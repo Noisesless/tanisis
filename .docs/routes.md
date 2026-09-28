@@ -1,0 +1,111 @@
+# Peta Rute SISPERTANI (`routes.md`)
+
+Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API backend, mencakup metode HTTP, handler, status autentikasi, dan rantai middleware.
+
+---
+
+## 1. Frontend Routes (Pages & Views)
+
+| Route Path | Kategori Navigasi | Page Title | Auth | Status |
+|---|---|---|---|---|
+| `/` | Eksekutif & Spasial | Dashboard Eksekutif SISPERTANI | Publik | STABLE |
+| `/sebaran/pangan` | Eksekutif & Spasial | Peta Geospasial WebGIS Tutupan Lahan | Publik | STABLE |
+| `/prediction` | Sektor Komoditas | Prediksi Panen Padi & Palawija | Publik | STABLE |
+| `/food-crops` | Sektor Komoditas | Produksi Tanaman Pangan (Padi & Palawija) | Publik | STABLE |
+| `/komoditas-unggulan/:bidang` | Sektor Komoditas | Komoditas & Varietas Unggulan Dinamis per Bidang | Publik | STABLE |
+| `/nilai-ekonomi/:bidang`| Sektor Komoditas | Valuasi Nilai Ekonomi Komoditas Dinamis per Bidang (Rp) | Publik | STABLE |
+| `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah & Hortikultura | Publik | STABLE |
+| `/plantation` | Sektor Komoditas | Analitik Perkebunan & Komoditas Khas | Publik | STABLE |
+| `/ltt-katam` | Sektor Komoditas | Luas Tambah Tanam (LTT) & Kalender Tanam | Publik | STABLE |
+| `/livestock` | Sektor Komoditas | Populasi & Produksi Peternakan | Publik | STABLE |
+| `/peternakan/susu-kulit`| Sektor Komoditas | Produksi Susu & Pengolahan Kulit | Publik | STABLE |
+| `/livestock-flow` | Sektor Komoditas | Lalu Lintas Ternak & Pemotongan RPH | Publik | STABLE |
+| `/fisheries` | Sektor Komoditas | Produksi Perikanan & Budidaya Air Tawar | Publik | STABLE |
+| `/food-security` | Kebijakan & Ketapang | Ketersediaan Beras & Stok Lumbung Pangan | Publik | STABLE |
+| `/fsva` | Kebijakan & Ketapang | Peta Kerawanan Pangan (FSVA Bapanas) | Publik | STABLE |
+| `/supply-chain` | Kebijakan & Ketapang | Rantai Pasok & Distribusi Beras (RMU) | Publik | STABLE |
+| `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar & Inflasi Bahan Pangan | Publik | STABLE |
+| `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | Publik | STABLE |
+| `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Pertanian Daerah | Publik | STABLE |
+| `/sensus-2023` | Kebijakan & Ketapang | Data Hasil Sensus Pertanian 2023 (ST2023) | Publik | STABLE |
+| `/farmers` | Kelembagaan & Data | Direktori Kelembagaan Poktan & Gapoktan | Publik | STABLE |
+| `/kewirausahaan/kwt` | Kelembagaan & Data | Profil Kewirausahaan Kelompok Wanita Tani | Publik | STABLE |
+| `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
+| `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
+| `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
+| `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara | Publik | STABLE |
+| `/admin` | Portal Admin | Portal Dasbor Admin & Kelola Excel | Admin/Bidang | STABLE |
+| `/info` | Bantuan & Info | Informasi Umum SISPERTANI | Publik | STABLE |
+| `/manual` | Bantuan & Info | Panduan Penggunaan / Manual Book | Publik | STABLE |
+
+---
+
+## 2. API Routes (Endpoints)
+
+> Catatan: Setiap rute di bawah tersedia secara otomatis pada dua jalur prefix: `/api/v1/*` dan `/sispertani-api/v1/*`.
+
+| Method | Route Path | Handler | Auth | Purpose |
+|---|---|---|---|---|
+| `GET` | `/health` | `src/server.js` | Publik | Health check & verifikasi pool koneksi MySQL |
+| `GET` | `/v1` | `src/server.js` | Publik | Metadata versi API & katalog rute publik |
+| `GET` | `/3/*` | `src/server.js` | Publik | CKAN proxy ke Open Data Pemkab Banjarnegara |
+| `GET` | `/v1/lahan/desa` | `src/routes/lahan.js` | Publik | Data penggunaan lahan tingkat desa |
+| `GET` | `/v1/lahan/kabupaten` | `src/routes/lahan.js` | Publik | Data penggunaan lahan agregat kabupaten |
+| `GET` | `/v1/padi/production` | `src/routes/padi.js` | Publik | Produksi dan luas panen padi per kecamatan |
+| `GET` | `/v1/padi/history` | `src/routes/padi.js` | Publik | Historis tren produksi padi 2018–2024 |
+| `GET` | `/v1/padi/sawah-ladang` | `src/routes/padi.js` | Publik | Komparasi produksi padi sawah vs ladang |
+| `GET` | `/v1/palawija/jagung-ubi-kayu` | `src/routes/padi.js` | Publik | Produksi jagung dan ubi kayu |
+| `GET` | `/v1/palawija/kacang-kedelai` | `src/routes/padi.js` | Publik | Produksi kacang tanah dan kedelai |
+| `GET` | `/v1/palawija/ubi-kacang-hijau` | `src/routes/padi.js` | Publik | Produksi ubi jalar dan kacang hijau |
+| `GET` | `/v1/hortikultura/sayuran-produksi` | `src/routes/hortikultura.js` | Publik | Produksi sayuran (kentang Dieng, kubis, wortel) |
+| `GET` | `/v1/hortikultura/sayuran-luas` | `src/routes/hortikultura.js` | Publik | Luas panen tanaman sayuran |
+| `GET` | `/v1/hortikultura/buah-produksi` | `src/routes/hortikultura.js` | Publik | Produksi tanaman buah-buahan |
+| `GET` | `/v1/hortikultura/produksi-tahunan` | `src/routes/hortikultura.js` | Publik | Total produksi hortikultura tahunan |
+| `GET` | `/v1/perkebunan/areal` | `src/routes/perkebunan.js` | Publik | Luas areal perkebunan per komoditas |
+| `GET` | `/v1/perkebunan/produksi` | `src/routes/perkebunan.js` | Publik | Volume produksi perkebunan per kecamatan |
+| `GET` | `/v1/peternakan/kecil` | `src/routes/peternakan.js` | Publik | Populasi Domba Batur, domba lokal, kambing |
+| `GET` | `/v1/peternakan/besar` | `src/routes/peternakan.js` | Publik | Populasi sapi potong, perah, kerbau |
+| `GET` | `/v1/peternakan/unggas` | `src/routes/peternakan.js` | Publik | Populasi ayam kampung, broiler, puyuh |
+| `GET` | `/v1/peternakan/pemasukan` | `src/routes/peternakan.js` | Publik | Arus lalu lintas ternak masuk |
+| `GET` | `/v1/peternakan/pengeluaran` | `src/routes/peternakan.js` | Publik | Arus lalu lintas ternak keluar |
+| `GET` | `/v1/peternakan/luar-rph` | `src/routes/peternakan.js` | Publik | Pemotongan hewan di luar RPH |
+| `GET` | `/v1/peternakan/daging-unggas` | `src/routes/peternakan.js` | Publik | Produksi daging ternak & karkas unggas |
+| `GET` | `/v1/peternakan/susu-kulit` | `src/routes/peternakan.js` | Publik | Produksi susu segar & hasil kulit |
+| `GET` | `/v1/perikanan/budidaya` | `src/routes/perikanan.js` | Publik | Produksi budidaya kolam, waduk, minapadi |
+| `GET` | `/v1/perikanan/tangkap` | `src/routes/perikanan.js` | Publik | Hasil tangkap perairan umum Banjarnegara |
+| `GET` | `/v1/perikanan/benih` | `src/routes/perikanan.js` | Publik | Produksi benih ikan air tawar |
+| `GET` | `/v1/perikanan/nilai-budidaya` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi budidaya ikan |
+| `GET` | `/v1/perikanan/nilai-tangkap` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi perikanan tangkap |
+| `GET` | `/v1/ekonomi/inflasi` | `src/routes/ekonomi.js` | Publik | Indeks inflasi bahan pangan |
+| `GET` | `/v1/ekonomi/pasar` | `src/routes/ekonomi.js` | Publik | Direktori pasar komoditas daerah |
+| `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor & tahun (Zero Dummy Data) |
+| `GET` | `/v1/komoditas-unggulan` | `src/server.js` | Publik | Daftar dinamis komoditas unggulan per bidang dari MySQL (Zero Dummy Data) |
+| `GET` | `/v1/lumbung` | `src/routes/ekonomi.js` | Publik | Fasilitas lumbung pangan dan kapasitas gudang |
+| `GET` | `/v1/kelembagaan/kelompok-tani` | `src/routes/kelembagaan.js` | Publik | Sebaran kelompok tani (Poktan) per desa |
+| `GET` | `/v1/kelembagaan/kth` | `src/routes/kelembagaan.js` | Publik | Data Kelompok Tani Hutan (KTH) |
+| `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
+| `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
+| `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token |
+| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | Daftar domain terotorisasi untuk peran aktif |
+| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan |
+| `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel |
+| `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel & eksekusi upsert ke MySQL |
+| `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |
+| `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor |
+| `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
+
+---
+
+## 3. Middleware Chain
+
+| Middleware | Diaplikasikan Pada | Tujuan & Fungsi |
+|---|---|---|
+| `x-powered-by disable` | Seluruh aplikasi | Menyembunyikan header `X-Powered-By: Express` untuk proteksi fingerprinting |
+| `CORS Allowlist` | Seluruh permintaan HTTP | Memvalidasi header Origin terhadap konfigurasi `CORS_ORIGIN` atau wildcard |
+| `express.json({ limit: "256kb" })` | API routes | Mem-parsing payload JSON (termasuk kredensial login admin) |
+| `express.static(distRoot)` | Berkas frontend `./dist` | Melayani aset web statis (JS, CSS, ikon, GeoJSON) dengan cache header |
+| `Rate Limiter Login` | `POST /api/v1/admin/login` | Membatasi maksimal 5 kali kegagalan login per 15 menit per IP |
+| `Bearer Auth Token` | Seluruh `/api/v1/admin/*` (kecuali login) | Memverifikasi keberadaan dan masa berlaku in-memory Bearer token |
+| `RBAC Domain Guard` | `template`, `export`, `import` admin | Memvalidasi kewenangan akun bidang terhadap domain yang diminta |
+| `Multer MemoryStorage` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |
+| `SPA HTML Fallback` | Seluruh `GET` non-API non-ekstensi | Mengarahkan navigasi peramban ke `index.html` untuk mendukung routing klien |
