@@ -16,6 +16,7 @@ import { kelembagaanRouter } from "./routes/kelembagaan.js";
 import { st2023Router } from "./routes/st2023.js";
 import bantuanRouter from "./routes/bantuan.js";
 import adminRouter from "./routes/admin.js";
+import aiRouter from "./routes/ai.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -124,6 +125,7 @@ api.use("/v1/kelembagaan", kelembagaanRouter);
 api.use("/v1/st2023", st2023Router);
 api.use("/v1/bantuan", bantuanRouter);
 api.use("/v1/admin", adminRouter);
+api.use("/v1/ai", aiRouter);
 
 // Endpoint Komoditas Unggulan Dinamis per Bidang (Zero Dummy Data Law)
 api.get("/v1/komoditas-unggulan", async (req, res) => {

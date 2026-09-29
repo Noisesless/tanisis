@@ -233,3 +233,58 @@ Menampilkan 50 entri riwayat audit sinkronisasi dan impor data terakhir.
 ### `GET /api/v1/admin/paket`
 Menampilkan indeks paket arsip data template dan ekspor siap unduh (format Excel dan CSV) yang tersimpan di server.
 - **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
+
+---
+
+## 4. Endpoint Asisten Analis AI (Si Pertani)
+
+### `POST /api/v1/ai/chat`
+Endpoint proksi streaming berbasis Server-Sent Events (SSE) yang melayani Chatbot Si Pertani dengan integrasi Google Gemini API, proteksi keamanan, dan Dynamic RAG (Retrieval-Augmented Generation) langsung dari basis data.
+
+- **Autentikasi & Keamanan:**
+  - Token rahasia `GEMINI_API_KEY` terisolasi di sisi server (`.env`), tidak pernah dibocorkan ke klien.
+  - **In-Memory Sliding Rate Limiter:** Maksimal 30 request/menit per IP klien (mencegah eksploitasi dan kuota drain).
+  - **Payload Sanitization:** Pembatasan histori chat (maks. 30 pesan terakhir), validasi array pesan, dan pembatasan `max_tokens` (maks. 4096-8192).
+- **Dynamic Live RAG Retrieval:**
+  - Server secara otomatis mendeteksi kata kunci dari pesan pengguna.
+  - Melakukan query paralel langsung ke MySQL `pertasis` (`komoditas_unggulan`, `perkebunan_produksi`, `padi_produksi`, `palawija_produksi`, `horti_produksi`, `ternak_populasi`, `ikan_budidaya`).
+  - Melakukan query langsung ke portal CKAN Open Data Banjarnegara (`opendata.banjarnegarakab.go.id/api/3/action/package_search`) untuk pencarian katalog dataset terkait.
+  - Menyuntikkan hasil query angka riil ke prompt sistem sebelum diteruskan ke model LLM.
+- **Model Fallback Orchestration:**
+  - Mengutamakan model berkinerja tinggi dan stabil: `gemini-flash-lite-latest`.
+  - Jika upstream mengembalikan error beban tinggi (503 / 429), server otomatis mencoba model cadangan: `gemini-3.5-flash-lite`, `gemini-3.6-flash`, atau `gemini-3.8-flash`.
+- **Request Body (JSON):**
+  ```json
+  {
+    "model": "gemini-flash-lite-latest",
+    "messages": [
+      { "role": "user", "content": "Analisa produksi kopi Banjarnegara" }
+    ],
+    "stream": true,
+    "temperature": 0.6
+  }
+  ```
+- **Response 200 OK (Stream):**
+  - **Headers:** `Content-Type: text/event-stream`, `Cache-Control: no-cache, no-transform`, `Connection: keep-alive`
+  - **Format Body:** Server-Sent Events (SSE) data chunks:
+    ```
+    data: {"choices":[{"delta":{"content":"Berdasarkan data..."}}]}
+    data: [DONE]
+    ```
+- **Error Responses:**
+  - `400 Bad Request`: `{"error": "invalid_payload", "message": "..."}`
+  - `429 Too Many Requests`: `{"error": "rate_limit_exceeded", "message": "Terlalu banyak permintaan chat..."}`
+  - `503 Service Unavailable`: `{"error": "service_unavailable", "message": "..."}`
+
+---
+
+## 5. Kebijakan Zero Dummy Data Sektoral (Perikanan)
+
+Sesuai prinsip kepatuhan **ADR-002 (Zero Dummy Data Law)** dan **ADR-006 (Zero Dummy Fish Species)**:
+1. Pendataan resmi Distankan KP Kabupaten Banjarnegara hanya mencatat sektor perikanan menurut **metode budidaya** (kolam pembesaran, karamba, minapadi) dan **alat tangkap perairan umum** (jala tebar, pancing, jaring insang).
+2. Tidak ada pencatatan resmi per spesies ikan (Nila, Lele, Mas, Gurame, Koi, dll.) dalam berkas dinas. Seluruh data sintetis spesies ikan telah **dibersihkan total** dari basis data.
+3. Dampak respons API perikanan:
+   - `GET /api/v1/komoditas-unggulan?sektor=perikanan`: Mengembalikan `[]` (kosong).
+   - `GET /api/v1/ekonomi/nilai-ekonomi?bidang=perikanan`: Mengembalikan `{ bidang: "perikanan", sumber: "kosong", jumlah: 0, rows: [] }`.
+   - `GET /api/v1/ekonomi/sektor-ringkasan?sektor=perikanan`: Mengembalikan `{ status: "empty", sektor: "perikanan", ... }`.
+

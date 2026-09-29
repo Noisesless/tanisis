@@ -55,8 +55,44 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menambahkan 2 submenu terpisah secara simetris di setiap bidang pada berkas navigasi `dist/assets/site-B5h-x_N5.js`.
   3. Memastikan semua endpoint dan widget menampilkan status *empty* secara jujur saat data belum diunggah, tanpa merekayasa angka atau varietas dummy fiktif.
 
+### [ISSUE-006] Galat Koneksi Chatbot AI & Eksploitasi Kredensial Pihak Luar
+- **Status:** RESOLVED
+- **Tanggal:** 2026-09-29
+- **Deskripsi:** Chatbot Si Pertani mengembalikan pesan *"Maaf, terjadi kesalahan koneksi"* dan pada konsol backend terjadi `stream reading error ... An existing connection was forcibly closed by the remote host`.
+- **Akar Masalah:**
+  1. Klien memanggil model `gemini-3.8-flash` yang sedang mengalami beban tinggi (HTTP 503) di Google Generative Language API.
+  2. Header `content-encoding: gzip` dari upstream diteruskan langsung ke klien padahal body `fetch` Node.js sudah terdekompresi, menyebabkan tabrakan format stream zlib (`Z_DATA_ERROR`) dan pemutusan koneksi TCP mendadak.
+  3. API key sebelumnya berada di frontend bundle sehingga rentan dieksploitasi pihak luar.
+- **Solusi:**
+  1. Mengisolasi API key murni di backend (`.env`) dan mengarahkan panggilan frontend ke proksi lokal `/api/v1/ai/chat`.
+  2. Menerapkan in-memory sliding rate limiter (maks 30 req/menit per IP) dan validasi ukuran payload.
+  3. Mengimplementasikan **Model Fallback Orchestration** (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) sehingga saat satu model sibuk, server otomatis beralih tanpa menimbulkan galat ke pengguna.
+  4. Menggunakan stream piping native Node.js (`Readable.fromWeb(upstream.body).pipe(res)`) tanpa meneruskan header hop-by-hop.
+
+### [ISSUE-007] Template Penolakan Chatbot pada Komoditas yang Belum Terangkum di Frontend
+- **Status:** RESOLVED
+- **Tanggal:** 2026-09-29
+- **Deskripsi:** Saat ditanya mengenai komoditas perkebunan (seperti kopi), bot tidak menyajikan data statistik dan malah mengeluarkan template penolakan generik *"dataset tersebut saat ini belum cukup dalam sistem. Anda dapat merujuk ke Katalog Data Terbuka..."*.
+- **Akar Masalah:** Konteks awal yang dikirim frontend hanya memuat rangkuman sebagian sektor (padi, sapi, ikan) tanpa angka statistik perkebunan, dan prompt menginstruksikan bot menolak jika data tidak tertera. Padahal data kopi ada lengkap di database MySQL (`perkebunan_produksi` dan `komoditas_unggulan`).
+- **Solusi:**
+  1. Membangun **Dynamic Live RAG Engine** pada `src/routes/ai.js` yang secara otomatis mengekstrak kata kunci pesan pengguna dan melakukan query real-time ke MySQL `pertasis` dan CKAN OpenData Banjarnegara.
+  2. Menyuntikkan hasil query angka riil ke prompt sistem dan mewajibkan bot menjawab secara langsung, spesifik, dan melarang template penolakan jika data ada di database.
+
+### [ISSUE-008] Data Sintetis Jenis Ikan pada Tabel Komoditas Unggulan & Nilai Ekonomi
+- **Status:** RESOLVED
+- **Tanggal:** 2026-09-29
+- **Deskripsi:** Sistem memunculkan nama-nama spesies ikan sintetis (Ikan Nila, Lele, Mas, Gurame, Koi, Mas Koki, Cupang, Komet) yang tidak bersumber dari data primer dinas.
+- **Akar Masalah:** Berkas resmi Distankan KP Banjarnegara hanya mencatat data perikanan berdasarkan metode budidaya (*kolam pembesaran, karamba, minapadi*) dan alat tangkap (*jala tebar, pancing, jaring insang*), tanpa rincian spesies. Spesies ikan tersebut merupakan data tiruan yang sempat diinput ke tabel agregasi.
+- **Solusi:**
+  1. Menghapus bersih seluruh 10 baris sintetis jenis ikan di tabel `komoditas_unggulan` dan `nilai_ekonomi_tahunan`.
+  2. Menyelaraskan endpoint `/api/v1/komoditas-unggulan?sektor=perikanan` dan `/api/v1/ekonomi/nilai-ekonomi?bidang=perikanan` agar mengembalikan status kosong (*empty*) sesuai prinsip *Zero Dummy Data Law*.
+  3. Memperbarui instruksi bot AI agar jujur menjelaskan dasar pencatatan resmi perikanan Banjarnegara dan menyajikan data riil volume per kecamatan tanpa mengarang jenis ikan.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
+
+1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
+2. **Monitoring Latensi AI Upstream:** Pemantauan berkala terhadap response time endpoint Google Generative Language API.
 
 *(Saat ini seluruh isu fungsional kritis telah diselesaikan. Sistem siap untuk pengujian operasional dinas dan pengembangan modul lanjutan).*

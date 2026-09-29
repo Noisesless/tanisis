@@ -39,6 +39,7 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 | [`src/routes/st2023.js`](file:///e:/Project/pertanian_main/src/routes/st2023.js) | Endpoint kueri data sensus ST2023 tingkat desa | Terisolasi pada domain Sensus |
 | [`src/routes/bantuan.js`](file:///e:/Project/pertanian_main/src/routes/bantuan.js) | Endpoint kueri program dan sebaran bantuan pemerintah | Terisolasi pada domain Bantuan |
 | [`src/routes/lahan.js`](file:///e:/Project/pertanian_main/src/routes/lahan.js) | Endpoint kueri penggunaan dan tutupan lahan | Terisolasi pada domain Lahan |
+| [`src/routes/ai.js`](file:///e:/Project/pertanian_main/src/routes/ai.js) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL & CKAN) | Terisolasi pada modul AI & RAG Gateway |
 | [`src/lib/helpers.js`](file:///e:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
 
 ---
@@ -66,6 +67,7 @@ src/server.js
   ├── src/routes/st2023.js ──────> src/db.js
   ├── src/routes/bantuan.js ─────> src/db.js
   ├── src/routes/lahan.js ───────> src/db.js
+  ├── src/routes/ai.js ──────────> src/db.js & Google Gemini API
   └── /api/v1/komoditas-unggulan ─> src/db.js (Tabel komoditas_unggulan)
 ```
 

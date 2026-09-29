@@ -93,6 +93,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
+| `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL & CKAN) |
 
 ---
 
@@ -105,6 +106,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `express.json({ limit: "256kb" })` | API routes | Mem-parsing payload JSON (termasuk kredensial login admin) |
 | `express.static(distRoot)` | Berkas frontend `./dist` | Melayani aset web statis (JS, CSS, ikon, GeoJSON) dengan cache header |
 | `Rate Limiter Login` | `POST /api/v1/admin/login` | Membatasi maksimal 5 kali kegagalan login per 15 menit per IP |
+| `Rate Limiter AI Chat`| `POST /api/v1/ai/chat` | In-memory sliding rate limiter maks. 30 request/menit per IP |
 | `Bearer Auth Token` | Seluruh `/api/v1/admin/*` (kecuali login) | Memverifikasi keberadaan dan masa berlaku in-memory Bearer token |
 | `RBAC Domain Guard` | `template`, `export`, `import` admin | Memvalidasi kewenangan akun bidang terhadap domain yang diminta |
 | `Multer MemoryStorage` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |

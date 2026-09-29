@@ -77,6 +77,9 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Sensus** | `st2023_desa` | `(desa_id)` | Rumah tangga petani/nelayan hasil sensus ST2023 |
 | **Kebijakan** | `renstra_target` | `(indikator, tahun_target)` | Target indikator kinerja Renstra Distankan |
 
+> **Catatan Kepatuhan ADR-006 (Zero Dummy Fish Species):**  
+> Tabel `komoditas_unggulan` dan `nilai_ekonomi_tahunan` dikosongkan untuk sektor perikanan karena data primer dinas (Distankan KP) hanya mencatat metode budidaya dan alat tangkap perairan umum tanpa rincian spesies ikan. Sesuai prinsip *Zero Dummy Data*, sistem tidak mentolerir adanya data sintetis jenis ikan.
+
 ---
 
 ## 4. Tabel Audit & Keamanan

@@ -29,6 +29,7 @@ Dokumen ini memuat prosedur deployment aplikasi, pemetaan variabel lingkungan, d
 | `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data |
 | `ADMIN_PASS` | `C9145qbSjR` | `[hash_or_strong_pass]` | Kata sandi super-admin |
 | `PASS_*` (Bidang) | `[Bidang].2026` | `[secure_random_pass]` | Kata sandi per bidang RBAC |
+| `GEMINI_API_KEY` | `AIzaSy...` | `AIzaSy...` | API Key Google Gemini untuk gateway AI / Si Pertani (Wajib di server backend, aman dari client) |
 
 ---
 

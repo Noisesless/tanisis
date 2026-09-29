@@ -101,3 +101,45 @@ graph TD
    - **Tingkat Navigasi Sidebar:** Setiap bidang dilengkapi 2 submenu mandiri:
      - `Komoditas Unggulan`: rute `/komoditas-unggulan/:bidang` untuk rincian varietas, luas, dan sentra komoditas.
      - `Nilai Ekonomi`: rute `/nilai-ekonomi/:bidang` untuk analisis valuasi finansial per komoditas.
+
+---
+
+## 6. Arsitektur AI Gateway & Dynamic Live RAG (Si Pertani)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Pengguna (Chatbot UI)
+    participant Server as Express Server (/api/v1/ai/chat)
+    participant RateLimiter as In-Memory Rate Limiter
+    participant DB as MySQL (pertasis)
+    participant CKAN as OpenData Banjarnegara (CKAN)
+    participant Gemini as Google Generative Language API
+
+    User->>Server: POST /api/v1/ai/chat (messages, stream=true)
+    Server->>RateLimiter: Cek kuota IP (Maks. 30 req/menit)
+    alt Kuota Terlampaui
+        RateLimiter-->>User: HTTP 429 Too Many Requests
+    else Kuota Tersedia
+        Server->>DB: Query SQL dinamis (komoditas_unggulan, perkebunan, padi, horti, ternak)
+        DB-->>Server: Data angka riil (produksi, sentra, Rp)
+        opt Pertanyaan Dataset / Open Data
+            Server->>CKAN: GET /api/3/action/package_search?q=...
+            CKAN-->>Server: Daftar judul dataset & dinas terkait
+        end
+        Server->>Server: Susun Grounding Context & Instruksi Faktual
+        Server->>Gemini: POST /v1beta/openai/chat/completions (Bearer Secret)
+        alt Upstream 503 / 429 (High Demand)
+            Gemini-->>Server: HTTP 503
+            Server->>Gemini: Coba Fallback Model (gemini-3.5-flash-lite, dll)
+        end
+        Gemini-->>Server: HTTP 200 Stream (text/event-stream)
+        Server->>User: Pipe SSE Stream (Readable.fromWeb.pipe(res))
+    end
+```
+
+1. **Isolasi Kredensial Mutlak:** API Key Google Gemini (`GEMINI_API_KEY`) hanya dibaca melalui `process.env` di backend, tidak pernah terekspos di paket statis frontend bundle (`dist/assets`).
+2. **Proteksi Anti-Eksploitasi:** In-memory sliding rate limiter membatasi 30 panggilan per menit per alamat IP guna mencegah pengurasan kuota token oleh pihak ketiga.
+3. **Dynamic Live Grounding (Paritas Dev & Production):** Server mengekstrak kata kunci pencarian dari pengguna lalu melakukan kueri SQL langsung ke basis data `pertasis` dan katalog CKAN. Data angka riil disuntikkan ke prompt sistem sebagai fakta mutlak agar AI dilarang keras berhalusinasi atau memberikan template penolakan generik.
+4. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) menjamin layanan asisten tetap berjalan lancar tanpa terganggu lonjakan beban (*high demand*) pada model tertentu.
+
