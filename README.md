@@ -34,7 +34,9 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Bantuan & Sarpras` — Penyaluran Bantuan Alsintan & Benih Pemerintah.
    - `Data Lahan & Geografi` — Penggunaan Lahan, Kesesuaian Lahan, dan Profil 20 Kecamatan.
 
-> **Fitur Visual Unggulan:**
+> **Fitur Visual & Tata Letak Unggulan:**
+> - **Unified Topbar & Avatar Dropdown:** Mengeliminasi tombol berceceran di header atas. Seluruh tautan utilitas (*Info*, *Panduan*, status profil *Guest*, dan akses *Portal Admin*) dirapikan ke dalam satu Avatar Dropdown interaktif setinggi `72px`.
+> - **Higienitas Bundel Aset:** Direktori `./dist/assets` disanitasi bersih hanya memuat 86 berkas aktif terverifikasi (eliminasi 1.885 berkas artefak build usang), menjamin kecepatan load tinggi dan eliminasi inkonsistensi cache.
 > - **High-Contrast Active State:** Submenu aktif disorot dengan badge kontras tinggi Emerald-600 (`#059669`) dan titik putih menyala.
 > - **Parent Indicator:** Kategori induk otomatis mendapatkan sorotan halus saat salah satu halamannya aktif.
 > - **Floating Executive Card:** Dasar sidebar memuat kartu institusional resmi *"Portal Data Dinas — Distankan KP Banjarnegara"*, indikator koneksi `● Basis Data Terhubung`, serta tombol aksi *"Masuk Dasbor Admin"*.

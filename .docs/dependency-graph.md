@@ -73,20 +73,26 @@ src/server.js
 
 ---
 
-## 🖥️ Frontend Shared Component Dependencies
+## 🖥️ Frontend Shared Component Dependencies (86 Active Clean Assets)
 
 ```text
-dist/assets/sektor-ringkasan-widget.js (SectorEconomicWidget)
-  ├── dist/assets/index-CI1XYnwk.js (React & JSX Runtime)
-  └── Di-import oleh 5 Halaman Sektor:
-        ├── food-crops-BebUD7KU.js (/food-crops)
-        ├── horticulture-CCLLXyU1.js (/horticulture)
-        ├── plantation-DQwd-omc.js (/plantation)
-        ├── livestock-D6KAVcvO.js (/livestock)
-        └── fisheries-5_2RapTI.js (/fisheries)
-
-dist/assets/site-B5h-x_N5.js (Sidebar Navigation)
-  └── Memetakan Navigasi Dinamis ke Halaman:
-        ├── /komoditas-unggulan/:bidang -> komoditas-unggulan-BhWh4UVQ.js
-        └── /nilai-ekonomi/:bidang -> nilai-ekonomi-uFV4-6ig.js
+dist/index.html (Entry Point)
+  ├── dist/assets/index-CI1XYnwk.js (React 19 Root & SPA Router)
+  │     ├── dist/assets/default-CAKe9ffW.js (Layout Master & Interactive Avatar Dropdown Header)
+  │     │     ├── dist/assets/site-B5h-x_N5.js (Sidebar Navigation Structure)
+  │     │     └── Shared Utility Icons & User Menu Logic
+  │     └── Route Splitting to 35+ Active Views
+  │
+  ├── dist/assets/sektor-ringkasan-widget.js (SectorEconomicWidget)
+  │     └── Di-import oleh 5 Halaman Sektor:
+  │           ├── food-crops-BebUD7KU.js (/food-crops)
+  │           ├── horticulture-CCLLXyU1.js (/horticulture)
+  │           ├── plantation-DQwd-omc.js (/plantation)
+  │           ├── livestock-D6KAVcvO.js (/livestock)
+  │           └── fisheries-5_2RapTI.js (/fisheries)
+  │
+  └── dist/assets/site-B5h-x_N5.js (Sidebar Navigation)
+        └── Memetakan Navigasi Dinamis ke Halaman:
+              ├── /komoditas-unggulan/:bidang -> komoditas-unggulan-BhWh4UVQ.js
+              └── /nilai-ekonomi/:bidang -> nilai-ekonomi-uFV4-6ig.js
 ```

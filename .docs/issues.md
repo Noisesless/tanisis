@@ -88,11 +88,25 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menyelaraskan endpoint `/api/v1/komoditas-unggulan?sektor=perikanan` dan `/api/v1/ekonomi/nilai-ekonomi?bidang=perikanan` agar mengembalikan status kosong (*empty*) sesuai prinsip *Zero Dummy Data Law*.
   3. Memperbarui instruksi bot AI agar jujur menjelaskan dasar pencatatan resmi perikanan Banjarnegara dan menyajikan data riil volume per kecamatan tanpa mengarang jenis ikan.
 
+### [ISSUE-009] Penumpukan 1.885 Berkas Aset Duplikat di dist/assets & Inkonsistensi View Produksi vs Development (Normalisasi Avatar Header)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-09-30
+- **Deskripsi:** Tampilan aplikasi di lingkungan produksi (`https://pertanian.sistemdata.id`) berbeda total dengan development. Hasil normalisasi header (meringkas navigasi berserakan menjadi Avatar Dropdown interaktif) tidak muncul di produksi karena server produksi masih melayani bundel HTML/JS lama (`index-C7-MA-gB.js` dan `default-PIMY9oy9.js`). Selain itu, folder `dist/assets/` mengalami penumpukan masif sebanyak 1.971 file akibat artefak build Vite usang yang tidak pernah dibersihkan.
+- **Akar Masalah:**
+  1. Build berulang tanpa opsi pembersihan direktori output (`emptyOutDir: false`) menyebabkan ratusan berkas dengan hash usang tetap tertimbun.
+  2. Server produksi belum mengeksekusi `git pull` terbaru dari remote repositori, sehingga masih merujuk ke entry point lawas.
+  3. Ketiadaan sanitasi dependensi pohon aset aktif menyebabkan sulitnya membedakan berkas yang benar-benar aktif vs berkas sampah.
+- **Solusi:**
+  1. Menjalankan penelusuran graf dependensi rekursif (*dependency graph traversal*) mulai dari `dist/index.html` dan `index-CI1XYnwk.js`.
+  2. Menghapus secara aman **1.885 berkas duplikat/usang** di `dist/assets/` dan menyisakan **86 berkas aktif murni** (termasuk layout `default-CAKe9ffW.js` dengan Avatar Dropdown).
+  3. Memvalidasi bahwa server lokal merespons `200 OK` tanpa berkas 404, lalu melakukan commit dan push ke remote `origin/main` agar siap di-pull di VPS produksi.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Latensi AI Upstream:** Pemantauan berkala terhadap response time endpoint Google Generative Language API.
+3. **Eksekusi Git Pull di VPS Produksi:** Menjalankan `git pull origin main` dan `pm2 reload ecosystem.config.cjs` di server produksi `pertanian.sistemdata.id` serta melakukan hard-refresh browser (`Ctrl + Shift + R`).
 
 *(Saat ini seluruh isu fungsional kritis telah diselesaikan. Sistem siap untuk pengujian operasional dinas dan pengembangan modul lanjutan).*

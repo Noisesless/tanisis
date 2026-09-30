@@ -66,27 +66,48 @@ server {
 ## 4. Pre-Deploy Checklist (Sebelum Rilis)
 
 - [ ] File `.env` produksi telah dikonfigurasi dengan kata sandi kuat dan kredensial MySQL yang tepat.
-- [ ] Folder `./dist` berisi build frontend terbaru yang stabil (`index.html`, bundle `assets/`, dan file GeoJSON).
+- [ ] Folder `./dist` berisi build frontend terbaru yang stabil (`index.html`, bundle `assets/` bersih 86 berkas tanpa artefak usang, dan berkas GeoJSON).
 - [ ] Dependensi `node_modules` telah terpasang bersih (`npm ci --omit=dev`).
 - [ ] Database MySQL `pertasis` telah di-dump dan dicadangkan (*backup*).
 - [ ] Port yang ditentukan pada `PORT` tidak terblokir firewall eksternal (hanya terbuka untuk Nginx lokal).
 - [ ] Folder `./logs-pm2` telah tersedia dan memiliki izin tulis untuk user pengelola.
+- [ ] Repositori lokal telah bersih dari artefak duplikat usang dan ter-push ke branch `main`.
 
 ---
 
-## 5. Post-Deploy Verification (Verifikasi Pasca Rilis)
+## 5. Prosedur Rilis Produksi & Post-Deploy Verification
 
+### A. Perintah Pembaruan di VPS Produksi (CloudPanel):
+```bash
+# Masuk ke direktori aplikasi
+cd /path/ke/pertanian_main
+
+# Tarik perubahan terbaru dari GitHub (termasuk pembersihan dist/assets)
+git pull origin main
+
+# Reload proses Express tanpa downtime
+pm2 reload ecosystem.config.cjs
+
+# Verifikasi log tidak memiliki error
+pm2 logs sispertani-api --lines 20
+```
+
+### B. Verifikasi Pasca Rilis:
 1. **Smoke Test Health Check:**
    ```bash
    curl -I https://pertanian.sistemdata.id/api/health
    # Harus menghasilkan status 200 OK dengan {"ok":true,"db":"up"}
    ```
-2. **Frontend Routing & SPA Check:**
+2. **Frontend Routing & Avatar Header Check:**
    - Buka beranda `https://pertanian.sistemdata.id/`
-   - Buka rute dalam `https://pertanian.sistemdata.id/pangan` dan lakukan refresh peramban (pastikan tidak terjadi 404).
-3. **GeoJSON & Map Test:**
+   - Lakukan **Hard Refresh** (`Ctrl + Shift + R` atau `Cmd + Shift + R`) untuk membersihkan cache browser.
+   - Pastikan header tampil rapi setinggi `72px` dengan **Avatar Dropdown Pengunjung [G]** (bukan tombol Info/Panduan/Login yang berserakan).
+   - Klik avatar untuk memastikan modal dropdown membuka tautan Info, Panduan, dan Portal Admin.
+3. **SPA Route Check:**
+   - Buka rute dalam `https://pertanian.sistemdata.id/komoditas-unggulan/pangan` dan lakukan refresh peramban (pastikan tidak terjadi 404).
+4. **GeoJSON & Map Test:**
    - Buka peta spasial, verifikasi layer GeoJSON sawah, desa, dan jalan ter-render dengan sempurna tanpa galat CORS.
-4. **Admin Login & Template Test:**
+5. **Admin Login & Template Test:**
    - Lakukan login pada portal admin dengan kredensial uji coba.
    - Uji unduh satu template Excel (`GET /api/v1/admin/template/padi`).
 

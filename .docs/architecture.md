@@ -49,6 +49,10 @@ graph TD
    - Menggunakan pustaka MapLibre GL untuk merender peta interaktif.
    - Peta dan data vektor disajikan dalam format GeoJSON statis dari direktori `./dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`, `danau.geojson`, `sungai.geojson`, `jalan.geojson`, dll).
 
+3. **Arsitektur Aset Bersih & Layout Normalisasi Header:**
+   - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (86 berkas terhubung ke entry point `index-CI1XYnwk.js` dan CSS `index-DmHYJUQI.css`), mengeliminasi 1.885 berkas artefak build usang.
+   - Tata letak antarmuka utama (`default-CAKe9ffW.js`) mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
+
 ---
 
 ## 3. Lapisan Logika & Kontrol (Logic Layer)
