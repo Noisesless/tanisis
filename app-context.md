@@ -1,5 +1,5 @@
 <!-- app-context.md v2.0 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-09-29T13:53:00+07:00 | Phase: 2/2 | Build: OK -->
+<!-- Last: 2026-09-30T15:28:00+07:00 | Phase: 2/2 | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=2 done=2/2 last=Pembersihan total dummy data jenis ikan di komoditas_unggulan & nilai_ekonomi_tahunan (Zero Dummy Data Law, status empty jika data resmi dinas belum mencatat per spesies)
+phase=2 done=2/2 last=Pembersihan total 1.885 berkas duplikat usang di dist/assets (hanya tersisa 86 berkas aktif bersih), sinkronisasi normalisasi avatar header ke origin main
 build=OK issues=0
 
 ## [VISUAL_GATE]
