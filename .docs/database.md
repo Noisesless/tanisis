@@ -8,7 +8,7 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 
 - **Database Engine:** MySQL / MariaDB (InnoDB)
 - **Collation:** `utf8mb4_unicode_ci`
-- **Total Tabel:** 52 Tabel
+- **Total Tabel:** 54 Tabel
 - **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan.
 
 ---
@@ -56,21 +56,24 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Peternakan** | `ternak_susu_kulit` | `(kecamatan_id, jenis, tahun)` | Produksi susu perah dan lembar kulit |
 | **Peternakan** | `ternak_flow` | `(kecamatan_id, arah, jenis, tahun)` | Arus keluar/masuk ternak lintas wilayah |
 | **Peternakan** | `ternak_pemotongan` | `(kecamatan_id, lokasi, jenis, tahun)` | Pemotongan hewan RPH pemerintah vs non-RPH |
+| **Perikanan** | `ikan_produksi_jenis` | `(tahun, jenis_ikan)` | Data definitif 10 spesies ikan budidaya (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan) 2020–2025 |
 | **Perikanan** | `ikan_budidaya` | `(kecamatan_id, jenis_budidaya, tahun)` | Produksi budidaya kolam air tenang, deras, minapadi |
-| **Perikanan** | `ikan_tangkap` | `(kecamatan_id, jenis_alat, tahun)` | Produksi tangkap perairan umum per jenis alat |
+| **Perikanan** | `ikan_tangkap` | `(kecamatan_id, jenis_alat, tahun)` | Produksi tangkap perairan umum per jenis alat (termasuk Bubu) |
 | **Perikanan** | `ikan_tangkap_perairan_umum`| `(kecamatan_id, tahun)` | Tangkap ikan di waduk Mrica & sungai Serayu |
-| **Perikanan** | `ikan_benih` | `(kecamatan_id, arah, tahun)` | Produksi & distribusi benih ikan (ekor) |
+| **Perikanan** | `ikan_benih` | `(kecamatan_id, arah, tahun)` | Produksi & distribusi benih ikan (ekor dan luas Ha) |
 | **Perikanan** | `ikan_kolam`, `ikan_waduk`, `ikan_minapadi` | `(kecamatan_id, tahun)` | Luas bidang pemeliharaan perikanan (ha/m²) |
 | **Perikanan** | `ikan_pemeliharaan` | `(kecamatan_id, tempat, tahun)` | Rincian tempat pemeliharaan ikan |
 | **Perikanan** | `ikan_obyek_penangkapan` | `(kecamatan_id, obyek, arah, tahun)` | Pemantauan obyek penangkapan ikan |
-| **Perikanan** | `ikan_hias` | `(kecamatan_id, jenis, tahun)` | Budidaya ikan hias (koi, komet, cupang, guppy) |
+| **Perikanan** | `ikan_hias` | `(kecamatan_id, varietas, tahun)` | Budidaya ikan hias (cupang, koi, koki, guppy, arwana, dll.) |
 | **Ekonomi** | `inflasi` | `(wilayah, tahun)` | Laju inflasi komoditas pangan |
 | **Ekonomi** | `pasar` | `(jenis, tahun)` | Jumlah dan kategori pasar daerah |
 | **Ekonomi** | `nilai_ekonomi_tahunan` | `(bidang, komoditas, tahun, triwulan)`| Valuasi rupiah (Volume × Harga Produsen) |
-| **Ekonomi / Komoditas** | `komoditas_unggulan` | `(sektor, nama_komoditas, tahun)` | Agregasi dinamis komoditas unggulan ranking #1, volume, sentra, dan valuasi estimasi |
+| **Ekonomi / Komoditas** | `komoditas_unggulan` | `(sektor, nama_komoditas, tahun)` | Agregasi dinamis komoditas unggulan ranking #1, volume, sentra, dan valuasi estimasi (ADR-009: auto-calculated dari tabel produksi) |
 | **Ekonomi** | `lumbung_pangan` | `(kecamatan_id, tahun)` | Jumlah unit & kapasitas lumbung/gudang |
 | **Kelembagaan**| `kelompok_tani` | `(desa_id, tahun)` | Jumlah Poktan, Gapoktan, dan anggota per desa |
 | **Kelembagaan**| `kelompok_tani_hutan` | `(desa_id, tahun)` | KTH tingkat Pemula, Madya, Utama |
+| **Kelembagaan (KWT)**| `kwt_kelompok_wanita_tani` | `(kecamatan, nama_kelompok)` | Profil KWT, Pokdakan, Poklahsar, Pokmamas per kecamatan |
+| **Tanaman Pangan**| `ltt_katam` | `(kecamatan, komoditas, jenis, tahun)` | Luas Tambah Tanam (LTT) & Kalender Tanam (Katam) |
 | **Bantuan** | `bantuan_program` | `(nama, sumber_dana, tahun_anggaran)`| Nama kegiatan, alokasi nilai, dan penerima |
 | **Bantuan** | `bantuan_alokasi` | `(tahun)` | Pagu tahunan dana APBD & APBN |
 | **Bantuan** | `bantuan_korelasi` | `(sektor)` | Korelasi bantuan vs kenaikan produksi |

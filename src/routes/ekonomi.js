@@ -79,29 +79,48 @@ ekonomiRouter.get(
       throw err;
     }
 
-    // Tentukan tahun: jika tidak ada parameter, cari tahun terbaru dari database
+    // Tentukan tahun & ambil daftar komoditas utama
     let tahun = req.query.tahun ? Number(req.query.tahun) : null;
-    if (!tahun || isNaN(tahun)) {
-      const [latest] = await q(
-        "SELECT MAX(tahun) AS maxTahun FROM komoditas_unggulan WHERE sektor = ?",
-        [sektor],
-      );
-      tahun = latest?.maxTahun ? Number(latest.maxTahun) : 2024;
-    }
+    let items = [];
 
-    // Ambil daftar komoditas utama dari tabel komoditas_unggulan
-    const items = await q(
-      `SELECT nama_komoditas AS komoditas,
-              satuan,
-              kecamatan_sentra AS kecamatanSentra,
-              total_produksi AS volumeProduksi,
-              nilai_ekonomi_estimasi AS nilaiEkonomiRp,
-              tahun
-         FROM komoditas_unggulan
-        WHERE sektor = ? AND tahun = ? AND total_produksi > 0
-        ORDER BY total_produksi DESC`,
-      [sektor, tahun],
-    );
+    if (sektor === "perikanan") {
+      if (!tahun || isNaN(tahun)) {
+        const [latest] = await q("SELECT MAX(tahun) AS maxTahun FROM ikan_produksi_jenis WHERE produksi_kg > 0");
+        tahun = latest?.maxTahun ? Number(latest.maxTahun) : 2025;
+      }
+      items = await q(
+        `SELECT jenis_ikan AS komoditas,
+                'Ton' AS satuan,
+                COALESCE(nama_kecamatan, 'Kabupaten Banjarnegara') AS kecamatanSentra,
+                ROUND(produksi_kg / 1000, 2) AS volumeProduksi,
+                nilai_ekonomi_rp AS nilaiEkonomiRp,
+                tahun
+           FROM ikan_produksi_jenis
+          WHERE tahun = ? AND produksi_kg > 0
+          ORDER BY produksi_kg DESC`,
+        [tahun],
+      );
+    } else {
+      if (!tahun || isNaN(tahun)) {
+        const [latest] = await q(
+          "SELECT MAX(tahun) AS maxTahun FROM komoditas_unggulan WHERE sektor = ?",
+          [sektor],
+        );
+        tahun = latest?.maxTahun ? Number(latest.maxTahun) : 2024;
+      }
+      items = await q(
+        `SELECT nama_komoditas AS komoditas,
+                satuan,
+                kecamatan_sentra AS kecamatanSentra,
+                total_produksi AS volumeProduksi,
+                nilai_ekonomi_estimasi AS nilaiEkonomiRp,
+                tahun
+           FROM komoditas_unggulan
+          WHERE sektor = ? AND tahun = ? AND total_produksi > 0
+          ORDER BY total_produksi DESC`,
+        [sektor, tahun],
+      );
+    }
 
     // Ambil total nilai ekonomi dari nilai_ekonomi_tahunan (jika diinput resmi)
     const [resmiTotal] = await q(

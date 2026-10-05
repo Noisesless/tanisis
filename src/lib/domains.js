@@ -52,6 +52,13 @@ const LABELS = {
   nilai: "Nilai", satuan: "Satuan",
   bidang: "Bidang", volume: "Volume", harga_produsen: "Harga Produsen (Rp)",
   triwulan: "Triwulan (1-4; kosong = tahunan)",
+  nama_kelompok: "Nama Kelompok", jumlah_anggota: "Jumlah Anggota",
+  produk_andalan: "Produk Andalan", tahun_registrasi: "Tahun Registrasi",
+  varietas: "Varietas", produktivitas: "Produktivitas (Kg/Ha)",
+  produksi: "Produksi (Ton)", ketersediaan_benih: "Ketersediaan Benih", luas_lahan: "Luas Lahan (Ha)",
+  luas_rencana: "Luas Rencana (Ha)", luas_tanam: "Luas Tanam (Ha)", luas_panen: "Luas Panen (Ha)",
+  produksi_rencana: "Produksi Rencana (Ton)", produksi_aktual: "Produksi Aktual (Ton)",
+  bulan_mulai: "Bulan Mulai", bulan_panen: "Bulan Panen",
 };
 
 // Suffix kolom → satuan pada label
@@ -116,12 +123,47 @@ export const DOMAINS = {
   },
   perikanan: {
     label: "Perikanan",
-    desc: "Produksi tangkap/budidaya/benih, luas kolam-waduk-minapadi, tempat pemeliharaan, dan obyek penangkapan.",
+    desc: "Produksi tangkap/budidaya/benih, 10 jenis ikan definitif, ikan hias, luas kolam-waduk-minapadi, dan tempat pemeliharaan.",
     sheets: [
-      { table: "ikan_tangkap", name: "Tangkap per Alat", kecamatan: true, key: ["kecamatan", "jenis_alat", "tahun"] },
+      {
+        table: "ikan_tangkap",
+        name: "Tangkap per Alat",
+        kecamatan: true,
+        key: ["kecamatan", "jenis_alat", "tahun"],
+        enums: { jenis_alat: ["Jala Tebar", "Pancing", "Jaring Insang", "Bubu", "Lainnya"] },
+      },
       { table: "ikan_tangkap_perairan_umum", name: "Tangkap Perairan Umum", kecamatan: true, key: ["kecamatan", "tahun"] },
-      { table: "ikan_budidaya", name: "Budidaya", kecamatan: true, key: ["kecamatan", "jenis_budidaya", "tahun"] },
-      { table: "ikan_benih", name: "Benih", kecamatan: true, key: ["kecamatan", "arah", "tahun"] },
+      {
+        table: "ikan_budidaya",
+        name: "Budidaya",
+        kecamatan: true,
+        key: ["kecamatan", "jenis_budidaya", "tahun"],
+        enums: { jenis_budidaya: ["Kolam Pembesaran", "Karamba Jaring Apung", "Mina Padi Tumpang Sari", "Mina Padi Penyelang"] },
+      },
+      {
+        table: "ikan_produksi_jenis",
+        name: "10 Jenis Ikan",
+        kecamatan: false,
+        key: ["tahun", "jenis_ikan"],
+        enums: { jenis_ikan: ["Bawal", "Gurami", "Lele", "Ikan Mas", "Mujair", "Nila", "Nilem", "Patin", "Tambakan", "Tawes"] },
+        labels: { nama_kecamatan: "Wilayah / Sentra", produksi_kg: "Produksi (Kg)", luas_ha: "Luas (Ha)", nilai_ekonomi_rp: "Nilai Ekonomi (Rp)" },
+      },
+      {
+        table: "ikan_hias",
+        name: "Ikan Hias",
+        kecamatan: true,
+        key: ["kecamatan", "varietas", "tahun"],
+        enums: { varietas: ["Cupang", "Koi", "Koki", "Guppy", "Arwana", "Discus", "Manfish", "Louhan", "Komet", "Molly", "Platy", "Lainnya"] },
+        labels: { volume_ekor: "Volume (Ekor)", luas_m2: "Luas (M²)", nilai_ekonomi: "Nilai Ekonomi (Rp)" },
+      },
+      {
+        table: "ikan_benih",
+        name: "Benih",
+        kecamatan: true,
+        key: ["kecamatan", "arah", "tahun"],
+        enums: { arah: ["sendiri", "lain_daerah"] },
+        labels: { arah: "Distribusi (sendiri/lain_daerah)", jumlah_ekor: "Jumlah (Ekor)", luas_ha: "Luas (Ha)" },
+      },
       { table: "ikan_kolam", name: "Kolam", kecamatan: true, key: ["kecamatan", "tahun"] },
       { table: "ikan_waduk", name: "Waduk", kecamatan: true, key: ["kecamatan", "tahun"] },
       { table: "ikan_minapadi", name: "Mina Padi", kecamatan: true, key: ["kecamatan", "tahun"] },
@@ -171,6 +213,17 @@ export const DOMAINS = {
     label: "Renstra — Target",
     desc: "Target indikator Renstra Distankan (mis. Tabel 4.1 renstra.pdf).",
     sheets: [{ table: "renstra_target", name: "Target Renstra", kecamatan: false, key: ["indikator", "tahun_target"] }],
+  },
+  "kwt": {
+    label: "KWT — Kelompok Wanita Tani",
+    desc: "Kelompok Wanita Tani (KWT), Pokdakan, Poklahsar, Pokmamas per kecamatan.",
+    sheets: [{ table: "kwt_kelompok_wanita_tani", name: "KWT", kecamatan: true, key: ["kecamatan", "nama_kelompok"], enums: { jenis: ["KWT", "Pokdakan", "Poklahsar", "Pokmamas"] } }],
+  },
+
+  "ltt-katam": {
+    label: "LTT — Luas Tambah Tanam & Kalender Tanam",
+    desc: "Monitoring luas tambah tanam (LTT) dan kalender tanam (Katam) per kecamatan.",
+    sheets: [{ table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } }],
   },
 };
 
@@ -263,8 +316,13 @@ export async function loadDomain(domainKey) {
   if (!domain) return null;
   const sheets = await Promise.all(
     domain.sheets.map(async (s) => {
+      const hasNamaKecamatan = (await loadColumns(s.table)).some((c) => c.column_name === "nama_kecamatan");
       const colsRaw = (await loadColumns(s.table)).filter(
-        (c) => !SKIP_COLS.has(c.column_name) && !SKIP_TYPES.has(c.data_type) && !c.generation_expression
+        (c) =>
+          !SKIP_COLS.has(c.column_name) &&
+          !SKIP_TYPES.has(c.data_type) &&
+          !c.generation_expression &&
+          !(s.kecamatan && c.column_name === "nama_kecamatan")
       );
       const hasSumber = (await loadColumns(s.table)).some((c) => c.column_name === "sumber");
       const hasDesaNorm = (await loadColumns(s.table)).some((c) => c.column_name === "desa_norm");
@@ -289,6 +347,7 @@ export async function loadDomain(domainKey) {
         kecamatan: !!s.kecamatan,
         hasSumber,
         hasDesaNorm,
+        hasNamaKecamatan: !!(s.kecamatan && hasNamaKecamatan),
         cols: s.kecamatan
           ? [{ field: "kecamatan", header: "Kecamatan", type: "kecamatan", required: true, enumValues: null }, ...cols]
           : cols,

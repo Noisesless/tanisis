@@ -99,41 +99,51 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
   Produksi susu segar (liter) dan pengolahan kulit mentah/samak.
 
 ### D. Perikanan
+- **`GET /api/v1/perikanan/jenis-ikan`**  
+  Data definitif 10 spesies ikan budidaya Kabupaten Banjarnegara tahun 2020–2025 (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan) bersumber dari berkas dinas `Data produksi 2020-2025.xlsx`.
+- **`GET /api/v1/perikanan/budidaya-luasan`**  
+  Data budidaya perikanan per kecamatan mencakup luasan (Ha/m²), volume produksi (Kg), dan produktivitas (Ton/Ha).
+- **`GET /api/v1/perikanan/hias`**  
+  Statistik budidaya ikan hias menurut varietas dan kecamatan.
 - **`GET /api/v1/perikanan/budidaya`**  
   Produksi perikanan budidaya air tawar (kolam air tenang, kolam air deras, mina padi).
 - **`GET /api/v1/perikanan/tangkap`**  
-  Hasil tangkap perairan umum daratan (Waduk PB Soedirman / Mrica, Sungai Serayu).
+  Hasil tangkap perairan umum daratan (Waduk PB Soedirman / Mrica, Sungai Serayu), mencakup kategori alat tangkap **Bubu** (`ALAT_MAP`).
 - **`GET /api/v1/perikanan/benih`**  
-  Produksi dan penyaluran benih ikan (ekor) menurut Balai Benih Ikan & pembenih rakyat.
+  Produksi dan penyaluran benih ikan (ekor dan luas Ha) menurut Balai Benih Ikan & pembenih rakyat.
 - **`GET /api/v1/perikanan/nilai-budidaya`** & **`/perikanan/nilai-tangkap`**  
   Nilai ekonomi produksi perikanan (ribu rupiah).
 
 ### E. Ekonomi, Logistik, Kelembagaan & Bantuan
 - **`GET /api/v1/ekonomi/sektor-ringkasan?sektor=[pangan|hortikultura|perkebunan|peternakan|perikanan]&tahun=[YYYY]`**  
   Agregasi dinamis komoditas utama (ranking #1 berdasarkan volume produksi) dan total nilai ekonomi sektor untuk tahun tertentu.  
+  - *Single Source of Truth (ADR-009)*: Komoditas unggulan dikalkulasi otomatis dari tabel transaksi produksi lapangan (misal sektor perikanan langsung dari `ikan_produksi_jenis`). Tidak ada form upload terpisah.
   - *Zero Dummy Data Policy*: Hanya mencakup komoditas dengan data riil (`total_produksi > 0`). Jika data belum diunggah / belum tersedia di database, mengembalikan status `empty` dan `totalNilaiEkonomiRp: 0` tanpa merekayasa data dummy.
   - **Query Params:** `sektor` (wajib: string), `tahun` (wajib: number/string).
   - **Response 200 OK:**
     ```json
     {
       "status": "success",
-      "sektor": "hortikultura",
-      "tahun": 2024,
+      "sektor": "perikanan",
+      "tahun": 2025,
       "top1": {
-        "komoditas": "Salak",
+        "komoditas": "Nila",
         "satuan": "Ton",
-        "kecamatanSentra": "Kalibening",
-        "volumeProduksi": 199676,
-        "nilaiEkonomiRp": 1198056000000,
-        "tahun": 2024
+        "kecamatanSentra": "Kabupaten Banjarnegara",
+        "volumeProduksi": 20250.13,
+        "nilaiEkonomiRp": 0,
+        "tahun": 2025
       },
       "items": [ ... ],
-      "totalNilaiEkonomiRp": 4069280500000,
-      "jumlahKomoditas": 9
+      "totalNilaiEkonomiRp": 0,
+      "jumlahKomoditas": 10
     }
     ```
 - **`GET /api/v1/ekonomi/inflasi`** — Tingkat inflasi bahan pangan tahunan & bulanan.
 - **`GET /api/v1/ekonomi/pasar`** — Profil pasar tradisional & pusat perdagangan komoditas.
+- **`GET /api/v1/ekonomi/nilai-ekonomi?bidang={bidang}`** — Valuasi nilai ekonomi tahunan resmi per bidang dari MySQL `nilai_ekonomi_tahunan`.
+- **`GET /api/v1/komoditas-unggulan`** — Daftar komoditas unggulan dinamis per bidang (pangan, hortikultura, perkebunan, peternakan, perikanan) dengan kalkulasi otomatis dari tabel produksi riil (termasuk 10 jenis ikan).
+- **`GET /api/v1/komoditas-unggulan/per-kecamatan?tahun={tahun}`** — Komoditas unggulan teratas (ranking #1) per kecamatan untuk 5 bidang utama, dihitung server-side dari tabel produksi riil.
 - **`GET /api/v1/lumbung`** — Data sebaran, kapasitas unit lumbung pangan dan gudang cadangan beras.
 - **`GET /api/v1/kelembagaan/kelompok-tani`** — Direktori Kelompok Tani (Poktan) & Gapoktan per desa.
 - **`GET /api/v1/kelembagaan/kth`** — Kelompok Tani Hutan (KTH) dan kelas kemampuannya.
@@ -168,26 +178,9 @@ Autentikasi pengguna berdasarkan peran bidang atau super-admin.
 - **Response 429 Too Many Requests:** Diblokir karena melebihi 5 percobaan gagal per 15 menit.
 
 ### `GET /api/v1/admin/domains`
-Mengambil daftar domain yang dapat dikelola oleh akun yang sedang masuk.
+Mengambil daftar domain (total 18 domain lengkap) yang dapat dikelola oleh akun yang sedang masuk berdasarkan peran RBAC (`bantuan-program`, `bantuan-alokasi`, `bantuan-korelasi`, `padi`, `palawija`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `st2023`, `renstra`, `kwt`, `komoditas-unggulan`, `ltt-katam`).
 - **Headers:** `Authorization: Bearer <token>`
-- **Response 200 OK:**
-  ```json
-  [
-    {
-      "key": "padi",
-      "label": "Padi",
-      "desc": "Produksi padi (sawah & ladang) per kecamatan per tahun.",
-      "sheets": [
-        {
-          "table": "padi_produksi",
-          "name": "Padi",
-          "kecamatan": true,
-          "key": ["kecamatan", "tahun", "jenis"]
-        }
-      ]
-    }
-  ]
-  ```
+- **Response 200 OK:** Array konfigurasi domain beserta skema sheet, natural key, dan dropdown enum.
 
 ### `GET /api/v1/admin/template/:domain`
 Mengunduh formulir template berkas Microsoft Excel (`.xlsx`) kosong untuk domain tertentu. Berkas dilengkapi sheet petunjuk tata cara pengisian, sheet data berformat resmi, dan sheet data contoh.
@@ -195,7 +188,7 @@ Mengunduh formulir template berkas Microsoft Excel (`.xlsx`) kosong untuk domain
 - **Response:** Berkas binary stream file `.xlsx`.
 
 ### `GET /api/v1/admin/export/:domain`
-Mengekspor seluruh data aktif yang tersimpan pada tabel basis data untuk domain terkait ke dalam format workbook Excel multi-sheet.
+Mengekspor seluruh data aktif yang tersimpan pada tabel basis data untuk domain terkait ke dalam format workbook Excel multi-sheet. Pada tabel yang memiliki flag `hasSumber`, otomatis disuntikkan kolom `Sumber Data` untuk audit traceability.
 - **Headers:** `Authorization: Bearer <token>`
 - **Response:** Berkas binary stream file `.xlsx`.
 

@@ -23,6 +23,11 @@ pnpm-debug.log*
 .agents/
 .gemini/
 
+# Temporary and Archives
+*.zip
+dist_backup_local/
+scratch/
+
 # Operating System Files
 .DS_Store
 Thumbs.db

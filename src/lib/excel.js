@@ -169,10 +169,14 @@ export async function buildWorkbook(domainKey, mode = "template") {
   await buildPetunjuk(wb, domain, specs, kec);
 
   for (const spec of specs) {
+    // Saat mode export, tambahkan kolom sumber ke spec.cols untuk traceability
+    const exportSpec = spec.hasSumber
+      ? { ...spec, cols: [...spec.cols, { field: "sumber", header: "Sumber Data", type: "text", required: false }] }
+      : spec;
     if (mode === "export") {
       const rows = await q(selectSql(spec) + orderSql(spec));
-      const mapped = rows.map((r) => spec.cols.map((c) => (c.field === "kecamatan" ? r.kecamatan ?? "" : r[c.field] ?? null)));
-      addDataSheet(wb, spec, mapped);
+      const mapped = rows.map((r) => exportSpec.cols.map((c) => (c.field === "kecamatan" ? r.kecamatan ?? "" : r[c.field] ?? null)));
+      addDataSheet(wb, exportSpec, mapped);
     } else {
       addDataSheet(wb, spec, []);
       // Sheet contoh: ambil 2 baris terakhir dari DB, atau contoh sintetis
@@ -284,6 +288,7 @@ async function upsertRow(spec, values) {
       vals.push(values[c.field]);
     }
     if (spec.hasDesaNorm && values.desa) { sets.push("desa_norm = ?"); vals.push(normDesa(values.desa)); }
+    if (spec.hasNamaKecamatan && values.kecamatan) { sets.push("`nama_kecamatan` = ?"); vals.push(values.kecamatan); }
     if (!sets.length) return "skipped";
     vals.push(existing[0].id);
     await q(`UPDATE \`${spec.table}\` SET ${sets.join(", ")} WHERE id = ?`, vals);
@@ -293,6 +298,7 @@ async function upsertRow(spec, values) {
   const vals = [];
   const push = (c, v) => { cols.push(`\`${c}\``); vals.push(v); };
   if (spec.kecamatan) push("kecamatan_id", values.kecamatan_id);
+  if (spec.hasNamaKecamatan && values.kecamatan) push("nama_kecamatan", values.kecamatan);
   for (const c of spec.cols) {
     if (c.type === "kecamatan") continue;
     if (values[c.field] === null || values[c.field] === undefined) continue;

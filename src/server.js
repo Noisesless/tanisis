@@ -15,6 +15,7 @@ import { ekonomiRouter, lumbungRouter } from "./routes/ekonomi.js";
 import { kelembagaanRouter } from "./routes/kelembagaan.js";
 import { st2023Router } from "./routes/st2023.js";
 import bantuanRouter from "./routes/bantuan.js";
+import { komoditasUnggulanRouter } from "./routes/komoditas-unggulan.js";
 import adminRouter from "./routes/admin.js";
 import aiRouter from "./routes/ai.js";
 
@@ -104,6 +105,9 @@ api.get("/v1", (_req, res) => {
       "/api/v1/kelembagaan/kelompok-tani", "/api/v1/kelembagaan/kth",
       "/api/v1/st2023/desa",
       "/api/v1/bantuan",
+      "/api/v1/komoditas-unggulan/per-kecamatan",
+      "/api/v1/komoditas-unggulan",
+      "/api/v1/ai",
       "/api/v1/admin/login", "/api/v1/admin/domains", "/api/v1/admin/sync-log",
       "/api/v1/admin/template/:domain", "/api/v1/admin/export/:domain",
       "/api/v1/admin/import/:domain",
@@ -124,6 +128,7 @@ api.use("/v1/lumbung", lumbungRouter);
 api.use("/v1/kelembagaan", kelembagaanRouter);
 api.use("/v1/st2023", st2023Router);
 api.use("/v1/bantuan", bantuanRouter);
+api.use("/v1/komoditas-unggulan/per-kecamatan", komoditasUnggulanRouter);
 api.use("/v1/admin", adminRouter);
 api.use("/v1/ai", aiRouter);
 
@@ -145,6 +150,23 @@ api.get("/v1/komoditas-unggulan", async (req, res) => {
       ORDER BY tahun DESC, total_produksi DESC
     `);
 
+    // Kalkulasi otomatis komoditas unggulan perikanan dari data riil 10 jenis ikan
+    const [perikananRows] = await pool.query(`
+      SELECT 
+        'perikanan' AS sektor,
+        jenis_ikan AS nama_komoditas,
+        'Ton' AS satuan,
+        COALESCE(nama_kecamatan, 'Kabupaten Banjarnegara') AS kecamatan_sentra,
+        ROUND(produksi_kg / 1000, 2) AS total_produksi,
+        nilai_ekonomi_rp AS nilai_ekonomi_estimasi,
+        tahun
+      FROM ikan_produksi_jenis
+      WHERE produksi_kg > 0
+      ORDER BY tahun DESC, produksi_kg DESC
+    `);
+
+    const allRows = [...rows, ...perikananRows];
+
     const BIDANG_MAP = {
       pangan: "Tanaman Pangan",
       hortikultura: "Hortikultura",
@@ -153,7 +175,7 @@ api.get("/v1/komoditas-unggulan", async (req, res) => {
       perikanan: "Perikanan",
     };
 
-    const result = rows.map((r) => ({
+    const result = allRows.map((r) => ({
       bidang: BIDANG_MAP[r.sektor] || r.sektor,
       komoditas: r.nama_komoditas,
       varietas: "-",

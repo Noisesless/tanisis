@@ -6,7 +6,7 @@
  * mengelola SEMUA domain (15 domain) + fitur sinkronisasi (sync-log & paket).
  *
  *   admin             → semua domain (null) + sync-log + paket
- *   tanaman-pangan    → padi, palawija
+ *   tanaman-pangan    → padi, palawija, ltt-katam
  *   horti-perkebunan  → hortikultura, perkebunan
  *   peternakan        → peternakan
  *   perikanan         → perikanan
@@ -18,7 +18,7 @@
 
 export const ROLES = {
   admin: { label: "Administrator", domains: null }, // null = SEMUA domain
-  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija"] },
+  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija", "ltt-katam"] },
   "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan"] },
   peternakan: { label: "Bidang Peternakan", domains: ["peternakan"] },
   perikanan: { label: "Bidang Perikanan", domains: ["perikanan"] },

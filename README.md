@@ -22,8 +22,8 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Dashboard Eksekutif` (`/`) — Ringkasan metrik makro pangan, komoditas, dan grafik daerah.
    - `Peta Geospasial GIS` (`/sebaran/pangan`) — WebGIS interaktif tutupan sawah, ladang, sungai, jalan, dan batas wilayah.
 2. **Sektor Komoditas (4 Bidang Teknis Simetris — Dual Submenus Dinamis):**
-   - `Tanaman Pangan` — Produksi Padi & Palawija, Komoditas Unggulan Pangan (`/komoditas-unggulan/pangan`), Nilai Ekonomi Pangan (`/nilai-ekonomi/pangan`), Prediksi Panen.
-   - `Hortikultura & Perkebunan` — Produksi Sayuran & Buah, Komoditas Unggulan Hortikultura, Nilai Ekonomi Hortikultura, Analitik Perkebunan Khas, Komoditas Unggulan Perkebunan, Nilai Ekonomi Perkebunan, LTT & Kalender Tanam.
+   - `Tanaman Pangan` — Produksi Padi & Palawija, Komoditas Unggulan Pangan (`/komoditas-unggulan/pangan`), Nilai Ekonomi Pangan (`/nilai-ekonomi/pangan`), LTT & Kalender Tanam (`/ltt-katam`), Prediksi Panen.
+   - `Hortikultura & Perkebunan` — Produksi Sayuran & Buah, Komoditas Unggulan Hortikultura, Nilai Ekonomi Hortikultura, Analitik Perkebunan Khas, Komoditas Unggulan Perkebunan, Nilai Ekonomi Perkebunan.
    - `Peternakan & Keswan` — Populasi & Produksi Ternak, Komoditas Unggulan Peternakan, Nilai Ekonomi Peternakan, Susu & Kulit Ternak, Lalu Lintas & Pemotongan RPH.
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
@@ -36,7 +36,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 
 > **Fitur Visual & Tata Letak Unggulan:**
 > - **Unified Topbar & Avatar Dropdown:** Mengeliminasi tombol berceceran di header atas. Seluruh tautan utilitas (*Info*, *Panduan*, status profil *Guest*, dan akses *Portal Admin*) dirapikan ke dalam satu Avatar Dropdown interaktif setinggi `72px`.
-> - **Higienitas Bundel Aset:** Direktori `./dist/assets` disanitasi bersih hanya memuat 86 berkas aktif terverifikasi (eliminasi 1.885 berkas artefak build usang), menjamin kecepatan load tinggi dan eliminasi inkonsistensi cache.
+> - **Higienitas Bundel Aset:** Direktori `./dist/assets` disanitasi bersih hanya memuat 106 berkas aktif terverifikasi (eliminasi 2.714 berkas artefak build usang, 22 CSS mati, dan 39 folder `_tmp`), menjamin kecepatan load tinggi dan eliminasi inkonsistensi cache.
 > - **High-Contrast Active State:** Submenu aktif disorot dengan badge kontras tinggi Emerald-600 (`#059669`) dan titik putih menyala.
 > - **Parent Indicator:** Kategori induk otomatis mendapatkan sorotan halus saat salah satu halamannya aktif.
 > - **Floating Executive Card:** Dasar sidebar memuat kartu institusional resmi *"Portal Data Dinas — Distankan KP Banjarnegara"*, indikator koneksi `● Basis Data Terhubung`, serta tombol aksi *"Masuk Dasbor Admin"*.
@@ -161,17 +161,17 @@ Sistem menerapkan pembatasan hak akses berbasis bidang teknis di lingkungan Dist
 
 | Pengguna (Username) | Peran (Role) | Domain yang Dikelola |
 |---|---|---|
-| `admin` | **Administrator** | **Seluruh 15 Domain**, Audit Log (`sync_log`), Paket Arsip |
-| `tanaman-pangan` | **Bidang Tanaman Pangan** | `padi`, `palawija` |
+| `admin` | **Administrator** | **Seluruh 17 Domain Operasional**, Audit Log (`sync_log`), Paket Arsip |
+| `tanaman-pangan` | **Bidang Tanaman Pangan** | `padi`, `palawija`, `ltt-katam` |
 | `horti-perkebunan` | **Bidang Hortikultura & Perkebunan** | `hortikultura`, `perkebunan` |
 | `peternakan` | **Bidang Peternakan** | `peternakan` |
-| `perikanan` | **Bidang Perikanan** | `perikanan` |
+| `perikanan` | **Bidang Perikanan** | `perikanan` (11 sheet terpadu) |
 
 Setiap sesi login menghasilkan **Bearer Token** in-memory dengan masa berlaku **12 jam** dan diamankan dengan rate limiting (maksimal 5 kali percobaan gagal per 15 menit).
 
 ---
 
-## 📊 Registri Domain Data & Sheet Excel
+## 📊 Registri 17 Domain Operasional & Sheet Excel
 
 Semua domain data didefinisikan secara deklaratif di [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js):
 
@@ -183,13 +183,23 @@ Semua domain data didefinisikan secara deklaratif di [`src/lib/domains.js`](file
 6. **hortikultura:** Luas panen & produksi sayuran dan buah (per kecamatan & agregat kabupaten).
 7. **perkebunan:** Luas areal & produksi komoditas perkebunan (kopi, teh, cengkeh, dll).
 8. **peternakan:** Populasi ternak, produksi daging, telur, susu, kulit, lalu-lintas ternak, pemotongan RPH.
-9. **perikanan:** Budidaya kolam, waduk, mina padi, tangkap perairan umum, produksi benih, pemeliharaan.
+9. **perikanan:** 11 sheet terpadu: 10 jenis ikan budidaya definitif (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan), alat tangkap perairan umum (termasuk Bubu), produksi & luas benih ikan (Ha), pemeliharaan, waduk, kolam, minapadi, dan varietas ikan hias.
 10. **lahan:** Luas penggunaan lahan kabupaten (sawah, tegal, pemukiman, hutan).
 11. **lumbung:** Jumlah unit dan kapasitas lumbung pangan serta gudang per kecamatan.
 12. **ekonomi:** Laju inflasi tahunan, pasar daerah, nilai ekonomi komoditas (tahunan/triwulan).
 13. **kelembagaan:** Kelompok Tani (Poktan), Gapoktan, dan Kelompok Tani Hutan (KTH) per desa.
 14. **st2023:** Data rumah tangga petani & perikanan hasil Sensus Pertanian 2023.
 15. **renstra:** Target indikator Renstra Distankan tahun berjalan.
+16. **kwt:** Data Kelompok Wanita Tani (KWT), status keaktifan, dan produk olahan.
+17. **ltt-katam:** Luas Tambah Tanam (LTT) dan Kalender Tanam terpadu per kecamatan.
+
+> ⚠️ **Aturan Arsitektur Baku — Anti-Over-Engineering Law (ADR-009 & ADR-010):**
+> 1. **Komoditas Unggulan adalah Hasil Kalkulasi Otomatis (Single Source of Truth):**
+>    Komoditas Unggulan **BUKAN** form input/upload manual bagi klien atau dinas. Komoditas unggulan dan pemeringkatan Top-1 dihitung secara otomatis oleh backend aplikasi dari agregasi data transaksi produksi primer (padi, palawija, hortikultura, perkebunan, peternakan, dan 10 spesies ikan budidaya). Form upload `komoditas-unggulan` di Dasbor Admin telah ditiadakan permanen untuk mencegah beban kerja ganda dinas dan risiko divergensi data (*data drift*).
+> 2. **Cakupan Wilayah Pragmatis:**
+>    Cakupan data distandardisasi pada tingkat **perkecamatan** dan **rekapitulasi kabupaten**. Sistem menolak *over-engineering* granularitas desa/kolam mikro jika tidak didukung pendataan primer resmi dinas.
+> 3. **Toleransi Data Compang-Camping (Zero Dummy Data Law):**
+>    Data transaksi yang belum diunggah atau masih kosong ditampilkan secara elegan sebagai *empty state* jujur ("Menunggu pembaruan data dinas"), tanpa pernah mengarang angka sintetis atau spesies buatan.
 
 ---
 
@@ -208,21 +218,38 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/v1/hortikultura/sayuran-produksi`, `/sayuran-luas`, `/buah-produksi` — Statistik hortikultura.
 - `GET /api/v1/perkebunan/areal`, `/perkebunan/produksi` — Statistik perkebunan.
 - `GET /api/v1/peternakan/populasi`, `/ternak/daging`, `/ternak/pemotongan` — Statistik peternakan & RPH.
-- `GET /api/v1/perikanan/budidaya`, `/perikanan/tangkap`, `/perikanan/benih` — Statistik perikanan.
+- `GET /api/v1/perikanan/jenis-ikan` — Data definitif 10 spesies ikan budidaya 2020–2025.
+- `GET /api/v1/perikanan/budidaya-luasan` — Luas bidang vs produksi & rasio produktivitas perikanan.
+- `GET /api/v1/perikanan/hias` — Data varietas ikan hias per kecamatan.
+- `GET /api/v1/perikanan/budidaya`, `/perikanan/tangkap`, `/perikanan/benih` — Statistik perikanan & alat tangkap (termasuk Bubu).
 - `GET /api/v1/ekonomi/inflasi`, `/ekonomi/pasar`, `/lumbung` — Indikator makro ekonomi & logistik.
+- `GET /api/v1/ekonomi/sektor-ringkasan` — Komoditas utama ranking #1 & nilai ekonomi sektor (kalkulasi dinamis, Zero Dummy Data).
+- `GET /api/v1/ekonomi/nilai-ekonomi` — Valuasi nilai ekonomi tahunan resmi per bidang.
+- `GET /api/v1/komoditas-unggulan` — Daftar dinamis komoditas unggulan per bidang (agregasi otomatis server-side).
+- `GET /api/v1/komoditas-unggulan/per-kecamatan` — Top-1 komoditas per kecamatan x 5 bidang (agregasi server-side).
 - `GET /api/v1/kelembagaan/kelompok-tani`, `/kelembagaan/kth` — Data kelembagaan tani.
 - `GET /api/v1/st2023/desa` — Data Sensus Pertanian 2023 desa.
 - `GET /api/v1/bantuan` — Data alokasi, program, dan sebaran bantuan.
+- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL `pertasis` + Google Gemini).
 - `GET /api/3/*` — Gateway proksi katalog CKAN Open Data Banjarnegara.
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)
 - `POST /api/v1/admin/login` — Autentikasi akun admin/bidang.
-- `GET /api/v1/admin/domains` — Mendapatkan daftar domain yang diizinkan untuk peran aktif.
-- `GET /api/v1/admin/template/:domain` — Unduh workbook Excel template input kosong berpanduan.
-- `GET /api/v1/admin/export/:domain` — Unduh data aktif MySQL dalam format workbook Excel.
+- `GET /api/v1/admin/domains` — Mendapatkan daftar 17 domain operasional yang diizinkan untuk peran aktif.
+- `GET /api/v1/admin/template/:domain` — Unduh workbook Excel template input kosong berpanduan (17 domain operasional).
+- `GET /api/v1/admin/export/:domain` — Unduh data aktif MySQL dalam format workbook Excel (kolom Sumber Data).
 - `POST /api/v1/admin/import/:domain` — Unggah file Excel untuk pembaruan data secara otomatis (upsert).
 - `GET /api/v1/admin/sync-log` — Riwayat audit log aktivitas impor data.
 - `GET /api/v1/admin/paket` — Indeks paket arsip data template/ekspor per bidang.
+
+---
+
+## 🚀 Paket Rilis Bersih (Clean Release)
+
+Aplikasi telah disinkronkan dan disiapkan dalam paket siap deploy tanpa menunggu kolaborasi GitHub:
+- **Paket Rilis:** `deploy_pertanian_clean_20261005.zip` (35.2 MB, reduksi 58% dari 84.4 MB)
+- **Panduan Deploy Cepat:** [`README_DEPLOY.md`](file:///e:/Project/pertanian_main/README_DEPLOY.md) (Prosedur ganti folder cPanel / SFTP / SSH dan rollback < 1 menit)
+- **Branch Rilis Git:** `release/2026-10-05-clean`
 
 ---
 

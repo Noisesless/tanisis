@@ -14,7 +14,9 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Efisiensi Memori & I/O** | Baik | ✅ PASSED | Multer `memoryStorage` dengan batas wajar 15 MB, streaming respons Excel, dan Express static cache header (`max-age=1h`). |
 | **Normalisasi Data** | Sangat Baik | ✅ PASSED | Algoritma normalisasi nama kecamatan (`normKey`) dan alias geografi mencegah duplikasi data akibat variasi ejaan lokal (e.g. Klampok vs Purwareja Klampok). |
 | **Integritas Data & Zero Dummy** | Sangat Baik | ✅ PASSED | Penegakan *Zero Dummy Data Law*: eliminasi mock array dan komoditas produksi 0, mengembalikan status empty transparan saat data belum terunggah. |
-| **Higienitas Bundel Aset (Asset Hygiene)** | Sangat Baik | ✅ PASSED | Eliminasi 1.885 berkas artefak build usang di `dist/assets/`, menyisakan 86 berkas aktif bersih terverifikasi (efisiensi ruang dan pencegahan drift produksi). |
+| **Single Source of Truth & Anti-Over-Engineering (ADR-009/010)** | Sangat Baik | ✅ PASSED | Komoditas Unggulan dihitung otomatis dari tabel transaksi produksi primer (10 jenis ikan, padi, palawija, horti, kebun, ternak). Menghapus form upload duplikat dan membatasi data pragmatis pada level perkecamatan & kabupaten. |
+| **Higienitas Bundel Aset (Asset Hygiene)** | Sangat Baik | ✅ PASSED | Eliminasi 2.714 berkas artefak build usang (96%) dan 22 file CSS mati di `dist/assets/`, menyisakan tepat 106 berkas aktif bersih (efisiensi ukuran zip dari 84.4 MB menjadi 35.2 MB / reduksi 58%). |
+| **Keamanan Kredensial AI Gateway** | Sangat Baik | ✅ PASSED | Eliminasi kebocoran API key eksternal di bundel JavaScript klien; seluruh kueri RAG dan streaming Gemini dialihkan ke gateway internal `/api/v1/ai/chat` dengan proteksi rate limit. |
 
 ---
 
@@ -35,6 +37,15 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 
 5. **Penyamaran Jejak Server:**
    - Header `x-powered-by` dimatikan (`app.disable("x-powered-by")`) untuk meminimalisasi deteksi teknologi otomatis oleh bot penyerang.
+
+6. **Isolasi Kredensial & Dynamic RAG Gateway:**
+   - Kredensial `GEMINI_API_KEY` terisolasi 100% pada variabel lingkungan server (`.env`).
+   - Klien hanya berkomunikasi dengan `/api/v1/ai/chat` yang menerapkan pembatasan sliding window (30 req/menit per IP) dan mengambil fakta riil dari MySQL `pertasis`.
+
+7. **Prinsip Single Source of Truth & Data Minimization (ADR-009 & ADR-010):**
+   - Menghapus form unggahan manual `komoditas-unggulan` dari Dasbor Admin mengeliminasi risiko *data drift* (divergensi antara data yang diinput manual dengan data kalkulasi produksi riil).
+   - Seluruh pemeringkatan komoditas unggulan dan nilai ekonomi sektor dikalkulasi otomatis oleh mesin backend secara dinamis.
+   - Pembatasan skema pada tingkat perkecamatan dan rekapitulasi kabupaten mencegah kompleksitas sistem (*over-engineering*) yang tidak didukung kesiapan data primer dinas.
 
 ---
 

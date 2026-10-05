@@ -50,8 +50,8 @@ graph TD
    - Peta dan data vektor disajikan dalam format GeoJSON statis dari direktori `./dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`, `danau.geojson`, `sungai.geojson`, `jalan.geojson`, dll).
 
 3. **Arsitektur Aset Bersih & Layout Normalisasi Header:**
-   - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (86 berkas terhubung ke entry point `index-CI1XYnwk.js` dan CSS `index-DmHYJUQI.css`), mengeliminasi 1.885 berkas artefak build usang.
-   - Tata letak antarmuka utama (`default-CAKe9ffW.js`) mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
+   - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (106 berkas terhubung ke entry point `index-C7-MA-gB.js` dan CSS `index-CSp9XjIe.css`), mengeliminasi 2.714 berkas artefak build usang dan 22 file CSS mati.
+   - Tata letak antarmuka utama (`default-PIMY9oy9.js` / `pages-COv__DbI.js`) mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
 
 ---
 
@@ -64,16 +64,21 @@ graph TD
    - Pendekatan ini menghilangkan kerapuhan penulisan ulang URL (`req.url rewrite`) di middleware antar-versi Express.
 
 2. **Manajemen Domain & Upsert Otomatis (Dynamic Domain Registry):**
-   - Pustaka [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js) mendaftarkan metadata 15 domain pertanian.
+   - Pustaka [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js) mendaftarkan metadata **17 domain pertanian operasional** (mencakup KWT, LTT & Katam, dan 11 sheet Perikanan dengan dropdown validasi).
+   - **Prinsip Single Source of Truth & Anti-Over-Engineering (ADR-009):** Komoditas Unggulan bukanlah berkas yang di-upload terpisah oleh dinas, melainkan dikalkulasi secara otomatis oleh server dari data produksi primer lapangan (padi, palawija, hortikultura, perkebunan, peternakan, 10 jenis ikan). Form upload `komoditas-unggulan` ditiadakan dari Admin Dasbor untuk mengeliminasi beban input ganda dan memastikan konsistensi angka 100%.
    - Kolom untuk template Excel dibaca secara dinamis dari `information_schema.columns` MySQL saat runtime, menjamin template Excel selalu sinkron 100% dengan skema database tanpa perlu migrasi kode ganda.
-   - Menggunakan *natural key* unik per sheet (misal: kombinasi `kecamatan`, `tahun`, `komoditas`) untuk melakukan operasi `INSERT ... ON DUPLICATE KEY UPDATE` saat proses impor Excel berlangsung.
+   - Menggunakan *natural key* unik per sheet (misal: kombinasi `kecamatan`, `tahun`, `komoditas`) untuk melakukan operasi `INSERT ... ON DUPLICATE KEY UPDATE` saat proses impor Excel berlangsung. Ekspor data menyertakan kolom `Sumber Data` untuk keterlacakan audit (*traceability*).
 
-3. **Autentikasi & RBAC (Role-Based Access Control):**
+3. **Gateway Asisten AI & Live RAG Engine:**
+   - Modul [`src/routes/ai.js`](file:///e:/Project/pertanian_main/src/routes/ai.js) melayani Chatbot Si Pertani secara aman dari server-side, mengisolasi token `GEMINI_API_KEY` dari klien.
+   - Dilengkapi **In-Memory Sliding Rate Limiter** (30 request/menit), **Multi-Model Fallback** (`gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-3.6-flash`, `gemini-3.8-flash`), dan **Dynamic RAG** yang menarik data riil basis data `pertasis` dan portal CKAN secara instan.
+
+4. **Autentikasi & RBAC (Role-Based Access Control):**
    - Modul [`src/lib/users.js`](file:///e:/Project/pertanian_main/src/lib/users.js) membatasi akses berdasarkan bidang teknis (Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan, dan Administrator Pusat).
    - Menggunakan in-memory Bearer token dengan masa kedaluwarsa 12 jam.
    - Keamanan login diperkuat dengan `crypto.timingSafeEqual` untuk mencegah serangan *timing attack* dan pembatasan laju (rate limiting) maksimal 5 kali kegagalan per 15 menit per alamat IP.
 
-4. **Proksi CKAN Gateway:**
+5. **Proksi CKAN Gateway:**
    - Menyediakan endpoint `/api/3/*` yang meneruskan kueri ke portal Open Data resmi Kabupaten Banjarnegara (`https://opendata.banjarnegarakab.go.id`).
    - Menyediakan header cache `public, max-age=300` untuk mengurangi beban upstream dan memastikan katalog dataset tetap dapat diakses dari origin aplikasi yang sama tanpa kendala CORS.
 

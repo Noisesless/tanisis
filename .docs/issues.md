@@ -101,12 +101,41 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menghapus secara aman **1.885 berkas duplikat/usang** di `dist/assets/` dan menyisakan **86 berkas aktif murni** (termasuk layout `default-CAKe9ffW.js` dengan Avatar Dropdown).
   3. Memvalidasi bahwa server lokal merespons `200 OK` tanpa berkas 404, lalu melakukan commit dan push ke remote `origin/main` agar siap di-pull di VPS produksi.
 
+### [ISSUE-010] Divergensi Produksi vs Dev, Pembocoran Key AI Eksternal, 2.714 Dead Assets, dan Harmonisasi Dua Arah Tanpa Kolaborator GitHub
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-05
+- **Deskripsi:** Programmer utama sakit sehingga pembaruan lewat GitHub tertahan approval. Analisis berkas produksi (`pertanian_prod.zip`) mendeteksi perbedaan dua arah: produksi memiliki 3 domain admin baru (KWT, Komoditas Unggulan, LTT-Katam), router `komoditas-unggulan/per-kecamatan`, dan kolom ekspor `hasSumber` yang tidak ada di dev/GitHub. Di sisi lain, produksi tidak memiliki gateway RAG AI, nilai ekonomi sektor ringkasan, serta menimbun 2.714 berkas aset mati (96%), 22 file CSS ganda, 39 folder `_tmp`, dan membocorkan API key eksternal (`sk_live_...`) pada bundel rekomendasi.
+- **Akar Masalah:** Pembaruan sebelumnya diunggah manual ke server tanpa commit ke GitHub, sementara build Vite baru ditimpa di atas bundel lama tanpa pembersihan direktori output (`emptyOutDir: false`).
+- **Solusi:**
+  1. Menjalankan audit hash SHA1 deterministik dua arah untuk memetakan seluruh perbedaan berkas secara faktual.
+  2. Menyelaraskan basis data dengan migrasi tabel `kwt_kelompok_wanita_tani` dan `ltt_katam`.
+  3. Menggabungkan backend (`src/server.js`, `src/lib/domains.js` 18 domain, `src/lib/excel.js`, dan `src/routes/komoditas-unggulan.js`).
+  4. Menyaring tepat 106 berkas bundel aktif dan memangkas 2.714 berkas usang dan 39 folder `_tmp`.
+  5. Mem-patch bundel frontend rekomendasi agar memanggil endpoint lokal `/api/v1/ai/chat` (Google Gemini RAG) yang terproteksi.
+  6. Mengompilasi paket rilis bersih `deploy_pertanian_clean_20261005.zip` (35.2 MB) dan menyusun panduan rilis mandiri via folder-swap di `README_DEPLOY.md` serta meng-commit ke branch `release/2026-10-05-clean`.
+
+### [ISSUE-011] Redundansi Form Upload Komoditas Unggulan & Refaktorisasi Perikanan Pragmatis (Single Source of Truth / ADR-009)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-05
+- **Deskripsi:** 
+  1. Komoditas Unggulan sempat dijadikan sheet upload terpisah (`komoditas-unggulan` di 18 domain admin), padahal secara arsitektural komoditas unggulan adalah hasil kalkulasi agregasi otomatis dari data transaksi lapangan (padi, palawija, sayur/buah hortikultura, perkebunan, peternakan, perikanan). Hal ini menimbulkan beban kerja input ganda untuk dinas dan risiko divergensi data (*data drift*).
+  2. Data perikanan sempat rancu dan kosong karena format pendataan awal dinas compang-camping dan belum mengakomodasi 10 spesies ikan budidaya definitif, alat tangkap Bubu, placeholder benih, serta varietas ikan hias.
+- **Akar Masalah:**
+  1. Over-engineering pada arsitektur domain admin yang menduplikasi tabel turunan/agregasi sebagai form upload terpisah.
+  2. Ketiadaan skema definitif untuk mencatat 10 spesies ikan budidaya air tawar Banjarnegara (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan).
+- **Solusi & Aturan Baku (Anti-Over-Engineering Law & ADR-009/010):**
+  1. Menghapus sheet upload `komoditas-unggulan` dari `src/lib/domains.js`. Domain admin distandardisasi menjadi **17 domain operasional murni**.
+  2. Mengotomatisasi kalkulasi komoditas unggulan perikanan di server-side (`GET /v1/komoditas-unggulan` dan `GET /v1/ekonomi/sektor-ringkasan`) dengan merangking Top-1 (2025: Nila 20.250 Ton; 2024: Lele 17.842 Ton) langsung dari tabel transaksi `ikan_produksi_jenis`.
+  3. Membatasi ruang lingkup data perikanan secara pragmatis: hanya wilayah perkecamatan dan rekapitulasi kabupaten (menolak over-engineering ke level kolam/desa mikro yang tidak dimiliki dinas).
+  4. Menerapkan toleransi data compang-camping: data yang kosong atau belum diunggah dinas disajikan secara elegan dengan *empty state* jujur ("Menunggu pembaruan data dinas") tanpa memunculkan angka buatan/fiktif.
+  5. Menyelaraskan template Excel perikanan (dropdown Bubu, 10 spesies ikan, varietas ikan hias, luas benih Ha) dengan skema MySQL.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
-2. **Monitoring Latensi AI Upstream:** Pemantauan berkala terhadap response time endpoint Google Generative Language API.
-3. **Eksekusi Git Pull di VPS Produksi:** Menjalankan `git pull origin main` dan `pm2 reload ecosystem.config.cjs` di server produksi `pertanian.sistemdata.id` serta melakukan hard-refresh browser (`Ctrl + Shift + R`).
+1. **Upload Paket Bersih ke Server Produksi:** Melakukan upload `deploy_pertanian_clean_20261005.zip` via cPanel File Manager/SFTP dan merestart Node.js App.
+2. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
+3. **Merge Branch GitHub Pasca Kesembuhan Programmer:** Mengajukan Pull Request dari branch `release/2026-10-05-clean` ke `main` saat kolaborator aktif kembali.
 
-*(Saat ini seluruh isu fungsional kritis telah diselesaikan. Sistem siap untuk pengujian operasional dinas dan pengembangan modul lanjutan).*
+*(Saat ini seluruh sinkronisasi kode, sanitasi aset, dan pengujian lokal telah tuntas 100%).*

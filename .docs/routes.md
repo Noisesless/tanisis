@@ -71,24 +71,29 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/peternakan/luar-rph` | `src/routes/peternakan.js` | Publik | Pemotongan hewan di luar RPH |
 | `GET` | `/v1/peternakan/daging-unggas` | `src/routes/peternakan.js` | Publik | Produksi daging ternak & karkas unggas |
 | `GET` | `/v1/peternakan/susu-kulit` | `src/routes/peternakan.js` | Publik | Produksi susu segar & hasil kulit |
+| `GET` | `/v1/perikanan/jenis-ikan` | `src/routes/perikanan.js` | Publik | Data 10 jenis ikan definitif budidaya 2020–2025 (Lele, Nila, Gurami, Bawal, dll) |
+| `GET` | `/v1/perikanan/budidaya-luasan` | `src/routes/perikanan.js` | Publik | Luas lahan vs produksi perikanan & rasio produktivitas per kecamatan |
+| `GET` | `/v1/perikanan/hias` | `src/routes/perikanan.js` | Publik | Data perikanan ikan hias per kecamatan & varietas |
 | `GET` | `/v1/perikanan/budidaya` | `src/routes/perikanan.js` | Publik | Produksi budidaya kolam, waduk, minapadi |
-| `GET` | `/v1/perikanan/tangkap` | `src/routes/perikanan.js` | Publik | Hasil tangkap perairan umum Banjarnegara |
-| `GET` | `/v1/perikanan/benih` | `src/routes/perikanan.js` | Publik | Produksi benih ikan air tawar |
+| `GET` | `/v1/perikanan/tangkap` | `src/routes/perikanan.js` | Publik | Hasil tangkap perairan umum Banjarnegara (mencakup alat tangkap Bubu) |
+| `GET` | `/v1/perikanan/benih` | `src/routes/perikanan.js` | Publik | Produksi & penyaluran benih ikan air tawar (ekor & luas Ha) |
 | `GET` | `/v1/perikanan/nilai-budidaya` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi budidaya ikan |
 | `GET` | `/v1/perikanan/nilai-tangkap` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi perikanan tangkap |
 | `GET` | `/v1/ekonomi/inflasi` | `src/routes/ekonomi.js` | Publik | Indeks inflasi bahan pangan |
 | `GET` | `/v1/ekonomi/pasar` | `src/routes/ekonomi.js` | Publik | Direktori pasar komoditas daerah |
-| `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor & tahun (Zero Dummy Data) |
-| `GET` | `/v1/komoditas-unggulan` | `src/server.js` | Publik | Daftar dinamis komoditas unggulan per bidang dari MySQL (Zero Dummy Data) |
+| `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor & tahun (Zero Dummy Data, ADR-009) |
+| `GET` | `/v1/ekonomi/nilai-ekonomi` | `src/routes/ekonomi.js` | Publik | Valuasi nilai ekonomi tahunan resmi per bidang dari MySQL |
+| `GET` | `/v1/komoditas-unggulan` | `src/server.js` | Publik | Daftar dinamis komoditas unggulan per bidang dari MySQL & tabel produksi riil (Zero Dummy Data) |
+| `GET` | `/v1/komoditas-unggulan/per-kecamatan` | `src/routes/komoditas-unggulan.js` | Publik | Komoditas unggulan top-1 per kecamatan x 5 bidang (agregasi server-side mengikuti tahun) |
 | `GET` | `/v1/lumbung` | `src/routes/ekonomi.js` | Publik | Fasilitas lumbung pangan dan kapasitas gudang |
 | `GET` | `/v1/kelembagaan/kelompok-tani` | `src/routes/kelembagaan.js` | Publik | Sebaran kelompok tani (Poktan) per desa |
 | `GET` | `/v1/kelembagaan/kth` | `src/routes/kelembagaan.js` | Publik | Data Kelompok Tani Hutan (KTH) |
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
 | `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token |
-| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | Daftar domain terotorisasi untuk peran aktif |
-| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan |
-| `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel |
+| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 17 domain operasional terotorisasi (KWT, LTT-Katam, 11 sheet Perikanan) |
+| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (17 domain) |
+| `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data |
 | `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel & eksekusi upsert ke MySQL |
 | `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor |

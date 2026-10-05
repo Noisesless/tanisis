@@ -65,34 +65,53 @@ server {
 
 ## 4. Pre-Deploy Checklist (Sebelum Rilis)
 
-- [ ] File `.env` produksi telah dikonfigurasi dengan kata sandi kuat dan kredensial MySQL yang tepat.
-- [ ] Folder `./dist` berisi build frontend terbaru yang stabil (`index.html`, bundle `assets/` bersih 86 berkas tanpa artefak usang, dan berkas GeoJSON).
+- [ ] File `.env` produksi telah dikonfigurasi dengan kata sandi kuat, kredensial MySQL, dan `GEMINI_API_KEY`.
+- [ ] Folder `./dist` berisi build frontend bersih (106 berkas bundel aktif `assets/`, zero dead code, tanpa folder `_tmp`).
+- [ ] Berkas paket deploy bersih telah siap: `deploy_pertanian_clean_20261005.zip` (35.2 MB).
 - [ ] Dependensi `node_modules` telah terpasang bersih (`npm ci --omit=dev`).
 - [ ] Database MySQL `pertasis` telah di-dump dan dicadangkan (*backup*).
 - [ ] Port yang ditentukan pada `PORT` tidak terblokir firewall eksternal (hanya terbuka untuk Nginx lokal).
 - [ ] Folder `./logs-pm2` telah tersedia dan memiliki izin tulis untuk user pengelola.
-- [ ] Repositori lokal telah bersih dari artefak duplikat usang dan ter-push ke branch `main`.
+- [ ] Repositori lokal tersinkronisasi pada branch `release/2026-10-05-clean`.
 
 ---
 
 ## 5. Prosedur Rilis Produksi & Post-Deploy Verification
 
-### A. Perintah Pembaruan di VPS Produksi (CloudPanel):
+### A. Alur Rilis Mandiri via cPanel / SFTP (Clean Release):
+1. **Cadangkan Folder Aktif:**
+   Ubah nama direktori `pertanian.sistemdata.id` menjadi `pertanian.sistemdata.id_backup_20261005`.
+2. **Unggah dan Ekstrak:**
+   Buat folder baru `pertanian.sistemdata.id`, unggah `deploy_pertanian_clean_20261005.zip`, lalu ekstrak.
+3. **Konfigurasi Lingkungan:**
+   Salin `.env` dari folder cadangan, pastikan baris `GEMINI_API_KEY` terkonfigurasi.
+4. **Restart Aplikasi:**
+   Buka cPanel > **Setup Node.js App** > klik **Restart** (atau jalankan `pm2 restart ecosystem.config.cjs` jika menggunakan SSH).
+
+### B. Perintah Pembaruan di VPS Produksi (CloudPanel / SSH):
 ```bash
-# Masuk ke direktori aplikasi
-cd /path/ke/pertanian_main
+# Masuk ke direktori web
+cd /path/ke/webroot
 
-# Tarik perubahan terbaru dari GitHub (termasuk pembersihan dist/assets)
-git pull origin main
+# Backup direktori aktif
+mv pertanian.sistemdata.id pertanian.sistemdata.id_backup_20261005
 
-# Reload proses Express tanpa downtime
-pm2 reload ecosystem.config.cjs
+# Ekstrak paket rilis bersih
+mkdir pertanian.sistemdata.id && cd pertanian.sistemdata.id
+unzip /path/ke/deploy_pertanian_clean_20261005.zip
+
+# Salin .env dan pasang dependensi
+cp ../pertanian.sistemdata.id_backup_20261005/.env .env
+npm ci --omit=dev
+
+# Reload proses Express
+pm2 reload ecosystem.config.cjs || pm2 restart pertanian-api
 
 # Verifikasi log tidak memiliki error
 pm2 logs sispertani-api --lines 20
 ```
 
-### B. Verifikasi Pasca Rilis:
+### C. Verifikasi Pasca Rilis:
 1. **Smoke Test Health Check:**
    ```bash
    curl -I https://pertanian.sistemdata.id/api/health
