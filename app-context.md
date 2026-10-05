@@ -52,6 +52,7 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 [ADR-008] Strict Zero-Empty Filter: Kategori, alat, atau kecamatan dengan data 0/kosong disembunyikan otomatis; modul Ikan Hias menampilkan status jujur menunggu upload data dinas tanpa angka tiruan.
 [ADR-009] Single Source of Truth for Flagship Commodities (Anti-Over-Engineering Law): Komoditas Unggulan BUKAN form upload terpisah untuk klien/dinas, melainkan HASIL KALKULASI OTOMATIS aplikasi dari data produksi mentah (padi, palawija, horti, kebun, ternak, 10 jenis ikan). Form upload komoditas-unggulan di Admin resmi dihapus untuk mengeliminasi redundansi beban kerja dinas, risiko data ganda, dan inkonsistensi.
 [ADR-010] Pragmatic Regional Scope & Sparse Data Tolerance: Lingkup data dibatasi pragmatis pada tingkat perkecamatan dan rekapitulasi kabupaten (anti-over-engineering). Data kosong/belum diunggah dinas ditampilkan jujur sebagai empty state tanpa angka fiktif.
+[ADR-011] Production-Ready Reactive Session Sync & Header Avatar: Token dan sesi auth admin disimpan secara dual (localStorage & sessionStorage) dengan broadcast event 'sispertani:auth-change'. Layout master publik (default-CAKe9ffW.js) secara reaktif merender profil admin yang sedang login (nama bidang, role, status online sesi aktif, tombol dasbor admin, dan tombol logout instan), serta fallback aman ke Guest/Pengunjung saat belum login.
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
@@ -63,6 +64,7 @@ mysql=root=
 [x] Penambahan endpoint API perikanan: /jenis-ikan, /budidaya-luasan, /hias, /tangkap (inc Bubu)
 [x] Sinkronisasi template Excel Dasbor Admin untuk domain perikanan (dropdown Bubu, 10 spesies ikan, varietas ikan hias, luas benih)
 [x] Penghapusan sheet upload komoditas-unggulan dari Admin (Single Source of Truth) & otomatisasi kalkulasi komoditas unggulan perikanan di server
+[x] Perbaikan sistem session dan dynamic avatar publik (cross-tab sync, dual-storage, reaktif logout)
 [x] Sinkronisasi dokumentasi utama (.docs & app-context.md)
 [/] Push commit ke GitHub remote repository (https://github.com/Noisesless/tanisis)
 
