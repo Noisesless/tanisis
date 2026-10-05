@@ -1,4 +1,8 @@
-import{f as e,t}from"./default-CAKe9ffW.js";
+import fs from 'fs';
+
+const filePath = 'dist/assets/peternakan-susu-kulit-B1vV3OM5.js';
+
+const viewCode = `import{f as e,t}from"./default-CAKe9ffW.js";
 import{t as n}from"./calendar-days-Bl5g72ag.js";
 import{p as r}from"./x-CXWFwwzx.js";
 import{t as i}from"./table-2-IlJK-Tnk.js";
@@ -23,14 +27,14 @@ const KEC_LIST = [
 ];
 
 const SPECIES_CONFIG = {
-  sapi_potong: { label: "Sapi Potong", category: "Ruminansia Besar", unit: "kg", defaultVol: 52600 },
-  sapi_perah: { label: "Sapi Perah (Susu)", category: "Ruminansia Besar", unit: "liter", defaultVol: 280 },
-  domba_batur: { label: "Domba Batur (Khas)", category: "Rumpun Khusus", unit: "kg", isSpecial: true, defaultVol: 0 },
-  domba_lokal: { label: "Domba Lokal", category: "Ruminansia Kecil", unit: "kg", defaultVol: 158 },
-  kambing: { label: "Kambing", category: "Ruminansia Kecil", unit: "kg", defaultVol: 7500 },
-  kerbau: { label: "Kerbau", category: "Ruminansia Besar", unit: "kg", defaultVol: 0 },
-  unggas_daging: { label: "Ayam Broiler / Daging", category: "Unggas", unit: "kg", defaultVol: 56470 },
-  unggas_telur: { label: "Ayam Layer / Telur", category: "Unggas", unit: "butir", defaultVol: 1177600 }
+  sapi_potong: { label: "Sapi Potong", kategori: "Ternak Ruminansia Besar", unit: "kg", defaultVol: 52600 },
+  sapi_perah: { label: "Sapi Perah", kategori: "Produksi Susu Segar", unit: "liter", defaultVol: 280 },
+  domba_batur: { label: "Domba Batur", kategori: "Rumpun Asli Banjarnegara", unit: "kg", isSpecial: true, defaultVol: 0 },
+  domba_lokal: { label: "Domba Lokal", kategori: "Ternak Ruminansia Kecil", unit: "kg", defaultVol: 158 },
+  kambing: { label: "Kambing", kategori: "Ternak Ruminansia Kecil", unit: "kg", defaultVol: 7500 },
+  kerbau: { label: "Kerbau", kategori: "Ternak Ruminansia Besar", unit: "kg", defaultVol: 0 },
+  unggas_daging: { label: "Ayam Broiler", kategori: "Unggas Pedaging", unit: "kg", defaultVol: 56470 },
+  unggas_telur: { label: "Ayam Ras Layer", kategori: "Unggas Petelur", unit: "butir", defaultVol: 1177600 }
 };
 
 const HPT_VARIETIES = {
@@ -66,8 +70,8 @@ function View() {
 
   // HPT Calculation
   const selectedVarInfo = HPT_VARIETIES[hptVar] || HPT_VARIETIES.odot;
-  const hptTotalYield = hptLuas * selectedVarInfo.yieldPerHa; // Ton segar/th
-  const hptCarryingCapacityST = hptTotalYield / 12; // 1 ST butuh 12 ton/th
+  const hptTotalYield = hptLuas * selectedVarInfo.yieldPerHa;
+  const hptCarryingCapacityST = hptTotalYield / 12;
   const hptSapiCount = Math.floor(hptCarryingCapacityST * 1);
   const hptDombaCount = Math.floor(hptCarryingCapacityST * 7);
 
@@ -81,7 +85,7 @@ function View() {
         (0,O.jsx)(c, {
           icon: (0,O.jsx)(e, { className: "h-6 w-6 text-emerald-600" }),
           title: "Produksi Ternak & Hasil Ikutan",
-          subtitle: "Pusat data produksi daging, telur, susu segar, hasil ikutan RPH (kulit, tulang, tanduk) per jenis hewan, serta simulasi daya dukung lahan HPT."
+          subtitle: "Pusat data produksi daging, telur, susu segar, hasil ikutan RPH (kulit, tulang, tanduk) per komoditas hewan, serta simulasi daya dukung lahan HPT."
         }),
 
         // Tab Navigation
@@ -92,25 +96,25 @@ function View() {
               type: "button",
               onClick: () => setTab("utama"),
               className: tab === "utama"
-                ? "px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-sm"
+                ? "px-4 py-2 rounded-lg bg-emerald-700 text-white text-xs font-bold shadow-sm"
                 : "px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50",
-              children: "Produksi Utama (Daging, Telur, Susu)"
+              children: "1. Produksi Utama (Daging, Telur, Susu)"
             }),
             (0,O.jsx)("button", {
               type: "button",
               onClick: () => setTab("ikutan"),
               className: tab === "ikutan"
-                ? "px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-sm"
+                ? "px-4 py-2 rounded-lg bg-emerald-700 text-white text-xs font-bold shadow-sm"
                 : "px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50",
-              children: "Hasil Ikutan (Kulit, Tulang, Tanduk, Pupuk)"
+              children: "2. Hasil Ikutan (Kulit, Tulang, Tanduk, Pupuk)"
             }),
             (0,O.jsx)("button", {
               type: "button",
               onClick: () => setTab("hpt"),
               className: tab === "hpt"
-                ? "px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-sm"
+                ? "px-4 py-2 rounded-lg bg-emerald-700 text-white text-xs font-bold shadow-sm"
                 : "px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50",
-              children: "Simulasi Lahan HPT (Hijauan Pakan)"
+              children: "3. Simulasi Lahan HPT (Hijauan Pakan)"
             })
           ]
         }),
@@ -118,16 +122,16 @@ function View() {
         // TAB 1: PRODUKSI UTAMA
         tab === "utama" && (0,O.jsxs)(O.Fragment, {
           children: [
-            // Species Pill Selector
+            // Clean Professional Species Selector (NO EMOJIS)
             (0,O.jsxs)("div", {
               className: "bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm",
               children: [
                 (0,O.jsx)("p", {
-                  className: "text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2",
-                  children: "Pilih Komoditas / Jenis Hewan:"
+                  className: "text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5",
+                  children: "Pilih Komoditas Hewan:"
                 }),
                 (0,O.jsx)("div", {
-                  className: "flex flex-wrap gap-1.5",
+                  className: "flex flex-wrap gap-2",
                   children: Object.entries(SPECIES_CONFIG).map(([key, item]) => (
                     (0,O.jsxs)("button", {
                       type: "button",
@@ -138,12 +142,9 @@ function View() {
                         : "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-100",
                       children: [
                         (0,O.jsx)("span", { children: item.label }),
-                        (0,O.jsx)("span", {
-                          className: species === key
-                            ? "text-[10px] bg-emerald-800 text-emerald-100 px-1.5 py-0.5 rounded font-medium"
-                            : "text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-medium",
-                          children: item.category
-                        })
+                        item.isSpecial
+                          ? (0,O.jsx)("span", { className: "text-[9px] bg-amber-400 text-amber-950 px-1.5 py-0.5 rounded font-bold uppercase", children: "Rumpun Khas" })
+                          : (0,O.jsx)("span", { className: "text-[10px] opacity-75 font-normal", children: "(" + item.unit + ")" })
                       ]
                     })
                   ))
@@ -151,37 +152,36 @@ function View() {
               ]
             }),
 
-            // Domba Batur Alert if selected
+            // Domba Batur Alert if selected (Clean text badge, NO EMOJIS)
             spConfig.isSpecial && (0,O.jsxs)("div", {
-              className: "p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900",
+              className: "p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-950",
               children: [
                 (0,O.jsxs)("div", {
                   className: "flex items-center gap-2",
                   children: [
-                    (0,O.jsx)("span", { className: "h-2 w-2 rounded-full bg-amber-600" }),
-                    (0,O.jsx)("span", { className: "font-bold text-sm", children: "Spesies Khas: Rumpun Domba Batur Banjarnegara" }),
-                    (0,O.jsx)("span", { className: "ml-auto text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded", children: "SK Mentan No. 2916/2011" })
+                    (0,O.jsx)("span", { className: "font-bold text-sm text-amber-900", children: "Rumpun Khas: Domba Batur Banjarnegara" }),
+                    (0,O.jsx)("span", { className: "ml-auto text-[10px] bg-amber-200 text-amber-900 font-bold px-2.5 py-0.5 rounded uppercase tracking-wider", children: "SK Mentan No. 2916/2011" })
                   ]
                 }),
                 (0,O.jsx)("p", {
-                  className: "text-xs mt-1.5 leading-relaxed text-amber-800",
-                  children: "Data produksi daging dan wol Domba Batur saat ini masih digabung dalam rekapitulasi 'Domba' umum BPS. Placeholder tabel ini telah disiapkan khusus secara modular untuk menerima unggahan pendataan terpilah dari Bidang Peternakan & Keswan."
+                  className: "text-xs mt-1.5 leading-relaxed text-amber-900/90",
+                  children: "Data produksi daging dan wol Domba Batur saat ini masih tercatat dalam agregasi 'Domba' umum BPS. Formasi modul ini disiapkan secara terpisah dan modular untuk menampilkan data terpilah saat Bidang Peternakan & Keswan mengunggah hasil pendataan mandiri."
                 })
               ]
             }),
 
-            // Price Status Card
+            // Price Status Card (Clean typography, NO EMOJIS)
             (0,O.jsxs)("div", {
               className: "p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs text-slate-600",
               children: [
                 (0,O.jsxs)("span", {
                   className: "flex items-center gap-2",
                   children: [
-                    (0,O.jsx)("span", { className: "w-2 h-2 rounded-full bg-blue-500 animate-pulse" }),
+                    (0,O.jsx)("span", { className: "w-2 h-2 rounded-full bg-blue-600" }),
                     (0,O.jsx)("span", { className: "font-medium", children: "Status Data Harga Pasar / Produsen Peternakan: Menunggu Upload Resmi Dinas (Zero Dummy Data)." })
                   ]
                 }),
-                (0,O.jsx)("span", { className: "text-[11px] font-semibold text-slate-400", children: "Terverifikasi" })
+                (0,O.jsx)("span", { className: "text-[11px] font-semibold text-slate-400 uppercase tracking-wider", children: "Sistem Terhubung" })
               ]
             }),
 
@@ -237,11 +237,11 @@ function View() {
                 }),
                 (0,O.jsx)(f, {
                   icon: (0,O.jsx)(a, { className: "h-5 w-5 text-amber-600" }),
-                  label: "Sentra Kecamatan Utama",
-                  value: spConfig.isSpecial ? "Batur & Dieng" : (selectedKec || "Banjarmangu / Batur"),
+                  label: "Sentra Produksi Utama",
+                  value: spConfig.isSpecial ? "Batur & Dataran Dieng" : (selectedKec || "Banjarmangu / Batur"),
                   unit: "",
                   color: "bg-amber-100",
-                  hint: "Wilayah dengan kontribusi produksi tertinggi"
+                  hint: "Wilayah kontributor terbesar"
                 }),
                 (0,O.jsx)(f, {
                   icon: (0,O.jsx)(n, { className: "h-5 w-5 text-blue-600" }),
@@ -270,7 +270,7 @@ function View() {
                           children: [
                             (0,O.jsx)("th", { className: "px-3 py-2.5 text-left text-xs font-bold text-slate-700", children: "No" }),
                             (0,O.jsx)("th", { className: "px-3 py-2.5 text-left text-xs font-bold text-slate-700", children: "Kecamatan" }),
-                            (0,O.jsx)("th", { className: "px-3 py-2.5 text-left text-xs font-bold text-slate-700", children: "Komoditas / Spesies" }),
+                            (0,O.jsx)("th", { className: "px-3 py-2.5 text-left text-xs font-bold text-slate-700", children: "Komoditas Hewan" }),
                             (0,O.jsx)("th", { className: "px-3 py-2.5 text-right text-xs font-bold text-slate-700", children: "Volume Produksi" }),
                             (0,O.jsx)("th", { className: "px-3 py-2.5 text-left text-xs font-bold text-slate-700", children: "Satuan" }),
                             (0,O.jsx)("th", { className: "px-3 py-2.5 text-center text-xs font-bold text-slate-700", children: "Status Validasi" })
@@ -307,15 +307,15 @@ function View() {
           ]
         }),
 
-        // TAB 2: HASIL IKUTAN / TURUNAN
+        // TAB 2: HASIL IKUTAN / TURUNAN (Clean enterprise cards, NO EMOJIS)
         tab === "ikutan" && (0,O.jsxs)(O.Fragment, {
           children: [
             (0,O.jsx)("p", {
               className: "text-xs text-slate-500 mb-2 leading-relaxed",
-              children: "Produk sampingan dan hasil turunan RPH yang dihasilkan dari proses pemotongan dan pengelolaan peternakan di Banjarnegara, dipisahkan secara spesifik berdasarkan jenis hewan."
+              children: "Produk sampingan dan hasil turunan RPH yang dihasilkan dari pemotongan dan penanganan peternakan di Banjarnegara, dipisahkan secara spesifik berdasarkan jenis hewan."
             }),
 
-            // Grid of Byproduct Categories per Species (Clean, Professional, No Raw Emojis)
+            // Grid of Byproduct Categories per Species
             (0,O.jsxs)("div", {
               className: "grid grid-cols-1 md:grid-cols-3 gap-4",
               children: [
@@ -324,23 +324,18 @@ function View() {
                   className: "p-4 bg-white rounded-xl border border-slate-200 shadow-sm",
                   children: [
                     (0,O.jsxs)("div", {
-                      className: "flex items-center gap-2.5 pb-3 border-b border-slate-100",
+                      className: "pb-3 border-b border-slate-100",
                       children: [
-                        (0,O.jsx)("div", { className: "w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" }),
-                        (0,O.jsxs)("div", {
-                          children: [
-                            (0,O.jsx)("h4", { className: "text-sm font-bold text-slate-800", children: "Sapi Potong & Kerbau" }),
-                            (0,O.jsx)("p", { className: "text-[11px] text-slate-500 font-medium", children: "Hasil Ikutan Pemotongan RPH" })
-                          ]
-                        })
+                        (0,O.jsx)("h4", { className: "text-sm font-bold text-slate-800", children: "Sapi Potong & Kerbau" }),
+                        (0,O.jsx)("p", { className: "text-[11px] text-slate-400 mt-0.5", children: "Hasil Ikutan Pemotongan RPH" })
                       ]
                     }),
                     (0,O.jsxs)("ul", {
                       className: "mt-3 space-y-2 text-xs text-slate-600",
                       children: [
-                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Kulit Mentah / Garam:" }), (0,O.jsx)("span", { className: "font-bold text-slate-800", children: "Riil di MySQL (Lembar)" })] }),
-                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tulang & Kepala:" }), (0,O.jsx)("span", { className: "text-amber-600 font-medium", children: "Menunggu Data Dinas" })] }),
-                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tanduk Kerbau/Sapi:" }), (0,O.jsx)("span", { className: "text-amber-600 font-medium", children: "Kerajinan / Siap Upload" })] }),
+                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Kulit Mentah / Garam:" }), (0,O.jsx)("span", { className: "font-bold text-slate-800", children: "Tersedia di MySQL (Lembar)" })] }),
+                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tulang & Kepala:" }), (0,O.jsx)("span", { className: "text-amber-700 font-medium", children: "Menunggu Data Dinas" })] }),
+                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tanduk Kerbau/Sapi:" }), (0,O.jsx)("span", { className: "text-amber-700 font-medium", children: "Kerajinan / Siap Upload" })] }),
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Jeroan & Tetelan:" }), (0,O.jsx)("span", { className: "font-semibold text-slate-700", children: "Pasar Tradisional" })] })
                       ]
                     })
@@ -349,18 +344,18 @@ function View() {
 
                 // Domba Batur Byproducts
                 (0,O.jsxs)("div", {
-                  className: "p-4 bg-emerald-50/60 rounded-xl border border-emerald-200/80 shadow-sm",
+                  className: "p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 shadow-sm",
                   children: [
                     (0,O.jsxs)("div", {
-                      className: "flex items-center gap-2.5 pb-3 border-b border-emerald-200/60",
+                      className: "pb-3 border-b border-emerald-200/60 flex items-center justify-between",
                       children: [
-                        (0,O.jsx)("div", { className: "w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" }),
                         (0,O.jsxs)("div", {
                           children: [
                             (0,O.jsx)("h4", { className: "text-sm font-bold text-emerald-950", children: "Domba Batur (Spesies Khas)" }),
-                            (0,O.jsx)("p", { className: "text-[11px] text-emerald-700 font-medium", children: "Wol Premium & Hasil Olahan" })
+                            (0,O.jsx)("p", { className: "text-[11px] text-emerald-700 mt-0.5", children: "Wol Khas & Produk Turunan" })
                           ]
-                        })
+                        }),
+                        (0,O.jsx)("span", { className: "text-[9px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold uppercase", children: "Khas" })
                       ]
                     }),
                     (0,O.jsxs)("ul", {
@@ -368,7 +363,7 @@ function View() {
                       children: [
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Wol Khas Batur:" }), (0,O.jsx)("span", { className: "font-bold text-emerald-800", children: "Bahan Tekstil / Kerajinan" })] }),
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Kulit Domba Batur:" }), (0,O.jsx)("span", { className: "font-semibold text-slate-800", children: "Jaket & Bedug (Lembar)" })] }),
-                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Status Sensus Wol:" }), (0,O.jsx)("span", { className: "text-amber-700 font-medium", children: "Placeholder Siap Upload" })] }),
+                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Status Sensus Wol:" }), (0,O.jsx)("span", { className: "text-amber-800 font-medium", children: "Placeholder Siap Upload" })] }),
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Bibit Ternak Hidup:" }), (0,O.jsx)("span", { className: "text-emerald-700 font-semibold", children: "Sentra Pembibitan Dieng" })] })
                       ]
                     })
@@ -380,15 +375,10 @@ function View() {
                   className: "p-4 bg-white rounded-xl border border-slate-200 shadow-sm",
                   children: [
                     (0,O.jsxs)("div", {
-                      className: "flex items-center gap-2.5 pb-3 border-b border-slate-100",
+                      className: "pb-3 border-b border-slate-100",
                       children: [
-                        (0,O.jsx)("div", { className: "w-2.5 h-2.5 rounded-full bg-amber-600 shrink-0" }),
-                        (0,O.jsxs)("div", {
-                          children: [
-                            (0,O.jsx)("h4", { className: "text-sm font-bold text-slate-800", children: "Kambing & Domba Lokal" }),
-                            (0,O.jsx)("p", { className: "text-[11px] text-slate-500 font-medium", children: "Kulit & Biomassa Organik" })
-                          ]
-                        })
+                        (0,O.jsx)("h4", { className: "text-sm font-bold text-slate-800", children: "Kambing & Domba Lokal" }),
+                        (0,O.jsx)("p", { className: "text-[11px] text-slate-400 mt-0.5", children: "Kulit & Biomassa Organik" })
                       ]
                     }),
                     (0,O.jsxs)("ul", {
@@ -396,7 +386,7 @@ function View() {
                       children: [
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Kulit Kambing/Domba:" }), (0,O.jsx)("span", { className: "font-bold text-slate-800", children: "Tercatat di MySQL (Lembar)" })] }),
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Pupuk Kandang (Srintil):" }), (0,O.jsx)("span", { className: "font-semibold text-emerald-600", children: "Pertanian Organik Sayur" })] }),
-                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tanduk Kambing Jantan:" }), (0,O.jsx)("span", { className: "text-amber-600 font-medium", children: "Menunggu Data Dinas" })] }),
+                        (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Tanduk Kambing Jantan:" }), (0,O.jsx)("span", { className: "text-amber-700 font-medium", children: "Menunggu Data Dinas" })] }),
                         (0,O.jsxs)("li", { className: "flex justify-between", children: [(0,O.jsx)("span", { children: "Penjualan Ternak Hidup:" }), (0,O.jsx)("span", { className: "font-semibold text-blue-700", children: "Musim Qurban & Aqiqah" })] })
                       ]
                     })
@@ -595,4 +585,8 @@ function View() {
   });
 }
 
-export default View;
+export { View as default };
+`;
+
+fs.writeFileSync(filePath, viewCode, 'utf8');
+console.log('Successfully wrote clean, enterprise view (NO EMOJIS) to', filePath);

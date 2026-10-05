@@ -17,9 +17,10 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah & Hortikultura | Publik | STABLE |
 | `/plantation` | Sektor Komoditas | Analitik Perkebunan & Komoditas Khas | Publik | STABLE |
 | `/ltt-katam` | Sektor Komoditas | Luas Tambah Tanam (LTT) & Kalender Tanam | Publik | STABLE |
-| `/livestock` | Sektor Komoditas | Populasi & Produksi Peternakan | Publik | STABLE |
-| `/peternakan/susu-kulit`| Sektor Komoditas | Produksi Susu & Pengolahan Kulit | Publik | STABLE |
-| `/livestock-flow` | Sektor Komoditas | Lalu Lintas Ternak & Pemotongan RPH | Publik | STABLE |
+| `/livestock` | Sektor Komoditas | Populasi Ternak Murni & Estimasi Ternak Dijual Hidup (inc. Domba Batur) | Publik | STABLE |
+| `/peternakan/susu-kulit`| Sektor Komoditas | Produksi Utama & Hasil Ikutan per Spesies + Simulasi Lahan HPT | Publik | STABLE |
+| `/livestock-flow` | Sektor Komoditas | Lalu Lintas Ternak, Pasar Hewan & Pemotongan RPH | Publik | STABLE |
+| `/nilai-ekonomi/peternakan`| Sektor Komoditas | Nilai Ekonomi & Ekosistem Usaha Peternakan (4 Tab: Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV) | Publik | STABLE |
 | `/fisheries` | Sektor Komoditas | Produksi Perikanan & Budidaya Air Tawar | Publik | STABLE |
 | `/food-security` | Kebijakan & Ketapang | Ketersediaan Beras & Stok Lumbung Pangan | Publik | STABLE |
 | `/fsva` | Kebijakan & Ketapang | Peta Kerawanan Pangan (FSVA Bapanas) | Publik | STABLE |

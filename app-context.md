@@ -18,6 +18,7 @@ icon_lib=lucide
 🔴 SVG mentah→icon_lib | border logo→as-is | hardcode hex→var(--vibe-*)
 🔴 font tunggal→2 font | bg:white hardcode→var(--vibe-background)
 🔴 spacing acak→8pt grid | campur icon lib→ONE family
+🔴 emoji / simbol mentah (🐄, 🌾, ▲, ▼, dll) = FORBIDDEN (Anti-AI-Slop Law) — gunakan Lucide resmi & pill badge
 🔴 [Design Read]+Three Dials sebelum halaman baru
 🔴 kontras text vs bg ≥ 4.5:1 | baca taste-skill sebelum visual
 🔴 scratchpad_dom=FORBIDDEN | browser_gate=STRICT
@@ -36,6 +37,9 @@ icon_lib=lucide
 /recommendations=Rekomendasi & Chatbot Si Pertani=public=STABLE
 /komoditas-unggulan/:bidang=Komoditas Unggulan Dinamis per Bidang=public=STABLE
 /nilai-ekonomi/:bidang=Valuasi Nilai Ekonomi Dinamis per Bidang=public=STABLE
+/nilai-ekonomi/peternakan=4 Tab Ekosistem Usaha (Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV)=public=STABLE
+/peternakan/susu-kulit=Produksi Utama & Hasil Ikutan per Spesies + Simulasi Lahan HPT=public=STABLE
+/peternakan/populasi=Populasi Ternak Murni + Domba Batur + Ternak Dijual Hidup=public=STABLE
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
@@ -53,6 +57,13 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 [ADR-009] Single Source of Truth for Flagship Commodities (Anti-Over-Engineering Law): Komoditas Unggulan BUKAN form upload terpisah untuk klien/dinas, melainkan HASIL KALKULASI OTOMATIS aplikasi dari data produksi mentah (padi, palawija, horti, kebun, ternak, 10 jenis ikan). Form upload komoditas-unggulan di Admin resmi dihapus untuk mengeliminasi redundansi beban kerja dinas, risiko data ganda, dan inkonsistensi.
 [ADR-010] Pragmatic Regional Scope & Sparse Data Tolerance: Lingkup data dibatasi pragmatis pada tingkat perkecamatan dan rekapitulasi kabupaten (anti-over-engineering). Data kosong/belum diunggah dinas ditampilkan jujur sebagai empty state tanpa angka fiktif.
 [ADR-011] Production-Ready Reactive Session Sync & Header Avatar: Token dan sesi auth admin disimpan secara dual (localStorage & sessionStorage) dengan broadcast event 'sispertani:auth-change'. Layout master publik (default-CAKe9ffW.js) secara reaktif merender profil admin yang sedang login (nama bidang, role, status online sesi aktif, tombol dasbor admin, dan tombol logout instan), serta fallback aman ke Guest/Pengunjung saat belum login.
+[ADR-012] Species-Centric Livestock Refactoring & Professional Clean UI:
+- Pemisahan tegas data Populasi vs Produksi (menghilangkan tabel telur dari halaman populasi).
+- Submenu Susu & Kulit diubah menjadi Produksi Utama & Hasil Ikutan (daging, telur, susu, kulit, tulang, tanduk, pupuk kandang, dan wol) yang dipilah per jenis hewan.
+- Rumpun asli khas Domba Batur Banjarnegara (SK Mentan No. 2916/2011) disiapkan modular terpisah dari Domba Biasa/Lokal.
+- Modul Agrostologi Simulasi Penambahan Lahan HPT (Hijauan Pakan Ternak) dengan kalkulasi otomatis kapasitas Satuan Ternak (ST), sapi potong, dan Domba Batur.
+- Submenu Nilai Ekonomi Peternakan (/nilai-ekonomi/peternakan) dikhususkan pada 4 tab mandiri: Valuasi Nilai Ekonomi Peternakan, Direktori UMKM Pakan Ternak Mandiri, Sebaran Toko Peternakan/Poultry Shop (Maps), dan Registrasi Unit Usaha Ber-NKV (Nomor Kontrol Veteriner).
+- Anti-AI-Slop Law: Pembersihan menyeluruh terhadap seluruh emoji mentah dan simbol tiruan di seluruh tampilan antarmuka sistem.
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
@@ -60,13 +71,13 @@ mysql=root=
 
 ## [NEXT]
 [x] Pembersihan total leftover code, dead assets, dan scraper _tmp (206 MB dibebaskan)
-[x] Refaktorisasi Perikanan Pragmatis: 10 jenis ikan riil (2020-2025), alat tangkap Bubu, placeholder benih & ikan hias, serta rekapitulasi per-kecamatan & kabupaten
-[x] Penambahan endpoint API perikanan: /jenis-ikan, /budidaya-luasan, /hias, /tangkap (inc Bubu)
-[x] Sinkronisasi template Excel Dasbor Admin untuk domain perikanan (dropdown Bubu, 10 spesies ikan, varietas ikan hias, luas benih)
-[x] Penghapusan sheet upload komoditas-unggulan dari Admin (Single Source of Truth) & otomatisasi kalkulasi komoditas unggulan perikanan di server
+[x] Refaktorisasi Perikanan Pragmatis: 10 jenis ikan riil (2020-2025), alat tangkap Bubu, placeholder benih & ikan hias
 [x] Perbaikan sistem session dan dynamic avatar publik (cross-tab sync, dual-storage, reaktif logout)
+[x] Refaktorisasi Bidang Peternakan & Keswan (Populasi Murni, Produksi per Spesies, Simulasi HPT, 4 Tab Nilai Ekonomi)
+[x] Pembersihan total emoji mentah dan simbol AI-slop dari antarmuka
 [x] Sinkronisasi dokumentasi utama (.docs & app-context.md)
 [/] Push commit ke GitHub remote repository (https://github.com/Noisesless/tanisis)
+
 
 
 

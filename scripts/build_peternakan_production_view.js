@@ -1,4 +1,8 @@
-import{f as e,t}from"./default-CAKe9ffW.js";
+import fs from 'fs';
+
+// Full clean production & byproducts view code for peternakan-susu-kulit-B1vV3OM5.js
+// STRICT: NO RAW EMOJIS, NO RAW ICONS, CLEAN ENTERPRISE UI
+const code = `import{f as e,t}from"./default-CAKe9ffW.js";
 import{t as n}from"./calendar-days-Bl5g72ag.js";
 import{p as r}from"./x-CXWFwwzx.js";
 import{t as i}from"./table-2-IlJK-Tnk.js";
@@ -596,3 +600,7 @@ function View() {
 }
 
 export default View;
+`;
+
+fs.writeFileSync('dist/assets/peternakan-susu-kulit-B1vV3OM5.js', code, 'utf8');
+console.log('Successfully upgraded peternakan-susu-kulit-B1vV3OM5.js with clean professional UI (Zero emojis/raw icons)!');
