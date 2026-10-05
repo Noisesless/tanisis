@@ -30,6 +30,21 @@ const BUAH_FIELDS = [
 ];
 const BUAH_MAP = new Map(BUAH_FIELDS);
 
+const BIOFARMAKA_FIELDS = [
+  ["Jahe", "jahe"],
+  ["Kunyit", "kunyit"],
+  ["Kencur", "kencur"],
+  ["Laos", "laos"],
+];
+const BIOFARMAKA_MAP = new Map(BIOFARMAKA_FIELDS);
+
+const HIAS_FIELDS = [
+  ["Agloenema", "aglaonema"],
+  ["Aglaonema", "aglaonema"],
+  ["Soka", "soka"],
+];
+const HIAS_MAP = new Map(HIAS_FIELDS);
+
 const num0 = (v) => (v === null || v === undefined ? 0 : Number(v));
 
 /** GET /api/v1/hortikultura/sayuran-produksi -> VegetableProduction[] (ton) */
@@ -75,6 +90,70 @@ hortikulturaRouter.get(
     );
     return pivotLong(rows, (r) => {
       const f = BUAH_MAP.get(r.komoditas);
+      return f ? [f, num0(r.nilai)] : null;
+    });
+  }),
+);
+
+/** GET /api/v1/hortikultura/biofarmaka-produksi -> (tangkai/kg) */
+hortikulturaRouter.get(
+  "/biofarmaka-produksi",
+  route(async () => {
+    const rows = await q(
+      `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.nilai
+       FROM horti_produksi t JOIN kecamatan k ON k.id = t.kecamatan_id
+       WHERE t.kelompok = 'biofarmaka' ORDER BY k.nama, t.tahun`,
+    );
+    return pivotLong(rows, (r) => {
+      const f = BIOFARMAKA_MAP.get(r.komoditas);
+      return f ? [f, num0(r.nilai)] : null;
+    });
+  }),
+);
+
+/** GET /api/v1/hortikultura/biofarmaka-luas -> (m2) */
+hortikulturaRouter.get(
+  "/biofarmaka-luas",
+  route(async () => {
+    const rows = await q(
+      `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.nilai
+       FROM horti_luas t JOIN kecamatan k ON k.id = t.kecamatan_id
+       WHERE t.kelompok = 'biofarmaka' ORDER BY k.nama, t.tahun`,
+    );
+    return pivotLong(rows, (r) => {
+      const f = BIOFARMAKA_MAP.get(r.komoditas);
+      return f ? [f, num0(r.nilai)] : null;
+    });
+  }),
+);
+
+/** GET /api/v1/hortikultura/tanaman-hias-produksi -> (tangkai) */
+hortikulturaRouter.get(
+  "/tanaman-hias-produksi",
+  route(async () => {
+    const rows = await q(
+      `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.nilai
+       FROM horti_produksi t JOIN kecamatan k ON k.id = t.kecamatan_id
+       WHERE t.kelompok = 'tanaman_hias' ORDER BY k.nama, t.tahun`,
+    );
+    return pivotLong(rows, (r) => {
+      const f = HIAS_MAP.get(r.komoditas);
+      return f ? [f, num0(r.nilai)] : null;
+    });
+  }),
+);
+
+/** GET /api/v1/hortikultura/tanaman-hias-luas -> (m2) */
+hortikulturaRouter.get(
+  "/tanaman-hias-luas",
+  route(async () => {
+    const rows = await q(
+      `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.nilai
+       FROM horti_luas t JOIN kecamatan k ON k.id = t.kecamatan_id
+       WHERE t.kelompok = 'tanaman_hias' ORDER BY k.nama, t.tahun`,
+    );
+    return pivotLong(rows, (r) => {
+      const f = HIAS_MAP.get(r.komoditas);
       return f ? [f, num0(r.nilai)] : null;
     });
   }),
