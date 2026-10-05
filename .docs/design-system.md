@@ -15,6 +15,8 @@ Prinsip utama desain visual:
 2. **Numeric Precision (Tabular Data):** Semua angka statistik, koordinat, kode kecamatan, dan nilai moneter (Rupiah) menggunakan format angka monospace terstruktur (`tabular-nums font-mono`).
 3. **Symmetrical Multi-Sector Rhythm:** Konsistensi navigasi 4 pilar di seluruh 5 bidang teknis dengan kode warna tematik yang harmonis dan terstandarisasi.
 4. **Anti-AI-Slop & Professional Authority:** Tidak menggunakan warna ungu neon buatan atau kartu generik datar tanpa hierarki; mengutamakan kedalaman visual nyata melalui *border-l-4*, kontur `rounded-lg`, pembatas `slate-200`, dan bayangan halus `shadow-sm`.
+5. **Zero Raw Emoji & Enterprise Iconography:** Dilarang keras menyematkan emoji mentah (seperti simbol hewan, susu, tanaman) atau karakter mentah (seperti segitiga unicode) pada antarmuka, tabel data, kartu KPI, dan layer GIS. Seluruh indikator visual wajib menggunakan ikon resmi `lucide-react`, pill badges berlatar pastel dengan teks kontras tinggi, atau tipografi tabular terstruktur.
+6. **Strict Zero-Empty Law & Clean Placeholders:** Tabel dan antarmuka publik menyaring baris bernilai `0` atau kosong secara otomatis agar tampilan bersih dan fokus pada data produktif. Bagian data yang masih kosong disajikan dengan placeholder bersih dan panduan pengisian lewat Dasbor Admin tanpa menggunakan data tiruan (*zero dummy data*).
 
 ---
 

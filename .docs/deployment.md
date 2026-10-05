@@ -70,6 +70,7 @@ server {
 - [ ] Berkas paket deploy bersih telah siap: `deploy_pertanian_clean_20261005.zip` (35.2 MB).
 - [ ] Dependensi `node_modules` telah terpasang bersih (`npm ci --omit=dev`).
 - [ ] Database MySQL `pertasis` telah di-dump dan dicadangkan (*backup*).
+- [ ] Skema tabel ekosistem peternakan telah dimigrasikan (`node scripts/setup_ternak_ecosystem_tables.js` & `node scripts/sync_kulit_domba.js`).
 - [ ] Port yang ditentukan pada `PORT` tidak terblokir firewall eksternal (hanya terbuka untuk Nginx lokal).
 - [ ] Folder `./logs-pm2` telah tersedia dan memiliki izin tulis untuk user pengelola.
 - [ ] Repositori lokal tersinkronisasi pada branch `release/2026-10-05-clean`.

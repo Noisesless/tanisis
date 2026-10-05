@@ -130,6 +130,41 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   4. Menerapkan toleransi data compang-camping: data yang kosong atau belum diunggah dinas disajikan secara elegan dengan *empty state* jujur ("Menunggu pembaruan data dinas") tanpa memunculkan angka buatan/fiktif.
   5. Menyelaraskan template Excel perikanan (dropdown Bubu, 10 spesies ikan, varietas ikan hias, luas benih Ha) dengan skema MySQL.
 
+### [ISSUE-012] Divergensi Sesi Login Admin & Pembaruan Header Profil Dinamis (Reaktivitas Multi-Tab & Dropdown Logout)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-05
+- **Deskripsi:** Status login admin di dasbor admin tidak tersinkronisasi secara reaktif dengan layout publik (`default-CAKe9ffW.js`), sehingga saat admin login, header publik tetap menampilkan 'Guest / Pengunjung'. Selain itu, logout di satu tab tidak membersihkan sesi di tab lain.
+- **Akar Masalah:** Penyimpanan token auth hanya berada di memori/satu storage tanpa mekanisme sinkronisasi event broadcast lintas-komponen.
+- **Solusi:**
+  1. Menerapkan dual-storage sync (`localStorage` dan `sessionStorage`) dengan event dispatcher `sispertani:auth-change`.
+  2. Memperbarui `default-CAKe9ffW.js` agar secara reaktif membaca profil admin yang aktif (username, nama bidang, peran, indikator status online, tombol pintas Dasbor Admin, dan tombol Logout instan).
+  3. Menyediakan fallback mulus ke avatar Guest Pengunjung ketika sesi berakhir atau pengguna logout.
+
+### [ISSUE-013] Pemisahan Spesies Peternakan & Keswan, Eliminasi Data Campuran, Penegakan Strict Zero-Empty Law, Pembersihan Simbol Mentah Anti-AI-Slop, serta Dasbor Admin Entry & 10-Sheet Template
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-05
+- **Deskripsi:** Berdasarkan notulensi perbaikan dari klien Distankan KP:
+  1. Data populasi dan produksi ternak tercampur sehingga data terkesan rancu.
+  2. Data kulit masih menggabungkan 'Sapi/Kerbau' dan 'Kambing/Domba', padahal dinas meminta pemisahan tegas per jenis hewan.
+  3. Munculnya data bernilai 0 / kosong yang mengotori tabel antarmuka publik.
+  4. Penggunaan emoji mentah (`🐄`, `🥛`, `🌾`, `▲`, `▼`) dan kata buzzword berlebihan yang bertentangan dengan prinsip anti-AI-slop dan standar kedinasan.
+  5. Submenu nilai ekonomi masih mencantumkan tab sektor lain (pangan, horti, dll.), yang diminta diubah menjadi 4 tab ekosistem usaha peternakan: Nilai Ekonomi Ternak, UMKM Pakan Ternak, Toko Peternakan / Poultry Shop, dan Unit Usaha Ber-NKV (dengan Zero Dummy Data, hanya placeholder bersih).
+  6. Permintaan penambahan komoditas hewani: Susu Kambing, Telur Burung Puyuh, Telur Itik, Daging Kelinci, Domba Batur sebagai rumpun spesifik, serta estimasi ternak dijual hidup dan modul simulasi lahan HPT (Hijauan Pakan Ternak).
+  7. Ketiadaan antarmuka dan template bagi dinas untuk meng-entry data yang masih kosong.
+- **Akar Masalah:**
+  1. Skema lama `ternak_susu_kulit` mencatat komoditas gabungan 'Sapi/Kerbau' dan 'Kambing/Domba'.
+  2. Ketiadaan tabel khusus untuk ekosistem peternakan (HPT, UMKM Pakan, Poultry Shop, NKV).
+  3. Filter frontend tidak menyaring record bernilai 0.
+  4. Domain admin peternakan lama hanya mencakup 6 sheet tanpa kolom pakan, toko, dan NKV.
+- **Solusi (ADR-012):**
+  1. Memisahkan data kulit di database `pertasis`: memetakan 'Kulit Sapi' (120 baris), 'Kulit Kambing' (120 baris), dan menyinkronkan data pemotongan riil ke 'Kulit Domba' (89 baris riil).
+  2. Membuat 4 tabel MySQL baru: `ternak_hpt`, `ternak_umkm_pakan`, `ternak_poultry_shop`, dan `ternak_nkv`.
+  3. Memperbarui backend `src/routes/peternakan.js` dengan endpoint: `/susu-kulit`, `/hpt`, `/umkm-pakan`, `/poultry-shop`, `/nkv`, serta endpoint input manual `POST /api/v1/peternakan/entry`.
+  4. Mengembangkan template Excel 10 sheet lengkap di `src/lib/domains.js` yang memfasilitasi isian wilayah kecamatan, tahun/bulan, komoditas, jumlah/banyaknya, dan status.
+  5. Menegakkan *Strict Zero-Empty Law* di frontend: seluruh record bernilai 0 otomatis tidak ditampilkan di tabel publik.
+  6. Menghapus 100% emoji mentah dan simbol segitiga dari seluruh bundel peternakan dan layer peta, menggantinya dengan badge enterprise dan tipografi lugas.
+  7. Membangun 4 tab tertata pada rute `/nilai-ekonomi/peternakan` dengan placeholder bersih tanpa data tiruan/fiktif.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
@@ -138,4 +173,5 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 2. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 3. **Merge Branch GitHub Pasca Kesembuhan Programmer:** Mengajukan Pull Request dari branch `release/2026-10-05-clean` ke `main` saat kolaborator aktif kembali.
 
-*(Saat ini seluruh sinkronisasi kode, sanitasi aset, dan pengujian lokal telah tuntas 100%).*
+*(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan pembaruan dokumentasi telah tuntas 100%).*
+

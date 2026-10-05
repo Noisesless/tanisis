@@ -84,19 +84,31 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
 
 ### C. Peternakan & Kesehatan Hewan
 - **`GET /api/v1/peternakan/kecil`**  
-  Populasi ternak kecil: Domba Batur (plasma nutfah khas), domba lokal, dan kambing.
+  Populasi ternak kecil: Domba Batur (plasma nutfah khas Banjarnegara), domba lokal, dan kambing.
 - **`GET /api/v1/peternakan/besar`**  
   Populasi ternak besar: Sapi potong, sapi perah, dan kerbau.
 - **`GET /api/v1/peternakan/unggas`**  
-  Populasi unggas: Ayam buras/kampung, ayam petelur, ayam pedaging (broiler), itik, puyuh.
+  Populasi unggas: Ayam buras/kampung, ayam petelur (layer), ayam pedaging (broiler), itik, dan puyuh.
 - **`GET /api/v1/peternakan/pemasukan`** & **`/peternakan/pengeluaran`**  
   Arus lalu lintas ternak yang masuk ke dan keluar dari wilayah Kabupaten Banjarnegara.
-- **`GET /api/v1/peternakan/luar-rph`**  
-  Estimasi pemotongan hewan di luar Rumah Potong Hewan (RPH).
-- **`GET /api/v1/peternakan/daging-unggas`**  
-  Produksi daging ternak dan karkas unggas.
+- **`GET /api/v1/peternakan/luar-rph`** & **`/peternakan/rph-pemerintah`**  
+  Pemotongan hewan di Rumah Potong Hewan (RPH) pemerintah vs luar RPH.
+- **`GET /api/v1/peternakan/daging`** & **`/peternakan/daging-unggas`**  
+  Produksi daging ternak besar & kecil (sapi, kerbau, kambing, domba, kelinci) serta karkas unggas (ayam broiler, kampung, itik, puyuh) dalam satuan kg.
+- **`GET /api/v1/peternakan/telur`**  
+  Produksi telur terpilah per jenis unggas (ayam ras layer, ayam kampung, itik, burung puyuh) dalam satuan butir/kg.
 - **`GET /api/v1/peternakan/susu-kulit`**  
-  Produksi susu segar (liter) dan pengolahan kulit mentah/samak.
+  Produksi susu segar (sapi perah, susu kambing) dan kulit terpilah per jenis hewan (Kulit Sapi, Kulit Kerbau, Kulit Kambing, Kulit Domba, Kulit Kelinci, Wol Domba Batur, Tulang & Tanduk) dalam satuan lembar/liter/kg.
+- **`GET /api/v1/peternakan/hpt`**  
+  Data lahan penanaman Hijauan Pakan Ternak (Odot, Gajah, Pakchong, Indigofera), luasan (Ha), dan estimasi kapasitas daya tampung Satuan Ternak (ST).
+- **`GET /api/v1/peternakan/umkm-pakan`**  
+  Direktori pelaku usaha dan kelompok tani produsen pakan ternak mandiri (silase tebon jagung, konsentrat, pakan fermentasi).
+- **`GET /api/v1/peternakan/poultry-shop`**  
+  Sebaran kios sapronak, penyedia obat hewan, vitamin, dan poultry shop per kecamatan.
+- **`GET /api/v1/peternakan/nkv`**  
+  Register unit usaha produk asal hewan bersertifikat Nomor Kontrol Veteriner (NKV).
+- **`POST /api/v1/peternakan/entry`**  
+  Endpoint entry data manual bagian peternakan yang kosong (kategori: `hpt`, `umkm_pakan`, `poultry_shop`, `nkv`, `susu_kulit`, `daging`, `telur`). Parameter: `kecamatan`, `tahun`, `bulan`, `jenis/nama`, `jumlah/nilai`, `satuan`, `catatan/alamat/kontak`.
 
 ### D. Perikanan
 - **`GET /api/v1/perikanan/jenis-ikan`**  

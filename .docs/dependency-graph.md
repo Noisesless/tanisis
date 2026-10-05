@@ -96,5 +96,7 @@ dist/index.html (Entry Point)
   └── dist/assets/site-B5h-x_N5.js (Sidebar Navigation)
         └── Memetakan Navigasi Dinamis ke Halaman:
               ├── /komoditas-unggulan/:bidang -> komoditas-unggulan-BhWh4UVQ.js
-              └── /nilai-ekonomi/:bidang -> nilai-ekonomi-uFV4-6ig.js
+              ├── /nilai-ekonomi/:bidang -> nilai-ekonomi-uFV4-6ig.js (Khusus peternakan: 4 tab mandiri live API)
+              ├── /livestock -> livestock-D6KAVcvO.js (Populasi Ternak Murni & Domba Batur)
+              └── /peternakan/susu-kulit -> peternakan-susu-kulit-B1vV3OM5.js (Produksi Utama, Hasil Ikutan Spesies-Centric & Simulasi HPT)
 ```

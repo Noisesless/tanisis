@@ -4,17 +4,17 @@ Dokumentasi Utama Sistem Informasi Pertanian, Perikanan, dan Ketahanan Pangan (S
 
 ---
 
-## 🌾 Ringkasan Sistem
+## Ringkasan Sistem
 
 **SISPERTANI** adalah platform terintegrasi untuk pengumpulan, pengolahan, analisis spasial, dan pelaporan statistik komoditas pertanian di lingkungan **Dinas Pertanian, Perikanan dan Ketahanan Pangan (Distankan KP) Kabupaten Banjarnegara**.
 
 Sistem ini melayani dua antarmuka utama:
 1. **Portal Publik & Analitik Spasial:** Peta interaktif GIS (tutupan sawah, ladang, kebun, sungai, jaringan jalan, dan batas wilayah administrasi desa/kecamatan), grafik tren komoditas 2018–2026, neraca pangan Bapanas, sensus pertanian ST2023, serta katalog dataset terbuka via proksi CKAN Open Data Banjarnegara.
-2. **Dasbor Administrasi Data & RBAC:** Manajemen pembaruan data berkala dinas melalui unduh template Excel multi-sheet terstandar, ekspor data termutakhir, impor data dengan parser validasi natural-key (upsert), serta audit logging `sync_log`.
+2. **Dasbor Administrasi Data & RBAC:** Manajemen pembaruan data berkala dinas melalui unduh template Excel multi-sheet terstandar (termasuk 10-sheet terpadu peternakan dan 11-sheet perikanan), ekspor data termutakhir, impor data dengan parser validasi natural-key (upsert), entry manual data kosong, serta audit logging `sync_log`.
 
 ---
 
-## 🧭 Struktur Navigasi & Tampilan Antarmuka (Pembaruan v2.4)
+## Struktur Navigasi & Tampilan Antarmuka
 
 Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prinsip anti-AI-slop yang membagi navigasi menjadi 4 pilar fungsional terurut dengan ikonografi resmi `lucide-react`:
 
@@ -24,7 +24,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 2. **Sektor Komoditas (4 Bidang Teknis Simetris — Dual Submenus Dinamis):**
    - `Tanaman Pangan` — Produksi Padi & Palawija, Komoditas Unggulan Pangan (`/komoditas-unggulan/pangan`), Nilai Ekonomi Pangan (`/nilai-ekonomi/pangan`), LTT & Kalender Tanam (`/ltt-katam`), Prediksi Panen.
    - `Hortikultura & Perkebunan` — Produksi Sayuran & Buah, Komoditas Unggulan Hortikultura, Nilai Ekonomi Hortikultura, Analitik Perkebunan Khas, Komoditas Unggulan Perkebunan, Nilai Ekonomi Perkebunan.
-   - `Peternakan & Keswan` — Populasi & Produksi Ternak, Komoditas Unggulan Peternakan, Nilai Ekonomi Peternakan, Susu & Kulit Ternak, Lalu Lintas & Pemotongan RPH.
+   - `Peternakan & Keswan` — Populasi Ternak Murni & Estimasi Dijual Hidup (`/livestock` inc. Domba Batur), Komoditas Unggulan Peternakan, Nilai Ekonomi & Ekosistem Usaha (`/nilai-ekonomi/peternakan` - 4 Tab: Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV), Produksi Utama & Hasil Ikutan per Spesies + Simulasi Lahan HPT (`/peternakan/susu-kulit`), Lalu Lintas & Pemotongan RPH (`/livestock-flow`).
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
    - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA, Rantai Pasok/RMU, Fluktuasi Harga Pasar.
@@ -40,8 +40,9 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 > - **High-Contrast Active State:** Submenu aktif disorot dengan badge kontras tinggi Emerald-600 (`#059669`) dan titik putih menyala.
 > - **Parent Indicator:** Kategori induk otomatis mendapatkan sorotan halus saat salah satu halamannya aktif.
 > - **Floating Executive Card:** Dasar sidebar memuat kartu institusional resmi *"Portal Data Dinas — Distankan KP Banjarnegara"*, indikator koneksi `● Basis Data Terhubung`, serta tombol aksi *"Masuk Dasbor Admin"*.
+> - **Strict Zero-Empty Law & Anti-AI-Slop:** Seluruh tabel menyaring baris bernilai kosong/0 secara otomatis dan membersihkan seluruh emoji mentah/simbol anak-anak dari antarmuka.
 
-## 🏛️ Arsitektur & Teknologi
+## Arsitektur & Teknologi
 
 | Komponen | Spesifikasi & Teknologi | Keterangan |
 |---|---|---|
@@ -56,7 +57,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 
 ---
 
-## 📂 Struktur Direktori Proyek
+## Struktur Direktori Proyek
 
 ```text
 pertanian_main/
@@ -72,7 +73,7 @@ pertanian_main/
 │   ├── server.js              # Entrypoint server, routing ganda, static & SPA fallback
 │   ├── db.js                  # Pool koneksi MySQL2 & helper query q()
 │   ├── lib/
-│   │   ├── domains.js         # Registri 15 domain data, pemetaan sheet, natural keys
+│   │   ├── domains.js         # Registri 17 domain operasional, pemetaan sheet, natural keys
 │   │   ├── excel.js           # Engine pembaca & pembuat workbook template/export/import
 │   │   ├── users.js           # Registri akun pengguna RBAC & perizinan bidang
 │   │   └── helpers.js         # Wrapper error handling, validasi & format response
@@ -86,7 +87,7 @@ pertanian_main/
 │       ├── padi.js            # Produksi padi sawah/ladang & palawija
 │       ├── perikanan.js       # Budidaya kolam/waduk/minapadi, tangkap & benih
 │       ├── perkebunan.js      # Areal & produksi komoditas perkebunan
-│       ├── peternakan.js      # Populasi ternak, daging, telur, susu, RPH & aliran
+│       ├── peternakan.js      # Populasi, daging, telur, susu/kulit, HPT, UMKM, NKV & entry
 │       └── st2023.js          # Sensus Pertanian 2023 tingkat desa
 └── .docs/                     # Dokumentasi arsitektur standar lengkap
     ├── architecture.md        # Aliran data makro (Presentation -> Logic -> DB)
@@ -102,7 +103,7 @@ pertanian_main/
 
 ---
 
-## ⚡ Panduan Instalasi & Menjalankan
+## Panduan Instalasi & Menjalankan
 
 ### 1. Prasyarat Sistem
 - **Node.js**: Versi 20.x atau lebih baru (direkomendasikan v22 LTS).
@@ -155,7 +156,7 @@ pm2 logs sispertani-api
 
 ---
 
-## 🔐 Manajemen Pengguna & Hak Akses (RBAC)
+## Manajemen Pengguna & Hak Akses (RBAC)
 
 Sistem menerapkan pembatasan hak akses berbasis bidang teknis di lingkungan Distankan KP:
 
@@ -164,14 +165,14 @@ Sistem menerapkan pembatasan hak akses berbasis bidang teknis di lingkungan Dist
 | `admin` | **Administrator** | **Seluruh 17 Domain Operasional**, Audit Log (`sync_log`), Paket Arsip |
 | `tanaman-pangan` | **Bidang Tanaman Pangan** | `padi`, `palawija`, `ltt-katam` |
 | `horti-perkebunan` | **Bidang Hortikultura & Perkebunan** | `hortikultura`, `perkebunan` |
-| `peternakan` | **Bidang Peternakan** | `peternakan` |
+| `peternakan` | **Bidang Peternakan** | `peternakan` (10 sheet terpadu) |
 | `perikanan` | **Bidang Perikanan** | `perikanan` (11 sheet terpadu) |
 
 Setiap sesi login menghasilkan **Bearer Token** in-memory dengan masa berlaku **12 jam** dan diamankan dengan rate limiting (maksimal 5 kali percobaan gagal per 15 menit).
 
 ---
 
-## 📊 Registri 17 Domain Operasional & Sheet Excel
+## Registri 17 Domain Operasional & Sheet Excel
 
 Semua domain data didefinisikan secara deklaratif di [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js):
 
@@ -182,7 +183,7 @@ Semua domain data didefinisikan secara deklaratif di [`src/lib/domains.js`](file
 5. **palawija:** Jagung, kedelai, kacang tanah, ubi kayu, ubi jalar, kacang hijau.
 6. **hortikultura:** Luas panen & produksi sayuran dan buah (per kecamatan & agregat kabupaten).
 7. **perkebunan:** Luas areal & produksi komoditas perkebunan (kopi, teh, cengkeh, dll).
-8. **peternakan:** Populasi ternak, produksi daging, telur, susu, kulit, lalu-lintas ternak, pemotongan RPH.
+8. **peternakan:** 10 sheet terpadu: Populasi (termasuk ternak dijual hidup & Domba Batur), Daging (9 jenis inc. kelinci & puyuh), Telur (layer, kampung, itik, puyuh), Susu & Kulit (spesies definitif: Kulit Sapi, Kerbau, Kambing, Domba, Kelinci, Susu Kambing, Wol Batur, Tulang/Tanduk), Lahan HPT & Kapasitas ST, UMKM Pakan Ternak, Toko Peternakan / Poultry Shop, Usaha Ber-NKV, Aliran Ternak, dan Pemotongan RPH.
 9. **perikanan:** 11 sheet terpadu: 10 jenis ikan budidaya definitif (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan), alat tangkap perairan umum (termasuk Bubu), produksi & luas benih ikan (Ha), pemeliharaan, waduk, kolam, minapadi, dan varietas ikan hias.
 10. **lahan:** Luas penggunaan lahan kabupaten (sawah, tegal, pemukiman, hutan).
 11. **lumbung:** Jumlah unit dan kapasitas lumbung pangan serta gudang per kecamatan.
@@ -203,7 +204,7 @@ Semua domain data didefinisikan secara deklaratif di [`src/lib/domains.js`](file
 
 ---
 
-## 🌐 Ikhtisar REST API
+## Ikhtisar REST API
 
 Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `/api/*` (jalur internal backend)
@@ -217,7 +218,12 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/v1/palawija/jagung-ubi-kayu`, `/palawija/kacang-kedelai`, `/palawija/ubi-kacang-hijau` — Statistik palawija.
 - `GET /api/v1/hortikultura/sayuran-produksi`, `/sayuran-luas`, `/buah-produksi` — Statistik hortikultura.
 - `GET /api/v1/perkebunan/areal`, `/perkebunan/produksi` — Statistik perkebunan.
-- `GET /api/v1/peternakan/populasi`, `/ternak/daging`, `/ternak/pemotongan` — Statistik peternakan & RPH.
+- `GET /api/v1/peternakan/populasi`, `/peternakan/kecil`, `/peternakan/besar`, `/peternakan/unggas` — Populasi ternak murni.
+- `GET /api/v1/peternakan/daging-unggas`, `/peternakan/susu-kulit` — Produksi daging, susu (sapi, kambing) & kulit per jenis hewan.
+- `GET /api/v1/peternakan/hpt` — Lahan HPT & kapasitas daya tampung Satuan Ternak (ST).
+- `GET /api/v1/peternakan/umkm-pakan`, `/peternakan/poultry-shop`, `/peternakan/nkv` — Ekosistem usaha peternakan.
+- `POST /api/v1/peternakan/entry` — Entry manual data bagian peternakan yang kosong (HPT, UMKM, toko, NKV, susu/kulit).
+- `GET /api/v1/peternakan/pemasukan`, `/peternakan/pengeluaran`, `/peternakan/luar-rph` — Lalu lintas & RPH.
 - `GET /api/v1/perikanan/jenis-ikan` — Data definitif 10 spesies ikan budidaya 2020–2025.
 - `GET /api/v1/perikanan/budidaya-luasan` — Luas bidang vs produksi & rasio produktivitas perikanan.
 - `GET /api/v1/perikanan/hias` — Data varietas ikan hias per kecamatan.
@@ -244,7 +250,7 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 
 ---
 
-## 🚀 Paket Rilis Bersih (Clean Release)
+## Paket Rilis Bersih (Clean Release)
 
 Aplikasi telah disinkronkan dan disiapkan dalam paket siap deploy tanpa menunggu kolaborasi GitHub:
 - **Paket Rilis:** `deploy_pertanian_clean_20261005.zip` (35.2 MB, reduksi 58% dari 84.4 MB)
@@ -253,7 +259,7 @@ Aplikasi telah disinkronkan dan disiapkan dalam paket siap deploy tanpa menunggu
 
 ---
 
-## 📚 Indeks Dokumentasi `.docs/`
+## Indeks Dokumentasi `.docs/`
 
 Detail teknis mendalam tersedia pada direktori [`/.docs/`](file:///e:/Project/pertanian_main/.docs):
 - [**Arsitektur Sistem**](file:///e:/Project/pertanian_main/.docs/architecture.md) — Aliran data, struktur micro-monolith, integrasi GIS dan CKAN.

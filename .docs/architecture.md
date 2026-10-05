@@ -107,9 +107,12 @@ graph TD
 
 3. **Integrasi Komponen & Submenu Navigasi Ganda:**
    - **Tingkat Halaman Sektor:** Widget `SectorEconomicWidget` tertanam reaktif pada 5 halaman produksi utama (`/food-crops`, `/horticulture`, `/plantation`, `/livestock`, `/fisheries`) mengikuti filter tahun aktif.
-   - **Tingkat Navigasi Sidebar:** Setiap bidang dilengkapi 2 submenu mandiri:
+   - **Tingkat Navigasi Sidebar:** Setiap bidang dilengkapi submenu terstruktur:
      - `Komoditas Unggulan`: rute `/komoditas-unggulan/:bidang` untuk rincian varietas, luas, dan sentra komoditas.
-     - `Nilai Ekonomi`: rute `/nilai-ekonomi/:bidang` untuk analisis valuasi finansial per komoditas.
+     - `Nilai Ekonomi`: rute `/nilai-ekonomi/:bidang` untuk analisis valuasi finansial per komoditas. Khusus sektor peternakan (`/nilai-ekonomi/peternakan`), menyajikan 4 tab mandiri: *Nilai Ekonomi Ternak*, *UMKM Pakan Ternak*, *Toko Peternakan & Poultry Shop*, dan *Unit Usaha Ber-NKV*.
+     - `Populasi Ternak`: rute `/livestock` memfokuskan murni pada populasi ternak hidup, indikator ternak dijual hidup, dan rumpun khas Domba Batur.
+     - `Produksi & Hasil Ikutan`: rute `/peternakan/susu-kulit` memisahkan produksi utama (daging, telur, susu) dan hasil ikutan (kulit sapi, kerbau, kambing, domba, kelinci, wol batur, tulang & tanduk) terpilah per spesies tanpa kategori campuran, dilengkapi modul Simulasi Lahan HPT (Hijauan Pakan Ternak) dan filter *Strict Zero-Empty* (baris bernilai 0 difilter out).
+   - **Manajemen Dasbor Admin Peternakan:** Didukung template Excel 10 sheet lengkap berpanduan (memuat isian wilayah, tahun, bulan, jenis, jumlah/banyaknya, satuan, dan status) serta endpoint entry cepat `POST /api/v1/peternakan/entry` untuk pengisian langsung bagian yang masih kosong.
 
 ---
 

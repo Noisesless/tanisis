@@ -17,6 +17,8 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Single Source of Truth & Anti-Over-Engineering (ADR-009/010)** | Sangat Baik | ✅ PASSED | Komoditas Unggulan dihitung otomatis dari tabel transaksi produksi primer (10 jenis ikan, padi, palawija, horti, kebun, ternak). Menghapus form upload duplikat dan membatasi data pragmatis pada level perkecamatan & kabupaten. |
 | **Higienitas Bundel Aset (Asset Hygiene)** | Sangat Baik | ✅ PASSED | Eliminasi 2.714 berkas artefak build usang (96%) dan 22 file CSS mati di `dist/assets/`, menyisakan tepat 106 berkas aktif bersih (efisiensi ukuran zip dari 84.4 MB menjadi 35.2 MB / reduksi 58%). |
 | **Keamanan Kredensial AI Gateway** | Sangat Baik | ✅ PASSED | Eliminasi kebocoran API key eksternal di bundel JavaScript klien; seluruh kueri RAG dan streaming Gemini dialihkan ke gateway internal `/api/v1/ai/chat` dengan proteksi rate limit. |
+| **Kepatuhan Visual Enterprise & Anti-AI-Slop Law** | Sangat Baik | ✅ PASSED | Pembersihan total emoji mentah (🐄, 🥛, 🌾, 🐑, dll.) dan simbol segitiga (▲, ▼); digantikan pill badge tipografi enterprise dan indikator numerik formal. |
+| **Kepatuhan Zero-Empty & Spesies Definitif (ADR-012)** | Sangat Baik | ✅ PASSED | Pemisahan tegas Kulit Sapi vs Kerbau vs Kambing vs Domba vs Kelinci; penambahan Susu Kambing & Telur Puyuh; eliminasi baris bernilai 0/kosong dari tabel publik; penyiapan placeholder bersih untuk UMKM Pakan, Poultry Shop, dan NKV tanpa mock dummy data. |
 
 ---
 
