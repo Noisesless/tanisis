@@ -57,13 +57,13 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 [ADR-009] Single Source of Truth for Flagship Commodities (Anti-Over-Engineering Law): Komoditas Unggulan BUKAN form upload terpisah untuk klien/dinas, melainkan HASIL KALKULASI OTOMATIS aplikasi dari data produksi mentah (padi, palawija, horti, kebun, ternak, 10 jenis ikan). Form upload komoditas-unggulan di Admin resmi dihapus untuk mengeliminasi redundansi beban kerja dinas, risiko data ganda, dan inkonsistensi.
 [ADR-010] Pragmatic Regional Scope & Sparse Data Tolerance: Lingkup data dibatasi pragmatis pada tingkat perkecamatan dan rekapitulasi kabupaten (anti-over-engineering). Data kosong/belum diunggah dinas ditampilkan jujur sebagai empty state tanpa angka fiktif.
 [ADR-011] Production-Ready Reactive Session Sync & Header Avatar: Token dan sesi auth admin disimpan secara dual (localStorage & sessionStorage) dengan broadcast event 'sispertani:auth-change'. Layout master publik (default-CAKe9ffW.js) secara reaktif merender profil admin yang sedang login (nama bidang, role, status online sesi aktif, tombol dasbor admin, dan tombol logout instan), serta fallback aman ke Guest/Pengunjung saat belum login.
-[ADR-012] Species-Centric Livestock Refactoring & Professional Clean UI:
-- Pemisahan tegas data Populasi vs Produksi (menghilangkan tabel telur dari halaman populasi).
-- Submenu Susu & Kulit diubah menjadi Produksi Utama & Hasil Ikutan (daging, telur, susu, kulit, tulang, tanduk, pupuk kandang, dan wol) yang dipilah per jenis hewan.
-- Rumpun asli khas Domba Batur Banjarnegara (SK Mentan No. 2916/2011) disiapkan modular terpisah dari Domba Biasa/Lokal.
-- Modul Agrostologi Simulasi Penambahan Lahan HPT (Hijauan Pakan Ternak) dengan kalkulasi otomatis kapasitas Satuan Ternak (ST), sapi potong, dan Domba Batur.
-- Submenu Nilai Ekonomi Peternakan (/nilai-ekonomi/peternakan) dikhususkan pada 4 tab mandiri: Valuasi Nilai Ekonomi Peternakan, Direktori UMKM Pakan Ternak Mandiri, Sebaran Toko Peternakan/Poultry Shop (Maps), dan Registrasi Unit Usaha Ber-NKV (Nomor Kontrol Veteriner).
-- Anti-AI-Slop Law: Pembersihan menyeluruh terhadap seluruh emoji mentah dan simbol tiruan di seluruh tampilan antarmuka sistem.
+[ADR-012] Species-Centric Livestock Refactoring, Zero-Empty Law & Admin Entry:
+- Pemisahan tegas data Populasi vs Produksi (halaman populasi murni ternak hidup).
+- Submenu Produksi Utama & Hasil Ikutan dipilah per jenis hewan definitif: Daging (Sapi, Kerbau, Kambing, Domba Lokal, Domba Batur, Ayam Kampung, Ayam Broiler, Itik, Puyuh, Kelinci), Telur (Ayam Layer, Ayam Kampung, Itik, Puyuh), Susu (Sapi Segar, Susu Kambing), dan Hasil Ikutan (Kulit Sapi, Kulit Kerbau, Kulit Kambing, Kulit Domba, Kulit Kelinci, Wol Batur, Tulang & Tanduk). Kulit Sapi dan Kerbau dipisah tegas tanpa kategori gabungan.
+- Strict Zero-Empty Law: Baris data produksi bernilai 0 atau kosong difilter out dan tidak ditampilkan di tabel antarmuka publik.
+- Anti-Bloat & Anti-AI-Slop Law: Menghilangkan seluruh kata lebay, buzzwords, dan emoji mentah dari seluruh halaman dan layer GIS.
+- Nilai Ekonomi Peternakan & Ekosistem Usaha (4 Tab Mandiri): 1. Nilai Ekonomi Ternak, 2. UMKM Pakan Ternak, 3. Toko Peternakan & Poultry Shop, 4. Unit Usaha Ber-NKV dengan Zero Dummy Data (placeholder bersih yang siap menerima data riil).
+- Admin Entry & 10-Sheet Excel Template: Menambahkan endpoint POST /api/v1/peternakan/entry dan 10 sheet template Excel di Dasbor Admin (/admin) yang memfasilitasi isian jumlah, banyaknya, wilayah kecamatan, tahun/bulan untuk seluruh komponen peternakan yang kosong.
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR

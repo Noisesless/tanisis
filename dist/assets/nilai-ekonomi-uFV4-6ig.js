@@ -1,112 +1,83 @@
-import{p as e,t}from"./default-CAKe9ffW.js";import{a as n,c as r,i,n as a,o,r as ee,s,t as te}from"./nilai-ekonomi-estimasi-DaEImWx6.js";import{t as ne}from"./beef-Cqs5FrT3.js";import{l as re,n as c}from"./x-CXWFwwzx.js";import{t as l}from"./trophy-C7fTz98e.js";import{C as ie,a as ae,b as oe,c as se,d as u,h as ce,i as d,l as f,m as le,o as p,p as ue,s as de,u as fe,v as pe}from"./index-CI1XYnwk.js";import{s as me,t as m}from"./harga-referensi-BaLL1acW.js";import{X as h,Z as g,d as _,f as v,g as y,in as b,t as x,u as S}from"./BarChart-CCPNsfhB.js";var C=ie(oe(),1),w=ue(),he={wheat:c,carrot:s,coffee:o,beef:ne},ge=[...a.map(e=>({key:e,label:te[e].label,icon:he[te[e].ikon],href:`/nilai-ekonomi/${e}`})),{key:`perikanan`,label:`Perikanan`,icon:re,href:`/economic-value`}],T=[`#1d4ed8`,`#0d9488`,`#7c3aed`,`#db2777`,`#ea580c`,`#65a30d`,`#0891b2`,`#9333ea`,`#dc2626`,`#ca8a04`],E=`Semua Kecamatan`,D=e=>e==null?`—`:new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,maximumFractionDigits:0}).format(e),O=e=>e.toLocaleString(`id-ID`,{maximumFractionDigits:1}),_e=e=>!!e&&a.includes(e),ve=e=>{switch(e){case`resmi-live`:return(0,w.jsx)(d,{tone:`emerald`,children:`Resmi-live · Bappebti`});case`indikatif`:return(0,w.jsx)(d,{tone:`amber`,children:`Indikatif · perlu verifikasi`});default:return(0,w.jsx)(d,{tone:`slate`,children:`Belum ada harga`})}};function ye(){let{bidang:a}=pe(),o=_e(a)?a:null,[peternakanSubTab,setPeternakanSubTab]=(0,C.useState)("valuasi"),[s,ne]=(0,C.useState)([]),[re,c]=(0,C.useState)(!0),[ie,oe]=(0,C.useState)(null),[ue,ye]=(0,C.useState)(0),[k,be]=(0,C.useState)(``),[A,xe]=(0,C.useState)(E),[j,Se]=(0,C.useState)(null),[M,N]=(0,C.useState)(`tahunan`);(0,C.useEffect)(()=>{if(!o)return;let e=!0;return c(!0),oe(null),i(o).then(t=>{e&&ne(t)}).catch(()=>{e&&(ne([]),oe(`Gagal memuat dataset produksi (backend & fallback CSV tidak merespons). Coba muat ulang.`))}).finally(()=>{e&&c(!1)}),()=>{e=!1}},[o,ue]),(0,C.useEffect)(()=>{if(!o)return;let e=!0;return Se(null),N(`tahunan`),ee(o).then(t=>{e&&t&&Se(t)}),()=>{e=!1}},[o,ue]);let P=j!=null&&j.length>0,F=(j??[]).some(e=>e.triwulan!=null),I=(0,C.useMemo)(()=>[...new Set(P?(j??[]).map(e=>String(e.tahun)):s.map(e=>e.tahun))].sort((e,t)=>t.localeCompare(e)),[P,j,s]);(0,C.useEffect)(()=>{if(I.length===0){be(``);return}I.includes(k)||be(I[0])},[I,k]);let L=(0,C.useMemo)(()=>[E,...[...new Set(s.filter(e=>e.tahun===k).map(e=>e.kecamatan))].sort((e,t)=>e.localeCompare(t))],[s,k]);(0,C.useEffect)(()=>{L.includes(A)||xe(E)},[L,A]);let R=(0,C.useMemo)(()=>s.filter(e=>e.tahun===k&&(A===E||e.kecamatan===A)),[s,k,A]),z=(0,C.useMemo)(()=>P?(j??[]).filter(e=>String(e.tahun)===k):[],[P,j,k]),B=(0,C.useMemo)(()=>!P||M!==`tahunan`?[]:z.filter(e=>e.triwulan==null).map(e=>({komoditas:e.komoditas,volume:e.volume,satuanVolume:e.satuan,konversiKg:0,hargaRp:e.hargaProdusen,satuanHarga:e.satuan,subtotalRp:e.nilaiRp,terhitung:!0,kelas:`resmi-live`,sumber:`Tabel nilai_ekonomi_tahunan — input Dinas`})).sort((e,t)=>t.subtotalRp-e.subtotalRp),[P,M,z]),V=(0,C.useMemo)(()=>{if(!P||M===`tahunan`)return[];let e=z.filter(e=>e.triwulan!=null);return M===`triwulan`?[1,2,3,4].map(t=>({key:`T${t}`,label:`Triwulan ${t}`,rows:e.filter(e=>e.triwulan===t)})):[{key:`S1`,label:`Semester 1 (T1–T2)`,rows:e.filter(e=>(e.triwulan??0)<=2)},{key:`S2`,label:`Semester 2 (T3–T4)`,rows:e.filter(e=>(e.triwulan??0)>=3)}]},[P,M,z]),H=(0,C.useMemo)(()=>{if(V.length===0)return[];let e=V.flatMap(e=>e.rows);return[...new Set(e.map(e=>e.komoditas))].sort().map(t=>{let n=V.map(e=>{let n=e.rows.filter(e=>e.komoditas===t);return{ada:n.length>0,volume:n.reduce((e,t)=>e+t.volume,0),nilai:n.reduce((e,t)=>e+t.nilaiRp,0)}});return{komoditas:t,satuan:e.find(e=>e.komoditas===t)?.satuan??``,sel:n,total:n.reduce((e,t)=>e+t.nilai,0)}}).sort((e,t)=>t.total-e.total)},[V]),U=(0,C.useMemo)(()=>B.reduce((e,t)=>e+t.subtotalRp,0),[B]),W=(0,C.useMemo)(()=>V.reduce((e,t)=>e+t.rows.reduce((e,t)=>e+t.nilaiRp,0),0),[V]),G=B[0],Ce=G&&U>0?G.subtotalRp/U*100:0,we=(0,C.useMemo)(()=>B.map(e=>({name:e.komoditas,nilai:e.subtotalRp/1e6})).sort((e,t)=>t.nilai-e.nilai).slice(0,12),[B]),Te=(0,C.useMemo)(()=>B.filter(e=>e.hargaRp!=null).map(e=>({name:e.komoditas,harga:(e.hargaRp??0)/1e6,satuan:`/${e.satuanHarga}`})).sort((e,t)=>t.harga-e.harga).slice(0,12),[B]),Ee=(0,C.useMemo)(()=>V.map(e=>({name:e.label,nilai:e.rows.reduce((e,t)=>e+t.nilaiRp,0)/1e6})),[V]),K=(0,C.useMemo)(()=>{let e=new Map;return R.forEach(t=>{let r=n(t),i=e.get(t.komoditas);i?(i.volume+=t.volume,i.konversiKg+=t.konversiKg,i.subtotalRp+=r??0):e.set(t.komoditas,{komoditas:t.komoditas,volume:t.volume,satuanVolume:t.satuanVolume,konversiKg:t.konversiKg,hargaRp:t.hargaRp,satuanHarga:t.satuanHarga,subtotalRp:r??0,terhitung:r!=null,kelas:t.kelas,sumber:t.sumber,catatan:t.catatan,bobotKgPerEkor:t.bobotKgPerEkor})}),[...e.values()].sort((e,t)=>t.subtotalRp-e.subtotalRp)},[R]),De=(0,C.useMemo)(()=>{let e=new Map;return R.forEach(t=>{let r=n(t)??0;e.set(t.kecamatan,(e.get(t.kecamatan)??0)+r)}),[...e.entries()].map(([e,t])=>({name:e,nilaiJuta:t/1e6})).sort((e,t)=>t.nilaiJuta-e.nilaiJuta)},[R]),q=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.subtotalRp,0),[K]),Oe=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.konversiKg,0),[K]),ke=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.volume,0),[K]),Ae=K[0]?.satuanVolume??`—`,je=Oe>0?q/Oe:null,J=K.find(e=>e.terhitung),Me=J&&q>0?J.subtotalRp/q*100:0,Ne=K.filter(e=>e.kelas===`resmi-live`).length,Pe=K.filter(e=>e.kelas===`indikatif`).length,Y=K.filter(e=>!e.terhitung).length;if(!o)return(0,w.jsx)(ce,{to:`/nilai-ekonomi/pangan`,replace:!0});let X=te[o],Fe=he[X.ikon],Z=`Estimasi Nilai (juta Rp)`,Q=`Nilai resmi (juta Rp)`,$=A===E?`${De.length} kecamatan`:A;return(0,w.jsx)(t,{children:(0,w.jsxs)(`div`,{className:`flex flex-col gap-6`,children:[(0,w.jsx)(se,{icon:(0,w.jsx)(Fe,{className:`h-6 w-6`,"aria-hidden":!0}),title:X.judul,subtitle:`${X.tagline} Harga referensi diakses ${m}.`}),o===`peternakan`?(0,w.jsxs)(`div`,{className:`flex flex-wrap gap-2`,children:[(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`valuasi`),className:peternakanSubTab===`valuasi`?`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold bg-emerald-700 text-white shadow-sm`:`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`1. Valuasi Nilai Ekonomi`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`pakan`),className:peternakanSubTab===`pakan`?`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold bg-emerald-700 text-white shadow-sm`:`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`2. UMKM Pakan Ternak`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`poultry`),className:peternakanSubTab===`poultry`?`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold bg-emerald-700 text-white shadow-sm`:`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`3. Toko Peternakan / Poultry Shop (Maps)`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`nkv`),className:peternakanSubTab===`nkv`?`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold bg-emerald-700 text-white shadow-sm`:`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`4. Usaha Ber-NKV (Bersertifikat)`})]}):(0,w.jsx)(`nav`,{className:`flex flex-wrap gap-2`,"aria-label":`Pemilih bidang nilai ekonomi`,children:ge.map(e=>{let t=e.icon,n=e.key===o;return(0,w.jsxs)(le,{to:e.href,className:[`inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-medium transition-colors`,n?`bg-emerald-600 text-white shadow-sm`:`bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-emerald-50 hover:text-emerald-700`].join(` `),"aria-current":n?`page`:void 0,children:[(0,w.jsx)(t,{className:`h-4 w-4`,"aria-hidden":!0}),e.label]},e.key)})}),(o===`peternakan`&&peternakanSubTab!==`valuasi`?(0,w.jsxs)(`div`,{className:`flex flex-col gap-6`,children:[
+import{p as e,t}from"./default-CAKe9ffW.js";import{a as n,c as r,i,n as a,o,r as ee,s,t as te}from"./nilai-ekonomi-estimasi-DaEImWx6.js";import{t as ne}from"./beef-Cqs5FrT3.js";import{l as re,n as c}from"./x-CXWFwwzx.js";import{t as l}from"./trophy-C7fTz98e.js";import{C as ie,a as ae,b as oe,c as se,d as u,h as ce,i as d,l as f,m as le,o as p,p as ue,s as de,u as fe,v as pe}from"./index-CI1XYnwk.js";import{s as me,t as m}from"./harga-referensi-BaLL1acW.js";import{X as h,Z as g,d as _,f as v,g as y,in as b,t as x,u as S}from"./BarChart-CCPNsfhB.js";var C=ie(oe(),1),w=ue(),he={wheat:c,carrot:s,coffee:o,beef:ne},ge=[...a.map(e=>({key:e,label:te[e].label,icon:he[te[e].ikon],href:`/nilai-ekonomi/${e}`})),{key:`perikanan`,label:`Perikanan`,icon:re,href:`/economic-value`}],T=[`#1d4ed8`,`#0d9488`,`#7c3aed`,`#db2777`,`#ea580c`,`#65a30d`,`#0891b2`,`#9333ea`,`#dc2626`,`#ca8a04`],E=`Semua Kecamatan`,D=e=>e==null?`—`:new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,maximumFractionDigits:0}).format(e),O=e=>e.toLocaleString(`id-ID`,{maximumFractionDigits:1}),_e=e=>!!e&&a.includes(e),ve=e=>{switch(e){case`resmi-live`:return(0,w.jsx)(d,{tone:`emerald`,children:`Resmi-live · Bappebti`});case`indikatif`:return(0,w.jsx)(d,{tone:`amber`,children:`Indikatif · perlu verifikasi`});default:return(0,w.jsx)(d,{tone:`slate`,children:`Belum ada harga`})}};function ye(){let{bidang:a}=pe(),o=_e(a)?a:null,[peternakanSubTab,setPeternakanSubTab]=(0,C.useState)("valuasi"),[liveUmkm,setLiveUmkm]=(0,C.useState)([]),[livePoultry,setLivePoultry]=(0,C.useState)([]),[liveNkv,setLiveNkv]=(0,C.useState)([]),[s,ne]=(0,C.useState)([]),[re,c]=(0,C.useState)(!0),[ie,oe]=(0,C.useState)(null),[ue,ye]=(0,C.useState)(0),[k,be]=(0,C.useState)(``),[A,xe]=(0,C.useState)(E),[j,Se]=(0,C.useState)(null),[M,N]=(0,C.useState)(`tahunan`);(0,C.useEffect)(()=>{if(!o)return;let e=!0;return c(!0),oe(null),i(o).then(t=>{e&&ne(t)}).catch(()=>{e&&(ne([]),oe(`Gagal memuat dataset produksi (backend & fallback CSV tidak merespons). Coba muat ulang.`))}).finally(()=>{e&&c(!1)}),()=>{e=!1}},[o,ue]),(0,C.useEffect)(()=>{if(!o)return;let e=!0;return Se(null),N(`tahunan`),ee(o).then(t=>{e&&t&&Se(t)}),()=>{e=!1}},[o,ue]);let P=j!=null&&j.length>0,F=(j??[]).some(e=>e.triwulan!=null),I=(0,C.useMemo)(()=>[...new Set(P?(j??[]).map(e=>String(e.tahun)):s.map(e=>e.tahun))].sort((e,t)=>t.localeCompare(e)),[P,j,s]);(0,C.useEffect)(()=>{if(I.length===0){be(``);return}I.includes(k)||be(I[0])},[I,k]);let L=(0,C.useMemo)(()=>[E,...[...new Set(s.filter(e=>e.tahun===k).map(e=>e.kecamatan))].sort((e,t)=>e.localeCompare(t))],[s,k]);(0,C.useEffect)(()=>{L.includes(A)||xe(E)},[L,A]);let R=(0,C.useMemo)(()=>s.filter(e=>e.tahun===k&&(A===E||e.kecamatan===A)),[s,k,A]),z=(0,C.useMemo)(()=>P?(j??[]).filter(e=>String(e.tahun)===k):[],[P,j,k]),B=(0,C.useMemo)(()=>!P||M!==`tahunan`?[]:z.filter(e=>e.triwulan==null).map(e=>({komoditas:e.komoditas,volume:e.volume,satuanVolume:e.satuan,konversiKg:0,hargaRp:e.hargaProdusen,satuanHarga:e.satuan,subtotalRp:e.nilaiRp,terhitung:!0,kelas:`resmi-live`,sumber:`Tabel nilai_ekonomi_tahunan — input Dinas`})).sort((e,t)=>t.subtotalRp-e.subtotalRp),[P,M,z]),V=(0,C.useMemo)(()=>{if(!P||M===`tahunan`)return[];let e=z.filter(e=>e.triwulan!=null);return M===`triwulan`?[1,2,3,4].map(t=>({key:`T${t}`,label:`Triwulan ${t}`,rows:e.filter(e=>e.triwulan===t)})):[{key:`S1`,label:`Semester 1 (T1–T2)`,rows:e.filter(e=>(e.triwulan??0)<=2)},{key:`S2`,label:`Semester 2 (T3–T4)`,rows:e.filter(e=>(e.triwulan??0)>=3)}]},[P,M,z]),H=(0,C.useMemo)(()=>{if(V.length===0)return[];let e=V.flatMap(e=>e.rows);return[...new Set(e.map(e=>e.komoditas))].sort().map(t=>{let n=V.map(e=>{let n=e.rows.filter(e=>e.komoditas===t);return{ada:n.length>0,volume:n.reduce((e,t)=>e+t.volume,0),nilai:n.reduce((e,t)=>e+t.nilaiRp,0)}});return{komoditas:t,satuan:e.find(e=>e.komoditas===t)?.satuan??``,sel:n,total:n.reduce((e,t)=>e+t.nilai,0)}}).sort((e,t)=>t.total-e.total)},[V]),U=(0,C.useMemo)(()=>B.reduce((e,t)=>e+t.subtotalRp,0),[B]),W=(0,C.useMemo)(()=>V.reduce((e,t)=>e+t.rows.reduce((e,t)=>e+t.nilaiRp,0),0),[V]),G=B[0],Ce=G&&U>0?G.subtotalRp/U*100:0,we=(0,C.useMemo)(()=>B.map(e=>({name:e.komoditas,nilai:e.subtotalRp/1e6})).sort((e,t)=>t.nilai-e.nilai).slice(0,12),[B]),Te=(0,C.useMemo)(()=>B.filter(e=>e.hargaRp!=null).map(e=>({name:e.komoditas,harga:(e.hargaRp??0)/1e6,satuan:`/${e.satuanHarga}`})).sort((e,t)=>t.harga-e.harga).slice(0,12),[B]),Ee=(0,C.useMemo)(()=>V.map(e=>({name:e.label,nilai:e.rows.reduce((e,t)=>e+t.nilaiRp,0)/1e6})),[V]),K=(0,C.useMemo)(()=>{let e=new Map;return R.forEach(t=>{let r=n(t),i=e.get(t.komoditas);i?(i.volume+=t.volume,i.konversiKg+=t.konversiKg,i.subtotalRp+=r??0):e.set(t.komoditas,{komoditas:t.komoditas,volume:t.volume,satuanVolume:t.satuanVolume,konversiKg:t.konversiKg,hargaRp:t.hargaRp,satuanHarga:t.satuanHarga,subtotalRp:r??0,terhitung:r!=null,kelas:t.kelas,sumber:t.sumber,catatan:t.catatan,bobotKgPerEkor:t.bobotKgPerEkor})}),[...e.values()].sort((e,t)=>t.subtotalRp-e.subtotalRp)},[R]),De=(0,C.useMemo)(()=>{let e=new Map;return R.forEach(t=>{let r=n(t)??0;e.set(t.kecamatan,(e.get(t.kecamatan)??0)+r)}),[...e.entries()].map(([e,t])=>({name:e,nilaiJuta:t/1e6})).sort((e,t)=>t.nilaiJuta-e.nilaiJuta)},[R]),q=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.subtotalRp,0),[K]),Oe=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.konversiKg,0),[K]),ke=(0,C.useMemo)(()=>K.reduce((e,t)=>e+t.volume,0),[K]),Ae=K[0]?.satuanVolume??`—`,je=Oe>0?q/Oe:null,J=K.find(e=>e.terhitung),Me=J&&q>0?J.subtotalRp/q*100:0,Ne=K.filter(e=>e.kelas===`resmi-live`).length,Pe=K.filter(e=>e.kelas===`indikatif`).length,Y=K.filter(e=>!e.terhitung).length;if(!o)return(0,w.jsx)(ce,{to:`/nilai-ekonomi/pangan`,replace:!0});let X=te[o],Fe=he[X.ikon],Z=`Estimasi Nilai (juta Rp)`,Q=`Nilai resmi (juta Rp)`,$=A===E?`${De.length} kecamatan`:A;return(0,w.jsx)(t,{children:(0,w.jsxs)(`div`,{className:`flex flex-col gap-6`,children:[(0,w.jsx)(se,{icon:(0,w.jsx)(Fe,{className:`h-6 w-6`,"aria-hidden":!0}),title:X.judul,subtitle:`${X.tagline} Harga referensi diakses ${m}.`}),o===`peternakan`?(0,w.jsxs)(`div`,{className:`flex flex-wrap gap-2`,children:[(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`valuasi`),className:peternakanSubTab===`valuasi`?`px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white shadow-sm`:`px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`1. Nilai Ekonomi Ternak`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`pakan`),className:peternakanSubTab===`pakan`?`px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white shadow-sm`:`px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`2. UMKM Pakan Ternak`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`poultry`),className:peternakanSubTab===`poultry`?`px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white shadow-sm`:`px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`3. Toko Peternakan & Poultry Shop`}),(0,w.jsx)(`button`,{type:`button`,onClick:()=>setPeternakanSubTab(`nkv`),className:peternakanSubTab===`nkv`?`px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white shadow-sm`:`px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50`,children:`4. Unit Usaha Ber-NKV`})]}):(0,w.jsx)(`nav`,{className:`flex flex-wrap gap-2`,"aria-label":`Pemilih bidang nilai ekonomi`,children:ge.map(e=>{let t=e.icon,n=e.key===o;return(0,w.jsxs)(le,{to:e.href,className:[`inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-medium transition-colors`,n?`bg-emerald-600 text-white shadow-sm`:`bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-emerald-50 hover:text-emerald-700`].join(` `),"aria-current":n?`page`:void 0,children:[(0,w.jsx)(t,{className:`h-4 w-4`,"aria-hidden":!0}),e.label]},e.key)})}),(o===`peternakan`&&peternakanSubTab!==`valuasi`?(0,w.jsxs)(`div`,{className:`flex flex-col gap-6`,children:[
   peternakanSubTab===`pakan`&&(0,w.jsxs)(`div`,{className:`flex flex-col gap-4`,children:[
     (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-      (0,w.jsx)(`h3`,{className:`text-sm font-bold text-slate-800 uppercase tracking-wider`,children:`Direktori Pelaku Usaha Pakan Ternak Mandiri`}),
-      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Unit usaha produksi pakan silase tebon jagung, konsentrat kambing/sapi, dan pakan fermentasi lokal di Kabupaten Banjarnegara.`})
-    ]}),
-    (0,w.jsxs)(`div`,{className:`p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs text-slate-600`,children:[
-      (0,w.jsxs)(`span`,{className:`flex items-center gap-2`,children:[
-        (0,w.jsx)(`span`,{className:`w-2 h-2 rounded-full bg-blue-600`}),
-        (0,w.jsx)(`span`,{className:`font-medium`,children:`Status Data: Formasi direktori telah disiapkan untuk menerima input/upload data resmi dinas (Zero Dummy Data).`})
-      ]}),
-      (0,w.jsx)(`span`,{className:`text-[11px] font-semibold text-slate-400 uppercase tracking-wider`,children:`Siap Upload`})
+      (0,w.jsx)(`h3`,{className:`text-xs font-semibold text-slate-700 uppercase tracking-wider`,children:`Direktori Pelaku Usaha Pakan Ternak Mandiri`}),
+      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Data pelaku usaha dan kelompok tani pengolah pakan ternak (silase tebon jagung, konsentrat, dan pakan fermentasi) di Kabupaten Banjarnegara.`})
     ]}),
     (0,w.jsx)(`div`,{className:`overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm`,children:
       (0,w.jsxs)(`table`,{className:`w-full text-sm`,children:[
-        (0,w.jsx)(`thead`,{children:(0,w.jsxs)(`tr`,{className:`border-b border-slate-200 bg-slate-50 text-slate-700 text-xs font-bold`,children:[
+        (0,w.jsx)(`thead`,{children:(0,w.jsxs)(`tr`,{className:`border-b border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold`,children:[
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`No`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kecamatan`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Nama Pelaku Usaha / Poktan`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Jenis Pakan Diproduksi`}),
-          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-right`,children:`Estimasi Kapasitas (Ton/Bulan)`}),
-          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-center`,children:`Status Verifikasi`})
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-right`,children:`Kapasitas (Ton/Bulan)`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kontak / Alamat`})
         ]})}),
-        (0,w.jsx)(`tbody`,{children:[
-          "Batur","Karangkobar","Madukara","Wanayasa","Purwanegara","Kalibening","Mandiraja","Pejawaran","Pagedongan","Banjarmangu"
-        ].map((k,idx)=>(0,w.jsxs)(`tr`,{key:k,className:`border-b border-slate-100 hover:bg-slate-50`,children:[
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500`,children:idx+1}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 font-semibold text-slate-800`,children:k}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:`Sentra Pakan Ternak Kec. `+k}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:idx%2===0?`Silase Tebon Jagung / Fermentasi`:`Konsentrat Kambing & Sapi`}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-right text-slate-400`,children:`—`}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-center`,children:(0,w.jsx)(`span`,{className:`px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-900`,children:`Menunggu Input Dinas`})})
-        ]}))})
+        (0,w.jsx)(`tbody`,{children:
+          liveUmkm.length > 0 ? liveUmkm.map((item, idx)=>(0,w.jsxs)(`tr`,{key:idx,className:`border-b border-slate-100 hover:bg-slate-50`,children:[
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500`,children:idx+1}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 font-medium text-slate-800`,children:item.kecamatan}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-700 font-semibold`,children:item.nama_usaha}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:item.jenis_pakan}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-right tabular-nums text-slate-900`,children:item.kapasitas_ton_bulan || `—`}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500 text-xs`,children:item.kontak || item.alamat || `—`})
+          ]})) : (0,w.jsx)(`tr`,{children:(0,w.jsx)(`td`,{colSpan:6,className:`px-4 py-8 text-center text-xs text-slate-500`,children:`Belum ada data pelaku usaha pakan ternak tersimpan. Data dapat diunggah melalui Menu Admin (Domain Peternakan & Keswan).`})})
+        })
       ]})
     })
   ]}),
   peternakanSubTab===`poultry`&&(0,w.jsxs)(`div`,{className:`flex flex-col gap-4`,children:[
     (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-      (0,w.jsx)(`h3`,{className:`text-sm font-bold text-slate-800 uppercase tracking-wider`,children:`Sebaran Toko Peternakan & Poultry Shop di 20 Kecamatan`}),
-      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Pemetaan sebaran kios sapronak, penyedia obat hewan, pakan unggas, dan pakan ternak di Kabupaten Banjarnegara.`})
-    ]}),
-    (0,w.jsxs)(`div`,{className:`grid grid-cols-1 sm:grid-cols-3 gap-4`,children:[
-      (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-xs font-semibold text-slate-500 uppercase`,children:`Wilayah Cakupan`}),
-        (0,w.jsx)(`p`,{className:`text-xl font-bold text-slate-800 my-1`,children:`20 Kecamatan`}),
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400`,children:`Seluruh Banjarnegara`})
-      ]}),
-      (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-xs font-semibold text-slate-500 uppercase`,children:`Kategori Layanan`}),
-        (0,w.jsx)(`p`,{className:`text-xl font-bold text-emerald-700 my-1`,children:`Sapronak & Obat`}),
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400`,children:`Pakan, vaksin & vitamin`})
-      ]}),
-      (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-xs font-semibold text-slate-500 uppercase`,children:`Status Geospasial`}),
-        (0,w.jsx)(`p`,{className:`text-xl font-bold text-blue-700 my-1`,children:`Pemetaan GPS`}),
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400`,children:`Menunggu koordinat dinas`})
-      ]})
-    ]}),
-    (0,w.jsxs)(`div`,{className:`p-8 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center`,children:[
-      (0,w.jsx)(`p`,{className:`text-sm font-bold text-slate-700`,children:`Modul WebGIS Peta Sebaran Poultry Shop`}),
-      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 max-w-md mx-auto`,children:`Titik koordinat kios sapronak dan poultry shop resmi binaan dinas sedang dalam proses sinkronisasi database geospasial.`})
-    ]})
-  ]}),
-  peternakanSubTab===`nkv`&&(0,w.jsxs)(`div`,{className:`flex flex-col gap-4`,children:[
-    (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
-      (0,w.jsx)(`h3`,{className:`text-sm font-bold text-slate-800 uppercase tracking-wider`,children:`Register Sertifikasi Nomor Kontrol Veteriner (NKV)`}),
-      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Jaminan kelayakan dasar higienitas dan sanitasi unit usaha produk asal hewan sesuai Permentan No. 11/2020 di Kabupaten Banjarnegara.`})
-    ]}),
-    (0,w.jsxs)(`div`,{className:`grid grid-cols-2 sm:grid-cols-4 gap-3 text-center`,children:[
-      (0,w.jsxs)(`div`,{className:`p-3 bg-white rounded-lg border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400 font-semibold block uppercase`,children:`RPH Ruminansia`}),
-        (0,w.jsx)(`span`,{className:`text-sm font-bold text-slate-800 mt-1 block`,children:`RPH Pemkab & Swasta`})
-      ]}),
-      (0,w.jsxs)(`div`,{className:`p-3 bg-white rounded-lg border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400 font-semibold block uppercase`,children:`RPH Unggas (RPH-U)`}),
-        (0,w.jsx)(`span`,{className:`text-sm font-bold text-slate-800 mt-1 block`,children:`Pemotongan Ayam`})
-      ]}),
-      (0,w.jsxs)(`div`,{className:`p-3 bg-white rounded-lg border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400 font-semibold block uppercase`,children:`Peternakan Layer`}),
-        (0,w.jsx)(`span`,{className:`text-sm font-bold text-slate-800 mt-1 block`,children:`Higienitas Telur`})
-      ]}),
-      (0,w.jsxs)(`div`,{className:`p-3 bg-white rounded-lg border border-slate-200 shadow-sm`,children:[
-        (0,w.jsx)(`span`,{className:`text-[11px] text-slate-400 font-semibold block uppercase`,children:`Kios Pangan Hewan`}),
-        (0,w.jsx)(`span`,{className:`text-sm font-bold text-slate-800 mt-1 block`,children:`Kios Daging & Telur`})
-      ]})
+      (0,w.jsx)(`h3`,{className:`text-xs font-semibold text-slate-700 uppercase tracking-wider`,children:`Sebaran Toko Peternakan dan Poultry Shop`}),
+      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Data kios sapronak, penyedia obat hewan, vitamin, dan pakan ternak di Kabupaten Banjarnegara.`})
     ]}),
     (0,w.jsx)(`div`,{className:`overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm`,children:
       (0,w.jsxs)(`table`,{className:`w-full text-sm`,children:[
-        (0,w.jsx)(`thead`,{children:(0,w.jsxs)(`tr`,{className:`border-b border-slate-200 bg-slate-50 text-slate-700 text-xs font-bold`,children:[
+        (0,w.jsx)(`thead`,{children:(0,w.jsxs)(`tr`,{className:`border-b border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold`,children:[
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`No`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kecamatan`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Nama Toko / Kios`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Layanan / Produk`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Alamat / Kontak`})
+        ]})}),
+        (0,w.jsx)(`tbody`,{children:
+          livePoultry.length > 0 ? livePoultry.map((item, idx)=>(0,w.jsxs)(`tr`,{key:idx,className:`border-b border-slate-100 hover:bg-slate-50`,children:[
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500`,children:idx+1}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 font-medium text-slate-800`,children:item.kecamatan}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-700 font-semibold`,children:item.nama_toko}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:item.jenis_layanan || `Sapronak & Pakan`}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500 text-xs`,children:item.alamat || item.kontak || `—`})
+          ]})) : (0,w.jsx)(`tr`,{children:(0,w.jsx)(`td`,{colSpan:5,className:`px-4 py-8 text-center text-xs text-slate-500`,children:`Belum ada data toko peternakan / poultry shop tersimpan. Data dapat diunggah melalui Menu Admin (Domain Peternakan & Keswan).`})})
+        })
+      ]})
+    })
+  ]}),
+  peternakanSubTab===`nkv`&&(0,w.jsxs)(`div`,{className:`flex flex-col gap-4`,children:[
+    (0,w.jsxs)(`div`,{className:`p-4 bg-white rounded-xl border border-slate-200 shadow-sm`,children:[
+      (0,w.jsx)(`h3`,{className:`text-xs font-semibold text-slate-700 uppercase tracking-wider`,children:`Register Sertifikasi Nomor Kontrol Veteriner (NKV)`}),
+      (0,w.jsx)(`p`,{className:`text-xs text-slate-500 mt-1 leading-relaxed`,children:`Daftar unit usaha produk hewan yang telah memiliki registrasi dan sertifikasi Nomor Kontrol Veteriner di Kabupaten Banjarnegara.`})
+    ]}),
+    (0,w.jsx)(`div`,{className:`overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm`,children:
+      (0,w.jsxs)(`table`,{className:`w-full text-sm`,children:[
+        (0,w.jsx)(`thead`,{children:(0,w.jsxs)(`tr`,{className:`border-b border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold`,children:[
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`No`}),
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kecamatan`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Nama Unit Usaha`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Nomor NKV`}),
           (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kategori Usaha`}),
-          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-left`,children:`Kecamatan`}),
-          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-center`,children:`Status NKV`})
+          (0,w.jsx)(`th`,{className:`px-3 py-2.5 text-center`,children:`Status Verifikasi`})
         ]})}),
-        (0,w.jsx)(`tbody`,{children:[
-          {nama:"RPH Ruminansia Klampok",kat:"RPH-Ruminansia",kec:"Purwareja Klampok"},
-          {nama:"RPH Unggas Banjarnegara",kat:"RPH-Unggas",kec:"Banjarnegara"},
-          {nama:"Peternakan Ayam Layer Mandiraja",kat:"Budidaya Unggas Petelur",kec:"Mandiraja"},
-          {nama:"Sentra Pengolahan Susu Dieng",kat:"Unit Pengolahan Susu",kec:"Batur"}
-        ].map((item,idx)=>(0,w.jsxs)(`tr`,{key:idx,className:`border-b border-slate-100 hover:bg-slate-50`,children:[
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500`,children:idx+1}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 font-semibold text-slate-800`,children:item.nama}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-400 font-mono text-xs`,children:`Menunggu Verifikasi`}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:item.kat}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:item.kec}),
-          (0,w.jsx)(`td`,{className:`px-3 py-2 text-center`,children:(0,w.jsx)(`span`,{className:`px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-900`,children:`Registrasi Dinas`})})
-        ]}))})
+        (0,w.jsx)(`tbody`,{children:
+          liveNkv.length > 0 ? liveNkv.map((item, idx)=>(0,w.jsxs)(`tr`,{key:idx,className:`border-b border-slate-100 hover:bg-slate-50`,children:[
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-500`,children:idx+1}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 font-medium text-slate-800`,children:item.kecamatan}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 font-semibold text-slate-800`,children:item.nama_unit_usaha}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 font-mono text-xs text-slate-700`,children:item.nomor_nkv || `Proses Registrasi`}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-slate-600`,children:item.kategori}),
+            (0,w.jsx)(`td`,{className:`px-3 py-2 text-center`,children:(0,w.jsx)(`span`,{className:`px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800`,children:item.status_verifikasi || `Tercatat`})})
+          ]})) : (0,w.jsx)(`tr`,{children:(0,w.jsx)(`td`,{colSpan:6,className:`px-4 py-8 text-center text-xs text-slate-500`,children:`Belum ada data unit usaha ber-NKV tersimpan. Data dapat diunggah melalui Menu Admin (Domain Peternakan & Keswan).`})})
+        })
       ]})
     })
   ]})

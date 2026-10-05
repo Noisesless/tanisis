@@ -61,7 +61,7 @@ const FLOW_LABELS = ["Sapi Perah", "Sapi Potong", "Kerbau", "Kuda", "Kambing", "
 const FLOW_DB_TO_LABEL = { "Sapi Perah": "Sapi Perah", Sapi: "Sapi Potong", Kerbau: "Kerbau", Kuda: "Kuda", Kambing: "Kambing", Domba: "Domba" };
 
 const RPH_LABELS = ["Sapi", "Kerbau", "Babi", "Kambing", "Domba"];
-const UNGGAS_LABELS = ["Ayam Ras Layer", "Ayam Kampung"];
+const UNGGAS_LABELS = ["Ayam Ras Layer", "Ayam Broiler", "Ayam Kampung", "Itik", "Puyuh"];
 
 async function ternakFlow({ table, where, params, labels, dbToLabel, valueCol, unit }) {
   const rows = await q(
@@ -124,9 +124,12 @@ peternakanRouter.get(
   route(() => ternakFlow({ table: "ternak_daging", where: "WHERE t.kelompok = ?", params: ["unggas"], labels: UNGGAS_LABELS, valueCol: "produksi_kg", unit: "kg" })),
 );
 
-/** GET /api/v1/peternakan/susu-kulit -> TernakFlow[] (produksi kulit & susu per grup ternak).
- *  Sumber BPS memakai 1 kolom per grup ternak tanpa memisahkan satuan kulit (lembar) vs
- *  susu (liter) — unit dilabeli "gabungan" dan catatan tersimpan per baris di tabel. */
+/** GET /api/v1/peternakan/susu-kulit -> TernakFlow[] (produksi kulit terpilah per jenis hewan, susu, wol & hasil ikutan).
+ *  Dipisahkan secara tegas: Kulit Sapi, Kulit Kerbau, Kulit Kambing, Kulit Domba, Kulit Kelinci, Susu Sapi Segar, Susu Kambing, Wol Domba Batur, Tulang & Tanduk. */
+const KULIT_SUSU_LABELS = [
+  "Kulit Sapi", "Kulit Kerbau", "Kulit Kambing", "Kulit Domba", "Kulit Kelinci",
+  "Susu Sapi Segar", "Susu Kambing", "Wol Domba Batur", "Tulang & Tanduk"
+];
 peternakanRouter.get(
   "/susu-kulit",
   route(() =>
@@ -134,24 +137,202 @@ peternakanRouter.get(
       table: "ternak_susu_kulit",
       where: "",
       params: [],
-      labels: ["Sapi/Kerbau", "Kambing/Domba"],
+      labels: KULIT_SUSU_LABELS,
       valueCol: "nilai",
-      unit: "gabungan (kulit lembar / susu liter)",
+      unit: "lembar / liter / kg",
     }),
   ),
 );
 
 /** GET /api/v1/peternakan/daging -> TernakFlow[] (kg) — daging ternak besar & kecil
- *  (Sapi, Kerbau, Kambing, Domba, Babi). Daging unggas lihat /daging-unggas. */
-const DAGING_TERNAK_LABELS = ["Sapi", "Kerbau", "Kambing", "Domba", "Babi"];
+ *  (Sapi, Kerbau, Kambing, Domba, Domba Batur, Babi, Kelinci). Daging unggas lihat /daging-unggas. */
+const DAGING_TERNAK_LABELS = ["Sapi", "Kerbau", "Kambing", "Domba", "Domba Batur", "Babi", "Kelinci"];
 peternakanRouter.get(
   "/daging",
   route(() => ternakFlow({ table: "ternak_daging", where: "WHERE t.kelompok = ?", params: ["ternak"], labels: DAGING_TERNAK_LABELS, valueCol: "produksi_kg", unit: "kg" })),
 );
 
-/** GET /api/v1/peternakan/telur -> TernakFlow[] (butir) — telur ayam kampung, ras layer & itik. */
-const TELUR_LABELS = ["Ayam Kampung", "Ayam Ras Layer", "Itik"];
+/** GET /api/v1/peternakan/telur -> TernakFlow[] (butir/kg) — telur ayam kampung, ras layer, itik & puyuh. */
+const TELUR_LABELS = ["Ayam Ras Layer", "Ayam Kampung", "Itik", "Puyuh"];
 peternakanRouter.get(
   "/telur",
   route(() => ternakFlow({ table: "ternak_telur", where: "", params: [], labels: TELUR_LABELS, valueCol: "produksi_kg", unit: "butir" })),
 );
+
+/** GET /api/v1/peternakan/hpt -> data lahan hijauan pakan ternak */
+peternakanRouter.get(
+  "/hpt",
+  route(async (req) => {
+    const { tahun, kecamatan_id } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (tahun) { where += " AND h.tahun = ?"; params.push(Number(tahun)); }
+    if (kecamatan_id) { where += " AND h.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    return q(
+      `SELECT h.*, k.nama AS kecamatan 
+       FROM ternak_hpt h JOIN kecamatan k ON k.id = h.kecamatan_id 
+       ${where} ORDER BY h.tahun DESC, k.nama ASC`,
+      params,
+    );
+  }),
+);
+
+/** GET /api/v1/peternakan/umkm-pakan -> direktori UMKM pakan ternak mandiri */
+peternakanRouter.get(
+  "/umkm-pakan",
+  route(async (req) => {
+    const { tahun, kecamatan_id } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (tahun) { where += " AND u.tahun = ?"; params.push(Number(tahun)); }
+    if (kecamatan_id) { where += " AND u.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    return q(
+      `SELECT u.*, k.nama AS kecamatan 
+       FROM ternak_umkm_pakan u JOIN kecamatan k ON k.id = u.kecamatan_id 
+       ${where} ORDER BY u.tahun DESC, k.nama ASC`,
+      params,
+    );
+  }),
+);
+
+/** GET /api/v1/peternakan/poultry-shop -> sebaran toko peternakan / poultry shop */
+peternakanRouter.get(
+  "/poultry-shop",
+  route(async (req) => {
+    const { tahun, kecamatan_id } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (tahun) { where += " AND p.tahun = ?"; params.push(Number(tahun)); }
+    if (kecamatan_id) { where += " AND p.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    return q(
+      `SELECT p.*, k.nama AS kecamatan 
+       FROM ternak_poultry_shop p JOIN kecamatan k ON k.id = p.kecamatan_id 
+       ${where} ORDER BY p.tahun DESC, k.nama ASC`,
+      params,
+    );
+  }),
+);
+
+/** GET /api/v1/peternakan/nkv -> unit usaha bersertifikat Nomor Kontrol Veteriner (NKV) */
+peternakanRouter.get(
+  "/nkv",
+  route(async (req) => {
+    const { tahun, kecamatan_id } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (tahun) { where += " AND n.tahun = ?"; params.push(Number(tahun)); }
+    if (kecamatan_id) { where += " AND n.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    return q(
+      `SELECT n.*, k.nama AS kecamatan 
+       FROM ternak_nkv n JOIN kecamatan k ON k.id = n.kecamatan_id 
+       ${where} ORDER BY n.tahun DESC, k.nama ASC`,
+      params,
+    );
+  }),
+);
+
+/** POST /api/v1/peternakan/entry -> Endpoint entry manual bagian peternakan yang kosong */
+peternakanRouter.post(
+  "/entry",
+  route(async (req) => {
+    const { kategori, kecamatan, tahun, bulan, nama, jenis, jumlah, nilai, satuan, catatan, alamat, kontak, koordinat, nomor_nkv, status } = req.body || {};
+    if (!kategori) throw Object.assign(new Error("Kategori entry wajib ditentukan (hpt, umkm_pakan, poultry_shop, nkv, susu_kulit, daging, telur)."), { status: 400 });
+    if (!kecamatan) throw Object.assign(new Error("Kecamatan wajib diisi."), { status: 400 });
+
+    // Cari ID kecamatan
+    const kecRows = await q("SELECT id FROM kecamatan WHERE LOWER(nama) = LOWER(?) LIMIT 1", [kecamatan.trim()]);
+    if (kecRows.length === 0) throw Object.assign(new Error(`Kecamatan '${kecamatan}' tidak ditemukan di Banjarnegara.`), { status: 400 });
+    const kecId = kecRows[0].id;
+    const thn = Number(tahun) || new Date().getFullYear();
+
+    if (kategori === "hpt") {
+      const jns = jenis || "Rumput Odot";
+      const luas = Number(jumlah || nilai || 0);
+      const prod = Number(req.body.produksi || 0);
+      const st = Number(req.body.kapasitas_st || (luas * 100 / 12));
+      await q(
+        `INSERT INTO ternak_hpt (kecamatan_id, tahun, bulan, jenis_hijauan, luas_ha, produksi_ton, kapasitas_st, catatan, sumber)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'manual')`,
+        [kecId, thn, bulan || null, jns, luas, prod, st, catatan || null],
+      );
+      return { ok: true, message: `Data Lahan HPT ${jns} di Kec. ${kecamatan} berhasil disimpan.` };
+    }
+
+    if (kategori === "umkm_pakan") {
+      const nm = nama || "Kelompok Tani Pakan";
+      const jns = jenis || "Silase Tebon Jagung";
+      const kap = Number(jumlah || nilai || 0);
+      await q(
+        `INSERT INTO ternak_umkm_pakan (kecamatan_id, tahun, bulan, nama_usaha, jenis_pakan, kapasitas_ton_bulan, alamat, kontak, catatan, sumber)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'manual')`,
+        [kecId, thn, bulan || null, nm, jns, kap, alamat || null, kontak || null, catatan || null],
+      );
+      return { ok: true, message: `Data UMKM Pakan '${nm}' di Kec. ${kecamatan} berhasil disimpan.` };
+    }
+
+    if (kategori === "poultry_shop") {
+      const nm = nama || "Toko Sapronak";
+      const lyn = jenis || req.body.layanan || "Pakan, Obat & Sapronak";
+      await q(
+        `INSERT INTO ternak_poultry_shop (kecamatan_id, tahun, bulan, nama_toko, alamat, jenis_layanan, koordinat, kontak, catatan, sumber)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'manual')`,
+        [kecId, thn, bulan || null, nm, alamat || null, lyn, koordinat || null, kontak || null, catatan || null],
+      );
+      return { ok: true, message: `Data Toko Peternakan '${nm}' di Kec. ${kecamatan} berhasil disimpan.` };
+    }
+
+    if (kategori === "nkv") {
+      const nm = nama || "Unit Usaha Produk Hewan";
+      const noNkv = nomor_nkv || "Dalam Proses";
+      const kat = jenis || req.body.kategori_usaha || "RPH / Kios Produk Hewan";
+      const stat = status || "Registrasi";
+      await q(
+        `INSERT INTO ternak_nkv (kecamatan_id, tahun, bulan, nama_unit_usaha, nomor_nkv, kategori, status_verifikasi, catatan, sumber)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'manual')`,
+        [kecId, thn, bulan || null, nm, noNkv, kat, stat, catatan || null],
+      );
+      return { ok: true, message: `Data Sertifikasi NKV '${nm}' di Kec. ${kecamatan} berhasil disimpan.` };
+    }
+
+    if (kategori === "susu_kulit") {
+      const jns = jenis || "Kulit Sapi";
+      const val = Number(jumlah || nilai || 0);
+      await q(
+        `INSERT INTO ternak_susu_kulit (kecamatan_id, jenis, tahun, nilai, catatan, sumber)
+         VALUES (?, ?, ?, ?, ?, 'manual')
+         ON DUPLICATE KEY UPDATE nilai = VALUES(nilai), catatan = VALUES(catatan)`,
+        [kecId, jns, thn, val, catatan || null],
+      );
+      return { ok: true, message: `Data ${jns} di Kec. ${kecamatan} berhasil disimpan (${val} ${satuan || "lembar/liter"}).` };
+    }
+
+    if (kategori === "daging") {
+      const jns = jenis || "Sapi";
+      const klp = ["Ayam Ras Layer", "Ayam Broiler", "Ayam Kampung", "Itik", "Puyuh"].includes(jns) ? "unggas" : "ternak";
+      const val = Number(jumlah || nilai || 0);
+      await q(
+        `INSERT INTO ternak_daging (kecamatan_id, kelompok, jenis, tahun, produksi_kg, sumber)
+         VALUES (?, ?, ?, ?, ?, 'manual')
+         ON DUPLICATE KEY UPDATE produksi_kg = VALUES(produksi_kg)`,
+        [kecId, klp, jns, thn, val],
+      );
+      return { ok: true, message: `Data Produksi Daging ${jns} di Kec. ${kecamatan} berhasil disimpan (${val} kg).` };
+    }
+
+    if (kategori === "telur") {
+      const jns = jenis || "Ayam Ras Layer";
+      const val = Number(jumlah || nilai || 0);
+      await q(
+        `INSERT INTO ternak_telur (kecamatan_id, jenis, tahun, produksi_kg, sumber)
+         VALUES (?, ?, ?, ?, 'manual')
+         ON DUPLICATE KEY UPDATE produksi_kg = VALUES(produksi_kg)`,
+        [kecId, jns, thn, val],
+      );
+      return { ok: true, message: `Data Produksi Telur ${jns} di Kec. ${kecamatan} berhasil disimpan (${val} butir).` };
+    }
+
+    throw Object.assign(new Error(`Kategori '${kategori}' belum didukung.`), { status: 400 });
+  }),
+);
+
+
