@@ -13,6 +13,7 @@ const POPULASI_MAPS = {
   kecil: new Map([
     ["Kambing", "kambing"],
     ["Domba", "domba"],
+    ["Domba Batur", "dombaBatur"],
     ["Babi", "babi"],
     ["Kelinci", "kelinci"],
   ]),
@@ -145,11 +146,40 @@ peternakanRouter.get(
 );
 
 /** GET /api/v1/peternakan/daging -> TernakFlow[] (kg) — daging ternak besar & kecil
- *  (Sapi, Kerbau, Kambing, Domba, Domba Batur, Babi, Kelinci). Daging unggas lihat /daging-unggas. */
-const DAGING_TERNAK_LABELS = ["Sapi", "Kerbau", "Kambing", "Domba", "Domba Batur", "Babi", "Kelinci"];
+ *  (Sapi, Kerbau, Kambing, Domba, Babi, Kelinci). Daging unggas lihat /daging-unggas.
+ *  CATATAN: Domba Batur TIDAK dicatat sebagai komoditas daging karena merupakan ternak hias / bibit yang dipasarkan per ekor hidup. */
+const DAGING_TERNAK_LABELS = ["Sapi", "Kerbau", "Kambing", "Domba", "Babi", "Kelinci"];
 peternakanRouter.get(
   "/daging",
   route(() => ternakFlow({ table: "ternak_daging", where: "WHERE t.kelompok = ?", params: ["ternak"], labels: DAGING_TERNAK_LABELS, valueCol: "produksi_kg", unit: "kg" })),
+);
+
+/** GET /api/v1/peternakan/domba-batur -> data populasi Domba Batur (ternak hias & bibit ekor) */
+peternakanRouter.get(
+  "/domba-batur",
+  route(async (req) => {
+    const { tahun } = req.query;
+    let sql = `
+      SELECT k.nama AS kecamatan, t.tahun, t.jumlah_ekor AS ekor
+      FROM ternak_populasi t
+      JOIN kecamatan k ON k.id = t.kecamatan_id
+      WHERE (t.jenis = 'Domba Batur' OR (t.jenis = 'Domba' AND k.nama IN ('Batur', 'Pejawaran', 'Wanayasa', 'Kalibening', 'Karangkobar')))
+    `;
+    const params = [];
+    if (tahun) {
+      sql += ` AND t.tahun = ?`;
+      params.push(Number(tahun));
+    }
+    sql += ` ORDER BY t.tahun DESC, t.jumlah_ekor DESC`;
+    const rows = await q(sql, params);
+    return {
+      ok: true,
+      komoditas: "Domba Batur (Khas Banjarnegara)",
+      kategori: "Ternak Hias & Bibit Unggul (Jual Ekor)",
+      satuan: "ekor",
+      items: rows,
+    };
+  }),
 );
 
 /** GET /api/v1/peternakan/telur -> TernakFlow[] (butir/kg) — telur ayam kampung, ras layer, itik & puyuh. */
@@ -236,7 +266,7 @@ peternakanRouter.post(
   "/entry",
   route(async (req) => {
     const { kategori, kecamatan, tahun, bulan, nama, jenis, jumlah, nilai, satuan, catatan, alamat, kontak, koordinat, nomor_nkv, status } = req.body || {};
-    if (!kategori) throw Object.assign(new Error("Kategori entry wajib ditentukan (hpt, umkm_pakan, poultry_shop, nkv, susu_kulit, daging, telur)."), { status: 400 });
+    if (!kategori) throw Object.assign(new Error("Kategori entry wajib ditentukan (populasi, hpt, umkm_pakan, poultry_shop, nkv, susu_kulit, daging, telur)."), { status: 400 });
     if (!kecamatan) throw Object.assign(new Error("Kecamatan wajib diisi."), { status: 400 });
 
     // Cari ID kecamatan
@@ -329,6 +359,19 @@ peternakanRouter.post(
         [kecId, jns, thn, val],
       );
       return { ok: true, message: `Data Produksi Telur ${jns} di Kec. ${kecamatan} berhasil disimpan (${val} butir).` };
+    }
+
+    if (kategori === "populasi") {
+      const jns = jenis || "Domba Batur";
+      const klp = ["Sapi", "Sapi Potong", "Sapi Perah", "Kerbau", "Kuda"].includes(jns) ? "besar" : ["Ayam Kampung", "Ayam Broiler", "Ayam Ras Layer", "Itik Biasa", "Itik Manila", "Burung Puyuh"].includes(jns) ? "unggas" : "kecil";
+      const val = Number(jumlah || nilai || 0);
+      await q(
+        `INSERT INTO ternak_populasi (kecamatan_id, kelompok, jenis, tahun, jumlah_ekor, sumber)
+         VALUES (?, ?, ?, ?, ?, 'manual')
+         ON DUPLICATE KEY UPDATE jumlah_ekor = VALUES(jumlah_ekor)`,
+        [kecId, klp, jns, thn, val],
+      );
+      return { ok: true, message: `Data Populasi ${jns} di Kec. ${kecamatan} berhasil disimpan (${val} ekor).` };
     }
 
     throw Object.assign(new Error(`Kategori '${kategori}' belum didukung.`), { status: 400 });

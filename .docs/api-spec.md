@@ -107,8 +107,10 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
   Sebaran kios sapronak, penyedia obat hewan, vitamin, dan poultry shop per kecamatan.
 - **`GET /api/v1/peternakan/nkv`**  
   Register unit usaha produk asal hewan bersertifikat Nomor Kontrol Veteriner (NKV).
+- **`GET /api/v1/peternakan/domba-batur`**  
+  Data sebaran populasi Domba Batur (ternak hias & bibit unggul per ekor) di sentra Dataran Tinggi Dieng (Batur, Pejawaran, Wanayasa, Kalibening, Karangkobar) per tahun dalam satuan ekor.
 - **`POST /api/v1/peternakan/entry`**  
-  Endpoint entry data manual bagian peternakan yang kosong (kategori: `hpt`, `umkm_pakan`, `poultry_shop`, `nkv`, `susu_kulit`, `daging`, `telur`). Parameter: `kecamatan`, `tahun`, `bulan`, `jenis/nama`, `jumlah/nilai`, `satuan`, `catatan/alamat/kontak`.
+  Endpoint entry data manual bagian peternakan yang kosong (kategori: `populasi`, `hpt`, `umkm_pakan`, `poultry_shop`, `nkv`, `susu_kulit`, `daging`, `telur`). Parameter: `kecamatan`, `tahun`, `bulan`, `jenis/nama`, `jumlah/nilai`, `satuan`, `catatan/alamat/kontak`.
 
 ### D. Perikanan
 - **`GET /api/v1/perikanan/jenis-ikan`**  

@@ -76,7 +76,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/peternakan/umkm-pakan` | `src/routes/peternakan.js` | Publik | Direktori pelaku usaha UMKM pakan ternak mandiri |
 | `GET` | `/v1/peternakan/poultry-shop` | `src/routes/peternakan.js` | Publik | Sebaran toko peternakan & poultry shop per kecamatan |
 | `GET` | `/v1/peternakan/nkv` | `src/routes/peternakan.js` | Publik | Register unit usaha bersertifikat Nomor Kontrol Veteriner |
-| `POST`| `/v1/peternakan/entry` | `src/routes/peternakan.js` | Publik/Admin | Endpoint entry manual data bagian peternakan yang kosong |
+| `GET` | `/v1/peternakan/domba-batur` | `src/routes/peternakan.js` | Publik | Populasi Domba Batur (ternak hias & bibit unggul Dieng dalam satuan ekor) |
+| `POST`| `/v1/peternakan/entry` | `src/routes/peternakan.js` | Publik/Admin | Endpoint entry manual data bagian peternakan yang kosong (populasi, HPT, dll) |
 | `GET` | `/v1/perikanan/jenis-ikan` | `src/routes/perikanan.js` | Publik | Data 10 jenis ikan definitif budidaya 2020–2025 (Lele, Nila, Gurami, Bawal, dll) |
 | `GET` | `/v1/perikanan/budidaya-luasan` | `src/routes/perikanan.js` | Publik | Luas lahan vs produksi perikanan & rasio produktivitas per kecamatan |
 | `GET` | `/v1/perikanan/hias` | `src/routes/perikanan.js` | Publik | Data perikanan ikan hias per kecamatan & varietas |

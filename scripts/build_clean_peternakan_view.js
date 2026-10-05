@@ -35,7 +35,6 @@ const UTAMA_SPECIES = {
   daging_kerbau: { label: "Daging Kerbau", group: "Daging", unit: "kg", api: "/api/v1/peternakan/daging", field: "Kerbau" },
   daging_kambing: { label: "Daging Kambing", group: "Daging", unit: "kg", api: "/api/v1/peternakan/daging", field: "Kambing" },
   daging_domba: { label: "Daging Domba", group: "Daging", unit: "kg", api: "/api/v1/peternakan/daging", field: "Domba" },
-  daging_domba_batur: { label: "Domba Batur (Khas)", group: "Daging", unit: "kg", isSpecial: true },
   daging_ayam_kampung: { label: "Daging Ayam Kampung", group: "Daging", unit: "kg", api: "/api/v1/peternakan/daging-unggas", field: "Ayam Kampung" },
   daging_ayam_broiler: { label: "Daging Ayam Broiler / Layer", group: "Daging", unit: "kg", api: "/api/v1/peternakan/daging-unggas", field: "Ayam Ras Layer" },
   daging_itik: { label: "Daging Itik / Bebek", group: "Daging", unit: "kg", isSpecial: true },

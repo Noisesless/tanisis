@@ -113,13 +113,20 @@ export const DOMAINS = {
     label: "Peternakan & Keswan",
     desc: "Populasi ternak, produksi daging/telur/susu/kulit terpilah, HPT, UMKM pakan, poultry shop, NKV, aliran ternak, dan pemotongan RPH.",
     sheets: [
-      { table: "ternak_populasi", name: "Populasi", kecamatan: true, key: ["kecamatan", "kelompok", "jenis", "tahun"] },
+      {
+        table: "ternak_populasi",
+        name: "Populasi",
+        kecamatan: true,
+        key: ["kecamatan", "kelompok", "jenis", "tahun"],
+        enums: { jenis: ["Sapi Potong", "Sapi Perah", "Kerbau", "Kuda", "Kambing", "Domba", "Domba Batur", "Kelinci", "Babi", "Ayam Kampung", "Ayam Broiler", "Ayam Ras Layer", "Itik Biasa", "Itik Manila", "Burung Puyuh"] },
+        labels: { jumlah_ekor: "Banyaknya Populasi (Ekor)" },
+      },
       {
         table: "ternak_daging",
         name: "Daging",
         kecamatan: true,
         key: ["kecamatan", "kelompok", "jenis", "tahun"],
-        enums: { jenis: ["Sapi", "Kerbau", "Kambing", "Domba", "Domba Batur", "Ayam Broiler", "Ayam Kampung", "Itik", "Puyuh", "Kelinci"] },
+        enums: { jenis: ["Sapi", "Kerbau", "Kambing", "Domba", "Ayam Broiler", "Ayam Kampung", "Itik", "Puyuh", "Kelinci"] },
         labels: { produksi_kg: "Produksi (Kg)" },
       },
       {

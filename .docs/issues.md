@@ -164,6 +164,7 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   5. Menegakkan *Strict Zero-Empty Law* di frontend: seluruh record bernilai 0 otomatis tidak ditampilkan di tabel publik.
   6. Menghapus 100% emoji mentah dan simbol segitiga dari seluruh bundel peternakan dan layer peta, menggantinya dengan badge enterprise dan tipografi lugas.
   7. Membangun 4 tab tertata pada rute `/nilai-ekonomi/peternakan` dengan placeholder bersih tanpa data tiruan/fiktif.
+  8. Menetapkan Domba Batur secara tunggal dan eksklusif pada Populasi Ekor (sebagai ternak hias dan bibit unggul yang dipasarkan per ekor hidup), menghapusnya dari komoditas daging karkas, menyatukan nama entri tunggal di `POPULASI_MAPS.kecil`, serta menyajikan tabel populasi ekor sentra Dataran Tinggi Dieng di antarmuka Populasi.
 
 ---
 

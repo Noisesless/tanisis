@@ -50,8 +50,8 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Perkebunan** | `perkebunan_areal` | `(kecamatan_id, tanaman, tahun)` | Luas areal tanaman perkebunan (TM, TBM, TR) |
 | **Perkebunan** | `perkebunan_produksi` | `(kecamatan_id, tanaman, tahun)` | Produksi komoditas perkebunan per kecamatan |
 | **Perkebunan** | `perkebunan_produksi_kabupaten` | `(tanaman, tahun)` | Produksi perkebunan tingkat kabupaten |
-| **Peternakan** | `ternak_populasi` | `(kecamatan_id, kelompok, jenis, tahun)` | Populasi ternak hidup (besar, kecil, unggas, inc. Domba Batur) |
-| **Peternakan** | `ternak_daging` | `(kecamatan_id, kelompok, jenis, tahun)` | Produksi daging ternak besar, kecil, unggas, puyuh, kelinci |
+| **Peternakan** | `ternak_populasi` | `(kecamatan_id, kelompok, jenis, tahun)` | Populasi ternak hidup per ekor (besar, kecil, unggas, inc. Domba Batur sebagai ternak hias & bibit ekor) |
+| **Peternakan** | `ternak_daging` | `(kecamatan_id, kelompok, jenis, tahun)` | Produksi daging ternak potong (Sapi, Kerbau, Kambing, Domba, Kelinci, Unggas — tidak mencakup Domba Batur) |
 | **Peternakan** | `ternak_telur` | `(kecamatan_id, jenis, tahun)` | Produksi telur (ayam ras layer, ayam kampung, itik, puyuh) |
 | **Peternakan** | `ternak_susu_kulit` | `(kecamatan_id, jenis, tahun)` | Produksi susu (sapi, kambing) & kulit terpilah per jenis hewan (Kulit Sapi, Kerbau, Kambing, Domba, Kelinci, Wol Batur, Tulang & Tanduk) |
 | **Peternakan** | `ternak_hpt` | `(kecamatan_id, jenis_hijauan, tahun)` | Lahan Hijauan Pakan Ternak (Odot, Gajah, Pakchong, Indigofera) & kapasitas ST |
