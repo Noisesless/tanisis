@@ -166,6 +166,25 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   7. Membangun 4 tab tertata pada rute `/nilai-ekonomi/peternakan` dengan placeholder bersih tanpa data tiruan/fiktif.
   8. Menetapkan Domba Batur secara tunggal dan eksklusif pada Populasi Ekor (sebagai ternak hias dan bibit unggul yang dipasarkan per ekor hidup), menghapusnya dari komoditas daging karkas, menyatukan nama entri tunggal di `POPULASI_MAPS.kecil`, serta menyajikan tabel populasi ekor sentra Dataran Tinggi Dieng di antarmuka Populasi.
 
+### [ISSUE-014] Optimasi Responsivitas Layar Laptop 1366×768, Tombol Sub-Sektor Hortikultura & Isolasi Tab Nilai Ekonomi Bidang
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-05
+- **Deskripsi:**
+  1. Pada halaman `/nilai-ekonomi/hortikultura`, pengguna meminta hanya menampilkan tab Hortikultura saja; pada `/nilai-ekonomi/perkebunan`, hanya menampilkan tab Perkebunan saja.
+  2. Pada resolusi layar laptop standar 1366×768 (tinggi viewport efektif ~640px), font dan jarak elemen tampak terlalu besar sehingga saling berhimpitan; tombol Sub-Sektor Hortikultura memaksakan 4 tombol dalam satu baris sempit 240px sehingga tombol "Tanaman Hias" patah menjadi 2 baris dan bertabrakan dengan ikon.
+- **Akar Masalah:**
+  1. Tab navigasi nilai ekonomi sebelumnya memetakan array global `ge` tanpa penyaringan kondisi bidang aktif.
+  2. Root font browser default (16px) dengan padding default Tailwind (`p-6`, `gap-8`) tidak diskalakan untuk batas vertikal/horizontal layar laptop 1366×768.
+  3. Tata letak grid tombol Sub-Sektor Hortikultura menggunakan `grid-cols-2 sm:grid-cols-4`, yang pada breakpoint laptop memaksa 4 tombol berjejer dalam kolom kontainer selebar ~240px (lebar efektif tiap tombol hanya ~54px).
+- **Solusi (ADR-013):**
+  1. Menambahkan filter kondisional pada navigasi tab nilai ekonomi (`o==="hortikultura"?ge.filter(e=>e.key==="hortikultura"):o==="perkebunan"?ge.filter(e=>e.key==="perkebunan"):ge`).
+  2. Menerapkan media query responsif laptop-first pada `dist/assets/index-DmHYJUQI.css`:
+     - Skala font dasar `html { font-size: 13.5px !important; }` pada `@media (max-width: 1440px)` sehingga seluruh komponen berbasis `rem` proporsional dan tidak berhimpitan.
+     - Mengurangi padding kontainer utama `.print-main` menjadi `1rem 1.25rem`.
+     - Mengatur tinggi header dan brand sidebar ke 60px.
+     - Mengatur padding sel tabel menjadi lebih kompak (`0.45rem 0.65rem`).
+  3. Mengubah grid tombol Sub-Sektor Hortikultura menjadi `grid-cols-2 2xl:grid-cols-4 gap-1.5` dengan tombol `py-1.5 px-2 text-[11px] whitespace-nowrap`, sehingga membentuk matriks 2×2 yang rapi, tombol selebar ~115px, dan teks "Tanaman Hias" muat sempurna dalam satu baris.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

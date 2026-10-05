@@ -13,8 +13,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/prediction` | Sektor Komoditas | Prediksi Panen Padi & Palawija | Publik | STABLE |
 | `/food-crops` | Sektor Komoditas | Produksi Tanaman Pangan (Padi & Palawija) | Publik | STABLE |
 | `/komoditas-unggulan/:bidang` | Sektor Komoditas | Komoditas & Varietas Unggulan Dinamis per Bidang | Publik | STABLE |
-| `/nilai-ekonomi/:bidang`| Sektor Komoditas | Valuasi Nilai Ekonomi Komoditas Dinamis per Bidang (Rp) | Publik | STABLE |
-| `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah & Hortikultura | Publik | STABLE |
+| `/nilai-ekonomi/:bidang`| Sektor Komoditas | Valuasi Nilai Ekonomi Dinamis (Tab Terisolasi: /hortikultura hanya tab Hortikultura, /perkebunan hanya tab Perkebunan) | Publik | STABLE |
+| `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah, Biofarmaka & Tanaman Hias (Responsive 1366x768 2x2 Matrix) | Publik | STABLE |
 | `/plantation` | Sektor Komoditas | Analitik Perkebunan & Komoditas Khas | Publik | STABLE |
 | `/ltt-katam` | Sektor Komoditas | Luas Tambah Tanam (LTT) & Kalender Tanam | Publik | STABLE |
 | `/livestock` | Sektor Komoditas | Populasi Ternak Murni & Estimasi Ternak Dijual Hidup (inc. Domba Batur) | Publik | STABLE |

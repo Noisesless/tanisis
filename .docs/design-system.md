@@ -603,5 +603,52 @@ Mengeliminasi tombol-tombol berceceran di topbar (`Info`, `Panduan`, dan `Login`
 
 ---
 
-## 5. Ringkasan Single Source of Truth
+## 6. Spesifikasi Tata Letak Responsif Laptop-First (1366×768) & Tab Isolation
+
+### A. Laptop-First Responsive Scaling (1366×768)
+Resolusi 1366×768 merupakan resolusi layar laptop utama pengguna. Dengan tinggi viewport browser efektif sekitar 640px dan sidebar permanen 256px (`w-64`), konten utama memerlukan rasio penskalaan proporsional:
+1. **Dynamic Root Font-Size (`html`):**
+   ```css
+   @media screen and (max-width: 1440px) {
+     html {
+       font-size: 13.5px !important;
+     }
+     .print-main {
+       padding: 1rem 1.25rem !important;
+     }
+     header.no-print {
+       height: 60px !important;
+     }
+     aside.no-print > div:first-child {
+       height: 60px !important;
+     }
+     .flex.flex-col.gap-8 {
+       gap: 1.25rem !important;
+     }
+     .bg-white.border.border-slate-200.rounded-lg.p-6 {
+       padding: 1rem !important;
+     }
+     table th, table td {
+       padding: 0.45rem 0.65rem !important;
+     }
+   }
+   ```
+2. **Efek Penskalaan:** Seluruh unit Tailwind berbasis `rem` mengecil sebesar 15.6% secara seragam, mengeliminasi teks tumpang tindih (*font collision*) dan mencegah overflow vertikal yang memicu scrollbar berlebihan.
+3. **Penyusunan Tombol Filter Bar (Matriks 2×2 Anti-Patah):**
+   Pada kartu filter 4-kolom (`grid-cols-1 md:grid-cols-2 xl:grid-cols-4`), kolom Sub-Sektor wajib menggunakan formasi:
+   `grid grid-cols-2 2xl:grid-cols-4 gap-1.5`
+   dengan setiap tombol:
+   `py-1.5 px-2 text-[11px] font-semibold uppercase flex items-center justify-center gap-1.5 truncate whitespace-nowrap`
+   Hal ini menjamin tombol dengan label panjang seperti "Tanaman Hias" dan "Biofarmaka" tetap utuh dalam satu baris dengan ikon tanpa terpotong.
+
+### B. Isolasi Tab Nilai Ekonomi Bidang
+Navigasi tab pada halaman `/nilai-ekonomi/:bidang` menerapkan isolasi sektoral yang ketat:
+- `/nilai-ekonomi/hortikultura` hanya merender tab **Hortikultura**.
+- `/nilai-ekonomi/perkebunan` hanya merender tab **Perkebunan**.
+- `/nilai-ekonomi/peternakan` merender 4 tab ekosistem mandiri (Valuasi Ternak, UMKM Pakan, Poultry Shop, NKV).
+- `/nilai-ekonomi/pangan` merender navigasi komoditas pangan.
+
+---
+
+## 7. Ringkasan Single Source of Truth
 Seluruh kode CSS baru, komponen React/Vite, pembaruan rute, maupun tampilan analitik pada SISPERTANI Banjarnegara wajib mematuhi standar dokumen `.docs/design-system.md` ini tanpa deviasi.

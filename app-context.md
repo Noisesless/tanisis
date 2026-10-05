@@ -65,19 +65,19 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Nilai Ekonomi Peternakan & Ekosistem Usaha (4 Tab Mandiri): 1. Nilai Ekonomi Ternak, 2. UMKM Pakan Ternak, 3. Toko Peternakan & Poultry Shop, 4. Unit Usaha Ber-NKV dengan Zero Dummy Data (placeholder bersih yang siap menerima data riil).
 - Admin Entry & 10-Sheet Excel Template: Menambahkan endpoint POST /api/v1/peternakan/entry dan 10 sheet template Excel di Dasbor Admin (/admin) yang memfasilitasi isian jumlah, banyaknya, wilayah kecamatan, tahun/bulan untuk seluruh komponen peternakan yang kosong.
 
+[ADR-013] Laptop-First (1366x768) Responsive Scaling, Sector Tab Isolation & Horti Matrix:
+- Tab Nilai Ekonomi Bidang: Halaman /nilai-ekonomi/hortikultura hanya menampilkan tab Hortikultura; /nilai-ekonomi/perkebunan hanya menampilkan tab Perkebunan.
+- Responsivitas Layar 1366×768: Font scale dinamis html { font-size: 13.5px !important; } pada @media (max-width: 1440px) memastikan seluruh elemen rem mengecil proporsional (-15.6%) dan tidak saling berhimpitan pada laptop. Padding utama .print-main dirampingkan ke 1rem 1.25rem, tinggi header/brand disesuaikan ke 60px, dan padding sel tabel dibuat kompak.
+- Tata Letak Filter Hortikultura: Grid tombol Sub-Sektor ditata menjadi matriks 2×2 (grid-cols-2 2xl:grid-cols-4 gap-1.5) dengan tombol selebar ~115px dan whitespace-nowrap, menjamin tombol "Tanaman Hias" & "Biofarmaka" muat rapi dalam satu baris tanpa terpotong atau tumpang tindih dengan ikon.
+- Modul Hortikultura Sinkron: Integrasi Biofarmaka (m², kg) & Tanaman Hias (m², tangkai) terhubung ke API backend riil, dan sinkronisasi tahun agregat kabupaten mengikuti filter tahun utama.
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
 
 ## [NEXT]
-[x] Pembersihan total leftover code, dead assets, dan scraper _tmp (206 MB dibebaskan)
-[x] Refaktorisasi Perikanan Pragmatis: 10 jenis ikan riil (2020-2025), alat tangkap Bubu, placeholder benih & ikan hias
-[x] Perbaikan sistem session dan dynamic avatar publik (cross-tab sync, dual-storage, reaktif logout)
-[x] Refaktorisasi Bidang Peternakan & Keswan (Populasi Murni, Produksi per Spesies, Simulasi HPT, 4 Tab Nilai Ekonomi)
-[x] Pembersihan total emoji mentah dan simbol AI-slop dari antarmuka
+[x] Isolasi tab nilai ekonomi hortikultura (hanya tab Hortikultura) & perkebunan (hanya tab Perkebunan)
+[x] Optimasi responsivitas layar laptop 1366×768 (font-scale 13.5px, compact header 60px, table padding compact)
+[x] Perbaikan formasi tombol Sub-Sektor Hortikultura menjadi matriks 2×2 anti-tumpang tindih
 [x] Sinkronisasi dokumentasi utama (.docs & app-context.md)
-[x] Push commit ke GitHub remote repository (https://github.com/Noisesless/tanisis)
-
-
-
-
+[x] Commit & push ke repository GitHub

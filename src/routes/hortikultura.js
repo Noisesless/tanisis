@@ -41,6 +41,8 @@ const BIOFARMAKA_MAP = new Map(BIOFARMAKA_FIELDS);
 const HIAS_FIELDS = [
   ["Agloenema", "aglaonema"],
   ["Aglaonema", "aglaonema"],
+  ["Krisan", "krisan"],
+  ["Mawar", "mawar"],
   ["Soka", "soka"],
 ];
 const HIAS_MAP = new Map(HIAS_FIELDS);
@@ -95,7 +97,7 @@ hortikulturaRouter.get(
   }),
 );
 
-/** GET /api/v1/hortikultura/biofarmaka-produksi -> (tangkai/kg) */
+/** GET /api/v1/hortikultura/biofarmaka-produksi -> (kg) */
 hortikulturaRouter.get(
   "/biofarmaka-produksi",
   route(async () => {
@@ -249,7 +251,7 @@ hortikulturaRouter.get(
         biofarmaka: {
           label: "Biofarmaka / Tanaman Obat",
           produksi: num0(bioProd?.total_produksi),
-          satuanProduksi: "Tangkai/Kg",
+          satuanProduksi: "Kg",
           luas: num0(bioLuas?.total_luas),
           satuanLuas: "m²",
         },
