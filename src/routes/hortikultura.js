@@ -82,51 +82,107 @@ hortikulturaRouter.get(
 
 /**
  * GET /api/v1/hortikultura/produksi-tahunan -> AnnualHorticultureProduction[]
- * Buah-buayan & sayuran tahunan kabupaten (long format per jenis tanaman)
- * + titik 2025 dari tabel tetap BPS (hardcoded, sama seperti api.ts).
+ * Buah-buahan & sayuran tahunan kabupaten murni dinamis dari tabel horti_produksi_kabupaten (Zero Dummy Data).
  */
-const bpsAnnualHorticulture2025 = [
-  { jenisTanaman: "Alpukat", produksiTon: 2126.043, tahun: "2025" },
-  { jenisTanaman: "Belimbing", produksiTon: 33.792, tahun: "2025" },
-  { jenisTanaman: "Duku/Langsat/Kokosan", produksiTon: 1329.105, tahun: "2025" },
-  { jenisTanaman: "Durian", produksiTon: 12809.925, tahun: "2025" },
-  { jenisTanaman: "Jambu Air", produksiTon: 285.218, tahun: "2025" },
-  { jenisTanaman: "Jambu Biji", produksiTon: 2813.476, tahun: "2025" },
-  { jenisTanaman: "Jengkol", produksiTon: 556.41, tahun: "2025" },
-  { jenisTanaman: "Jeruk Siam/Keprok", produksiTon: 40.2, tahun: "2025" },
-  { jenisTanaman: "Mangga", produksiTon: 589.75, tahun: "2025" },
-  { jenisTanaman: "Manggis", produksiTon: 326.193, tahun: "2025" },
-  { jenisTanaman: "Melinjo", produksiTon: 883.675, tahun: "2025" },
-  { jenisTanaman: "Nangka/Cempedak", produksiTon: 2350.192, tahun: "2025" },
-  { jenisTanaman: "Nenas", produksiTon: 81.124, tahun: "2025" },
-  { jenisTanaman: "Pepaya", produksiTon: 3509.496, tahun: "2025" },
-  { jenisTanaman: "Petai", produksiTon: 3279.633, tahun: "2025" },
-  { jenisTanaman: "Pisang", produksiTon: 18090.363, tahun: "2025" },
-  { jenisTanaman: "Rambutan", produksiTon: 1800.123, tahun: "2025" },
-  { jenisTanaman: "Salak", produksiTon: 127950.403, tahun: "2025" },
-  { jenisTanaman: "Sawo", produksiTon: 9.732, tahun: "2025" },
-  { jenisTanaman: "Sirsak", produksiTon: 248.525, tahun: "2025" },
-  { jenisTanaman: "Sukun", produksiTon: 10.795, tahun: "2025" },
-  { jenisTanaman: "Buah Naga", produksiTon: 62.72, tahun: "2025" },
-  { jenisTanaman: "Jeruk Lemon", produksiTon: 870.173, tahun: "2025" },
-  { jenisTanaman: "Lengkeng", produksiTon: 16.875, tahun: "2025" },
-];
-
 hortikulturaRouter.get(
   "/produksi-tahunan",
   route(async () => {
     const rows = await q(
       `SELECT t.komoditas, t.nilai, t.tahun
        FROM horti_produksi_kabupaten t
-       WHERE t.kelompok = 'buah_sayuran_tahunan'
-       ORDER BY t.tahun, t.komoditas`,
+       WHERE t.nilai > 0
+       ORDER BY t.tahun DESC, t.nilai DESC`,
     );
-    const dbRows = rows.map((r) => ({
+    return rows.map((r) => ({
       jenisTanaman: r.komoditas,
       produksiTon: num0(r.nilai),
       tahun: String(r.tahun),
     }));
-    return [...dbRows, ...bpsAnnualHorticulture2025];
+  }),
+);
+
+/**
+ * GET /api/v1/hortikultura/rekap-global?tahun=2024
+ * Merekap total produksi & luas per 4 subsektor: sayuran, buah, biofarmaka, tanaman_hias
+ * Buah & sayur semusim otomatis dipilah ke subsektor Sayuran dan Buah secara global.
+ */
+hortikulturaRouter.get(
+  "/rekap-global",
+  route(async (req) => {
+    const tahun = req.query.tahun ? Number(req.query.tahun) : null;
+    let whereTahun = tahun ? "WHERE tahun = ?" : "WHERE 1=1";
+    let params = tahun ? [tahun] : [];
+
+    // 1. Sayuran (Ton)
+    const [sayuranProd] = await q(
+      `SELECT SUM(nilai) as total_produksi FROM horti_produksi ${whereTahun} AND kelompok = 'sayuran' AND nilai > 0`,
+      params,
+    );
+    const [sayuranLuas] = await q(
+      `SELECT SUM(nilai) as total_luas FROM horti_luas ${whereTahun} AND kelompok = 'sayuran' AND nilai > 0`,
+      params,
+    );
+
+    // 2. Buah-Buahan (Ton) — menggabungkan buah tahunan pohon + buah semusim (melon/semangka)
+    const [buahProd] = await q(
+      `SELECT SUM(nilai) as total_produksi FROM horti_produksi ${whereTahun} AND kelompok = 'buah_tahunan' AND nilai > 0`,
+      params,
+    );
+
+    // 3. Biofarmaka (Tangkai / Kg)
+    const [bioProd] = await q(
+      `SELECT SUM(nilai) as total_produksi FROM horti_produksi ${whereTahun} AND kelompok = 'biofarmaka' AND nilai > 0`,
+      params,
+    );
+    const [bioLuas] = await q(
+      `SELECT SUM(nilai) as total_luas FROM horti_luas ${whereTahun} AND kelompok = 'biofarmaka' AND nilai > 0`,
+      params,
+    );
+
+    // 4. Tanaman Hias (Tangkai)
+    const [hiasProd] = await q(
+      `SELECT SUM(nilai) as total_produksi FROM horti_produksi ${whereTahun} AND kelompok = 'tanaman_hias' AND nilai > 0`,
+      params,
+    );
+    const [hiasLuas] = await q(
+      `SELECT SUM(nilai) as total_luas FROM horti_luas ${whereTahun} AND kelompok = 'tanaman_hias' AND nilai > 0`,
+      params,
+    );
+
+    return {
+      ok: true,
+      tahun: tahun || "Semua",
+      rekap: {
+        sayuran: {
+          label: "Sayuran",
+          produksi: num0(sayuranProd?.total_produksi),
+          satuanProduksi: "Ton",
+          luas: num0(sayuranLuas?.total_luas),
+          satuanLuas: "Ha",
+        },
+        buah: {
+          label: "Buah-Buahan",
+          produksi: num0(buahProd?.total_produksi),
+          satuanProduksi: "Ton",
+          luas: 0,
+          satuanLuas: "Ha",
+        },
+        biofarmaka: {
+          label: "Biofarmaka / Tanaman Obat",
+          produksi: num0(bioProd?.total_produksi),
+          satuanProduksi: "Tangkai/Kg",
+          luas: num0(bioLuas?.total_luas),
+          satuanLuas: "m²",
+        },
+        tanaman_hias: {
+          label: "Tanaman Hias",
+          produksi: num0(hiasProd?.total_produksi),
+          satuanProduksi: "Tangkai",
+          luas: num0(hiasLuas?.total_luas),
+          satuanLuas: "m²",
+        },
+      },
+    };
   }),
 );
 

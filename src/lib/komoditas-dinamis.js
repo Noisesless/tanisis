@@ -159,12 +159,16 @@ export async function getDynamicKomoditasUnggulan() {
     `);
     results.push(...panganRows);
 
-    // 5. HORTIKULTURA: Sayuran & Buah
+    // 5. HORTIKULTURA: Sayuran & Buah (Ton)
     const [hortiRows] = await pool.query(`
       SELECT 
         'Hortikultura' AS bidang,
         h.komoditas,
-        'Unggulan' AS varietas,
+        CASE 
+          WHEN h.kelompok = 'sayuran' THEN 'Sayuran'
+          WHEN h.kelompok = 'buah_tahunan' THEN 'Buah-Buahan'
+          ELSE 'Hortikultura'
+        END AS varietas,
         k.nama AS kecamatan,
         0 AS luas_lahan,
         0 AS produktivitas,
@@ -189,6 +193,68 @@ export async function getDynamicKomoditasUnggulan() {
       GROUP BY h.tahun, h.komoditas
     `);
     results.push(...hortiRows);
+
+    // 5b. HORTIKULTURA: Biofarmaka / Tanaman Obat (Jahe, Kunyit, Kencur, Laos - Tangkai/Kg)
+    const [biofarmakaRows] = await pool.query(`
+      SELECT 
+        'Hortikultura' AS bidang,
+        h.komoditas,
+        'Biofarmaka / Tanaman Obat' AS varietas,
+        k.nama AS kecamatan,
+        0 AS luas_lahan,
+        0 AS produktivitas,
+        ROUND(tot.total_produksi, 1) AS produksi,
+        'Tangkai/Kg' AS satuan,
+        'Tersedia' AS ketersediaan_benih,
+        h.tahun
+      FROM (
+        SELECT tahun, komoditas, MAX(nilai) as max_val
+        FROM horti_produksi
+        WHERE nilai > 0 AND kelompok = 'biofarmaka'
+        GROUP BY tahun, komoditas
+      ) sub
+      JOIN horti_produksi h ON h.tahun = sub.tahun AND h.komoditas = sub.komoditas AND h.nilai = sub.max_val AND h.kelompok = 'biofarmaka'
+      JOIN kecamatan k ON h.kecamatan_id = k.id
+      JOIN (
+        SELECT tahun, komoditas, SUM(nilai) as total_produksi
+        FROM horti_produksi
+        WHERE nilai > 0 AND kelompok = 'biofarmaka'
+        GROUP BY tahun, komoditas
+      ) tot ON tot.tahun = sub.tahun AND tot.komoditas = sub.komoditas
+      GROUP BY h.tahun, h.komoditas
+    `);
+    results.push(...biofarmakaRows);
+
+    // 5c. HORTIKULTURA: Tanaman Hias / Florikultura (Tangkai)
+    const [tanamanHiasRows] = await pool.query(`
+      SELECT 
+        'Hortikultura' AS bidang,
+        h.komoditas,
+        'Tanaman Hias / Florikultura' AS varietas,
+        k.nama AS kecamatan,
+        0 AS luas_lahan,
+        0 AS produktivitas,
+        ROUND(tot.total_produksi, 1) AS produksi,
+        'Tangkai' AS satuan,
+        'Tersedia' AS ketersediaan_benih,
+        h.tahun
+      FROM (
+        SELECT tahun, komoditas, MAX(nilai) as max_val
+        FROM horti_produksi
+        WHERE nilai > 0 AND kelompok = 'tanaman_hias'
+        GROUP BY tahun, komoditas
+      ) sub
+      JOIN horti_produksi h ON h.tahun = sub.tahun AND h.komoditas = sub.komoditas AND h.nilai = sub.max_val AND h.kelompok = 'tanaman_hias'
+      JOIN kecamatan k ON h.kecamatan_id = k.id
+      JOIN (
+        SELECT tahun, komoditas, SUM(nilai) as total_produksi
+        FROM horti_produksi
+        WHERE nilai > 0 AND kelompok = 'tanaman_hias'
+        GROUP BY tahun, komoditas
+      ) tot ON tot.tahun = sub.tahun AND tot.komoditas = sub.komoditas
+      GROUP BY h.tahun, h.komoditas
+    `);
+    results.push(...tanamanHiasRows);
 
     // 6. PERKEBUNAN: Kopi, Teh, Kelapa, dll.
     const [perkebunanRows] = await pool.query(`

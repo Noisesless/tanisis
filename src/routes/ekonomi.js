@@ -35,14 +35,51 @@ ekonomiRouter.get(
   }),
 );
 
+/** GET /api/v1/ekonomi/harga-kabupaten -> data harga produsen resmi kabupaten */
+ekonomiRouter.get(
+  "/harga-kabupaten",
+  route(async (req) => {
+    const { sektor, tahun } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (sektor) {
+      where += " AND sektor = ?";
+      params.push(String(sektor).toLowerCase());
+    }
+    if (tahun) {
+      where += " AND tahun = ?";
+      params.push(Number(tahun));
+    }
+    const rows = await q(
+      `SELECT id, sektor, komoditas, satuan, harga_per_satuan, tahun, sumber, created_at
+       FROM harga_produsen
+       ${where}
+       ORDER BY sektor ASC, komoditas ASC`,
+      params,
+    );
+    return {
+      status: "success",
+      total: rows.length,
+      rows: rows.map((r) => ({
+        id: r.id,
+        sektor: r.sektor,
+        komoditas: r.komoditas,
+        satuan: r.satuan,
+        hargaPerSatuan: Number(r.harga_per_satuan),
+        tahun: Number(r.tahun),
+        sumber: r.sumber,
+      })),
+    };
+  }),
+);
+
 /** GET /api/v1/ekonomi/nilai-ekonomi?bidang=pangan -> data resmi nilai ekonomi
- *  input Dinas (tabel nilai_ekonomi_tahunan). triwulan null = tahunan; semester
- *  (S1 = T1+T2, S2 = T3+T4) diturunkan klien. rows kosong -> frontend estimasi. */
+ *  input Dinas (tabel nilai_ekonomi_tahunan). Hanya menampilkan data dari produksi (nilai_rp > 0 & volume > 0). */
 ekonomiRouter.get(
   "/nilai-ekonomi",
   route(async (req) => {
     const VALID = ["pangan", "hortikultura", "perkebunan", "peternakan", "perikanan"];
-    const bidang = String(req.query.bidang ?? "");
+    const bidang = String(req.query.bidang ?? "").toLowerCase();
     if (!VALID.includes(bidang)) {
       const err = new Error(`Parameter 'bidang' wajib salah satu dari: ${VALID.join(", ")}`);
       err.status = 400;
@@ -52,8 +89,8 @@ ekonomiRouter.get(
       `SELECT komoditas, satuan, tahun, triwulan, volume,
               harga_produsen AS hargaProdusen, nilai_rp AS nilaiRp
          FROM nilai_ekonomi_tahunan
-        WHERE bidang = ?
-        ORDER BY tahun DESC, komoditas ASC, triwulan ASC`,
+        WHERE bidang = ? AND volume > 0 AND nilai_rp > 0
+        ORDER BY tahun DESC, nilai_rp DESC`,
       [bidang],
     );
     return {
