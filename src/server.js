@@ -18,6 +18,7 @@ import bantuanRouter from "./routes/bantuan.js";
 import { komoditasUnggulanRouter } from "./routes/komoditas-unggulan.js";
 import adminRouter from "./routes/admin.js";
 import aiRouter from "./routes/ai.js";
+import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -132,64 +133,13 @@ api.use("/v1/komoditas-unggulan/per-kecamatan", komoditasUnggulanRouter);
 api.use("/v1/admin", adminRouter);
 api.use("/v1/ai", aiRouter);
 
-// Endpoint Komoditas Unggulan Dinamis per Bidang (Zero Dummy Data Law)
+// Endpoint Komoditas Unggulan Dinamis Multi-Sektor (Zero Hardcode, Zero Dummy Law)
 api.get("/v1/komoditas-unggulan", async (req, res) => {
   try {
-    const pool = getPool();
-    const [rows] = await pool.query(`
-      SELECT 
-        sektor,
-        nama_komoditas,
-        satuan,
-        kecamatan_sentra,
-        total_produksi,
-        nilai_ekonomi_estimasi,
-        tahun
-      FROM komoditas_unggulan
-      WHERE total_produksi > 0
-      ORDER BY tahun DESC, total_produksi DESC
-    `);
-
-    // Kalkulasi otomatis komoditas unggulan perikanan dari data riil 10 jenis ikan
-    const [perikananRows] = await pool.query(`
-      SELECT 
-        'perikanan' AS sektor,
-        jenis_ikan AS nama_komoditas,
-        'Ton' AS satuan,
-        COALESCE(nama_kecamatan, 'Kabupaten Banjarnegara') AS kecamatan_sentra,
-        ROUND(produksi_kg / 1000, 2) AS total_produksi,
-        nilai_ekonomi_rp AS nilai_ekonomi_estimasi,
-        tahun
-      FROM ikan_produksi_jenis
-      WHERE produksi_kg > 0
-      ORDER BY tahun DESC, produksi_kg DESC
-    `);
-
-    const allRows = [...rows, ...perikananRows];
-
-    const BIDANG_MAP = {
-      pangan: "Tanaman Pangan",
-      hortikultura: "Hortikultura",
-      perkebunan: "Perkebunan",
-      peternakan: "Peternakan",
-      perikanan: "Perikanan",
-    };
-
-    const result = allRows.map((r) => ({
-      bidang: BIDANG_MAP[r.sektor] || r.sektor,
-      komoditas: r.nama_komoditas,
-      varietas: "-",
-      kecamatan: r.kecamatan_sentra || "Banjarnegara",
-      luas_lahan: 0,
-      produktivitas: 0,
-      produksi: Number(r.total_produksi) || 0,
-      ketersediaan_benih: "Tersedia",
-      tahun: Number(r.tahun),
-    }));
-
-    return res.json(result);
+    const data = await getDynamicKomoditasUnggulan();
+    return res.json(data);
   } catch (err) {
-    console.error("Gagal mengambil komoditas unggulan:", err);
+    console.error("Gagal mengambil komoditas unggulan dinamis:", err);
     return res.status(500).json({ error: "internal_error", message: err.message });
   }
 });
