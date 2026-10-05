@@ -208,10 +208,9 @@ const DIST_DIR = process.env.DIST_DIR || "./dist";
 const distRoot = path.isAbsolute(DIST_DIR) ? DIST_DIR : path.join(process.cwd(), DIST_DIR);
 app.use(
   express.static(distRoot, {
-    maxAge: "1h",
     setHeaders: (res, filePath) => {
-      // index.html selalu divalidasi ulang agar deploy baru langsung terlihat
-      if (filePath.endsWith(".html")) res.setHeader("cache-control", "no-cache");
+      // Pastikan assets HTML, JS, dan CSS selalu divalidasi ulang agar pembaruan view langsung terlihat di browser tanpa tertahan cache
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
     },
   })
 );

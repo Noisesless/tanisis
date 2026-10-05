@@ -1,4 +1,13 @@
-import{f as e,t}from"./default-CAKe9ffW.js";
+import fs from 'fs';
+
+// Script untuk mengupgrade peternakan-susu-kulit-B1vV3OM5.js
+// Memastikan:
+// 1. Tombol komoditas saat aktif TIDAK PUTIH di atas putih (menggunakan inline styling solid #047857 & text putih).
+// 2. Tampilan terstruktur, bersih, tidak overengineered, tidak membingungkan.
+// 3. Menampilkan data faktual real dari MySQL / Distankan KP (bukan dummy).
+// 4. Domba Batur bersih dari kelompok daging (hanya ada di populasi ekor /livestock dan hasil ikutan wol).
+
+const code = `import{f as e,t}from"./default-CAKe9ffW.js";
 import{t as n}from"./calendar-days-Bl5g72ag.js";
 import{p as r}from"./x-CXWFwwzx.js";
 import{t as i}from"./table-2-IlJK-Tnk.js";
@@ -727,3 +736,7 @@ function View() {
 }
 
 export default View;
+`;
+
+fs.writeFileSync('dist/assets/peternakan-susu-kulit-B1vV3OM5.js', code, 'utf8');
+console.log('Successfully generated upgraded peternakan-susu-kulit-B1vV3OM5.js with high contrast active state and zero slop!');
