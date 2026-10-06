@@ -246,6 +246,22 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
      - Jika data berasal dari MariaDB: ditulis lugas `Aplikasi SISPERTANI` (pada badge cakupan, kartu Sumber Data, dan tabel rincian).
      - Jika data berasal dari eksternal: secara spesifik menyebutkan nama institusi dan situs web asalnya: `BPS Banjarnegara (banjarnegarakab.bps.go.id)`, `Bappebti (bappebti.go.id)`, atau `Satu Data Banjarnegara (opendata.banjarnegarakab.go.id)`.
 
+### [ISSUE-020] Redesign View Dasbor Admin (/admin), Autentikasi Role-Aware & Integrasi Kelembagaan Baru
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:** Pengguna mengalami kendala login saat memasukkan kredensial admin karena kebingungan nama pengguna (username) dan potensi terkunci proteksi brute-force in-memory. Selain itu, tata letak dasbor admin membutuhkan pembaruan agar konsisten antar peran (RBAC), memfasilitasi seluruh 20 domain termasuk kelembagaan baru (JULEHA, P4S, UPJA, KWT, Kelembagaan Pertanian & Perikanan), serta bebas dari gaya bahasa hiperbolis/buzzword.
+- **Akar Masalah:**
+  1. Form login tidak menyajikan indikator peran yang jelas sehingga rawan salah ketik username.
+  2. Tata letak untuk peran bidang teknis sebelumnya hanya menampilkan banner alert pembatasan sempit, dan panel ringkasan bantuan bolong.
+  3. 5 domain baru belum terdaftar di peta ikon visual admin dan belum dipetakan ke wewenang RBAC bidang teknis di `src/lib/users.js`.
+- **Solusi:**
+  1. Mengimplementasikan **Quick Role Selector** pada form login `/admin` (Administrator, Tanaman Pangan, Horti & Kebun, Peternakan, Perikanan) yang otomatis mengisi username dan memberikan petunjuk akun yang benar.
+  2. Merombak layout dasbor admin menjadi **Role-Aware Architecture**:
+     - Super Admin mendapatkan **Tab Kategori & Live Search** untuk memfilter 20 domain data secara instan.
+     - Akun Bidang Teknis mendapatkan header elegan **Ruang Kerja Bidang** dan panduan alur kerja 3 langkah impor tanpa alert sempit.
+  3. Melengkapi pemetaan tema warna dan ikon resmi untuk seluruh 20 domain data di `dist/assets/admin-C9Dakcgq.js`.
+  4. Memperbarui wewenang RBAC di `src/lib/users.js` sehingga akun Tanaman Pangan, Peternakan, dan Perikanan otomatis berhak mengelola domain kelembagaannya.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

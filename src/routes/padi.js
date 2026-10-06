@@ -162,6 +162,8 @@ const PALAWIJA_PAIRS = {
   "jagung-ubi-kayu": ["Jagung", "Ubi Kayu"],
   "kacang-kedelai": ["Kacang Tanah", "Kedelai"],
   "ubi-kacang-hijau": ["Ubi Jalar", "Kacang Hijau"],
+  "jagung-ubi": ["Jagung", "Ubi Kayu", "Ubi Jalar", "Talas", "Porang"],
+  "kacang": ["Kacang Tanah", "Kedelai", "Kacang Hijau"],
 };
 
 palawijaRouter.get(
@@ -169,30 +171,48 @@ palawijaRouter.get(
   route(async (req) => {
     const pair = PALAWIJA_PAIRS[req.params.pair];
     if (!pair) throw Object.assign(new Error("pair tidak dikenal"), { status: 404 });
+    const placeholders = pair.map(() => "?").join(", ");
     const rows = await q(
       `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.luas_panen_ha, t.produksi_ton, t.rata_ku_ha
        FROM palawija_produksi t
        JOIN kecamatan k ON k.id = t.kecamatan_id
-       WHERE t.komoditas IN (?, ?)
+       WHERE t.komoditas IN (${placeholders})
        ORDER BY k.nama, t.tahun`,
       pair,
     );
     const byKey = new Map();
     for (const r of rows) {
       const key = `${r.kecamatan}|${r.tahun}`;
-      if (!byKey.has(key)) byKey.set(key, { kecamatan: r.kecamatan, tahun: String(r.tahun), items: [] });
+      if (!byKey.has(key)) {
+        byKey.set(key, {
+          kecamatan: r.kecamatan,
+          tahun: String(r.tahun),
+          itemsMap: new Map(),
+        });
+      }
       const row = byKey.get(key);
-      row.items.push({
+      row.itemsMap.set(r.komoditas, {
         komoditas: r.komoditas,
         luasPanen: Number(r.luas_panen_ha) || 0,
         produksi: Number(r.produksi_ton) || 0,
         rataRata: r.rata_ku_ha === null ? 0 : Number(r.rata_ku_ha),
       });
     }
-    // Urutkan items sesuai urutan pair (A lalu B) — mencerminkan urutan kolom CSV.
-    const order = (kom) => (kom === pair[0] ? 0 : 1);
+
     return [...byKey.values()]
-      .map((r) => ({ ...r, items: r.items.sort((a, b) => order(a.komoditas) - order(b.komoditas)) }))
+      .map((r) => ({
+        kecamatan: r.kecamatan,
+        tahun: r.tahun,
+        items: pair.map(
+          (kom) =>
+            r.itemsMap.get(kom) || {
+              komoditas: kom,
+              luasPanen: 0,
+              produksi: 0,
+              rataRata: 0,
+            },
+        ),
+      }))
       .sort((a, b) =>
         a.kecamatan === b.kecamatan
           ? parseInt(a.tahun) - parseInt(b.tahun)

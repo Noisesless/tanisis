@@ -59,6 +59,36 @@ const LABELS = {
   luas_rencana: "Luas Rencana (Ha)", luas_tanam: "Luas Tanam (Ha)", luas_panen: "Luas Panen (Ha)",
   produksi_rencana: "Produksi Rencana (Ton)", produksi_aktual: "Produksi Aktual (Ton)",
   bulan_mulai: "Bulan Mulai", bulan_panen: "Bulan Panen",
+  jenis_lembaga: "Jenis Lembaga",
+  id_simluhtan: "ID Simluhtan",
+  no_sk_pengukuhan: "No. SK Pengukuhan",
+  nama_ketua: "Nama Ketua",
+  kontak_hp: "Kontak HP / WA",
+  kelas_kemampuan: "Kelas Kemampuan",
+  subsektor_utama: "Subsektor Utama",
+  status_aktif: "Status Aktif",
+  tahun_berdiri: "Tahun Berdiri",
+  id_kusuka: "ID KUSUKA KKP",
+  nama_lengkap: "Nama Lengkap",
+  nik: "NIK",
+  no_sertifikat_halal: "No. Sertifikat Halal",
+  lembaga_penerbit: "Lembaga Penerbit Sertifikat",
+  unit_tugas: "Unit Tugas / RPH-RPU",
+  status_sertifikasi: "Status Sertifikasi",
+  tahun_kelulusan: "Tahun Kelulusan / Pelatihan",
+  nama_p4s: "Nama P4S",
+  pengelola: "Pengelola / Pimpinan",
+  bidang_kejuruan: "Bidang Kejuruan / Pelatihan",
+  klasifikasi_akreditasi: "Klasifikasi Akreditasi",
+  no_register_bppsdmp: "No. Register BPPSDMP",
+  kontak: "Kontak / Nomor Telepon",
+  nama_upja: "Nama UPJA",
+  manajer: "Nama Manajer UPJA",
+  gapoktan_induk: "Gapoktan Induk",
+  jenis_alsintan_dikelola: "Jenis Alsintan Dikelola",
+  jumlah_alsintan: "Jumlah Alsintan (Unit)",
+  status_operasional: "Status Operasional",
+  keterangan: "Keterangan",
 };
 
 // Suffix kolom → satuan pada label
@@ -281,6 +311,70 @@ export const DOMAINS = {
     label: "LTT — Luas Tambah Tanam & Kalender Tanam",
     desc: "Monitoring luas tambah tanam (LTT) dan kalender tanam (Katam) per kecamatan.",
     sheets: [{ table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } }],
+  },
+  "kelembagaan-pertanian": {
+    label: "Kelembagaan — Pertanian (Poktan, Gapoktan, KWT)",
+    desc: "Register kelembagaan pertanian: Poktan, Gapoktan, dan KWT (ID Simluhtan, SK Pengukuhan, kelas, komoditas, luas lahan).",
+    sheets: [{
+      table: "kelembagaan_pertanian",
+      name: "Kelembagaan Pertanian",
+      kecamatan: true,
+      key: ["kecamatan", "nama_kelompok"],
+      enums: {
+        jenis_lembaga: ["Poktan", "Gapoktan", "KWT"],
+        kelas_kemampuan: ["Pemula", "Lanjut", "Madya", "Utama", "Belum Dinilai"],
+        subsektor_utama: ["Tanaman Pangan", "Hortikultura", "Perkebunan", "Peternakan", "Campuran"],
+        status_aktif: ["Aktif", "Tidak Aktif", "Menunggu Verifikasi"]
+      }
+    }],
+  },
+  "kelembagaan-perikanan": {
+    label: "Kelembagaan — Perikanan (Pokdakan, Poklahsar, Pokmaswas)",
+    desc: "Register kelembagaan perikanan: Pokdakan, Poklahsar, dan Pokmaswas (ID KUSUKA KKP, SK Pengukuhan, kelas, jenis budidaya/olahan).",
+    sheets: [{
+      table: "kelembagaan_perikanan",
+      name: "Kelembagaan Perikanan",
+      kecamatan: true,
+      key: ["kecamatan", "nama_kelompok"],
+      enums: {
+        jenis_lembaga: ["Pokdakan", "Poklahsar", "Pokmaswas"],
+        kelas_kemampuan: ["Pemula", "Madya", "Utama", "Belum Dinilai"],
+        status_aktif: ["Aktif", "Tidak Aktif"]
+      }
+    }],
+  },
+  "kelembagaan-pendukung": {
+    label: "Kelembagaan — Pendukung (JULEHA, P4S, UPJA)",
+    desc: "Juru Sembelih Halal (JULEHA), Pusat Pelatihan Mandiri (P4S), dan Usaha Pelayanan Jasa Alsintan (UPJA).",
+    sheets: [
+      {
+        table: "kelembagaan_juleha",
+        name: "JULEHA Halal",
+        kecamatan: true,
+        key: ["kecamatan", "nama_lengkap"],
+        enums: {
+          status_sertifikasi: ["Tersertifikasi", "Dalam Pelatihan", "Masa Berlaku Habis"]
+        }
+      },
+      {
+        table: "kelembagaan_p4s",
+        name: "P4S Pertanian",
+        kecamatan: true,
+        key: ["kecamatan", "nama_p4s"],
+        enums: {
+          klasifikasi_akreditasi: ["Pratama", "Madya", "Utama", "Belum Terakreditasi"]
+        }
+      },
+      {
+        table: "kelembagaan_upja",
+        name: "UPJA Alsintan",
+        kecamatan: true,
+        key: ["kecamatan", "nama_upja"],
+        enums: {
+          status_operasional: ["Aktif Beroperasi", "Perlu Perbaikan", "Tidak Aktif"]
+        }
+      }
+    ],
   },
 };
 

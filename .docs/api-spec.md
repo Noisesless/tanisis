@@ -161,6 +161,15 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
 - **`GET /api/v1/lumbung`** — Data sebaran, kapasitas unit lumbung pangan dan gudang cadangan beras.
 - **`GET /api/v1/kelembagaan/kelompok-tani`** — Direktori Kelompok Tani (Poktan) & Gapoktan per desa.
 - **`GET /api/v1/kelembagaan/kth`** — Kelompok Tani Hutan (KTH) dan kelas kemampuannya.
+- **`GET /api/v1/kelembagaan/pertanian`** — Register Poktan, Gapoktan, dan KWT dengan nomor registrasi SIMLUHTAN dan SK pengukuhan.
+- **`GET /api/v1/kelembagaan/perikanan`** — Register Pokdakan, Poklahsar, dan Pokmaswas dengan ID KUSUKA KKP dan izin usaha.
+- **`GET /api/v1/kelembagaan/juleha`** — Data Juru Sembelih Halal (JULEHA) tersertifikasi kompetensi di RPH/RPU Banjarnegara.
+- **`GET /api/v1/kelembagaan/pendukung`** — Data kelembagaan pendukung mencakup akreditasi P4S dan inventaris alsintan UPJA.
+- **`GET /api/v1/psat-pduk/sampel`** — Hasil uji petik acak residu pestisida, formalin, dan cemaran kimia pada pasar tradisional.
+- **`GET /api/v1/psat-pduk/izin-edar`** — Register izin edar Pangan Segar Asal Tumbuhan Produksi Dalam Negeri Usaha Kecil (PSAT-PDUK).
+- **`GET /api/v1/ketahanan/fsva`** — Data 12 Indikator Peta Ketahanan dan Kerentanan Pangan (FSVA Bapanas) per kecamatan.
+- **`GET /api/v1/ketahanan/neraca`** — Neraca pangan komposit ketersediaan, kebutuhan, dan surplus/defisit komoditas pangan pokok.
+- **`GET /api/v1/ketahanan/logistik`** — Hasil survei kapasitas gilingan padi (RMU) dan rantai pasok beras antar-wilayah.
 - **`GET /api/v1/st2023/desa`** — Data profil rumah tangga tani (RTUP) berdasarkan Sensus Pertanian 2023.
 - **`GET /api/v1/bantuan`** — Rekapitulasi program bantuan sarana prasarana, alsintan, dan benih.
 

@@ -95,15 +95,24 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/lumbung` | `src/routes/ekonomi.js` | Publik | Fasilitas lumbung pangan dan kapasitas gudang |
 | `GET` | `/v1/kelembagaan/kelompok-tani` | `src/routes/kelembagaan.js` | Publik | Sebaran kelompok tani (Poktan) per desa |
 | `GET` | `/v1/kelembagaan/kth` | `src/routes/kelembagaan.js` | Publik | Data Kelompok Tani Hutan (KTH) |
+| `GET` | `/v1/kelembagaan/pertanian` | `src/routes/kelembagaan.js` | Publik | Register kelembagaan pertanian resmi (Poktan, Gapoktan, KWT) |
+| `GET` | `/v1/kelembagaan/perikanan` | `src/routes/kelembagaan.js` | Publik | Register kelembagaan perikanan resmi (Pokdakan, Poklahsar, Pokmaswas) |
+| `GET` | `/v1/kelembagaan/juleha` | `src/routes/kelembagaan.js` | Publik | Data Juru Sembelih Halal (JULEHA) tersertifikasi RPH & RPU |
+| `GET` | `/v1/kelembagaan/pendukung` | `src/routes/kelembagaan.js` | Publik | Data kelembagaan pendukung: P4S (akreditasi) & UPJA (alsintan) |
+| `GET` | `/v1/psat-pduk/sampel` | `src/routes/psat.js` | Publik | Hasil uji petik residu pestisida & keamanan pangan PSAT |
+| `GET` | `/v1/psat-pduk/izin-edar` | `src/routes/psat.js` | Publik | Register izin edar Pangan Segar Asal Tumbuhan (PDUK) |
+| `GET` | `/v1/ketahanan/fsva` | `src/routes/ketahanan.js` | Publik | Data 12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) |
+| `GET` | `/v1/ketahanan/neraca` | `src/routes/ketahanan.js` | Publik | Neraca pangan komposit ketersediaan komoditas pokok daerah |
+| `GET` | `/v1/ketahanan/logistik` | `src/routes/ketahanan.js` | Publik | Survei rantai pasok beras & penggilingan padi (RMU) |
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
-| `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token |
-| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 17 domain operasional terotorisasi (KWT, LTT-Katam, 11 sheet Perikanan) |
-| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (17 domain) |
+| `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token (rate-limited) |
+| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 20 domain operasional terotorisasi (inc. JULEHA, P4S, UPJA, KWT, LTT) |
+| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (20 domain) |
 | `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data |
 | `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel & eksekusi upsert ke MySQL |
 | `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |
-| `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor |
+| `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
 | `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL & CKAN) |
 

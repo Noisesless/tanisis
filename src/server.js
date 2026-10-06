@@ -18,6 +18,8 @@ import bantuanRouter from "./routes/bantuan.js";
 import { komoditasUnggulanRouter } from "./routes/komoditas-unggulan.js";
 import adminRouter from "./routes/admin.js";
 import aiRouter from "./routes/ai.js";
+import { psatRouter } from "./routes/psat.js";
+import { ketahananRouter } from "./routes/ketahanan.js";
 import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
 
 const app = express();
@@ -132,6 +134,8 @@ api.use("/v1/bantuan", bantuanRouter);
 api.use("/v1/komoditas-unggulan/per-kecamatan", komoditasUnggulanRouter);
 api.use("/v1/admin", adminRouter);
 api.use("/v1/ai", aiRouter);
+api.use("/v1/psat-pduk", psatRouter);
+api.use("/v1/ketahanan", ketahananRouter);
 
 // Endpoint Komoditas Unggulan Dinamis Multi-Sektor (Zero Hardcode, Zero Dummy Law)
 api.get("/v1/komoditas-unggulan", async (req, res) => {
@@ -169,8 +173,10 @@ const distRoot = path.isAbsolute(DIST_DIR) ? DIST_DIR : path.join(process.cwd(),
 app.use(
   express.static(distRoot, {
     setHeaders: (res, filePath) => {
-      // Pastikan assets HTML, JS, dan CSS selalu divalidasi ulang agar pembaruan view langsung terlihat di browser tanpa tertahan cache
-      res.setHeader("Cache-Control", "no-cache, must-revalidate");
+      // Cegah total browser caching pada aset statis (JS/CSS/HTML) agar view lama tidak pernah tertahan di memori browser
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
     },
   })
 );

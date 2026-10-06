@@ -43,7 +43,7 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,kwt_kelompok_wanita_tani,ltt_katam)
+pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,kwt_kelompok_wanita_tani,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,neraca_pangan_komposit)
 
 ## [ADR]
 [ADR-001] Express static + API dual mount: /api dan /sispertani-api dilayani oleh single server di port 5173
@@ -98,6 +98,28 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
   * Jika bersumber dari basis data internal MariaDB: ditulis lugas "Aplikasi SISPERTANI" (database MariaDB tabel nilai_ekonomi_tahunan).
   * Jika bersumber dari data eksternal: secara eksplisit menyebutkan situs web rujukan resmi asalnya, yaitu "BPS Banjarnegara (banjarnegarakab.bps.go.id)", "Bappebti (bappebti.go.id)", atau "Satu Data Banjarnegara (opendata.banjarnegarakab.go.id)".
 
+[ADR-019] Tanaman Pangan Restructuring (Komoditas, Produktivitas & LTT-Katam Sub-Navigation):
+- Pengelompokan Komoditas: Mengganti 4 pasangan kaku lama menjadi 3 kelompok komoditas terpadu:
+  1. Padi Sawah & Padi Ladang (tetap)
+  2. Jagung & Umbi-umbian: Jagung, Ubi Kayu, Ubi Jalar, Talas, Porang (5 komoditas)
+  3. Kacang-kacangan: Kacang Tanah, Kedelai, Kacang Hijau (3 komoditas)
+- Endpoint Backend Dinamis: /api/v1/palawija/jagung-ubi dan /api/v1/palawija/kacang mendukung komoditas jamak dengan penjaminan ketersediaan properti tiap komoditas tanpa crash.
+- Nomenklatur Produktivitas: Mengganti istilah 'Rata-rata Produksi' menjadi 'Produktivitas' dan 'Produktivitas (Ku/Ha)' sesuai standar Ditjen Tanaman Pangan Kementan.
+- Navigasi Sub-Tab LTT & Katam: Menambahkan tab navigasi terpadu di bagian atas halaman Produksi Pangan (/food-crops) dan LTT & Kalender Tanam (/ltt-katam) untuk peralihan 1-klik tanpa overengineering.
+[ADR-020] Ketahanan Pangan Enhancement & Keamanan Pangan Segar (PSAT-PDUK):
+- Submenu Keamanan Pangan (/psat-pduk): Terhubung ke basis data MariaDB tabel psat_pduk dan Express API /v1/psat-pduk. Mengakomodasi 2 pilar pengawasan OKKPD: (1) Uji petik acak pasar/pedagang (rapid test residu pestisida, pemutih, formalin), dan (2) Akreditasi/registrasi izin edar pangan segar asal tumbuhan usaha kecil (PSAT-PDUK).
+- FSVA 12 Indikator Bapanas (/fsva): Sub-tab switcher antara Peta FSVA Desa (6 Indikator) dan 12 Indikator Kabupaten Standar Bapanas (3 Pilar: Ketersediaan, Keterjangkauan, Pemanfaatan Pangan) berstatus transparan "Menunggu Data Integrasi Bapanas / OPD" (Zero Dummy Data Law).
+- Data Harga Banjarnegara (/price-volatility): Tab switcher Pasar Lokal Banjarnegara (4 pasar pantauan: Banjarnegara, Karangkobar, Mandiraja, Klampok) berstatus "Menunggu Input Petugas Pasar" vs Referensi Bapanas Jateng.
+- Rantai Pasok (/supply-chain): Banner status pemetaan koridor awal menunggu survei volume tonase logistik lapangan dinas.
+- Ketersediaan Pangan Daerah (/food-security): Sub-tab Neraca Bahan Makanan (NBM) komposit 8 komoditas non-beras berstatus dinamis menunggu data dinas.
+
+[ADR-021] Kelembagaan Tani, Perikanan, Lembaga Pendukung & JULEHA (Dynamic Placeholders & Admin Uploads):
+- Pemisahan Kelembagaan Pertanian & Perikanan: Memisahkan kelembagaan pertanian (Poktan, Gapoktan, KWT dengan ID Simluhtan & SK Pengukuhan) dan kelembagaan perikanan (Pokdakan, Poklahsar, Pokmaswas dengan ID KUSUKA KKP & komoditas budidaya/olahan) secara tegas ke tabel mandiri 'kelembagaan_pertanian' dan 'kelembagaan_perikanan'.
+- Juru Sembelih Halal (JULEHA): Registrasi petugas potong bersertifikasi BNSP/MUI/BPJPH pada RPH/RPU Banjarnegara di tabel 'kelembagaan_juleha'.
+- Lembaga Pendukung (P4S & UPJA): Pencatatan Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) terakreditasi BPPSDMP di 'kelembagaan_p4s' serta Usaha Pelayanan Jasa Alsintan (UPJA) beserta inventaris traktor/combine/transplanter di 'kelembagaan_upja'.
+- Dynamic Placeholders & Zero Buzzword Law: Status data transparan 'Menunggu Finalisasi List Resmi Dinas' dengan banner dinamis dan tautan langsung ke Dasbor Admin (/admin) untuk unduh template .xlsx dan unggah data massal. Seluruh deskripsi antarmuka lugas tanpa bahasa lebay.
+- Integrasi Admin Excel & DB Harmonisasi: 3 domain baru didaftarkan di lib/domains.js ('kelembagaan-pertanian', 'kelembagaan-perikanan', 'kelembagaan-pendukung'), skema DDL diintegrasikan ke production_migration_patch.sql, dan dump MariaDB dimutakhirkan di dump_production_pertanian_updated.sql (2,65 MB).
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -110,4 +132,16 @@ mysql=root=
 [x] Penambahan dropdown kecamatan dan kalkulasi per kecamatan pada Nilai Ekonomi Hortikultura & Perkebunan
 [x] Penambahan dropdown kecamatan universal dan sinkronisasi ekosistem usaha pada Nilai Ekonomi Peternakan & Keswan (4 Subtab)
 [x] Isolasi tab sektor tunggal Pangan & pembersihan label sumber data (Aplikasi SISPERTANI / URL website resmi eksternal)
+[x] Restrukturisasi kelompok komoditas pangan (Padi, Jagung & Umbi-umbian, Kacang-kacangan)
+[x] Penyesuaian nomenklatur 'Produktivitas' dan integrasi sub-navigasi LTT & Kalender Tanam
+[x] Submenu Keamanan Pangan (PSAT-PDUK): skema uji petik acak pasar & registrasi izin edar (DB + API + UI)
+[x] FSVA: 12 Indikator Bapanas dengan status placeholder dinamis & rumus teknis lugas
+[x] Fluktuasi Harga: Pemisahan data harga 4 pasar lokal Banjarnegara vs Bapanas Jateng
+[x] Rantai Pasok & Ketersediaan: Integrasi status survei logistik lapangan & neraca pangan komposit
+[x] Kelembagaan Tani & Perikanan: Pemisahan Pertanian (Poktan/Gapoktan/KWT) vs Perikanan (Pokdakan/Poklahsar/Pokmaswas)
+[x] Juru Sembelih Halal (JULEHA): Registrasi tersertifikasi kompetensi halal RPH/RPU di MariaDB & UI
+[x] Lembaga Pendukung: Integrasi data P4S (akreditasi BPPSDMP) & UPJA (inventaris alsintan)
+[x] Placeholder Dinamis & Admin Excel Template: 3 domain admin, form upload dinamis, YAGNI, zero buzzword
+[x] Redesign View Dasbor Admin (/admin): Layout responsif & role-aware, Quick Role selector pada form login, Tab Kategori & Live Search untuk 20 domain, Ruang Kerja Bidang tanpa alert sempit, YAGNI, zero buzzword
+
 

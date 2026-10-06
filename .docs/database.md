@@ -78,6 +78,16 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Kelembagaan**| `kelompok_tani` | `(desa_id, tahun)` | Jumlah Poktan, Gapoktan, dan anggota per desa |
 | **Kelembagaan**| `kelompok_tani_hutan` | `(desa_id, tahun)` | KTH tingkat Pemula, Madya, Utama |
 | **Kelembagaan (KWT)**| `kwt_kelompok_wanita_tani` | `(kecamatan, nama_kelompok)` | Profil KWT, Pokdakan, Poklahsar, Pokmamas per kecamatan |
+| **Kelembagaan Pertanian**| `kelembagaan_pertanian` | `(kecamatan_id, nama_kelompok)` | Register resmi Poktan, Gapoktan, KWT dengan ID Simluhtan & SK |
+| **Kelembagaan Perikanan**| `kelembagaan_perikanan` | `(kecamatan_id, nama_kelompok)` | Register resmi Pokdakan, Poklahsar, Pokmaswas dengan ID KUSUKA |
+| **Kelembagaan Halal**| `kelembagaan_juleha` | `(kecamatan_id, nama_lengkap)` | Register Juru Sembelih Halal (JULEHA) tersertifikasi RPH/RPU |
+| **Kelembagaan Pendukung**| `kelembagaan_p4s` | `(kecamatan_id, nama_p4s)` | Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) |
+| **Kelembagaan Alsintan**| `kelembagaan_upja` | `(kecamatan_id, nama_upja)` | Usaha Pelayanan Jasa Alsintan (UPJA) & armada kelolaan |
+| **Keamanan Pangan**| `psat_sampel_uji` | `(kecamatan_id, pasar, tanggal_uji, jenis_pangan)` | Uji petik acak residu pestisida & cemaran bahan pangan |
+| **Keamanan Pangan**| `psat_izin_edar` | `(nomor_izin_pduk)` | Register sertifikasi izin edar PSAT-PDUK pelaku usaha |
+| **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas |
+| **Ketahanan Pangan**| `neraca_pangan_komposit` | `(komoditas, tahun, minggu_ke)` | Neraca ketersediaan vs kebutuhan komoditas pokok mingguan |
+| **Ketahanan Pangan**| `survei_logistik_beras` | `(kecamatan_id, nama_rmu, tahun)` | Kapasitas penggilingan beras (RMU) & arus distribusi pangan |
 | **Tanaman Pangan**| `ltt_katam` | `(kecamatan, komoditas, jenis, tahun)` | Luas Tambah Tanam (LTT) & Kalender Tanam (Katam) |
 | **Bantuan** | `bantuan_program` | `(nama, sumber_dana, tahun_anggaran)`| Nama kegiatan, alokasi nilai, dan penerima |
 | **Bantuan** | `bantuan_alokasi` | `(tahun)` | Pagu tahunan dana APBD & APBN |

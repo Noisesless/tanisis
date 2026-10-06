@@ -18,10 +18,10 @@
 
 export const ROLES = {
   admin: { label: "Administrator", domains: null }, // null = SEMUA domain
-  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija", "ltt-katam"] },
+  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija", "ltt-katam", "kwt", "kelembagaan-pertanian"] },
   "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan"] },
-  peternakan: { label: "Bidang Peternakan", domains: ["peternakan"] },
-  perikanan: { label: "Bidang Perikanan", domains: ["perikanan"] },
+  peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan-pendukung"] },
+  perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan-perikanan"] },
 };
 
 // Daftar akun terdaftar. `passEnv` menunjuk nama variabel lingkungan tempat
