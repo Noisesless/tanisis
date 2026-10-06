@@ -231,6 +231,21 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Menambahkan `useEffect` untuk memuat data live dari endpoint `/api/v1/peternakan/umkm-pakan`, `/api/v1/peternakan/poultry-shop`, dan `/api/v1/peternakan/nkv`.
   4. Menerapkan penyaringan reaktif tabel ekosistem usaha (`filteredUmkm`, `filteredPoultry`, `filteredNkv`) berdasarkan kecamatan terpilih disertai badge counter unit dan empty state ramah yang dilengkapi tombol pintas `[Lihat Semua]`.
 
+### [ISSUE-019] Tampilan Tab Multi-Sektor di Tanaman Pangan & Diksi Hiperbolis Sumber Data
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:**
+  1. Pada submenu Nilai Ekonomi Tanaman Pangan (`/nilai-ekonomi/pangan`), tab di atas filter bar masih memunculkan seluruh 5 bidang (Pangan, Hortikultura, Perkebunan, Peternakan, Perikanan), padahal pengguna menginginkan isolasi sektor murni (hanya tab Pangan).
+  2. Diksi pada badge cakupan dan kartu metrik sumber data menggunakan frasa hiperbolis/buzzword (*"Resmi · Dinas"*, *"data resmi Dinas"*, *"input Dinas"*).
+- **Akar Masalah:**
+  1. Percabangan filter tab hanya mengecek `hortikultura` dan `perkebunan`, sehingga `pangan` jatuh ke daftar seluruh sektor `ge`.
+  2. Label teks sumber data di-hardcode dengan frasa administratif dinas yang kaku dan terkesan hiperbolis.
+- **Solusi (ADR-018):**
+  1. Mengubah penyaringan tab navigasi menjadi `ge.filter(e => e.key === o)`, sehingga setiap halaman nilai ekonomi hanya menampilkan tab sektor yang sedang dibuka (Pangan hanya Pangan, Hortikultura hanya Hortikultura, Perkebunan hanya Perkebunan).
+  2. Membersihkan seluruh teks hiperbolis sesuai kaidah pragmatis:
+     - Jika data berasal dari MariaDB: ditulis lugas `Aplikasi SISPERTANI` (pada badge cakupan, kartu Sumber Data, dan tabel rincian).
+     - Jika data berasal dari eksternal: secara spesifik menyebutkan nama institusi dan situs web asalnya: `BPS Banjarnegara (banjarnegarakab.bps.go.id)`, `Bappebti (bappebti.go.id)`, atau `Satu Data Banjarnegara (opendata.banjarnegarakab.go.id)`.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
