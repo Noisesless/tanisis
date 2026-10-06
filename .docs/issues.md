@@ -205,6 +205,18 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Mengimpor data unggul production (lahan 2025, 120 baris telur Itik, presisi desimal asli hortikultura) ke database lokal `pertasis`.
   4. Menghasilkan skrip migrasi non-destruktif `database/production_migration_patch.sql` dan dump terpadu `database/dump_production_pertanian_updated.sql` (100% lulus uji di sandbox DB).
 
+### [ISSUE-017] Ketiadaan Filter Dropdown Kecamatan pada Submenu Nilai Ekonomi Hortikultura & Perkebunan
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:** Pada submenu Nilai Ekonomi Hortikultura (`/nilai-ekonomi/hortikultura`) dan Perkebunan (`/nilai-ekonomi/perkebunan`), dropdown pilihan kecamatan tidak muncul dan hanya menampilkan teks statis cakupan kabupaten (`Kabupaten · data resmi Dinas`), sehingga pengguna tidak dapat melihat rincian nilai ekonomi per kecamatan.
+- **Akar Masalah:** Logika UI sebelumnya mendeteksi keberadaan data resmi dinas di `nilai_ekonomi_tahunan` (variabel `P = j != null && j.length > 0`). Karena data dinas ada di tingkat kabupaten, komponen langsung menyembunyikan elemen dropdown `<select>` kecamatan dan memblokir render tabel estimasi komoditas per kecamatan.
+- **Solusi (ADR-016):**
+  1. Memodifikasi `dist/assets/nilai-ekonomi-uFV4-6ig.js` agar dropdown Kecamatan selalu dirender aktif untuk seluruh 20 kecamatan Banjarnegara (`Banjarmangu` s.d. `Wanayasa`) plus opsi `Semua Kecamatan`.
+  2. Menerapkan pengondisian dinamis `isResmi = P && z.length > 0 && A === E`:
+     - Jika pengguna memilih `Semua Kecamatan` pada tahun yang memiliki data resmi (2024), aplikasi menampilkan data agregat resmi dinas kabupaten beserta diagram batang peringkat sebaran nilai ekonomi 20 kecamatan di bawahnya.
+     - Jika pengguna memilih kecamatan spesifik (misal `Batur`, `Kalibening`, `Banjarmangu`, `Pejawaran`), aplikasi langsung menampilkan kalkulasi estimasi nilai ekonomi komoditas kecamatan tersebut (volume panen BPS Distankan × harga referensi pasar/petani).
+  3. Memperluas pemilih tahun (`I`) agar menggabungkan seluruh horizon tahun yang tersedia dari dataset produksi BPS (2017–2024) dan data dinas.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
@@ -214,3 +226,4 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 3. **Eksekusi Migrasi di Server Produksi (Saat Rilis):** Menjalankan `database/production_migration_patch.sql` di server saat seluruh PR klien telah selesai dan disetujui.
 
 *(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan pembaruan dokumentasi telah tuntas 100%).*
+
