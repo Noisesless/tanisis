@@ -217,6 +217,20 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
      - Jika pengguna memilih kecamatan spesifik (misal `Batur`, `Kalibening`, `Banjarmangu`, `Pejawaran`), aplikasi langsung menampilkan kalkulasi estimasi nilai ekonomi komoditas kecamatan tersebut (volume panen BPS Distankan × harga referensi pasar/petani).
   3. Memperluas pemilih tahun (`I`) agar menggabungkan seluruh horizon tahun yang tersedia dari dataset produksi BPS (2017–2024) dan data dinas.
 
+### [ISSUE-018] Ketiadaan Filter Dropdown Kecamatan pada Submenu Nilai Ekonomi & Ekosistem Usaha Peternakan
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:** Pada submenu Nilai Ekonomi Peternakan & Keswan (`/nilai-ekonomi/peternakan`), filter dropdown kecamatan tidak muncul saat beralih ke subtab 2 (*UMKM Pakan Ternak*), subtab 3 (*Toko Peternakan & Poultry Shop*), atau subtab 4 (*Unit Usaha Ber-NKV*), dan pada subtab 1 (*Nilai Ekonomi Ternak*) selektor kecamatan sempat terkunci (*disabled*) jika dataset awal belum siap.
+- **Akar Masalah:**
+  1. Blok filter bar (`fe`) sebelumnya dibungkus di dalam percabangan `else` dari `o==='peternakan' && peternakanSubTab !== 'valuasi'`, sehingga saat memilih subtab 2, 3, atau 4, filter bar lenyap total dari layar.
+  2. Daftar kecamatan `L` hanya mengandalkan data estimasi async tanpa daftar baku 20 kecamatan, sehingga berisiko `disabled` saat dataset kosong.
+  3. Data pelaku usaha di subtab 2, 3, dan 4 belum memiliki efek `fetch` aktif ke API backend dan tabelnya belum menyaring data per kecamatan.
+- **Solusi (ADR-017):**
+  1. Memindahkan filter bar (`fe`) ke atas seluruh subtab konten sehingga selalu tampak dan aktif di keempat subtab peternakan.
+  2. Menginjeksi daftar baku 20 kecamatan resmi Kabupaten Banjarnegara (`KEC_BANJARNEGARA`) ke pembentukan memo `L` sehingga dropdown tidak pernah terkunci/disabled.
+  3. Menambahkan `useEffect` untuk memuat data live dari endpoint `/api/v1/peternakan/umkm-pakan`, `/api/v1/peternakan/poultry-shop`, dan `/api/v1/peternakan/nkv`.
+  4. Menerapkan penyaringan reaktif tabel ekosistem usaha (`filteredUmkm`, `filteredPoultry`, `filteredNkv`) berdasarkan kecamatan terpilih disertai badge counter unit dan empty state ramah yang dilengkapi tombol pintas `[Lihat Semua]`.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
