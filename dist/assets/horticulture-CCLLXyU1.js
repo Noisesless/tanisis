@@ -332,7 +332,7 @@ A==="buah"?(0,D.jsxs)("div",{className:"py-2 px-3 border border-slate-200 bg-sla
 ]}),
 
 Ce?(0,D.jsx)(ee,{label:"Memuat data hortikultura"}):(0,D.jsxs)(D.Fragment,{children:[
-(0,D.jsx)(Wgt,{sektor:"hortikultura",tahun:N}),
+(0,D.jsx)(Wgt,{sektor:"hortikultura",subsektor:A,tahun:N}),
 
 (0,D.jsxs)("div",{className:"grid grid-cols-1 md:grid-cols-3 gap-6",children:[
 (0,D.jsx)(h,{

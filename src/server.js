@@ -152,6 +152,16 @@ app.use("/api", api);
 app.use("/sispertani-api", api);
 
 // === Frontend: dist/ hasil build Vite dilayani dari sini ==================
+// Security Guard: Blokir akses langsung ke ekstensi sensitif (.sql, .env, .bak, .sh, dll)
+app.use((req, res, next) => {
+  const ext = path.extname(req.path).toLowerCase();
+  const BLOCKED_EXTS = new Set([".sql", ".env", ".bak", ".sh", ".bash", ".yml", ".yaml", ".config"]);
+  if (BLOCKED_EXTS.has(ext) || req.path.includes("/.")) {
+    return res.status(403).json({ error: "forbidden_access" });
+  }
+  next();
+});
+
 // DIST_DIR relatif Application Root (default ./dist, sejajar package.json).
 // Di dev (tanpa dist/) bagian ini tidak mengganggu — frontend tetap via Vite.
 const DIST_DIR = process.env.DIST_DIR || "./dist";
@@ -177,6 +187,9 @@ app.use((req, res, next) => {
   ) {
     return next();
   }
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
   res.sendFile(path.join(distRoot, "index.html"));
 });
 

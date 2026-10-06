@@ -11,14 +11,16 @@ function formatRp(val) {
   return "Rp " + Number(val).toLocaleString("id-ID");
 }
 
-export function SectorEconomicWidget({ sektor, tahun }) {
+export function SectorEconomicWidget({ sektor, subsektor, tahun }) {
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (!sektor || !tahun) return;
     setLoading(true);
-    fetch(`/api/v1/ekonomi/sektor-ringkasan?sektor=${sektor}&tahun=${tahun}`)
+    let url = `/api/v1/ekonomi/sektor-ringkasan?sektor=${sektor}&tahun=${tahun}`;
+    if (subsektor) url += `&subsektor=${encodeURIComponent(subsektor)}`;
+    fetch(url)
       .then(res => res.json())
       .then(json => {
         setData(json);
@@ -28,7 +30,7 @@ export function SectorEconomicWidget({ sektor, tahun }) {
         setData(null);
         setLoading(false);
       });
-  }, [sektor, tahun]);
+  }, [sektor, subsektor, tahun]);
 
   if (loading) {
     return (0, jsx.jsx)("div", {
@@ -113,19 +115,19 @@ export function SectorEconomicWidget({ sektor, tahun }) {
           }),
           (0, jsx.jsx)("p", {
             className: "text-xs text-slate-500 mt-1",
-            children: "Volume produksi tertinggi di sektor ini"
+            children: "Volume produksi tertinggi di " + (subsektor ? "sub-sektor ini" : "sektor ini")
           })
         ]
       }),
 
-      // Card 3: Nilai Ekonomi Sektor
+      // Card 3: Nilai Ekonomi Sektor / Sub-Sektor
       (0, jsx.jsxs)("div", {
         className: "bg-white border border-slate-200 border-l-4 border-l-amber-600 rounded-lg p-4 shadow-sm",
         children: [
           (0, jsx.jsxs)("div", {
             className: "flex items-center justify-between text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1",
             children: [
-              (0, jsx.jsxs)("span", { children: ["Nilai Ekonomi Sektor (", tahun, ")"] }),
+              (0, jsx.jsxs)("span", { children: [subsektor ? "Nilai Ekonomi Sub-Sektor (" : "Nilai Ekonomi Sektor (", tahun, ")"] }),
               (0, jsx.jsxs)("span", { className: "text-[10px] bg-amber-50 text-amber-800 px-2 py-0.5 rounded-full font-medium", children: [jumlahKomoditas, " Komoditas"] })
             ]
           }),
@@ -135,7 +137,7 @@ export function SectorEconomicWidget({ sektor, tahun }) {
           }),
           (0, jsx.jsx)("p", {
             className: "text-xs text-slate-500 mt-1",
-            children: "Volume riil × harga acuan produsen"
+            children: totalNilai > 0 ? "Volume riil × harga acuan produsen" : "Menunggu penetapan harga resmi dinas"
           })
         ]
       })

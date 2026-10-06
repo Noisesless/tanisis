@@ -82,6 +82,10 @@ graph TD
    - Menyediakan endpoint `/api/3/*` yang meneruskan kueri ke portal Open Data resmi Kabupaten Banjarnegara (`https://opendata.banjarnegarakab.go.id`).
    - Menyediakan header cache `public, max-age=300` untuk mengurangi beban upstream dan memastikan katalog dataset tetap dapat diakses dari origin aplikasi yang sama tanpa kendala CORS.
 
+6. **Lapisan Keamanan & Proteksi Berkas Sensitif (Security Guard):**
+   - Middleware Express secara tegas memblokir akses publik (HTTP 403 Forbidden) ke berkas berekstensi sensitif (`.sql`, `.env`, `.bak`, `.sh`, `.bash`, `.yml`, `.config`) serta direktori tersembunyi.
+   - Berkas migrasi dan dump basis data diisolasi ke direktori `database/` di luar web root statis `./dist` untuk mencegah kebocoran data.
+
 ---
 
 ## 4. Lapisan Basis Data (Persistence Layer)

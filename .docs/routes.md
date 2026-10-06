@@ -88,7 +88,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/perikanan/nilai-tangkap` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi perikanan tangkap |
 | `GET` | `/v1/ekonomi/inflasi` | `src/routes/ekonomi.js` | Publik | Indeks inflasi bahan pangan |
 | `GET` | `/v1/ekonomi/pasar` | `src/routes/ekonomi.js` | Publik | Direktori pasar komoditas daerah |
-| `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor & tahun (Zero Dummy Data, ADR-009) |
+| `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor, subsektor (sayuran, buah, biofarmaka, tanaman_hias), & tahun (Zero Dummy Data, ADR-009, ADR-014) |
 | `GET` | `/v1/ekonomi/nilai-ekonomi` | `src/routes/ekonomi.js` | Publik | Valuasi nilai ekonomi tahunan resmi per bidang dari MySQL |
 | `GET` | `/v1/komoditas-unggulan` | `src/server.js` | Publik | Daftar dinamis komoditas unggulan per bidang dari MySQL & tabel produksi riil (Zero Dummy Data) |
 | `GET` | `/v1/komoditas-unggulan/per-kecamatan` | `src/routes/komoditas-unggulan.js` | Publik | Komoditas unggulan top-1 per kecamatan x 5 bidang (agregasi server-side mengikuti tahun) |

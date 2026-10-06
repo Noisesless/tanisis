@@ -181,17 +181,36 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menerapkan media query responsif laptop-first pada `dist/assets/index-DmHYJUQI.css`:
      - Skala font dasar `html { font-size: 13.5px !important; }` pada `@media (max-width: 1440px)` sehingga seluruh komponen berbasis `rem` proporsional dan tidak berhimpitan.
      - Mengurangi padding kontainer utama `.print-main` menjadi `1rem 1.25rem`.
-     - Mengatur tinggi header dan brand sidebar ke 60px.
      - Mengatur padding sel tabel menjadi lebih kompak (`0.45rem 0.65rem`).
   3. Mengubah grid tombol Sub-Sektor Hortikultura menjadi `grid-cols-2 2xl:grid-cols-4 gap-1.5` dengan tombol `py-1.5 px-2 text-[11px] whitespace-nowrap`, sehingga membentuk matriks 2×2 yang rapi, tombol selebar ~115px, dan teks "Tanaman Hias" muat sempurna dalam satu baris.
+
+### [ISSUE-015] Sinkronisasi Dinamis Sub-Sektor Hortikultura & Isolasi Breadcrumb Antar-Sektor
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:** Widget 3 kartu ringkasan ekonomi sektor di `/horticulture` tidak berubah saat memilih sub-sektor (Sayuran, Buah, Biofarmaka, Tanaman Hias), dan judul breadcrumb menampilkan teks gabungan usang `SEKTOR KOMODITAS / Produksi Sayuran & Buah`.
+- **Akar Masalah:** Endpoint `/api/v1/ekonomi/sektor-ringkasan` belum memfilter berdasarkan parameter query `subsektor`, dan header bar `default-CAKe9ffW.js` belum mengisolasi nama sektor murni.
+- **Solusi (ADR-014):**
+  1. Menambahkan dukungan parameter `subsektor` pada `src/routes/ekonomi.js` untuk memfilter ranking #1 volume panen dan total nilai ekonomi secara reaktif.
+  2. Memperbarui `sektor-ringkasan-widget.js` agar memantau tombol sub-sektor yang aktif dan mengirimkan parameter `subsektor` ke API.
+  3. Mengisolasi label breadcrumb menjadi `HORTIKULTURA / Produksi Sayuran & Buah` dan `PERKEBUNAN / Produksi Perkebunan` serta membersihkan dead code teks lama.
+
+### [ISSUE-016] Harmonisasi Data Production vs Dev & Pengamanan Berkas SQL Database
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-06
+- **Deskripsi:** Ditemukan perbedaan antara dump production dan database development lokal (data lahan 2025 dan telur itik ada di prod tapi sempat terlewat di lokal, sedangkan skema 14 tabel baru dan RBAC ada di lokal tapi belum ada di prod). Selain itu, berkas dump `.sql` sempat tersimpan di `dist/` yang diekspos sebagai berkas web publik.
+- **Akar Masalah:** Sinkronisasi dua arah belum dilakukan, dan file SQL dump ditempatkan di folder `dist/` yang disajikan oleh `express.static`.
+- **Solusi (ADR-015):**
+  1. Memindahkan seluruh berkas dump SQL (`dump_production_pertanian.sql`, `dump_production_pertanian_updated.sql`, `production_migration_patch.sql`) ke direktori aman di luar web root: `database/`.
+  2. Menambahkan middleware security guard di `src/server.js` untuk memblokir akses publik (403 Forbidden) ke ekstensi sensitif (`.sql`, `.env`, `.bak`, `.sh`, dll).
+  3. Mengimpor data unggul production (lahan 2025, 120 baris telur Itik, presisi desimal asli hortikultura) ke database lokal `pertasis`.
+  4. Menghasilkan skrip migrasi non-destruktif `database/production_migration_patch.sql` dan dump terpadu `database/dump_production_pertanian_updated.sql` (100% lulus uji di sandbox DB).
 
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-1. **Upload Paket Bersih ke Server Produksi:** Melakukan upload `deploy_pertanian_clean_20261005.zip` via cPanel File Manager/SFTP dan merestart Node.js App.
+1. **Pengerjaan PR / Revisi Lanjutan dari Klien di DEV:** Menuntaskan daftar revisi dan fitur baru dari klien di lingkungan lokal sebelum merilis ke server produksi.
 2. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
-3. **Merge Branch GitHub Pasca Kesembuhan Programmer:** Mengajukan Pull Request dari branch `release/2026-10-05-clean` ke `main` saat kolaborator aktif kembali.
+3. **Eksekusi Migrasi di Server Produksi (Saat Rilis):** Menjalankan `database/production_migration_patch.sql` di server saat seluruh PR klien telah selesai dan disetujui.
 
 *(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan pembaruan dokumentasi telah tuntas 100%).*
-

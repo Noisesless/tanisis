@@ -28,6 +28,11 @@ pnpm-debug.log*
 dist_backup_local/
 scratch/
 
+# Database Dumps & Local DBs
+*.sql
+*.db
+*.sqlite
+
 # Operating System Files
 .DS_Store
 Thumbs.db

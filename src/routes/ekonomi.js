@@ -120,6 +120,8 @@ ekonomiRouter.get(
     let tahun = req.query.tahun ? Number(req.query.tahun) : null;
     let items = [];
 
+    const subsektor = String(req.query.subsektor ?? "").toLowerCase();
+
     if (sektor === "perikanan") {
       if (!tahun || isNaN(tahun)) {
         const [latest] = await q("SELECT MAX(tahun) AS maxTahun FROM ikan_produksi_jenis WHERE produksi_kg > 0");
@@ -137,6 +139,36 @@ ekonomiRouter.get(
           ORDER BY produksi_kg DESC`,
         [tahun],
       );
+    } else if (sektor === "hortikultura" && (subsektor === "biofarmaka" || subsektor === "tanaman_hias" || subsektor === "tanaman-hias")) {
+      if (!tahun || isNaN(tahun)) {
+        tahun = 2024;
+      }
+      const kelompokDb = subsektor === "biofarmaka" ? "biofarmaka" : "tanaman_hias";
+      const defaultSatuan = subsektor === "biofarmaka" ? "Kg" : "Tangkai";
+      const bioOrHiasRows = await q(
+        `SELECT t.komoditas,
+                ? AS satuan,
+                SUM(t.nilai) AS volumeProduksi,
+                ? AS tahun
+           FROM horti_produksi t
+          WHERE t.kelompok = ? AND t.tahun = ? AND t.nilai > 0
+          GROUP BY t.komoditas
+          ORDER BY volumeProduksi DESC`,
+        [defaultSatuan, tahun, kelompokDb, tahun],
+      );
+      for (const row of bioOrHiasRows) {
+        const [sentraRow] = await q(
+          `SELECT k.nama AS sentra
+             FROM horti_produksi t
+             JOIN kecamatan k ON k.id = t.kecamatan_id
+            WHERE t.komoditas = ? AND t.tahun = ? AND t.kelompok = ?
+            ORDER BY t.nilai DESC LIMIT 1`,
+          [row.komoditas, tahun, kelompokDb],
+        );
+        row.kecamatanSentra = sentraRow?.sentra || "Kabupaten Banjarnegara";
+        row.nilaiEkonomiRp = 0;
+      }
+      items = bioOrHiasRows;
     } else {
       if (!tahun || isNaN(tahun)) {
         const [latest] = await q(
@@ -157,19 +189,53 @@ ekonomiRouter.get(
           ORDER BY total_produksi DESC`,
         [sektor, tahun],
       );
+
+      // Filter sub-sektor khusus hortikultura
+      if (sektor === "hortikultura" && subsektor === "sayuran") {
+        const SAYURAN_LIST = ["Kentang", "Kubis", "Wortel", "Cabai Rawit", "Cabai Merah", "Cabai Besar", "Bawang Merah", "Bawang Putih", "Tomat", "Petsai"];
+        items = items.filter((it) => SAYURAN_LIST.some((s) => s.toLowerCase() === it.komoditas.toLowerCase()));
+      } else if (sektor === "hortikultura" && subsektor === "buah") {
+        const BUAH_LIST = ["Salak", "Pisang", "Durian", "Mangga", "Pepaya", "Jeruk Besar", "Jeruk Siam"];
+        items = items.filter((it) => BUAH_LIST.some((b) => b.toLowerCase() === it.komoditas.toLowerCase()));
+      }
     }
 
     // Ambil total nilai ekonomi dari nilai_ekonomi_tahunan (jika diinput resmi)
-    const [resmiTotal] = await q(
-      `SELECT SUM(nilai_rp) AS totalRp
-         FROM nilai_ekonomi_tahunan
-        WHERE bidang = ? AND tahun = ?`,
-      [sektor, tahun],
-    );
+    let totalNilaiRp = 0;
+    if (sektor === "hortikultura" && subsektor === "sayuran") {
+      const SAYURAN_LIST = ["Kentang", "Kubis", "Wortel", "Cabai Rawit", "Cabai Merah", "Cabai Besar", "Bawang Merah", "Bawang Putih", "Tomat", "Petsai"];
+      const [resmiTotal] = await q(
+        `SELECT SUM(nilai_rp) AS totalRp
+           FROM nilai_ekonomi_tahunan
+          WHERE bidang = 'hortikultura' AND tahun = ?
+            AND komoditas IN (${SAYURAN_LIST.map(() => "?").join(",")})`,
+        [tahun, ...SAYURAN_LIST],
+      );
+      totalNilaiRp = num0(resmiTotal?.totalRp);
+    } else if (sektor === "hortikultura" && subsektor === "buah") {
+      const BUAH_LIST = ["Salak", "Pisang", "Durian", "Mangga", "Pepaya", "Jeruk Besar", "Jeruk Siam"];
+      const [resmiTotal] = await q(
+        `SELECT SUM(nilai_rp) AS totalRp
+           FROM nilai_ekonomi_tahunan
+          WHERE bidang = 'hortikultura' AND tahun = ?
+            AND komoditas IN (${BUAH_LIST.map(() => "?").join(",")})`,
+        [tahun, ...BUAH_LIST],
+      );
+      totalNilaiRp = num0(resmiTotal?.totalRp);
+    } else if (sektor === "hortikultura" && (subsektor === "biofarmaka" || subsektor === "tanaman_hias" || subsektor === "tanaman-hias")) {
+      totalNilaiRp = 0;
+    } else {
+      const [resmiTotal] = await q(
+        `SELECT SUM(nilai_rp) AS totalRp
+           FROM nilai_ekonomi_tahunan
+          WHERE bidang = ? AND tahun = ?`,
+        [sektor, tahun],
+      );
+      totalNilaiRp = num0(resmiTotal?.totalRp);
+    }
 
     // Jika nilai_ekonomi_tahunan ada, gunakan total tersebut.
     // Jika tidak, jumlahkan dari nilai_ekonomi_estimasi di komoditas_unggulan.
-    let totalNilaiRp = num0(resmiTotal?.totalRp);
     if (!totalNilaiRp && items.length > 0) {
       totalNilaiRp = items.reduce((acc, it) => acc + num0(it.nilaiEkonomiRp), 0);
     }
@@ -179,6 +245,7 @@ ekonomiRouter.get(
       return {
         status: "empty",
         sektor,
+        subsektor: subsektor || null,
         tahun,
         message: `Belum ada data komoditas utama dan nilai ekonomi untuk tahun ${tahun}.`,
         top1: null,
@@ -191,6 +258,7 @@ ekonomiRouter.get(
     return {
       status: "success",
       sektor,
+      subsektor: subsektor || null,
       tahun,
       top1: items[0] || null,
       items,
