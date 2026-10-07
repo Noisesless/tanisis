@@ -93,10 +93,12 @@ var e = {
     {
       category: `KELEMBAGAAN & DATA`,
       title: `Kelembagaan Tani`,
-      subtitle: `Poktan, Gapoktan & KWT`,
+      subtitle: `Poktan, KEP & Penyuluhan`,
       icon: `lembaga`,
       items: [
-        { label: `Direktori Kelembagaan Tani`, href: `/farmers` }
+        { label: `Tani, Gapoktan & KWT`, href: `/farmers?klaster=tani` },
+        { label: `Ekonomi & Penyuluhan`, href: `/farmers?klaster=ekonomi` },
+        { label: `Sektoral & Pendukung`, href: `/farmers?klaster=sektoral` }
       ]
     },
     {

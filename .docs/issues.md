@@ -262,6 +262,49 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Melengkapi pemetaan tema warna dan ikon resmi untuk seluruh 20 domain data di `dist/assets/admin-C9Dakcgq.js`.
   4. Memperbarui wewenang RBAC di `src/lib/users.js` sehingga akun Tanaman Pangan, Peternakan, dan Perikanan otomatis berhak mengelola domain kelembagaannya.
 
+### [ISSUE-021] Blank Map Rendering pada Halaman WebGIS /sebaran/ dan Profil /kecamatan/
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-07
+- **Deskripsi:** Peta interaktif pada rute `/sebaran/` dan `/kecamatan/` tampil kosong (blank canvas) tanpa poligon kecamatan maupun raster basemap.
+- **Akar Masalah:**
+  1. MapLibre GL membutuhkan berkas Web Worker `maplibre-gl-worker.mjs` di direktori aset publik saat berjalan di browser, yang sebelumnya belum tersedia di root `./dist`.
+  2. Rute `/sebaran` dan `/sebaran/` belum dinormalisasi otomatis ke subrute WebGIS utama `/sebaran/pangan`.
+- **Solusi (ADR-024):**
+  1. Memasang `maplibre-gl-worker.mjs` dan `maplibre-gl-shared.mjs` di direktori `./dist`.
+  2. Menambahkan redirect normalisasi di `src/server.js` untuk mengarahkan `/sebaran/` ke `/sebaran/pangan` dan `/kecamatan/` ke `/kecamatan`.
+  3. Memperbaiki inisialisasi worker URL pada komponen peta `kecamatan-DQw1gkYq.js` sehingga peta spasial 20 kecamatan interaktif berfungsi sempurna.
+
+### [ISSUE-022] Pemisahan 3 Submenu Kelembagaan Tani di Navbar & Eliminasi Switcher 3-Tombol
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-07
+- **Deskripsi:** Tampilan kelembagaan menampilkan switcher 3-tombol horizontal yang membingungkan dan tidak terpisah per kebutuhan di navigasi navbar.
+- **Akar Masalah:** Navigasi sidebar hanya memiliki satu link direktori generik `/farmers`, sehingga pengguna harus berpindah klaster secara manual di dalam badan halaman.
+- **Solusi (ADR-025):**
+  1. Memisahkan 3 sub-item di navigasi sidebar (`dist/assets/site-B5h-x_N5.js`):
+     - `Tani, Gapoktan & KWT` (`/farmers?klaster=tani`)
+     - `Ekonomi & Penyuluhan` (`/farmers?klaster=ekonomi`)
+     - `Sektoral & Pendukung` (`/farmers?klaster=sektoral`)
+  2. Menghapus switcher 3-tombol pada tampilan halaman view (`dist/assets/farmers-RBAkXoyn.js`), sehingga view langsung terisolasi sesuai klaster yang dipilih di navigasi.
+
+### [ISSUE-023] Inkonsistensi Layout, Lebar Layar & Geometri Halaman /renstra & /recommendations
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-07
+- **Deskripsi:** Halaman `/renstra` dan `/recommendations` memiliki tata letak sempit (`max-w-5xl mx-auto`), sudut kotak tanpa rounded yang tidak seragam, warna latar pastel pekat, dan pemisahan kontainer tabel yang tidak rapi.
+- **Akar Masalah:** Kode halaman membawa legacy styling terisolasi yang belum diselaraskan dengan standar token `design-system.md`.
+- **Solusi (ADR-026):**
+  1. Menghapus batas sempit `max-w-5xl mx-auto` sehingga halaman memanfaatkan lebar penuh kontainer aplikasi secara elegan.
+  2. Menerapkan token `--radius-md: 8px` (`rounded-lg`) pada seluruh kartu metrik, callout, panel, dan tabel.
+  3. Mengganti styling kartu metrik menjadi kartu putih bergaris sisi kiri (`border-l-4 border-l-blue-800`, `border-l-amber-600`, `border-l-teal-700`) dan tipografi Executive Agritech yang jernih.
+
+### [ISSUE-024] Eliminasi Tag Eyebrow dan Pulsing Dot (AI Slop) pada Header Halaman
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-07
+- **Deskripsi:** Ditemukan elemen capsule/eyebrow huruf kapital dengan titik hijau berkedip (`● PERENCANAAN & EVALUASI KINERJA DAERAH`, `● KEBIJAKAN & ANALITIKA PERTANIAN`, `● BIDANG SEKTORAL & LEMBAGA PENDUKUNG`) di atas heading judul pada halaman `/renstra`, `/recommendations`, dan `/farmers`. Elemen ini dinilai tidak konsisten dan bertentangan dengan kaidah desain profesional (melanggar Anti-AI-Slop Law).
+- **Akar Masalah:** Komponen header membawa elemen visual generic AI template yang tidak ada pada halaman standar lainnya.
+- **Solusi (ADR-027):**
+  1. Menghapus total tag eyebrow dan animasi pulsing dot di atas judul `<h1>` pada ketiga halaman.
+  2. Menempatkan `<h1>` langsung di posisi teratas header kolom, menciptakan hierarki visual yang tenang, resmi, dan konsisten di seluruh aplikasi.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

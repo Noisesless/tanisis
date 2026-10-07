@@ -19,6 +19,8 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Keamanan Kredensial AI Gateway** | Sangat Baik | ✅ PASSED | Eliminasi kebocoran API key eksternal di bundel JavaScript klien; seluruh kueri RAG dan streaming Gemini dialihkan ke gateway internal `/api/v1/ai/chat` dengan proteksi rate limit. |
 | **Kepatuhan Visual Enterprise & Anti-AI-Slop Law** | Sangat Baik | ✅ PASSED | Pembersihan total emoji mentah (🐄, 🥛, 🌾, 🐑, dll.) dan simbol segitiga (▲, ▼); digantikan pill badge tipografi enterprise dan indikator numerik formal. |
 | **Kepatuhan Zero-Empty & Spesies Definitif (ADR-012)** | Sangat Baik | ✅ PASSED | Pemisahan tegas Kulit Sapi vs Kerbau vs Kambing vs Domba vs Kelinci; penambahan Susu Kambing & Telur Puyuh; eliminasi baris bernilai 0/kosong dari tabel publik; penyiapan placeholder bersih untuk UMKM Pakan, Poultry Shop, dan NKV tanpa mock dummy data. |
+| **Harmonisasi Layout & Geometri (ADR-026)** | Sangat Baik | ✅ PASSED | Eliminasi batas sempit `max-w-5xl` pada `/renstra` dan `/recommendations`, penerapan token `--radius-md: 8px`, border-left-4 pada kartu metrik, dan integrasi tabel seri tahunan ke dalam kontainer utama. |
+| **Eliminasi AI Slop & Pulsing Dot Header (ADR-027)** | Sangat Baik | ✅ PASSED | Penghapusan capsule/eyebrow kapital dan indikator pulsing dot pada header `/renstra`, `/recommendations`, dan `/farmers` demi kepatuhan mutlak pada Anti-AI-Slop Law. |
 
 ---
 

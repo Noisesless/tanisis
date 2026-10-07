@@ -138,6 +138,22 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Filter Selektif & Paginasi Terpadu: Penambahan dropdown bentuk badan usaha KEP, sinkronisasi penghitungan paginasi dinamis di semua tab, serta perapian dropdown kecamatan tanpa ikon tumpang-tindih.
 - Konsistensi Permintaan Dinas: Mempertahankan seluruh skema dan view sektoral perikanan, UPJA/P4S, dan Juleha sesuai arahan Dispertan KP.
 
+[ADR-025] Isolasi Tampilan Submenu Kelembagaan Navbar (/farmers):
+- Eliminasi Penukaran 3-Tombol di Halaman: Menghilangkan kontainer tombol pengalih 3 klaster horizontal pada tampilan halaman view (/farmers) sesuai arahan pengguna.
+- Akses Terisolasi Melalui Navbar: Pemilihan modul kelembagaan dilakukan eksklusif dari sidebar navigasi ('Tani, Gapoktan & KWT', 'Ekonomi & Penyuluhan', 'Sektoral & Pendukung').
+- Sinkronisasi Header & Subtab Adaptif: Halaman secara otomatis mengenali query `?klaster=` untuk menampilkan judul modul, badge resmi, subtab Level 2 (misal KEP/Posluhdes/PPS pada Ekonomi, atau Poktan/Rekap SK/Statistik pada Tani), dan tabel yang relevan secara eksklusif.
+
+[ADR-026] Harmonisasi Layout & Bentuk View Renstra & Rekomendasi Kebijakan (/renstra & /recommendations):
+- Eliminasi Batasan Sempit: Menghapus pembatas kolom sempit `max-w-5xl mx-auto` sehingga halaman memanfaatkan ruang tata letak penuh (`w-full`) di dalam wadah master `.print-main` secara konsisten dengan halaman dashboard dan sektoral lainnya.
+- Penyelarasan Geometri & Radius: Menerapkan standar `--radius-md: 8px` (`rounded-lg`) pada seluruh kartu metrik, panel ringkasan eksekutif, tabel evaluasi, dan kotak callout. Menghilangkan bentuk kotak bersudut tajam tanpa rounded.
+- Kartu KPI Berstandar Border-Left-4: Menggantikan latar blok pastel pekat dengan kartu putih beraksen garis sisi kiri (`border-l-4 border-l-emerald-600`, `border-l-amber-500`, `border-l-blue-800`) dan tipografi berbobot resmi sesuai `design-system.md §3C`.
+- Integrasi Tabel Seri Tahunan: Menyatukan kontainer tabel tren tahunan ke dalam alur kontainer utama (mengeliminasi perpecahan lebar layar ganda pada halaman rekomendasi).
+- Tipografi Elegan & Bebas Harsh Uppercase: Merapikan hierarki tipografi teks menjadi gaya Executive Agritech yang natural dan mudah dibaca.
+
+[ADR-027] Eliminasi AI Slop Eyebrow Badge & Pulsing Dot (/renstra, /recommendations, /farmers):
+- Penghapusan Total Indikator Slop: Menghapus elemen tag eyebrow huruf kapital disertai pulsing dot hijau (`● PERENCANAAN & EVALUASI KINERJA DAERAH`, `● KEBIJAKAN & ANALITIKA PERTANIAN`, `● BIDANG SEKTORAL & LEMBAGA PENDUKUNG`) di atas judul <h1> pada halaman /renstra, /recommendations, dan /farmers.
+- Penyelarasan Hierarki Header: Judul <h1> kini langsung menempati posisi teratas header kolom secara bersih, tenang, dan selaras dengan standar tata letak halaman lainnya (seperti /food-crops, /livestock, /plantation, /dashboard).
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -163,6 +179,14 @@ mysql=root=
 [x] Redesign View Dasbor Admin (/admin): Layout responsif & role-aware, Quick Role selector pada form login, Tab Kategori & Live Search untuk 20 domain, Ruang Kerja Bidang tanpa alert sempit, YAGNI, zero buzzword
 [x] Perbaikan Font & Kontainer Kelembagaan (/farmers): Poktan, Gapoktan, KWT, Juleha, P4S, UPJA, Perikanan (Anti-AI-Slop, no-mono, 12-col grid, laptop-first)
 [x] Integrasi Data Kelembagaan Valid Distankan KP: 2.409 Poktan, 278 Gapoktan, 137 KEP, 36 Posluhdes, 156 PPS (ETL Seeder, DB Patch, API Endpoint, Placeholder Resmi, Admin Excel Sync)
+[x] Pemisahan 3 Submenu Kelembagaan Tani di Navbar & Sinkronisasi URL Dua Arah (/farmers?klaster=tani, /farmers?klaster=ekonomi, /farmers?klaster=sektoral)
+[x] Perbaikan Peta Blank /sebaran/ & /kecamatan/ (Penyediaan Web Worker maplibre-gl, Seeding Padi 2025 & Palawija, Peta Spasial 20 Kecamatan)
+[x] Isolasi Tampilan View Kelembagaan Sesuai Submenu Navbar Terpilih (Penghapusan Switcher 3-Tombol di Halaman)
+[x] Harmonisasi Layout, Lebar & Geometri Halaman /renstra & /recommendations Sesuai design-system.md
+[x] Eliminasi AI Slop Eyebrow Badge & Pulsing Dot pada Header /renstra, /recommendations, dan /farmers
+
+
+
 
 
 

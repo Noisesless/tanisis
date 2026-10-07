@@ -25,6 +25,7 @@ pnpm-debug.log*
 
 # Temporary and Archives
 *.zip
+*.map
 dist_backup_local/
 scratch/
 

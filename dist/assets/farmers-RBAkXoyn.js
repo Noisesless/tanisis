@@ -3,7 +3,7 @@ import { d as n, r as usersIcon, o as shieldCheckIcon, l as fishIcon, n as wheat
 import { t as r } from "./file-spreadsheet-R11Sgu_C.js";
 import { t as i } from "./funnel-DPwG6jvG.js";
 import { t as a } from "./shield-alert-CgAkH6h8.js";
-import { C as o, b as s, p as c, s as l } from "./index-CI1XYnwk.js";
+import { C as o, b as s, p as c, s as l, g as useLoc, _ as useNav } from "./index-CI1XYnwk.js";
 import { V as u, m as d, p as f, r as p } from "./api-BxFGoia1.js";
 import { Z as m, d as h, f as g, g as _, in as v, t as y, u as b } from "./BarChart-CCPNsfhB.js";
 import { t as x } from "./Legend-DA0d5fUM.js";
@@ -43,12 +43,24 @@ function FarmersPage() {
   let [I, L] = (0, w.useState)(false);
   let [R, z] = (0, w.useState)(null);
 
-  // State untuk Tab Navigasi & Data Baru
-  let [activeTab, setActiveTab] = (0, w.useState)("pertanian");
+  let location = useLoc();
+  let navigate = useNav();
+  let getKlasterFromUrl = () => {
+    try {
+      let p = new URLSearchParams(location.search).get("klaster");
+      if (p === "ekonomi" || p === "sektoral" || p === "tani") return p;
+    } catch {}
+    return "tani";
+  };
+  let getDefaultTab = (k) => {
+    if (k === "ekonomi") return "kep";
+    if (k === "sektoral") return "perikanan";
+    return "pertanian";
+  };
+  let [activeKlaster, setActiveKlaster] = (0, w.useState)(getKlasterFromUrl);
+  let [activeTab, setActiveTab] = (0, w.useState)(() => getDefaultTab(getKlasterFromUrl()));
   let [searchQuery, setSearchQuery] = (0, w.useState)("");
   let [filterJenis, setFilterJenis] = (0, w.useState)("Semua");
-
-  let [activeKlaster, setActiveKlaster] = (0, w.useState)("tani");
   let [dataPertanian, setDataPertanian] = (0, w.useState)([]);
   let [dataKep, setDataKep] = (0, w.useState)([]);
   let [dataPosluhdes, setDataPosluhdes] = (0, w.useState)([]);
@@ -61,6 +73,63 @@ function FarmersPage() {
   let [loadingEntities, setLoadingEntities] = (0, w.useState)(true);
   let [currentPage, setCurrentPage] = (0, w.useState)(1);
   let [pageSize, setPageSize] = (0, w.useState)(25);
+
+  (0, w.useEffect)(() => {
+    let target = getKlasterFromUrl();
+    setActiveKlaster(target);
+    setActiveTab(curr => {
+      if (target === "tani") {
+        return (curr === "pertanian" || curr === "rekap_validasi" || curr === "rekap") ? curr : "pertanian";
+      }
+      if (target === "ekonomi") {
+        return (curr === "kep" || curr === "posluhdes" || curr === "pps") ? curr : "kep";
+      }
+      if (target === "sektoral") {
+        return (curr === "perikanan" || curr === "pendukung" || curr === "juleha") ? curr : "perikanan";
+      }
+      return curr;
+    });
+    setFilterJenis("Semua");
+    setCurrentPage(1);
+  }, [location.search]);
+
+  let headerMeta = {
+    tani: {
+      category: "Bidang Penyuluhan & Teknis Pertanian",
+      title: "Kelembagaan Tani, Gapoktan & KWT",
+      desc: "Direktori resmi 2.687 Kelompok Tani (Poktan), Gabungan Kelompok Tani (Gapoktan), dan Kelompok Wanita Tani (KWT) se-Kabupaten Banjarnegara.",
+      badges: [
+        { label: "SIMLUHTAN", cls: "text-emerald-800 bg-emerald-50 border-emerald-200" },
+        { label: "20 Kecamatan", cls: "text-slate-700 bg-slate-100 border-slate-200" },
+        { label: `${dataPertanian.length} Lembaga Tani`, cls: "text-emerald-800 bg-emerald-50 border-emerald-200" }
+      ]
+    },
+    ekonomi: {
+      category: "Bidang Ekonomi & Penyuluhan Pertanian",
+      title: "Kelembagaan Ekonomi & Penyuluhan",
+      desc: "Direktori Kelembagaan Ekonomi Petani (KEP), Pos Penyuluhan Desa (Posluhdes), dan Penyuluh Pertanian Swadaya (PPS) se-Kabupaten Banjarnegara.",
+      badges: [
+        { label: `${dataKep.length} KEP`, cls: "text-blue-800 bg-blue-50 border-blue-200" },
+        { label: `${dataPosluhdes.length} Posluhdes`, cls: "text-indigo-800 bg-indigo-50 border-indigo-200" },
+        { label: `${dataPps.length} PPS`, cls: "text-cyan-800 bg-cyan-50 border-cyan-200" }
+      ]
+    },
+    sektoral: {
+      category: "Bidang Sektoral & Lembaga Pendukung",
+      title: "Kelembagaan Sektoral & Pendukung",
+      desc: "Direktori Kelompok Pembudidaya Ikan (Pokdakan), Usaha Pelayanan Jasa Alsintan (UPJA), Pusat Pelatihan Pertanian Perdesaan Swadaya (P4S), dan Juru Sembelih Halal (JULEHA).",
+      badges: [
+        { label: "KUSUKA Perikanan", cls: "text-teal-800 bg-teal-50 border-teal-200" },
+        { label: "Sertifikasi Halal BNSP", cls: "text-purple-800 bg-purple-50 border-purple-200" },
+        { label: "20 Kecamatan", cls: "text-slate-700 bg-slate-100 border-slate-200" }
+      ]
+    }
+  }[activeKlaster] || {
+    category: "Bidang Kelembagaan & Data",
+    title: "Kelembagaan Tani",
+    desc: "Direktori Kelembagaan Pertanian Kabupaten Banjarnegara.",
+    badges: []
+  };
 
   // Load Data Agregat
   (0, w.useEffect)(() => {
@@ -426,91 +495,25 @@ function FarmersPage() {
             (0, T.jsxs)("div", {
               className: "flex-1",
               children: [
-                (0, T.jsxs)("div", {
-                  className: "flex items-center gap-2 mb-1.5",
-                  children: [
-                    (0, T.jsx)("span", { className: "w-2 h-2 rounded-full bg-emerald-600 animate-pulse" }),
-                    (0, T.jsx)("span", { className: "text-xs font-semibold uppercase tracking-wider text-emerald-800", children: "Bidang Kelembagaan & Data" })
-                  ]
-                }),
                 (0, T.jsx)("h1", {
                   className: "text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight",
-                  children: "Kelembagaan Tani, Perikanan & JULEHA"
+                  children: headerMeta.title
                 }),
                 (0, T.jsx)("p", {
                   className: "text-xs md:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed",
-                  children: "Pencatatan resmi Kelompok Tani (Poktan, Gapoktan, KWT), Kelembagaan Perikanan (Pokdakan, Poklahsar, Pokmaswas), Lembaga Pendukung (P4S, UPJA), serta Juru Sembelih Halal (JULEHA) Kabupaten Banjarnegara."
+                  children: headerMeta.desc
                 })
               ]
             }),
-            (0, T.jsxs)("div", {
+            (0, T.jsx)("div", {
               className: "flex flex-wrap items-center gap-2 shrink-0",
-              children: [
-                (0, T.jsx)("span", { className: "px-2.5 py-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md", children: "SIMLUHTAN & KUSUKA" }),
-                (0, T.jsx)("span", { className: "px-2.5 py-1 text-[11px] font-semibold text-purple-800 bg-purple-50 border border-purple-200 rounded-md", children: "Sertifikasi Halal BNSP" }),
-                (0, T.jsx)("span", { className: "px-2.5 py-1 text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200 rounded-md", children: "20 Kecamatan" })
-              ]
+              children: headerMeta.badges.map((b, idx) => (0, T.jsx)("span", { className: `px-2.5 py-1 text-[11px] font-semibold border rounded-md ${b.cls}`, children: b.label }, idx))
             })
           ]
         }),
 
-        // Tab Navigation Switcher (5 Sub-tab Utama)
-        (0, T.jsxs)("div", {
-          className: "flex flex-col gap-3",
-          children: [
-            // Level 1: Pilihan 3 Klaster Kelembagaan
-            (0, T.jsxs)("div", {
-              className: "grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200/80 shadow-2xs",
-              children: [
-                (0, T.jsxs)("button", {
-                  type: "button",
-                  onClick: () => { setActiveKlaster("tani"); setActiveTab("pertanian"); setFilterJenis("Semua"); setCurrentPage(1); },
-                  className: `py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    activeKlaster === "tani" ? "bg-white text-emerald-900 shadow-xs border border-slate-200" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50/60"
-                  }`,
-                  children: [
-                    (0, T.jsx)(wheatIcon, { className: "h-4 w-4 text-emerald-700 shrink-0" }),
-                    "Tani & Gapoktan",
-                    (0, T.jsx)("span", {
-                      className: `text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeKlaster === "tani" ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-700"}`,
-                      children: dataPertanian.length
-                    })
-                  ]
-                }),
-                (0, T.jsxs)("button", {
-                  type: "button",
-                  onClick: () => { setActiveKlaster("ekonomi"); setActiveTab("kep"); setFilterJenis("Semua"); setCurrentPage(1); },
-                  className: `py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    activeKlaster === "ekonomi" ? "bg-white text-blue-900 shadow-xs border border-slate-200" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50/60"
-                  }`,
-                  children: [
-                    (0, T.jsx)(usersIcon, { className: "h-4 w-4 text-blue-700 shrink-0" }),
-                    "Ekonomi & Penyuluhan",
-                    (0, T.jsx)("span", {
-                      className: `text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeKlaster === "ekonomi" ? "bg-blue-100 text-blue-800" : "bg-slate-200 text-slate-700"}`,
-                      children: dataKep.length + dataPosluhdes.length + dataPps.length
-                    })
-                  ]
-                }),
-                (0, T.jsxs)("button", {
-                  type: "button",
-                  onClick: () => { setActiveKlaster("sektoral"); setActiveTab("perikanan"); setFilterJenis("Semua"); setCurrentPage(1); },
-                  className: `py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    activeKlaster === "sektoral" ? "bg-white text-teal-900 shadow-xs border border-slate-200" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50/60"
-                  }`,
-                  children: [
-                    (0, T.jsx)(fishIcon, { className: "h-4 w-4 text-teal-700 shrink-0" }),
-                    "Sektoral & Pendukung",
-                    (0, T.jsx)("span", {
-                      className: `text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeKlaster === "sektoral" ? "bg-teal-100 text-teal-800" : "bg-slate-200 text-slate-700"}`,
-                      children: dataPerikanan.length + dataP4s.length + dataUpja.length + dataJuleha.length
-                    })
-                  ]
-                })
-              ]
-            }),
-
-            // Level 2: Sub-Tab Pills
+        // Sub-Tab Pills khusus klaster yang dipilih
+        // Level 2: Sub-Tab Pills
             (0, T.jsxs)("div", {
               className: "flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none",
               children: [
@@ -627,9 +630,7 @@ function FarmersPage() {
                   ]
                 })
               ]
-            })
-          ]
-        }),
+            }),
 
         // Filter Controls Bar (12-Kolom Responsive Grid)
         (0, T.jsxs)("div", {

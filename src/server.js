@@ -181,12 +181,24 @@ app.use(
   })
 );
 
-// SPA fallback: route frontend (GET tanpa ekstensi) → index.html supaya
+// Normalisasi rute & redirect spesifik sebelum SPA fallback
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+  if (req.path === "/sebaran" || req.path === "/sebaran/") {
+    return res.redirect(302, "/sebaran/pangan");
+  }
+  if (req.path === "/kecamatan/") {
+    return res.redirect(302, "/kecamatan");
+  }
+  next();
+});
+
+// SPA fallback: route frontend (GET/HEAD tanpa ekstensi) → index.html supaya
 // refresh di URL dalam (mis. /desa/susukan/brengkok) tidak 404. Path API tak
 // dikenal tetap 404 JSON; file statis yang hilang tetap 404.
 app.use((req, res, next) => {
   if (
-    req.method !== "GET" ||
+    (req.method !== "GET" && req.method !== "HEAD") ||
     req.path.startsWith("/api") ||
     req.path.startsWith("/sispertani-api") ||
     path.extname(req.path)

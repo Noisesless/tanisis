@@ -28,11 +28,15 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
    - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA, Rantai Pasok/RMU, Fluktuasi Harga Pasar.
-   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan, Rekomendasi Kebijakan, Sensus ST2023.
+   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra`), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
 4. **Kelembagaan & Data:**
-   - `Direktori Kelembagaan Tani` (`/farmers`) — Basis data resmi terpadu Sistem 3 Klaster: (1) Klaster Tani & Gapoktan (2.687 Poktan/KWT/Gapoktan & Rekapitulasi Validasi SK Kadistan 20 Kecamatan), (2) Klaster Ekonomi & Penyuluhan (137 KEP, 36 Posluhdes, 156 PPS), dan (3) Klaster Sektoral & Pendukung (Perikanan Pokdakan, Alsintan UPJA/P4S, Petugas JULEHA) lengkap dengan paginasi dinamis.
+   - `Kelembagaan Tani` (3 Submenu Navbar Terisolasi):
+     - `Tani, Gapoktan & KWT` (`/farmers?klaster=tani`) — 2.687 Poktan/KWT/Gapoktan & Rekapitulasi Validasi SK Kadistan 20 Kecamatan.
+     - `Ekonomi & Penyuluhan` (`/farmers?klaster=ekonomi`) — 137 KEP, 36 Posluhdes, 156 PPS.
+     - `Sektoral & Pendukung` (`/farmers?klaster=sektoral`) — Perikanan Pokdakan, Alsintan UPJA/P4S, Petugas JULEHA.
    - `Bantuan & Sarpras` — Penyaluran Bantuan Alsintan & Benih Pemerintah.
-   - `Data Lahan & Geografi` — Penggunaan Lahan, Kesesuaian Lahan, dan Profil 20 Kecamatan.
+   - `Data Lahan & Geografi` — Penggunaan Lahan, Kesesuaian Lahan, dan Profil 20 Kecamatan (`/kecamatan`).
+
 
 > **Fitur Visual & Tata Letak Unggulan:**
 > - **Unified Topbar & Avatar Dropdown:** Mengeliminasi tombol berceceran di header atas. Seluruh tautan utilitas (*Info*, *Panduan*, status profil *Guest*, dan akses *Portal Admin*) dirapikan ke dalam satu Avatar Dropdown interaktif setinggi `72px`.

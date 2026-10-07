@@ -28,9 +28,9 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar & Inflasi Bahan Pangan | Publik | STABLE |
 | `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | Publik | STABLE |
 | `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Pertanian Daerah | Publik | STABLE |
-| `/sensus-2023` | Kebijakan & Ketapang | Data Hasil Sensus Pertanian 2023 (ST2023) | Publik | STABLE |
-| `/farmers` | Kelembagaan & Data | Direktori Kelembagaan Kabupaten (3 Klaster: Tani & Gapoktan, Ekonomi & Penyuluhan, Sektoral & Pendukung) | Publik | STABLE |
-| `/kewirausahaan/kwt` | Kelembagaan & Data | Profil KWT (Auto-redirect ke /farmers terpadu) | Publik | REDIRECT |
+| `/farmers` / `/farmers?klaster=tani` | Kelembagaan & Data | Direktori Poktan, Gapoktan & KWT (2.687 lembaga binaan) | Publik | STABLE |
+| `/farmers?klaster=ekonomi` | Kelembagaan & Data | Kelembagaan Ekonomi Petani (137 KEP) & Penyuluhan (36 Posluhdes, 156 PPS) | Publik | STABLE |
+| `/farmers?klaster=sektoral` | Kelembagaan & Data | Kelembagaan Sektoral & Pendukung (Perikanan, UPJA, P4S, Juleha) | Publik | STABLE |
 | `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
 | `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
 | `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
