@@ -81,13 +81,29 @@ const LABELS = {
   bidang_kejuruan: "Bidang Kejuruan / Pelatihan",
   klasifikasi_akreditasi: "Klasifikasi Akreditasi",
   no_register_bppsdmp: "No. Register BPPSDMP",
-  kontak: "Kontak / Nomor Telepon",
   nama_upja: "Nama UPJA",
   manajer: "Nama Manajer UPJA",
   gapoktan_induk: "Gapoktan Induk",
   jenis_alsintan_dikelola: "Jenis Alsintan Dikelola",
   jumlah_alsintan: "Jumlah Alsintan (Unit)",
   status_operasional: "Status Operasional",
+  nama_kep: "Nama KEP",
+  bpp: "Nama BPP",
+  bentuk_kep: "Bentuk Badan Usaha",
+  dasar_hukum: "Dasar Hukum Pembentukan",
+  ada_struktur: "Struktur Organisasi (Ada/Tidak)",
+  ada_ad_art: "AD/ART (Ada/Tidak)",
+  jumlah_pengurus: "Jumlah Pengurus",
+  poktan_terlibat: "Jumlah Poktan Terlibat",
+  modal_usaha_aset: "Modal Usaha / Aset (Rp)",
+  nama_posluhdes: "Nama Posluhdes",
+  nama_pimpinan: "Pimpinan Posluhdes",
+  no_ba_pengukuhan: "No. BA / SK Pengukuhan",
+  penyuluh_swadaya: "Penyuluh Swadaya",
+  nama_penyuluh: "Nama Penyuluh Swadaya",
+  tempat_tgl_lahir: "Tempat / Tgl Lahir",
+  unit_kerja: "Unit Kerja (BPP)",
+  wilayah_kerja: "Wilayah Kerja (Desa)",
   keterangan: "Keterangan",
 };
 
@@ -344,9 +360,33 @@ export const DOMAINS = {
     }],
   },
   "kelembagaan-pendukung": {
-    label: "Kelembagaan — Pendukung (JULEHA, P4S, UPJA)",
-    desc: "Juru Sembelih Halal (JULEHA), Pusat Pelatihan Mandiri (P4S), dan Usaha Pelayanan Jasa Alsintan (UPJA).",
+    label: "Kelembagaan — Pendukung (KEP, Posluhdes, PPS, JULEHA, P4S, UPJA)",
+    desc: "Kelembagaan Ekonomi Petani (KEP), Pos Penyuluhan Desa (Posluhdes), Penyuluh Swadaya (PPS), JULEHA, P4S, dan UPJA.",
     sheets: [
+      {
+        table: "kelembagaan_kep",
+        name: "KEP Ekonomi Petani",
+        kecamatan: true,
+        key: ["kecamatan", "nama_kep"],
+        enums: {
+          bentuk_kep: ["LKM", "LKMA", "Koperasi Tani", "KWT", "LUPM", "Lainnya"],
+          ada_struktur: ["Ada", "Tidak"],
+          ada_ad_art: ["Ada", "Tidak"],
+          status_aktif: ["Aktif", "Tidak Aktif"]
+        }
+      },
+      {
+        table: "kelembagaan_posluhdes",
+        name: "Posluhdes Desa",
+        kecamatan: false,
+        key: ["desa", "nama_posluhdes"],
+      },
+      {
+        table: "kelembagaan_pps",
+        name: "Penyuluh Swadaya PPS",
+        kecamatan: false,
+        key: ["nama_penyuluh", "unit_kerja"],
+      },
       {
         table: "kelembagaan_juleha",
         name: "JULEHA Halal",

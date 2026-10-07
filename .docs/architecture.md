@@ -159,3 +159,44 @@ sequenceDiagram
 3. **Dynamic Live Grounding (Paritas Dev & Production):** Server mengekstrak kata kunci pencarian dari pengguna lalu melakukan kueri SQL langsung ke basis data `pertasis` dan katalog CKAN. Data angka riil disuntikkan ke prompt sistem sebagai fakta mutlak agar AI dilarang keras berhalusinasi atau memberikan template penolakan generik.
 4. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) menjamin layanan asisten tetap berjalan lancar tanpa terganggu lonjakan beban (*high demand*) pada model tertentu.
 
+---
+
+## 7. Arsitektur Modul Direktori Kelembagaan Terpadu (ADR-023 & ADR-024)
+
+Modul Kelembagaan Pertanian Kabupaten Banjarnegara (`/farmers`) mengadopsi arsitektur hierarkis 2-tingkat (Sistem 3 Klaster) yang menghubungkan data resmi SIMLUHTAN, Kelembagaan Ekonomi, Ketenagaan Penyuluhan, dan Lembaga Pendukung Khusus:
+
+```mermaid
+graph TD
+    UI[Antarmuka /farmers: 3 Klaster Kelembagaan] --> Klaster1[Klaster 1: Tani & Gapoktan]
+    UI --> Klaster2[Klaster 2: Ekonomi & Penyuluhan]
+    UI --> Klaster3[Klaster 3: Sektoral & Pendukung]
+    
+    Klaster1 --> Sub1A[Poktan, KWT & Gapoktan - 2.687 data]
+    Klaster1 --> Sub1B[Rekapitulasi Validasi SK Kadistan - 20 Kec]
+    Klaster1 --> Sub1C[Statistik Historis Desa]
+    
+    Klaster2 --> Sub2A[Ekonomi Petani / KEP - 137 unit]
+    Klaster2 --> Sub2B[Pos Penyuluhan Desa / Posluhdes - 36 unit]
+    Klaster2 --> Sub2C[Penyuluh Pertanian Swadaya / PPS - 156 orang]
+    
+    Klaster3 --> Sub3A[Kelembagaan Perikanan - Pokdakan]
+    Klaster3 --> Sub3B[Lembaga Pendukung - UPJA Alsintan & P4S]
+    Klaster3 --> Sub3C[Petugas JULEHA - Juru Sembelih Halal]
+    
+    subgraph Data_Storage [MariaDB pertasis]
+        Sub1A --> T1[kelembagaan_pertanian]
+        Sub1B --> T2[kelembagaan_rekap_kecamatan]
+        Sub2A --> T3[kelembagaan_kep]
+        Sub2B --> T4[kelembagaan_posluhdes]
+        Sub2C --> T5[kelembagaan_pps]
+        Sub3A --> T6[kelembagaan_perikanan]
+        Sub3B --> T7[kelembagaan_p4s & kelembagaan_upja]
+        Sub3C --> T8[kelembagaan_juleha]
+    end
+```
+
+1. **Pemisahan Klaster Navigasi:** Menata 8 entitas data agar terbebas dari *tab overload*, memudahkan aparatur dan masyarakat memilih klaster binaan utama (SIMLUHTAN), usaha & penyuluhan, atau pendukung sektoral.
+2. **Paginasi Dinamis Client-Side Universal:** Setiap tab data disajikan dengan paginasi instan (25, 50, atau 100 baris per halaman) untuk memastikan kecepatan render DOM di perangkat laptop standar (1366×768) dan seluler.
+3. **Pipeline Impor/Ekspor Mandiri Admin:** Terhubung ke sistem template Excel admin melalui domain `kelembagaan-pertanian` dan `kelembagaan-pendukung` di `src/lib/domains.js`, memungkinkan pembaruan data secara berkala oleh operator dinas tanpa intervensi kode.
+
+

@@ -1,0 +1,222 @@
+[
+  {
+    "no": 1,
+    "kecamatan": "Susukan",
+    "desa": 15,
+    "gapoktan": 15,
+    "poktan": 129,
+    "pemula": 38,
+    "lanjut": 58,
+    "madya": 29,
+    "utama": 4
+  },
+  {
+    "no": 2,
+    "kecamatan": "Purwareja Klampok",
+    "desa": 8,
+    "gapoktan": 8,
+    "poktan": 46,
+    "pemula": 2,
+    "lanjut": 16,
+    "madya": 26,
+    "utama": 2
+  },
+  {
+    "no": 3,
+    "kecamatan": "Mandiraja",
+    "desa": 16,
+    "gapoktan": 16,
+    "poktan": 132,
+    "pemula": 8,
+    "lanjut": 79,
+    "madya": 45,
+    "utama": 0
+  },
+  {
+    "no": 4,
+    "kecamatan": "Purwanegara",
+    "desa": 13,
+    "gapoktan": 13,
+    "poktan": 177,
+    "pemula": 17,
+    "lanjut": 61,
+    "madya": 81,
+    "utama": 18
+  },
+  {
+    "no": 5,
+    "kecamatan": "Bawang",
+    "desa": 18,
+    "gapoktan": 18,
+    "poktan": 140,
+    "pemula": 42,
+    "lanjut": 70,
+    "madya": 28,
+    "utama": 0
+  },
+  {
+    "no": 6,
+    "kecamatan": "Banjarnegara",
+    "desa": 13,
+    "gapoktan": 12,
+    "poktan": 79,
+    "pemula": 29,
+    "lanjut": 37,
+    "madya": 12,
+    "utama": 1
+  },
+  {
+    "no": 7,
+    "kecamatan": "Pagedongan",
+    "desa": 9,
+    "gapoktan": 9,
+    "poktan": 116,
+    "pemula": 63,
+    "lanjut": 52,
+    "madya": 1,
+    "utama": 0
+  },
+  {
+    "no": 8,
+    "kecamatan": "Sigaluh",
+    "desa": 15,
+    "gapoktan": 15,
+    "poktan": 94,
+    "pemula": 26,
+    "lanjut": 54,
+    "madya": 14,
+    "utama": 0
+  },
+  {
+    "no": 9,
+    "kecamatan": "Madukara",
+    "desa": 20,
+    "gapoktan": 20,
+    "poktan": 120,
+    "pemula": 37,
+    "lanjut": 61,
+    "madya": 22,
+    "utama": 0
+  },
+  {
+    "no": 10,
+    "kecamatan": "Banjarmangu",
+    "desa": 17,
+    "gapoktan": 17,
+    "poktan": 117,
+    "pemula": 13,
+    "lanjut": 36,
+    "madya": 66,
+    "utama": 2
+  },
+  {
+    "no": 11,
+    "kecamatan": "Wanadadi",
+    "desa": 11,
+    "gapoktan": 11,
+    "poktan": 118,
+    "pemula": 14,
+    "lanjut": 60,
+    "madya": 43,
+    "utama": 1
+  },
+  {
+    "no": 12,
+    "kecamatan": "Rakit",
+    "desa": 11,
+    "gapoktan": 11,
+    "poktan": 128,
+    "pemula": 46,
+    "lanjut": 58,
+    "madya": 22,
+    "utama": 2
+  },
+  {
+    "no": 13,
+    "kecamatan": "Punggelan",
+    "desa": 17,
+    "gapoktan": 17,
+    "poktan": 173,
+    "pemula": 98,
+    "lanjut": 58,
+    "madya": 15,
+    "utama": 2
+  },
+  {
+    "no": 14,
+    "kecamatan": "Karangkobar",
+    "desa": 13,
+    "gapoktan": 13,
+    "poktan": 100,
+    "pemula": 13,
+    "lanjut": 49,
+    "madya": 33,
+    "utama": 5
+  },
+  {
+    "no": 15,
+    "kecamatan": "Pejawaran",
+    "desa": 17,
+    "gapoktan": 17,
+    "poktan": 165,
+    "pemula": 54,
+    "lanjut": 64,
+    "madya": 44,
+    "utama": 3
+  },
+  {
+    "no": 16,
+    "kecamatan": "Pagentan",
+    "desa": 16,
+    "gapoktan": 16,
+    "poktan": 127,
+    "pemula": 2,
+    "lanjut": 73,
+    "madya": 49,
+    "utama": 3
+  },
+  {
+    "no": 17,
+    "kecamatan": "Batur",
+    "desa": 8,
+    "gapoktan": 8,
+    "poktan": 118,
+    "pemula": 59,
+    "lanjut": 41,
+    "madya": 14,
+    "utama": 4
+  },
+  {
+    "no": 18,
+    "kecamatan": "Wanayasa",
+    "desa": 17,
+    "gapoktan": 17,
+    "poktan": 117,
+    "pemula": 3,
+    "lanjut": 86,
+    "madya": 28,
+    "utama": 0
+  },
+  {
+    "no": 19,
+    "kecamatan": "Kalibening",
+    "desa": 16,
+    "gapoktan": 16,
+    "poktan": 134,
+    "pemula": 46,
+    "lanjut": 75,
+    "madya": 13,
+    "utama": 0
+  },
+  {
+    "no": 20,
+    "kecamatan": "Pandanarum",
+    "desa": 8,
+    "gapoktan": 8,
+    "poktan": 68,
+    "pemula": 12,
+    "lanjut": 45,
+    "madya": 7,
+    "utama": 4
+  }
+]

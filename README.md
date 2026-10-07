@@ -30,7 +30,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA, Rantai Pasok/RMU, Fluktuasi Harga Pasar.
    - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan, Rekomendasi Kebijakan, Sensus ST2023.
 4. **Kelembagaan & Data:**
-   - `Kelembagaan Tani` — Direktori Poktan, Gapoktan, dan Kewirausahaan KWT.
+   - `Direktori Kelembagaan Tani` (`/farmers`) — Basis data resmi terpadu Sistem 3 Klaster: (1) Klaster Tani & Gapoktan (2.687 Poktan/KWT/Gapoktan & Rekapitulasi Validasi SK Kadistan 20 Kecamatan), (2) Klaster Ekonomi & Penyuluhan (137 KEP, 36 Posluhdes, 156 PPS), dan (3) Klaster Sektoral & Pendukung (Perikanan Pokdakan, Alsintan UPJA/P4S, Petugas JULEHA) lengkap dengan paginasi dinamis.
    - `Bantuan & Sarpras` — Penyaluran Bantuan Alsintan & Benih Pemerintah.
    - `Data Lahan & Geografi` — Penggunaan Lahan, Kesesuaian Lahan, dan Profil 20 Kecamatan.
 

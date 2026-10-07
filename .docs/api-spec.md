@@ -304,3 +304,149 @@ Sesuai prinsip kepatuhan **ADR-002 (Zero Dummy Data Law)** dan **ADR-006 (Zero D
    - `GET /api/v1/ekonomi/nilai-ekonomi?bidang=perikanan`: Mengembalikan `{ bidang: "perikanan", sumber: "kosong", jumlah: 0, rows: [] }`.
    - `GET /api/v1/ekonomi/sektor-ringkasan?sektor=perikanan`: Mengembalikan `{ status: "empty", sektor: "perikanan", ... }`.
 
+---
+
+## 6. Endpoint Direktori Kelembagaan Pertanian Terpadu
+
+### `GET /api/v1/kelembagaan/pertanian`
+Mengembalikan register resmi kelompok tani, kelompok wanita tani (KWT), dan gabungan kelompok tani (Gapoktan) Kabupaten Banjarnegara (2.687 kelompok).
+- **Query Parameters:**
+  - `kecamatan` (opsional): Filter nama kecamatan (e.g. `Susukan`, `Bawang`, `Purwareja Klampok`)
+  - `jenis` (opsional): Filter jenis kelembagaan (`Poktan`, `KWT`, `Gapoktan`)
+  - `q` (opsional): Pencarian teks nama kelompok, desa, nama ketua, atau nomor SIMLUHTAN
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "total": 2687,
+    "rows": [
+      {
+        "id": 1,
+        "id_simluhtan": "330401001",
+        "nama_kelompok": "SRI REJEKI",
+        "jenis_lembaga": "Poktan",
+        "desa": "Gumelem Kulon",
+        "kecamatan": "Susukan",
+        "nama_ketua": "SUTARNO",
+        "jumlah_anggota": 35,
+        "luas_lahan_ha": 12.5,
+        "kelas_kemampuan": "Madya",
+        "subsektor_utama": "Tanaman Pangan",
+        "penyuluh_pendamping": "BAMBANG S., S.P."
+      }
+    ]
+  }
+  ```
+
+### `GET /api/v1/kelembagaan/kep`
+Mengembalikan master data Kelembagaan Ekonomi Petani (137 unit KEP resmi binaan BPP).
+- **Query Parameters:** `kecamatan`, `bentuk` (Koperasi, BUMDes, PT, CV, Kelompok), `q`
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "total": 137,
+    "rows": [
+      {
+        "id": 1,
+        "nama_kep": "KOPERASI PRODUSEN TANI MAKMUR",
+        "bentuk_kep": "Koperasi",
+        "komoditas": "Kopi Arabika",
+        "jenis_usaha": "Pengolahan & Pemasaran",
+        "kecamatan": "Batur",
+        "modal_usaha_aset": 150000000,
+        "penyuluh_pendamping": "SURATNO, S.P.",
+        "status_aktif": "Aktif"
+      }
+    ]
+  }
+  ```
+
+### `GET /api/v1/kelembagaan/posluhdes`
+Mengembalikan daftar Pos Penyuluhan Desa / Kelurahan (36 unit Posluhdes).
+- **Query Parameters:** `kecamatan` (filter BPP), `q`
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "total": 36,
+    "rows": [
+      {
+        "id": 1,
+        "nama_posluhdes": "POSLUHDES KARYA TANI",
+        "desa": "Gumelem Wetan",
+        "bpp": "Susukan",
+        "nama_pimpinan": "H. AHMAD",
+        "penyuluh_swadaya": "SUKIRMAN",
+        "kontak_hp": "-"
+      }
+    ]
+  }
+  ```
+
+### `GET /api/v1/kelembagaan/pps`
+Mengembalikan direktori profil Penyuluh Pertanian Swadaya (156 PPS Kabupaten Banjarnegara).
+- **Query Parameters:** `q` (nama penyuluh, unit kerja BPP, wilayah kerja)
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "total": 156,
+    "rows": [
+      {
+        "id": 1,
+        "nama_penyuluh": "AGUS PRIYONO",
+        "unit_kerja": "BPP Klampok",
+        "wilayah_kerja": "Klampok, Kaliwinasuh",
+        "keahlian_tp": true,
+        "keahlian_horti": false,
+        "keahlian_nak": true,
+        "keahlian_bun": false,
+        "pendidikan": "SLTA",
+        "kontak_hp": "-"
+      }
+    ]
+  }
+  ```
+
+### `GET /api/v1/kelembagaan/rekap-validasi`
+Mengembalikan rekapitulasi penetapan validasi kemampuan kelas kelompok tani per kecamatan berdasarkan SK resmi Kepala Dinas Pertanian, Perikanan dan Ketahanan Pangan (20 kecamatan).
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "total": 20,
+    "rows": [
+      {
+        "no": 1,
+        "kecamatan": "Susukan",
+        "jumlah_desa": 15,
+        "jumlah_gapoktan": 15,
+        "jumlah_poktan": 129,
+        "kelas_pemula": 38,
+        "kelas_lanjut": 58,
+        "kelas_madya": 29,
+        "kelas_utama": 4
+      }
+    ]
+  }
+  ```
+
+### `GET /api/v1/kelembagaan/summary`
+Mengembalikan indikator performa utama ringkas kelembagaan kabupaten untuk kartu metrik dan dasbor.
+- **Response 200 OK:**
+  ```json
+  {
+    "status": "success",
+    "pertanian": [
+      { "jenis_lembaga": "Poktan", "count": 2177, "anggota": 87080, "luas": 32655 },
+      { "jenis_lembaga": "Gapoktan", "count": 278, "anggota": 0, "luas": 0 },
+      { "jenis_lembaga": "KWT", "count": 232, "anggota": 6960, "luas": 116 }
+    ],
+    "kep": { "count": 137, "total_modal": 2209735848, "total_anggota": 3425, "total_poktan": 411 },
+    "posluhdes": { "count": 36, "total_bpp": 17, "total_desa": 35 },
+    "pps": { "count": 156 }
+  }
+  ```
+
+

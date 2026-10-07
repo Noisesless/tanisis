@@ -78,11 +78,15 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Kelembagaan**| `kelompok_tani` | `(desa_id, tahun)` | Jumlah Poktan, Gapoktan, dan anggota per desa |
 | **Kelembagaan**| `kelompok_tani_hutan` | `(desa_id, tahun)` | KTH tingkat Pemula, Madya, Utama |
 | **Kelembagaan (KWT)**| `kwt_kelompok_wanita_tani` | `(kecamatan, nama_kelompok)` | Profil KWT, Pokdakan, Poklahsar, Pokmamas per kecamatan |
-| **Kelembagaan Pertanian**| `kelembagaan_pertanian` | `(kecamatan_id, nama_kelompok)` | Register resmi Poktan, Gapoktan, KWT dengan ID Simluhtan & SK |
-| **Kelembagaan Perikanan**| `kelembagaan_perikanan` | `(kecamatan_id, nama_kelompok)` | Register resmi Pokdakan, Poklahsar, Pokmaswas dengan ID KUSUKA |
-| **Kelembagaan Halal**| `kelembagaan_juleha` | `(kecamatan_id, nama_lengkap)` | Register Juru Sembelih Halal (JULEHA) tersertifikasi RPH/RPU |
-| **Kelembagaan Pendukung**| `kelembagaan_p4s` | `(kecamatan_id, nama_p4s)` | Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) |
-| **Kelembagaan Alsintan**| `kelembagaan_upja` | `(kecamatan_id, nama_upja)` | Usaha Pelayanan Jasa Alsintan (UPJA) & armada kelolaan |
+| **Kelembagaan Pertanian**| `kelembagaan_pertanian` | `(kecamatan, nama_kelompok)` | Register resmi Poktan, Gapoktan, KWT dengan ID Simluhtan, Gapoktan Induk, Luas Lahan (Ha), PPL Pendamping (2.177 Poktan, 232 KWT, 278 Gapoktan — Total 2.687 kelompok) |
+| **Kelembagaan Ekonomi**| `kelembagaan_kep` | `(kecamatan, nama_kep)` | Kelembagaan Ekonomi Petani (137 KEP: LKM, LKMA, Koperasi Tani, modal usaha/aset Rp 2,21 Miliar) |
+| **Penyuluhan Desa**| `kelembagaan_posluhdes` | `(desa, nama_posluhdes)` | Pos Penyuluhan Desa/Kelurahan (36 unit, SK pengukuhan, penyuluh swadaya) |
+| **Penyuluh Swadaya**| `kelembagaan_pps` | `(nama_penyuluh, unit_kerja)` | Penyuluh Pertanian Swadaya (156 PPS: keahlian TP, Horti, Ternak, Kebun, kontak) |
+| **Rekapitulasi Validasi**| `kelembagaan_rekap_kecamatan` | `(kecamatan)` | Rekapitulasi penetapan validasi kelas kemampuan kelompok tani (20 kecamatan SK Kadistan: 2.398 Poktan, 277 Gapoktan, kelas Pemula, Lanjut, Madya, Utama) |
+| **Kelembagaan Perikanan**| `kelembagaan_perikanan` | `(kecamatan, nama_kelompok)` | Register resmi Pokdakan, Poklahsar, Pokmaswas dengan ID KUSUKA |
+| **Kelembagaan Halal**| `kelembagaan_juleha` | `(kecamatan, nama_lengkap)` | Register Juru Sembelih Halal (JULEHA) tersertifikasi RPH/RPU |
+| **Kelembagaan Pendukung**| `kelembagaan_p4s` | `(kecamatan, nama_p4s)` | Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) |
+| **Kelembagaan Alsintan**| `kelembagaan_upja` | `(kecamatan, nama_upja)` | Usaha Pelayanan Jasa Alsintan (UPJA) & armada kelolaan |
 | **Keamanan Pangan**| `psat_sampel_uji` | `(kecamatan_id, pasar, tanggal_uji, jenis_pangan)` | Uji petik acak residu pestisida & cemaran bahan pangan |
 | **Keamanan Pangan**| `psat_izin_edar` | `(nomor_izin_pduk)` | Register sertifikasi izin edar PSAT-PDUK pelaku usaha |
 | **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas |

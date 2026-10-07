@@ -113,12 +113,30 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Rantai Pasok (/supply-chain): Banner status pemetaan koridor awal menunggu survei volume tonase logistik lapangan dinas.
 - Ketersediaan Pangan Daerah (/food-security): Sub-tab Neraca Bahan Makanan (NBM) komposit 8 komoditas non-beras berstatus dinamis menunggu data dinas.
 
-[ADR-021] Kelembagaan Tani, Perikanan, Lembaga Pendukung & JULEHA (Dynamic Placeholders & Admin Uploads):
-- Pemisahan Kelembagaan Pertanian & Perikanan: Memisahkan kelembagaan pertanian (Poktan, Gapoktan, KWT dengan ID Simluhtan & SK Pengukuhan) dan kelembagaan perikanan (Pokdakan, Poklahsar, Pokmaswas dengan ID KUSUKA KKP & komoditas budidaya/olahan) secara tegas ke tabel mandiri 'kelembagaan_pertanian' dan 'kelembagaan_perikanan'.
-- Juru Sembelih Halal (JULEHA): Registrasi petugas potong bersertifikasi BNSP/MUI/BPJPH pada RPH/RPU Banjarnegara di tabel 'kelembagaan_juleha'.
-- Lembaga Pendukung (P4S & UPJA): Pencatatan Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) terakreditasi BPPSDMP di 'kelembagaan_p4s' serta Usaha Pelayanan Jasa Alsintan (UPJA) beserta inventaris traktor/combine/transplanter di 'kelembagaan_upja'.
-- Dynamic Placeholders & Zero Buzzword Law: Status data transparan 'Menunggu Finalisasi List Resmi Dinas' dengan banner dinamis dan tautan langsung ke Dasbor Admin (/admin) untuk unduh template .xlsx dan unggah data massal. Seluruh deskripsi antarmuka lugas tanpa bahasa lebay.
-- Integrasi Admin Excel & DB Harmonisasi: 3 domain baru didaftarkan di lib/domains.js ('kelembagaan-pertanian', 'kelembagaan-perikanan', 'kelembagaan-pendukung'), skema DDL diintegrasikan ke production_migration_patch.sql, dan dump MariaDB dimutakhirkan di dump_production_pertanian_updated.sql (2,65 MB).
+[ADR-022] Overhaul Kontainer, Grid Filter 12-Kolom & Tipografi Halaman Kelembagaan (/farmers):
+- Eliminasi Monospace: Menghapus seluruh font-mono pada nomor register SIMLUHTAN, KUSUKA, BPPSDMP, dan sertifikat halal JULEHA, digantikan tipografi Inter dengan atribut tabular-nums dan badge kontur bersih.
+- Grid Filter 12-Kolom Simetris: Penyelarasan form filter di seluruh tab (Pertanian, Perikanan, Pendukung, JULEHA, Rekap) sehingga sejajar rapi dalam 1 baris tanpa pergeseran elemen antartab.
+- Filter Selektif Lembaga Pendukung & JULEHA: Penambahan dropdown kategori Lembaga Pendukung (Semua / P4S / UPJA) dan Status Sertifikasi JULEHA (Semua / Tersertifikasi / Dalam Pelatihan).
+- KPI Cards Mandiri: 4 kartu statistik baru untuk Lembaga Pendukung (P4S Swadaya, Akreditasi BPPSDMP, UPJA Alsintan, Total Alsintan) dan 4 kartu untuk JULEHA (Total Personel, Tersertifikasi BNSP, Unit Tugas RPH/RPU, Cakupan Domisili).
+- Desain Laptop-First (1366x768): Header halaman dirampingkan dengan badge metadata resmi, grafik dengan tick Inter tabular-nums, dan tabel ber-header sticky backdrop-blur dengan scrollbar kustom.
+
+[ADR-023] Integrasi Basis Data Kelembagaan Tani Distankan KP & Dynamic Admin Excel Pipeline:
+- Data Valid Primer Dinas: Mengintegrasikan seluruh data resmi kabupaten (2.409 Poktan termasuk 232 KWT, 278 Gapoktan, 137 KEP, 36 Posluhdes, dan 156 PPS) ke MariaDB pertasis via skrip ekstraksi ETL (scripts/extract_clean_kelembagaan.py & scripts/seed_kelembagaan_distankan.js) dengan penyaringan 299 baris subtotal.
+- Patch Skema Database Non-Destruktif: Memperkaya kelembagaan_pertanian (+gapoktan_induk, +luas_lahan_ha, +penyuluh_pendamping, +penyuluh_hp) serta membuat tabel baru kelembagaan_kep, kelembagaan_posluhdes, dan kelembagaan_pps.
+- Placeholder Semantik & Anti-Buzzword: Field kontak tanpa nomor telepon diberi badge resmi "Belum terdata", luas lahan kosong ditampilkan "-", kelompok tanpa angka anggota diberi badge "Dalam pemutakhiran" tanpa kata-kata lebay atau angka fiktif.
+- Arsitektur Admin Dinamis: Domain kelembagaan-pertanian dan kelembagaan-pendukung di src/lib/domains.js mencakup seluruh tabel baru, memungkinkan admin Distankan KP mengunduh data terbaru, menyunting kontak/luasan di Excel, dan mengimpor ulang kapan saja secara mandiri.
+- Perapian Navigasi Sidebar & Paginasi Tabel (/farmers):
+  * Konsolidasi Submenu: Menghapus submenu redundan 'Kewirausahaan KWT' (yang sebelumnya hanya berisi 19 mock data contoh usang) dan menyatukannya ke dalam 'Direktori Kelembagaan Tani' (/farmers) yang memuat 2.409 kelompok terverifikasi (termasuk 232 KWT resmi). URL lawas /kewirausahaan/kwt secara otomatis diarahkan ke /farmers.
+  * Paginasi Ringan & Dinamis: Menambahkan kontrol paginasi client-side di tabel register (25, 50, 100 baris per halaman) dengan penghitungan indeks 'Menampilkan X–Y dari Z data' serta tombol navigasi Sebelum/Berikutnya, mencegah lag render DOM dan menjaga antarmuka tetap responsif di laptop 1366px.
+
+[ADR-024] Rekonstruksi Layout Navigasi 3 Klaster Kelembagaan Kabupaten (/farmers):
+- Penyelesaian Tab Overload: Menata 8 entitas kelembagaan menjadi sistem navigasi terstruktur 2 tingkat:
+  * Klaster 1: Tani & Gapoktan (SIMLUHTAN) -> Sub-tab: Poktan/KWT/Gapoktan (2.687 data), Rekapitulasi Validasi SK Kadistan (20 Kecamatan), dan Statistik Historis Desa.
+  * Klaster 2: Ekonomi & Penyuluhan (Bina Usaha & Ketenagaan) -> Sub-tab: Kelompok Ekonomi Petani/KEP (137 unit), Pos Penyuluhan Desa/Posluhdes (36 unit), dan Penyuluh Pertanian Swadaya/PPS (156 orang).
+  * Klaster 3: Sektoral & Pendukung -> Sub-tab: Kelembagaan Perikanan/Pokdakan (4 data placeholder), Lembaga Pendukung UPJA & P4S (4 data placeholder), dan Petugas JULEHA (4 data placeholder).
+- Integrasi Penuh Berkas Dinas: Menambahkan tabel `kelembagaan_rekap_kecamatan` dan endpoint API `/v1/kelembagaan/rekap-validasi` untuk 20 kecamatan SK Kadistan (2.398 Poktan, 277 Gapoktan, kelas Pemula, Lanjut, Madya, Utama).
+- Filter Selektif & Paginasi Terpadu: Penambahan dropdown bentuk badan usaha KEP, sinkronisasi penghitungan paginasi dinamis di semua tab, serta perapian dropdown kecamatan tanpa ikon tumpang-tindih.
+- Konsistensi Permintaan Dinas: Mempertahankan seluruh skema dan view sektoral perikanan, UPJA/P4S, dan Juleha sesuai arahan Dispertan KP.
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
@@ -143,5 +161,8 @@ mysql=root=
 [x] Lembaga Pendukung: Integrasi data P4S (akreditasi BPPSDMP) & UPJA (inventaris alsintan)
 [x] Placeholder Dinamis & Admin Excel Template: 3 domain admin, form upload dinamis, YAGNI, zero buzzword
 [x] Redesign View Dasbor Admin (/admin): Layout responsif & role-aware, Quick Role selector pada form login, Tab Kategori & Live Search untuk 20 domain, Ruang Kerja Bidang tanpa alert sempit, YAGNI, zero buzzword
+[x] Perbaikan Font & Kontainer Kelembagaan (/farmers): Poktan, Gapoktan, KWT, Juleha, P4S, UPJA, Perikanan (Anti-AI-Slop, no-mono, 12-col grid, laptop-first)
+[x] Integrasi Data Kelembagaan Valid Distankan KP: 2.409 Poktan, 278 Gapoktan, 137 KEP, 36 Posluhdes, 156 PPS (ETL Seeder, DB Patch, API Endpoint, Placeholder Resmi, Admin Excel Sync)
+
 
 

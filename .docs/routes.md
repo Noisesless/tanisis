@@ -29,8 +29,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | Publik | STABLE |
 | `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Pertanian Daerah | Publik | STABLE |
 | `/sensus-2023` | Kebijakan & Ketapang | Data Hasil Sensus Pertanian 2023 (ST2023) | Publik | STABLE |
-| `/farmers` | Kelembagaan & Data | Direktori Kelembagaan Poktan & Gapoktan | Publik | STABLE |
-| `/kewirausahaan/kwt` | Kelembagaan & Data | Profil Kewirausahaan Kelompok Wanita Tani | Publik | STABLE |
+| `/farmers` | Kelembagaan & Data | Direktori Kelembagaan Kabupaten (3 Klaster: Tani & Gapoktan, Ekonomi & Penyuluhan, Sektoral & Pendukung) | Publik | STABLE |
+| `/kewirausahaan/kwt` | Kelembagaan & Data | Profil KWT (Auto-redirect ke /farmers terpadu) | Publik | REDIRECT |
 | `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
 | `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
 | `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
@@ -95,10 +95,16 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/lumbung` | `src/routes/ekonomi.js` | Publik | Fasilitas lumbung pangan dan kapasitas gudang |
 | `GET` | `/v1/kelembagaan/kelompok-tani` | `src/routes/kelembagaan.js` | Publik | Sebaran kelompok tani (Poktan) per desa |
 | `GET` | `/v1/kelembagaan/kth` | `src/routes/kelembagaan.js` | Publik | Data Kelompok Tani Hutan (KTH) |
-| `GET` | `/v1/kelembagaan/pertanian` | `src/routes/kelembagaan.js` | Publik | Register kelembagaan pertanian resmi (Poktan, Gapoktan, KWT) |
+| `GET` | `/v1/kelembagaan/pertanian` | `src/routes/kelembagaan.js` | Publik | Register kelembagaan pertanian resmi (2.177 Poktan, 232 KWT, 278 Gapoktan — Total 2.687 kelompok) |
+| `GET` | `/v1/kelembagaan/kep` | `src/routes/kelembagaan.js` | Publik | Master data Kelembagaan Ekonomi Petani (137 KEP, modal, komoditas, badan usaha) |
+| `GET` | `/v1/kelembagaan/posluhdes` | `src/routes/kelembagaan.js` | Publik | Data Pos Penyuluhan Desa (36 Posluhdes, SK pengukuhan, penyuluh swadaya) |
+| `GET` | `/v1/kelembagaan/pps` | `src/routes/kelembagaan.js` | Publik | Data Penyuluh Pertanian Swadaya (156 PPS, keahlian teknis, kontak) |
+| `GET` | `/v1/kelembagaan/rekap-validasi` | `src/routes/kelembagaan.js` | Publik | Rekapitulasi hasil validasi kemampuan kelas kelompok tani per kecamatan (SK Kadistan — 20 kecamatan) |
+| `GET` | `/v1/kelembagaan/summary` | `src/routes/kelembagaan.js` | Publik | Ringkasan agregat statistik kelembagaan pertanian kabupaten |
 | `GET` | `/v1/kelembagaan/perikanan` | `src/routes/kelembagaan.js` | Publik | Register kelembagaan perikanan resmi (Pokdakan, Poklahsar, Pokmaswas) |
 | `GET` | `/v1/kelembagaan/juleha` | `src/routes/kelembagaan.js` | Publik | Data Juru Sembelih Halal (JULEHA) tersertifikasi RPH & RPU |
-| `GET` | `/v1/kelembagaan/pendukung` | `src/routes/kelembagaan.js` | Publik | Data kelembagaan pendukung: P4S (akreditasi) & UPJA (alsintan) |
+| `GET` | `/v1/kelembagaan/p4s` | `src/routes/kelembagaan.js` | Publik | Data Pusat Pelatihan Pertanian Perdesaan Swadaya (P4S) |
+| `GET` | `/v1/kelembagaan/upja` | `src/routes/kelembagaan.js` | Publik | Data Usaha Pelayanan Jasa Alsintan (UPJA) |
 | `GET` | `/v1/psat-pduk/sampel` | `src/routes/psat.js` | Publik | Hasil uji petik residu pestisida & keamanan pangan PSAT |
 | `GET` | `/v1/psat-pduk/izin-edar` | `src/routes/psat.js` | Publik | Register izin edar Pangan Segar Asal Tumbuhan (PDUK) |
 | `GET` | `/v1/ketahanan/fsva` | `src/routes/ketahanan.js` | Publik | Data 12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) |

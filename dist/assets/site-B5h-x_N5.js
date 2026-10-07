@@ -96,8 +96,7 @@ var e = {
       subtitle: `Poktan, Gapoktan & KWT`,
       icon: `lembaga`,
       items: [
-        { label: `Kelembagaan Poktan / Gapoktan`, href: `/farmers` },
-        { label: `Kewirausahaan KWT`, href: `/kewirausahaan/kwt` }
+        { label: `Direktori Kelembagaan Tani`, href: `/farmers` }
       ]
     },
     {

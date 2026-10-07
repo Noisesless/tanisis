@@ -147,9 +147,10 @@ kelembagaanRouter.get(
     }
 
     const rows = await q(
-      `SELECT id, kecamatan, desa, jenis_lembaga, nama_kelompok,
+      `SELECT id, kecamatan, desa, jenis_lembaga, nama_kelompok, gapoktan_induk,
               id_simluhtan, no_sk_pengukuhan, nama_ketua, kontak_hp,
-              kelas_kemampuan, subsektor_utama, jumlah_anggota,
+              penyuluh_pendamping, penyuluh_hp,
+              kelas_kemampuan, subsektor_utama, jumlah_anggota, luas_lahan_ha,
               tahun_berdiri, status_aktif
        FROM kelembagaan_pertanian
        ${where}
@@ -157,25 +158,47 @@ kelembagaanRouter.get(
       params,
     );
 
+    const list = rows.map((r) => ({
+      id: r.id,
+      kecamatan: r.kecamatan,
+      desa: r.desa,
+      jenis_lembaga: r.jenis_lembaga,
+      jenisLembaga: r.jenis_lembaga,
+      nama_kelompok: r.nama_kelompok,
+      namaKelompok: r.nama_kelompok,
+      gapoktan_induk: r.gapoktan_induk || "-",
+      gapoktanInduk: r.gapoktan_induk || "-",
+      id_simluhtan: r.id_simluhtan || "-",
+      idSimluhtan: r.id_simluhtan || "-",
+      no_sk_pengukuhan: r.no_sk_pengukuhan || "-",
+      noSk: r.no_sk_pengukuhan || "-",
+      nama_ketua: r.nama_ketua,
+      namaKetua: r.nama_ketua,
+      kontak_hp: r.kontak_hp || "-",
+      kontak: r.kontak_hp || "-",
+      penyuluh_pendamping: r.penyuluh_pendamping || "-",
+      penyuluhPendamping: r.penyuluh_pendamping || "-",
+      penyuluh_hp: r.penyuluh_hp || "-",
+      penyuluhHp: r.penyuluh_hp || "-",
+      kelas_kemampuan: r.kelas_kemampuan,
+      kelasKemampuan: r.kelas_kemampuan,
+      subsektor_utama: r.subsektor_utama,
+      subsektor: r.subsektor_utama,
+      jumlah_anggota: Number(r.jumlah_anggota || 0),
+      jumlahAnggota: Number(r.jumlah_anggota || 0),
+      luas_lahan_ha: Number(r.luas_lahan_ha || 0),
+      luasLahanHa: Number(r.luas_lahan_ha || 0),
+      tahun_berdiri: r.tahun_berdiri || "-",
+      tahunBerdiri: r.tahun_berdiri || "-",
+      status_aktif: r.status_aktif,
+      statusAktif: r.status_aktif,
+    }));
+
     return {
       status: "success",
-      total: rows.length,
-      rows: rows.map((r) => ({
-        id: r.id,
-        kecamatan: r.kecamatan,
-        desa: r.desa,
-        jenisLembaga: r.jenis_lembaga,
-        namaKelompok: r.nama_kelompok,
-        idSimluhtan: r.id_simluhtan || "-",
-        noSk: r.no_sk_pengukuhan || "-",
-        namaKetua: r.nama_ketua,
-        kontak: r.kontak_hp || "-",
-        kelasKemampuan: r.kelas_kemampuan,
-        subsektor: r.subsektor_utama,
-        jumlahAnggota: Number(r.jumlah_anggota || 0),
-        tahunBerdiri: r.tahun_berdiri || "-",
-        statusAktif: r.status_aktif,
-      })),
+      total: list.length,
+      rows: list,
+      data: list,
     };
   }),
 );
@@ -368,21 +391,288 @@ kelembagaanRouter.get(
       params,
     );
 
+    const list = rows.map((r) => ({
+      id: r.id,
+      namaUPJA: r.nama_upja,
+      nama_upja: r.nama_upja,
+      manajer: r.manajer,
+      kecamatan: r.kecamatan,
+      desa: r.desa,
+      gapoktanInduk: r.gapoktan_induk || "-",
+      gapoktan_induk: r.gapoktan_induk || "-",
+      jenisAlsintan: r.jenis_alsintan_dikelola,
+      jenis_alsintan_dikelola: r.jenis_alsintan_dikelola,
+      jumlahAlsintan: Number(r.jumlah_alsintan || 0),
+      jumlah_alsintan: Number(r.jumlah_alsintan || 0),
+      statusOperasional: r.status_operasional,
+      status_operasional: r.status_operasional,
+    }));
+
     return {
       status: "success",
-      total: rows.length,
-      rows: rows.map((r) => ({
-        id: r.id,
-        namaUPJA: r.nama_upja,
-        manajer: r.manajer,
-        kecamatan: r.kecamatan,
-        desa: r.desa,
-        gapoktanInduk: r.gapoktan_induk || "-",
-        jenisAlsintan: r.jenis_alsintan_dikelola,
-        jumlahAlsintan: Number(r.jumlah_alsintan || 0),
-        statusOperasional: r.status_operasional,
-      })),
+      total: list.length,
+      rows: list,
+      data: list,
     };
   }),
 );
+
+/**
+ * GET /api/v1/kelembagaan/kep
+ * Master data Kelembagaan Ekonomi Petani (KEP)
+ */
+kelembagaanRouter.get(
+  "/kep",
+  route(async (req) => {
+    const { kecamatan, bentuk, q: search } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+
+    if (kecamatan && kecamatan !== "all" && kecamatan !== "Semua") {
+      where += " AND kecamatan = ?";
+      params.push(String(kecamatan).trim());
+    }
+    if (bentuk && bentuk !== "all" && bentuk !== "Semua") {
+      where += " AND bentuk_kep = ?";
+      params.push(String(bentuk).trim());
+    }
+    if (search) {
+      where += " AND (nama_kep LIKE ? OR komoditas LIKE ? OR jenis_usaha LIKE ? OR alamat LIKE ?)";
+      const term = `%${String(search).trim()}%`;
+      params.push(term, term, term, term);
+    }
+
+    const rows = await q(
+      `SELECT id, kecamatan, bpp, nama_kep, alamat, penyuluh_pendamping, penyuluh_hp,
+              bentuk_kep, dasar_hukum, ada_struktur, ada_ad_art, komoditas, jenis_usaha,
+              jumlah_pengurus, jumlah_anggota, poktan_terlibat, modal_usaha_aset, status_aktif
+       FROM kelembagaan_kep
+       ${where}
+       ORDER BY kecamatan ASC, nama_kep ASC`,
+      params,
+    );
+
+    const list = rows.map((r) => ({
+      id: r.id,
+      kecamatan: r.kecamatan,
+      bpp: r.bpp || "-",
+      nama_kep: r.nama_kep,
+      namaKep: r.nama_kep,
+      alamat: r.alamat || "-",
+      penyuluh_pendamping: r.penyuluh_pendamping || "-",
+      penyuluhPendamping: r.penyuluh_pendamping || "-",
+      penyuluh_hp: r.penyuluh_hp || "-",
+      penyuluhHp: r.penyuluh_hp || "-",
+      bentuk_kep: r.bentuk_kep,
+      bentukKep: r.bentuk_kep,
+      dasar_hukum: r.dasar_hukum || "-",
+      dasarHukum: r.dasar_hukum || "-",
+      ada_struktur: r.ada_struktur,
+      adaStruktur: r.ada_struktur,
+      ada_ad_art: r.ada_ad_art,
+      adaAdArt: r.ada_ad_art,
+      komoditas: r.komoditas || "-",
+      jenis_usaha: r.jenis_usaha || "-",
+      jenisUsaha: r.jenis_usaha || "-",
+      jumlah_pengurus: Number(r.jumlah_pengurus || 0),
+      jumlahPengurus: Number(r.jumlah_pengurus || 0),
+      jumlah_anggota: Number(r.jumlah_anggota || 0),
+      jumlahAnggota: Number(r.jumlah_anggota || 0),
+      poktan_terlibat: Number(r.poktan_terlibat || 0),
+      poktanTerlibat: Number(r.poktan_terlibat || 0),
+      modal_usaha_aset: Number(r.modal_usaha_aset || 0),
+      modalUsahaAset: Number(r.modal_usaha_aset || 0),
+      status_aktif: r.status_aktif,
+      statusAktif: r.status_aktif,
+    }));
+
+    return {
+      status: "success",
+      total: list.length,
+      rows: list,
+      data: list,
+    };
+  }),
+);
+
+/**
+ * GET /api/v1/kelembagaan/posluhdes
+ * Master data Pos Penyuluhan Desa (Posluhdes)
+ */
+kelembagaanRouter.get(
+  "/posluhdes",
+  route(async (req) => {
+    const { kecamatan, q: search } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+
+    if (kecamatan && kecamatan !== "all" && kecamatan !== "Semua") {
+      where += " AND bpp LIKE ?";
+      params.push(`%${String(kecamatan).trim()}%`);
+    }
+    if (search) {
+      where += " AND (nama_posluhdes LIKE ? OR desa LIKE ? OR bpp LIKE ? OR nama_pimpinan LIKE ? OR penyuluh_swadaya LIKE ?)";
+      const term = `%${String(search).trim()}%`;
+      params.push(term, term, term, term, term);
+    }
+
+    const rows = await q(
+      `SELECT id, kabupaten, bpp, desa, nama_posluhdes, alamat, nama_pimpinan,
+              no_ba_pengukuhan, penyuluh_swadaya, alamat_penyuluh, kontak_hp
+       FROM kelembagaan_posluhdes
+       ${where}
+       ORDER BY bpp ASC, desa ASC`,
+      params,
+    );
+
+    const list = rows.map((r) => ({
+      id: r.id,
+      kabupaten: r.kabupaten,
+      bpp: r.bpp,
+      desa: r.desa,
+      nama_posluhdes: r.nama_posluhdes,
+      namaPosluhdes: r.nama_posluhdes,
+      alamat: r.alamat || "-",
+      nama_pimpinan: r.nama_pimpinan || "-",
+      namaPimpinan: r.nama_pimpinan || "-",
+      no_ba_pengukuhan: r.no_ba_pengukuhan || "-",
+      noBaPengukuhan: r.no_ba_pengukuhan || "-",
+      penyuluh_swadaya: r.penyuluh_swadaya || "-",
+      penyuluhSwadaya: r.penyuluh_swadaya || "-",
+      alamat_penyuluh: r.alamat_penyuluh || "-",
+      kontak_hp: r.kontak_hp || "-",
+      kontakHp: r.kontak_hp || "-",
+    }));
+
+    return {
+      status: "success",
+      total: list.length,
+      rows: list,
+      data: list,
+    };
+  }),
+);
+
+/**
+ * GET /api/v1/kelembagaan/pps
+ * Master data Penyuluh Pertanian Swadaya (PPS)
+ */
+kelembagaanRouter.get(
+  "/pps",
+  route(async (req) => {
+    const { q: search } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+
+    if (search) {
+      where += " AND (nama_penyuluh LIKE ? OR unit_kerja LIKE ? OR wilayah_kerja LIKE ?)";
+      const term = `%${String(search).trim()}%`;
+      params.push(term, term, term);
+    }
+
+    const rows = await q(
+      `SELECT id, nama_penyuluh, tempat_tgl_lahir, unit_kerja, pendidikan,
+              keahlian_tp, keahlian_nak, keahlian_bun, keahlian_horti, keahlian_lainnya,
+              wilayah_kerja, kontak_hp
+       FROM kelembagaan_pps
+       ${where}
+       ORDER BY unit_kerja ASC, nama_penyuluh ASC`,
+      params,
+    );
+
+    const list = rows.map((r) => ({
+      id: r.id,
+      nama_penyuluh: r.nama_penyuluh,
+      namaPenyuluh: r.nama_penyuluh,
+      tempat_tgl_lahir: r.tempat_tgl_lahir || "-",
+      unit_kerja: r.unit_kerja,
+      unitKerja: r.unit_kerja,
+      pendidikan: r.pendidikan || "-",
+      keahlian_tp: Boolean(r.keahlian_tp),
+      keahlian_nak: Boolean(r.keahlian_nak),
+      keahlian_bun: Boolean(r.keahlian_bun),
+      keahlian_horti: Boolean(r.keahlian_horti),
+      keahlian_lainnya: Boolean(r.keahlian_lainnya),
+      wilayah_kerja: r.wilayah_kerja || "-",
+      wilayahKerja: r.wilayah_kerja || "-",
+      kontak_hp: r.kontak_hp || "-",
+      kontakHp: r.kontak_hp || "-",
+    }));
+
+    return {
+      status: "success",
+      total: list.length,
+      rows: list,
+      data: list,
+    };
+  }),
+);
+
+/**
+ * GET /api/v1/kelembagaan/summary
+ * Agregat ringkas kelembagaan kabupaten untuk widget kartu dan dasbor
+ */
+kelembagaanRouter.get(
+  "/summary",
+  route(async () => {
+    const [pBreakdown, kepStat, posluhStat, ppsStat] = await Promise.all([
+      q("SELECT jenis_lembaga, count(*) as count, sum(jumlah_anggota) as anggota, sum(luas_lahan_ha) as luas FROM kelembagaan_pertanian GROUP BY jenis_lembaga"),
+      q("SELECT count(*) as count, sum(modal_usaha_aset) as total_modal, sum(jumlah_anggota) as total_anggota, sum(poktan_terlibat) as total_poktan FROM kelembagaan_kep"),
+      q("SELECT count(*) as count, count(distinct bpp) as total_bpp, count(distinct desa) as total_desa FROM kelembagaan_posluhdes"),
+      q("SELECT count(*) as count FROM kelembagaan_pps")
+    ]);
+
+    return {
+      status: "success",
+      pertanian: pBreakdown,
+      kep: kepStat[0],
+      posluhdes: posluhStat[0],
+      pps: ppsStat[0],
+    };
+  }),
+);
+
+/**
+ * GET /api/v1/kelembagaan/rekap-validasi
+ * Rekapitulasi hasil validasi kemampuan kelas kelompok tani per kecamatan (SK Kadistan)
+ */
+kelembagaanRouter.get(
+  "/rekap-validasi",
+  route(async () => {
+    const rows = await q(
+      `SELECT no_urut, kecamatan, jumlah_desa, jumlah_gapoktan, jumlah_poktan,
+              kelas_pemula, kelas_lanjut, kelas_madya, kelas_utama
+       FROM kelembagaan_rekap_kecamatan
+       ORDER BY no_urut ASC`
+    );
+
+    const list = rows.map((r) => ({
+      no: r.no_urut,
+      kecamatan: r.kecamatan,
+      jumlahDesa: Number(r.jumlah_desa || 0),
+      jumlah_desa: Number(r.jumlah_desa || 0),
+      jumlahGapoktan: Number(r.jumlah_gapoktan || 0),
+      jumlah_gapoktan: Number(r.jumlah_gapoktan || 0),
+      jumlahPoktan: Number(r.jumlah_poktan || 0),
+      jumlah_poktan: Number(r.jumlah_poktan || 0),
+      kelasPemula: Number(r.kelas_pemula || 0),
+      kelas_pemula: Number(r.kelas_pemula || 0),
+      kelasLanjut: Number(r.kelas_lanjut || 0),
+      kelas_lanjut: Number(r.kelas_lanjut || 0),
+      kelasMadya: Number(r.kelas_madya || 0),
+      kelas_madya: Number(r.kelas_madya || 0),
+      kelasUtama: Number(r.kelas_utama || 0),
+      kelas_utama: Number(r.kelas_utama || 0),
+    }));
+
+    return {
+      status: "success",
+      total: list.length,
+      rows: list,
+      data: list,
+    };
+  }),
+);
+
+
 
