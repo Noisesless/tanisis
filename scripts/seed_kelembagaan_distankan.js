@@ -150,6 +150,35 @@ async function seedKelembagaan() {
   }
   console.log("✓ Tabel kelembagaan_pps berhasil diisi!");
 
+  // 5. SEED REKAPITULASI KECAMATAN (SK Kadistan Validasi)
+  console.log("\n5. Mengisi tabel kelembagaan_rekap_kecamatan...");
+  const rekapPath = path.resolve("./dist/kelembagaan/rekapitulasi_cleaned.json");
+  if (fs.existsSync(rekapPath)) {
+    const rawRekap = fs.readFileSync(rekapPath, "utf-8");
+    const rekapData = JSON.parse(rawRekap);
+    await q("TRUNCATE TABLE kelembagaan_rekap_kecamatan");
+    console.log(`Total Kecamatan Rekapitulasi: ${rekapData.length}`);
+
+    for (const d of rekapData) {
+      await q(`
+        INSERT INTO kelembagaan_rekap_kecamatan 
+        (no_urut, kecamatan, jumlah_desa, jumlah_gapoktan, jumlah_poktan, kelas_pemula, kelas_lanjut, kelas_madya, kelas_utama)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        d.no,
+        d.kecamatan,
+        d.desa,
+        d.gapoktan,
+        d.poktan,
+        d.pemula,
+        d.lanjut,
+        d.madya,
+        d.utama
+      ]);
+    }
+    console.log("✓ Tabel kelembagaan_rekap_kecamatan berhasil diisi!");
+  }
+
   console.log("\n=== SEEDING BERHASIL 100%! SEMUA DATA RESMI TELAH MASUK KE DATABASE ===");
   process.exit(0);
 }

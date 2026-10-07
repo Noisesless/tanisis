@@ -94,6 +94,25 @@ async function applyKelembagaanPatch() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `);
 
+  // 5. Buat tabel kelembagaan_rekap_kecamatan (Rekapitulasi Validasi SK Kadistan)
+  console.log("Membuat tabel kelembagaan_rekap_kecamatan...");
+  await q(`
+    CREATE TABLE IF NOT EXISTS kelembagaan_rekap_kecamatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      no_urut INT NOT NULL,
+      kecamatan VARCHAR(100) NOT NULL UNIQUE,
+      jumlah_desa INT NOT NULL DEFAULT 0,
+      jumlah_gapoktan INT NOT NULL DEFAULT 0,
+      jumlah_poktan INT NOT NULL DEFAULT 0,
+      kelas_pemula INT NOT NULL DEFAULT 0,
+      kelas_lanjut INT NOT NULL DEFAULT 0,
+      kelas_madya INT NOT NULL DEFAULT 0,
+      kelas_utama INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `);
+
   console.log("Skema database kelembagaan berhasil diperbarui!");
   process.exit(0);
 }

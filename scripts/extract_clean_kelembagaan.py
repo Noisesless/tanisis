@@ -220,6 +220,43 @@ for idx, r in raw4.iterrows():
         "kontak_hp": str(r[11]).strip() if pd.notna(r[11]) and str(r[11]).strip().lower() != 'nan' else None
     })
 
+# 6. FILE 5: REKAPITULASI VALIDASI SK KADISTAN
+p5 = os.path.join(base_dir, "rekapitulasi.xlsx")
+rekap_list = []
+if os.path.exists(p5):
+    import openpyxl
+    wb = openpyxl.load_workbook(p5, data_only=True)
+    s = wb.active
+    for i in range(7, 27):
+        r = [s.cell(row=i, column=col).value for col in range(1, 10)]
+        if not r[1] or str(r[1]).strip() == 'JUMLAH':
+            continue
+        no_str = str(r[0] or '').replace('.', '').strip()
+        no = int(no_str) if no_str.isdigit() else (i - 6)
+        kec = str(r[1]).strip()
+        desa = int(r[2] or 0)
+        gapoktan = int(r[3] or 0)
+        poktan = int(r[4] or 0)
+        p = int(r[5] or 0)
+        l = int(r[6] or 0)
+        m = int(r[7] or 0)
+        u = int(r[8] or 0)
+        rekap_list.append({
+            "no": no,
+            "kecamatan": kec,
+            "desa": desa,
+            "gapoktan": gapoktan,
+            "poktan": poktan,
+            "pemula": p,
+            "lanjut": l,
+            "madya": m,
+            "utama": u
+        })
+    rekap_path = os.path.join(base_dir, "rekapitulasi_cleaned.json")
+    with open(rekap_path, "w", encoding="utf-8") as f:
+        json.dump(rekap_list, f, indent=2, ensure_ascii=False)
+    print(f"Rekapitulasi disimpan di {rekap_path}: {len(rekap_list)} kecamatan")
+
 output_data = {
     "poktan": poktan_list,
     "gapoktan": gapoktan_list,
@@ -238,3 +275,4 @@ print(f"Gapoktan: {len(gapoktan_list)}")
 print(f"KEP: {len(kep_list)}")
 print(f"Posluhdes: {len(posluhdes_list)}")
 print(f"PPS: {len(pps_list)}")
+

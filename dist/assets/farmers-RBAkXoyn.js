@@ -413,43 +413,7 @@ function FarmersPage() {
   }, [filteredRekapValidasi, startIndex, pageSize]);
 
 
-  // Placeholder Banner Component
-  let PlaceholderBanner = ({ title, domainSlug, count }) => (
-    (0, T.jsxs)("div", {
-      className: "bg-amber-50/80 border border-amber-200/90 rounded-xl p-4 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs",
-      children: [
-        (0, T.jsxs)("div", {
-          className: "flex items-start gap-3",
-          children: [
-            (0, T.jsx)("span", {
-              className: "p-2 bg-amber-100 text-amber-800 rounded-lg shrink-0 mt-0.5",
-              children: (0, T.jsx)(n, { className: "h-4 w-4" })
-            }),
-            (0, T.jsxs)("div", {
-              children: [
-                (0, T.jsxs)("h5", {
-                  className: "text-xs font-bold text-amber-950 uppercase tracking-wide",
-                  children: ["Status Register: Sinkronisasi Data Resmi Dinas (", count, " Terdaftar)"]
-                }),
-                (0, T.jsx)("p", {
-                  className: "text-xs text-amber-800/90 mt-0.5 leading-relaxed",
-                  children: "Data saat ini merupakan register awal terverifikasi. Untuk pembaruan massal dan sinkronisasi berkas resmi dinas, admin dapat mengunduh template Excel dan mengunggahnya langsung melalui dasbor."
-                })
-              ]
-            })
-          ]
-        }),
-        (0, T.jsxs)("a", {
-          href: "/admin",
-          className: "inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-bold rounded-lg whitespace-nowrap transition-colors shadow-2xs",
-          children: [
-            (0, T.jsx)(r, { className: "h-3.5 w-3.5" }),
-            "Template Excel di Dasbor Admin"
-          ]
-        })
-      ]
-    })
-  );
+
 
   return (0, T.jsx)(t, {
     children: (0, T.jsxs)("section", {
@@ -1500,11 +1464,7 @@ function FarmersPage() {
             activeTab === "perikanan" && (0, T.jsxs)("div", {
               className: "flex flex-col gap-6",
               children: [
-                (0, T.jsx)("div", { style: { display: "none" }, 
-                  title: "Kelembagaan Perikanan",
-                  domainSlug: "kelembagaan-perikanan",
-                  count: filteredPerikanan.length
-                }),
+
                 // Ringkasan Kartu Perikanan
                 (0, T.jsxs)("div", {
                   className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left",
@@ -1677,11 +1637,7 @@ function FarmersPage() {
             activeTab === "pendukung" && (0, T.jsxs)("div", {
               className: "flex flex-col gap-6",
               children: [
-                (0, T.jsx)("div", { style: { display: "none" }, 
-                  title: "Lembaga Pendukung Pertanian (P4S & UPJA)",
-                  domainSlug: "kelembagaan-pendukung",
-                  count: filteredP4s.length + filteredUpja.length
-                }),
+
 
                 // KPI Ringkasan Kartu Lembaga Pendukung
                 (0, T.jsxs)("div", {
@@ -1900,11 +1856,7 @@ function FarmersPage() {
             activeTab === "juleha" && (0, T.jsxs)("div", {
               className: "flex flex-col gap-6",
               children: [
-                (0, T.jsx)("div", { style: { display: "none" }, 
-                  title: "Juru Sembelih Halal (JULEHA)",
-                  domainSlug: "kelembagaan-pendukung",
-                  count: filteredJuleha.length
-                }),
+
 
                 // KPI Ringkasan Kartu JULEHA
                 (0, T.jsxs)("div", {
