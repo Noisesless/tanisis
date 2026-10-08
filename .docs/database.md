@@ -10,7 +10,7 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 - **Collation:** `utf8mb4_unicode_ci`
 - **Total Tabel:** 57 Tabel (termasuk 14 tabel sistem RBAC, master komoditas & varietas, harga produsen, 10 jenis ikan, dan modul ekosistem peternakan)
 - **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan.
-- **Harmonisasi Baseline:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql`.
+- **Harmonisasi Baseline & Dump:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql`, serta dump basis data dev mutakhir berformat UTF-8 tersimpan di `database/dump_production_pertanian_updated.sql` (1.89 MB, 2.421 baris DDL & data per 2026-10-08).
 
 ---
 

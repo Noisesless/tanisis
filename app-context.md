@@ -1,5 +1,5 @@
 <!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-08T08:58:00+07:00 | Phase: Clean Release | Build: OK -->
+<!-- Last: 2026-10-08T16:45:00+07:00 | Phase: Clean Release | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Clean Release done=ALL last=Perbaikan blank page /kecamatan via eliminasi infinite redirect loop React Router v6 (ADR-029) dan sinkronisasi dokumentasi
+phase=Clean Release done=ALL last=Perbaikan layout responsif login split view, eliminasi variable shadowing role dashboard, dan sinkronisasi dump database dev pertasis (ADR-030)
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -164,6 +164,11 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Root Cause: Di file bundle 'dist/assets/index-CI1XYnwk.js', terdapat rute redirect '<Route path="/kecamatan/" element={<Navigate to="/kecamatan" replace />} />' tepat sebelum '<Route path="/kecamatan" element={<KecamatanPage />} />'. Dalam algoritma scoring React Router v6, rute bertrailing slash mendapat skor lebih tinggi (15 vs 13) dan dicocokkan lebih awal dengan regex yang sama, memicu infinite client-side redirect loop pada dirinya sendiri saat pengguna mengakses /kecamatan (menjadikan container #root kosong 0 byte).
 - Solusi: Menghapus rute redirect redundan /kecamatan/ di sisi React Router. Normalisasi trailing-slash (/kecamatan/ -> /kecamatan) secara aman dan definitif telah ditangani di layer Express HTTP server (src/server.js: 302 redirect), sehingga halaman profil 20 kecamatan beserta peta spasial MapLibre kini ter-render sempurna tanpa blocking.
 
+[ADR-030] Login Asymmetric Cross-Resolution Stabilization, Variable Shadowing Immunity & Dev DB Snapshot:
+- Variable Shadowing Immunity: Me-refactor seluruh penamaan variabel state komponen admin ('dist/assets/admin-C9Dakcgq.js' & 'scripts/build_admin_view.js') ke identifier deskriptif ('token', 'sessionUser', 'isAdmin', 'loginUser', 'loginPass', 'loginErr', 'domsData', 'healthData', 'bantuanData', 'syncData', 'paketData', 'busyAction', 'actionErr', 'importResult'). Menghilangkan bentrok variabel 'f' (password vs icon users) dan 'd' (user setter vs icon clipboard) yang memicu galat 'createElement("")' saat pengguna login dengan akun bidang teknis non-admin.
+- Cross-Resolution Layout Hardening: Menurunkan breakpoint panel visual kiri (latar foto sawah Banjarnegara) dari ≥1024px ke ≥768px (50:50 pada mode split window/tablet, 60:40 pada laptop 1366px+). Mengisolasi wadah formulir dalam kelas CSS khusus '.sispertani-form-card' ('max-width: 380px'), mencegah form merenggang 100% pada resolusi layar/jendela di bawah 1024px tanpa ketergantungan pada arbitrary classes Tailwind yang tidak terkompilasi.
+- Database Dev Snapshot: Menghasilkan dump skema dan data MySQL/MariaDB dev 'pertasis' mutakhir dalam format UTF-8 standar ('database/dump_production_pertanian_updated.sql', 1.89 MB) mencakup seluruh 57 tabel terintegrasi.
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -196,6 +201,8 @@ mysql=root=
 [x] Eliminasi AI Slop Eyebrow Badge & Pulsing Dot pada Header /renstra, /recommendations, dan /farmers
 [x] Redesign Halaman Login Admin (/admin) Asimetris dengan Latar Foto Sawah Banjarnegara & Form Ringkas Resmi (ADR-028)
 [x] Eliminasi Infinite Client-Side Redirect Loop /kecamatan/ pada React Router v6 Bundle (ADR-029)
+[x] Resolusi Variable Shadowing Role Dashboard & Layout Asimetris Login Responsif Cross-Resolution (ADR-030)
+[x] Pembaruan Dump Database Development MariaDB pertasis UTF-8 (dump_production_pertanian_updated.sql)
 
 
 

@@ -321,9 +321,26 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 - **Deskripsi:** Membuka URL `http://localhost:5173/kecamatan` menghasilkan tampilan layar kosong putih (*blank page* total), di mana container `#root` tidak merender elemen DOM apapun (0 byte).
 - **Akar Masalah:** Pada file bundel `dist/assets/index-CI1XYnwk.js`, terdaftar rute `<Route path="/kecamatan/" element={<Navigate to="/kecamatan" replace />} />` persis sebelum `<Route path="/kecamatan" element={<KecamatanPage />} />`. Dalam algoritma scoring React Router v6, rute dengan trailing slash (`/kecamatan/`) memperoleh skor lebih tinggi (15) dibanding tanpa trailing slash (13) dan dievaluasi lebih awal menggunakan regex identik `/^\/kecamatan\/*$/i`. Akibatnya, setiap kali browser membuka `/kecamatan`, rute `/kecamatan/` terpicu dan mengeksekusi `<Navigate to="/kecamatan" replace={true} />`, menghasilkan infinite loop pada dirinya sendiri sehingga komponen halaman kecamatan tidak pernah termuat.
 - **Solusi (ADR-029):**
-  1. Menghapus rute redirect redundan `/kecamatan/` pada `dist/assets/index-CI1XYnwk.js`.
-  2. Normalisasi URL `/kecamatan/` ke `/kecamatan` sudah ditangani secara aman dan terpusat di sisi server HTTP Express (`src/server.js: 190` dengan status 302).
-  3. Verifikasi headless browser mengonfirmasi `#root` kini merender DOM lengkap (32.574 karakter), memuat peta spasial MapLibre GL 20 kecamatan, metrik agregat, dan pemilih wilayah tanpa galat.
+### [ISSUE-027] Galat createElement('') Akibat Variable Shadowing Icon & State Form Login Pada Dasbor Bidang Teknis (/admin)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Pengguna mendapati galat `[ErrorBoundary] Failed to execute 'createElement' on 'Document': The tag name provided ('') is not a valid name.` saat login menggunakan akun peran teknis non-admin (`tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`).
+- **Akar Masalah:** Di fungsi komponen `V()` pada `dist/assets/admin-C9Dakcgq.js` dan `scripts/build_admin_view.js`, variabel `f` di-import sebagai icon `users` dari modul luar, namun di-shadow oleh state form login `let [f, p] = useState('')` (penampung nilai awal password berupa string kosong `""`). Selain itu variabel `d` (icon clipboard) di-shadow oleh setter username `setLoginUser`. Saat akun bidang teknis login, banner ruang kerja mengeksekusi `(0, P.jsx)(f, { className: 'h-6 w-6' })` yang memanggil `(0, P.jsx)("", ...)`. React mengeksekusi `document.createElement('')` yang memicu browser melempar `InvalidCharacterError`.
+- **Solusi (ADR-030):**
+  1. Me-refactor seluruh deklarasi variabel state di `admin-C9Dakcgq.js` dan `build_admin_view.js` menjadi nama deskriptif (`token`, `sessionUser`, `isAdmin`, `loginUser`, `loginPass`, `loginErr`, `domsData`, `healthData`, `bantuanData`, `syncData`, `paketData`, `busyAction`, `actionErr`, `importResult`).
+  2. Mengeliminasi bentrok identifier lama (`f`, `d`, `c`, `K_sync`, `J_busy`) dan memverifikasi kelima peran (`admin` dan 4 bidang) berhasil me-render dasbor tanpa galat (Errors: 0).
+
+### [ISSUE-028] Keruntuhan Layout Asimetris Login & Form Merenggang Akibat Uncompiled Arbitrary CSS Classes
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Pada jendela peramban atau layar dengan lebar di bawah 1024px (termasuk jendela pengguna pada resolusi ~948px), panel visual kiri (latar foto sawah) hilang total, formulir input merenggang 100% ke tepi layar tanpa batas kartu, dan logo mobile muncul ganda.
+- **Akar Masalah:**
+  1. Breakpoint panel visual sebelumnya disetel kaku pada `@media (min-width: 1024px)`, sehingga jendela berukuran 948px otomatis menyembunyikan panel foto sawah (`display: none`).
+  2. Form login mengandalkan arbitrary class Tailwind `max-w-[340px]` dan `lg:hidden` yang tidak ada di berkas CSS pre-built `dist/assets/index-DmHYJUQI.css`. Karena kelas tersebut tidak dievaluasi oleh engine CSS, wadah formulir jatuh ke `width: 100%` tanpa batas maksimal.
+- **Solusi (ADR-030):**
+  1. Memindahkan dan mendefinisikan aturan CSS baku di `dist/assets/index-DmHYJUQI.css` tanpa ketergantungan pada arbitrary classes.
+  2. Menurunkan breakpoint panel visual kiri ke `≥ 768px` (50:50 pada mode jendela 948px / tablet, 60:40 pada desktop 1366px+) dengan gambar persawahan Banjarnegara dan gradien gelap resmi.
+  3. Membungkus formulir dalam kelas CSS `.sispertani-form-card` (`max-width: 380px`), menyembunyikan header mobile pada `≥ 768px`, dan menyematkan cache buster `?v=2` pada referensi CSS di `dist/index.html`. Pengujian visual headless Edge mengonfirmasi tata letak kini simetris, berwibawa, dan responsif.
 
 ---
 

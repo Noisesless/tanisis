@@ -46,6 +46,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 > - **Floating Executive Card:** Dasar sidebar memuat kartu institusional resmi *"Portal Data Dinas — Distankan KP Banjarnegara"*, indikator koneksi `● Basis Data Terhubung`, serta tombol aksi *"Masuk Dasbor Admin"*.
 > - **Strict Zero-Empty Law & Anti-AI-Slop:** Seluruh tabel menyaring baris bernilai kosong/0 secara otomatis dan membersihkan seluruh emoji mentah/simbol anak-anak dari antarmuka.
 > - **Redesign Portal Login Asimetris Sawah Banjarnegara (/admin):** Formulir login portal administrasi mengusung komposisi split 2-kolom asimetris (55:45) dengan latar fotografi sawah lokal Banjarnegara, logo resmi daerah, Quick Role selector, dan antarmuka form ringkas anti-buzzword berstandar WCAG AA.
+> - **Stabilitas Cross-Resolution & Imunitas Role Dashboard:** Tata letak login asimetris diperkuat dengan breakpoint adaptif (≥768px untuk laptop/tablet dan mobile-first card) dengan pembatas kartu CSS eksplisit (.sispertani-form-card), serta refactor variabel state deskriptif pada dasbor admin demi imunitas total terhadap variable shadowing di seluruh 5 peran pengguna.
 > - **Peta Spasial & Profil 20 Kecamatan (/kecamatan):** Penyajian peta interaktif MapLibre GL terpadu dengan batas GeoJSON resmi, agregat statistik 20 wilayah, dan routing andal bebas redirect loop.
 
 ## Arsitektur & Teknologi
