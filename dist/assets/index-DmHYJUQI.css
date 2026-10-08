@@ -50,38 +50,84 @@
   display: flex;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #ffffff;
-  color: #1e293b;
   width: 100%;
+  background-color: #f8fafc;
+  color: #1e293b;
+  overflow-x: hidden;
 }
 
 .sispertani-visual-panel {
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .sispertani-visual-panel {
     display: flex;
-    flex: 1 1 0%;
+    flex: 1 1 50%;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
     overflow: hidden;
     background-color: #020617;
     color: #ffffff;
-    padding: 2.75rem 3rem;
+    padding: 2.5rem;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sispertani-visual-panel {
+    flex: 1 1 58%;
+    padding: 3rem 3.5rem;
   }
 }
 
 @media (min-width: 1280px) {
   .sispertani-visual-panel {
+    flex: 1 1 62%;
     padding: 3.5rem 4rem;
   }
 }
 
+.sispertani-visual-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.65;
+}
+
+.sispertani-visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0.6) 50%, rgba(2, 6, 23, 0.35) 100%);
+  pointer-events: none;
+}
+
+.sispertani-visual-top {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.sispertani-visual-top > div {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding-left: 0.875rem;
+}
+
+.sispertani-visual-bottom {
+  position: relative;
+  z-index: 10;
+}
+
 .sispertani-form-panel {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -89,40 +135,68 @@
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #ffffff;
+  background-color: #f8fafc;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .sispertani-form-panel {
-    padding: 2.5rem;
+    flex: 0 0 380px;
+    width: 380px;
+    max-width: 380px;
+    padding: 2rem 1.75rem;
+    border-left: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.03);
   }
 }
 
 @media (min-width: 1024px) {
   .sispertani-form-panel {
-    flex: 0 0 380px;
-    width: 380px;
-    max-width: 380px;
-    padding: 2.5rem 2rem;
-    border-left: 1px solid #e2e8f0;
+    flex: 0 0 420px;
+    width: 420px;
+    max-width: 420px;
+    padding: 2.5rem 2.25rem;
   }
 }
 
 @media (min-width: 1280px) {
   .sispertani-form-panel {
-    flex: 0 0 420px;
-    width: 420px;
-    max-width: 420px;
+    flex: 0 0 450px;
+    width: 450px;
+    max-width: 450px;
     padding: 3rem 2.5rem;
   }
 }
 
-@media (min-width: 1536px) {
-  .sispertani-form-panel {
-    flex: 0 0 440px;
-    width: 440px;
-    max-width: 440px;
-    padding: 3.5rem 3rem;
+.sispertani-form-card {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
+@media (min-width: 768px) {
+  .sispertani-form-card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
   }
 }
 
+.sispertani-mobile-header {
+  display: block;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .sispertani-mobile-header {
+    display: none !important;
+  }
+}

@@ -970,14 +970,14 @@ function V(){
             (0,P.jsx)(\`img\`,{
               src:\`/img/sawah-login.jpg\`,
               alt:\`Hamparan Sawah Terasering Pertanian Banjarnegara\`,
-              className:\`absolute inset-0 h-full w-full object-cover object-center opacity-65\`
+              className:\`sispertani-visual-bg\`
             }),
             (0,P.jsx)(\`div\`,{
-              className:\`absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/30\`
+              className:\`sispertani-visual-overlay\`
             }),
             // Top: Official Regency Crest & Department
             (0,P.jsxs)(\`div\`,{
-              className:\`relative z-10 flex items-center gap-3.5\`,
+              className:\`sispertani-visual-top\`,
               children:[
                 (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI Banjarnegara\`,className:\`h-11 w-auto object-contain drop-shadow\`}),
                 (0,P.jsxs)(\`div\`,{
@@ -991,7 +991,7 @@ function V(){
             }),
             // Bottom: Title, Subtitle, & Official Attribution
             (0,P.jsxs)(\`div\`,{
-              className:\`relative z-10\`,
+              className:\`sispertani-visual-bottom\`,
               children:[
                 (0,P.jsx)(\`h1\`,{className:\`text-3xl xl:text-4xl font-extrabold tracking-tight text-white\`,children:\`SISPERTANI\`}),
                 (0,P.jsx)(\`p\`,{className:\`mt-1.5 text-sm xl:text-base font-medium text-slate-300\`,children:\`Sistem Informasi Statistik Pertanian Terpadu\`}),
@@ -1009,11 +1009,11 @@ function V(){
         (0,P.jsx)(\`div\`,{
           className:\`sispertani-form-panel\`,
           children:(0,P.jsxs)(\`div\`,{
-            className:\`w-full max-w-[340px]\`,
+            className:\`sispertani-form-card\`,
             children:[
               // Mobile Header (< 1024px)
               (0,P.jsxs)(\`div\`,{
-                className:\`mb-6 text-center lg:hidden\`,
+                className:\`sispertani-mobile-header\`,
                 children:[
                   (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI\`,className:\`mx-auto h-12 w-auto object-contain\`}),
                   (0,P.jsx)(\`p\`,{className:\`mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500\`,children:\`Pemerintah Kab. Banjarnegara\`}),
@@ -1037,7 +1037,7 @@ function V(){
                   key:qr.id,
                   type:\`button\`,
                   onClick:()=>{setLoginUser(qr.user);setLoginErr(null);},
-                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${loginUser===qr.user?\`bg-slate-900 text-white shadow-xs\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
+                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${loginUser===qr.user?\`bg-slate-900 text-white shadow-sm\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
                   children:qr.label
                 }))
               }),
@@ -1106,7 +1106,7 @@ function V(){
                   (0,P.jsx)(\`button\`,{
                     type:\`submit\`,
                     disabled:loadingAuth,
-                    className:\`w-full rounded-lg bg-emerald-700 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-emerald-800 active:bg-emerald-900 active:scale-[0.99] disabled:opacity-60 cursor-pointer\`,
+                    className:\`w-full rounded-lg bg-emerald-700 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 active:bg-emerald-900 active:scale-[0.99] disabled:opacity-60 cursor-pointer\`,
                     children:loadingAuth ? (
                       (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(j,{className:\`inline mr-2 h-4 w-4 animate-spin\`}),\`Memproses...\`]})
                     ) : \`Masuk ke Dasbor\`
