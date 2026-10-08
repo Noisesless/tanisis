@@ -1,15 +1,15 @@
 # Panduan Deployment SISPERTANI (`deployment.md`)
 
-Dokumen ini memuat prosedur deployment aplikasi, pemetaan variabel lingkungan, daftar periksa sebelum/setelah rilis, serta rencana mitigasi (*rollback plan*).
+Dokumen ini memuat prosedur resmi dan tunggal (*Single Source of Truth*) untuk deployment aplikasi SISPERTANI, pemetaan variabel lingkungan, panduan rilis via SSH/Git maupun cPanel File Manager, sinkronisasi basis data, serta prosedur pemulihan cepat (*rollback*).
 
 ---
 
 ## 1. Deployment Targets
 
-| Target | Tipe Lingkungan | Port | Stack & Pengelola Proses |
+| Target | Tipe Lingkungan | Port Internal / Protocol | Pengelola Proses |
 |---|---|---|---|
-| **Lokal (Dev)** | Workstation Windows (XAMPP) | `5173` | Node.js native (`--watch --env-file=.env`) |
-| **Produksi (CloudPanel)** | VPS Linux (Ubuntu / Debian) | `4100` / Reverse Proxy | PM2 (`ecosystem.config.cjs`) + Nginx |
+| **Lokal (Dev)** | Workstation Windows (XAMPP) | `5173` (HTTP) | Node.js native (`--watch --env-file=.env`) |
+| **Produksi (`pertanian.sistemdata.id`)** | VPS Linux / cPanel Cloud (Nargaroth) | `5173` / Reverse Proxy HTTPS | PM2 (`ecosystem.config.cjs`) |
 
 ---
 
@@ -17,127 +17,120 @@ Dokumen ini memuat prosedur deployment aplikasi, pemetaan variabel lingkungan, d
 
 | Variabel | Development (Lokal) | Production (Server) | Keterangan & Catatan |
 |---|---|---|---|
-| `PORT` | `5173` | `4100` (atau port internal CloudPanel) | Port listening Express server |
-| `BIND_HOST` | `127.0.0.1` | `127.0.0.1` / `0.0.0.0` | IP bind server |
-| `DB_HOST` | `127.0.0.1` | `127.0.0.1` | Host MySQL/MariaDB |
+| `PORT` | `5173` | `5173` | Port listening Express server |
+| `BIND_HOST` | `127.0.0.1` | `127.0.0.1` | IP bind server lokal |
+| `DB_HOST` | `127.0.0.1` | `localhost` / `127.0.0.1` | Host MySQL/MariaDB |
 | `DB_PORT` | `3306` | `3306` | Port MySQL |
-| `DB_USER` | `root` | `pertalit` / user terdedikasi | Akun user MySQL |
-| `DB_PASS` | *(kosong)* | `[strong_password]` | Kata sandi user MySQL |
+| `DB_USER` | `root` | `pertalit` | Akun database terdedikasi |
+| `DB_PASS` | *(kosong)* | `w1x4pYxx7u3WYNqVX4g4` | Kata sandi database produksi |
 | `DB_NAME` | `pertasis` | `pertasis` | Nama database |
-| `CORS_ORIGIN` | `*` / `https://pertanian.sistemdata.id` | `https://pertanian.sistemdata.id` | Domain yang diizinkan untuk CORS |
+| `CORS_ORIGIN` | `*` | `https://pertanian.sistemdata.id` | Domain yang diizinkan untuk CORS |
 | `DIST_DIR` | `./dist` | `./dist` | Direktori berkas statis frontend SPA |
-| `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data |
-| `ADMIN_PASS` | `C9145qbSjR` | `[hash_or_strong_pass]` | Kata sandi super-admin |
-| `PASS_*` (Bidang) | `[Bidang].2026` | `[secure_random_pass]` | Kata sandi per bidang RBAC |
-| `GEMINI_API_KEY` | `AIzaSy...` | `AIzaSy...` | API Key Google Gemini untuk gateway AI / Si Pertani (Wajib di server backend, aman dari client) |
+| `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data Banjarnegara |
+| `ADMIN_PASS` | `C9145qbSjR` | `[secure_password]` | Kata sandi super-admin |
+| `GEMINI_API_KEY`| `AIzaSy...` | `AIzaSy...` | API Key Google Gemini untuk gateway AI Si Pertani |
 
 ---
 
-## 3. Konfigurasi Nginx / Reverse Proxy (Produksi)
+## 3. Prosedur Deployment di Server Produksi
 
-Contoh blok konfigurasi vhost Nginx pada CloudPanel / VPS:
+### Opsi A: Pembaruan via Terminal SSH / Git (Metode Rekomendasi Utama)
 
-```nginx
-server {
-    server_name pertanian.sistemdata.id;
-    listen 80;
-    listen 443 ssl http2;
-    
-    # SSL Certificates dikelola oleh Let's Encrypt / CloudPanel
-    
-    client_max_body_size 20M;
+Metode ini adalah alur standar di server `pertanian.sistemdata.id`:
 
-    location / {
-        proxy_pass http://127.0.0.1:4100;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
----
-
-## 4. Pre-Deploy Checklist (Sebelum Rilis)
-
-- [ ] File `.env` produksi telah dikonfigurasi dengan kata sandi kuat, kredensial MySQL, dan `GEMINI_API_KEY`.
-- [ ] Folder `./dist` berisi build frontend bersih (106 berkas bundel aktif `assets/`, zero dead code, tanpa folder `_tmp`).
-- [ ] Berkas paket deploy bersih telah siap: `deploy_pertanian_clean_20261005.zip` (35.2 MB).
-- [ ] Dependensi `node_modules` telah terpasang bersih (`npm ci --omit=dev`).
-- [ ] Database MySQL `pertasis` telah di-dump dan dicadangkan (*backup*).
-- [ ] Skrip migrasi non-destruktif siap: `database/production_migration_patch.sql` (atau dump terpadu `database/dump_production_pertanian_updated.sql`).
-- [ ] Port yang ditentukan pada `PORT` tidak terblokir firewall eksternal (hanya terbuka untuk Nginx lokal).
-- [ ] Folder `./logs-pm2` telah tersedia dan memiliki izin tulis untuk user pengelola.
-- [ ] Repositori lokal tersinkronisasi pada branch `release/2026-10-05-clean`.
-
----
-
-## 5. Prosedur Rilis Produksi & Post-Deploy Verification
-
-### A. Alur Rilis Mandiri via cPanel / SFTP (Clean Release):
-1. **Cadangkan Folder Aktif:**
-   Ubah nama direktori `pertanian.sistemdata.id` menjadi `pertanian.sistemdata.id_backup_20261005`.
-2. **Unggah dan Ekstrak:**
-   Buat folder baru `pertanian.sistemdata.id`, unggah `deploy_pertanian_clean_20261005.zip`, lalu ekstrak.
-3. **Konfigurasi Lingkungan:**
-   Salin `.env` dari folder cadangan, pastikan baris `GEMINI_API_KEY` terkonfigurasi.
-4. **Restart Aplikasi:**
-   Buka cPanel > **Setup Node.js App** > klik **Restart** (atau jalankan `pm2 restart ecosystem.config.cjs` jika menggunakan SSH).
-
-### B. Perintah Pembaruan di VPS Produksi (CloudPanel / SSH):
 ```bash
-# Masuk ke direktori web
-cd /path/ke/webroot
+# 1. Masuk ke direktori webroot
+cd ~/htdocs/pertanian.sistemdata.id
 
-# Backup direktori aktif
-mv pertanian.sistemdata.id pertanian.sistemdata.id_backup_20261005
+# 2. Tarik pembaruan kode dan bundel terbaru dari GitHub
+git pull origin main
 
-# Ekstrak paket rilis bersih
-mkdir pertanian.sistemdata.id && cd pertanian.sistemdata.id
-unzip /path/ke/deploy_pertanian_clean_20261005.zip
-
-# Salin .env dan pasang dependensi
-cp ../pertanian.sistemdata.id_backup_20261005/.env .env
+# 3. Pasang dependensi jika terdapat perubahan package.json (opsional)
 npm ci --omit=dev
 
-# Reload proses Express
+# 4. Restart proses aplikasi via PM2
 pm2 reload ecosystem.config.cjs || pm2 restart pertanian-api
 
-# Verifikasi log tidak memiliki error
-pm2 logs sispertani-api --lines 20
+# 5. Cek status aplikasi dan log
+pm2 status
+curl -s http://127.0.0.1:5173/api/health
 ```
-
-### C. Verifikasi Pasca Rilis:
-1. **Smoke Test Health Check:**
-   ```bash
-   curl -I https://pertanian.sistemdata.id/api/health
-   # Harus menghasilkan status 200 OK dengan {"ok":true,"db":"up"}
-   ```
-2. **Frontend Routing & Avatar Header Check:**
-   - Buka beranda `https://pertanian.sistemdata.id/`
-   - Lakukan **Hard Refresh** (`Ctrl + Shift + R` atau `Cmd + Shift + R`) untuk membersihkan cache browser.
-   - Pastikan header tampil rapi setinggi `72px` dengan **Avatar Dropdown Pengunjung [G]** (bukan tombol Info/Panduan/Login yang berserakan).
-   - Klik avatar untuk memastikan modal dropdown membuka tautan Info, Panduan, dan Portal Admin.
-3. **SPA Route Check:**
-   - Buka rute dalam `https://pertanian.sistemdata.id/komoditas-unggulan/pangan` dan lakukan refresh peramban (pastikan tidak terjadi 404).
-4. **GeoJSON & Map Test:**
-   - Buka peta spasial, verifikasi layer GeoJSON sawah, desa, dan jalan ter-render dengan sempurna tanpa galat CORS.
-5. **Admin Login & Template Test:**
-   - Lakukan login pada portal admin dengan kredensial uji coba.
-   - Uji unduh satu template Excel (`GET /api/v1/admin/template/padi`).
 
 ---
 
-## 6. Rollback Plan (Rencana Pemulihan)
+### Opsi B: Deploy Bersih via cPanel File Manager (Unggah Arsip Zip)
 
-| Skenario Galat | Prosedur Tindakan Pemulihan |
-|---|---|
-| **Server Crash saat Mulai** | Periksa log PM2 (`pm2 logs sispertani-api`). Jika terdapat syntax error atau missing module, kembalikan ke commit Git sebelumnya (`git checkout <tag-sebelumnya>`) dan jalankan `pm2 restart ecosystem.config.cjs`. |
-| **MySQL Galat Akses / Down** | Verifikasi status layanan MariaDB/MySQL (`systemctl status mariadb`). Cek kredensial di `.env`. Uji koneksi via CLI `mysql -u [user] -p [database]`. |
-| **Frontend White Screen / 404** | Pastikan direktori `./dist` tidak terhapus. Periksa izin baca berkas `chmod -R 755 dist/`. |
-| **Kerusakan Data Akibat Impor** | Pulihkan tabel yang terdampak dari snapshot backup harian `mysqldump` terakhir: `mysql -u [user] -p pertasis < backup_pertasis.sql`. |
+Gunakan metode ini jika melakukan instalasi bersih atau memindahkan hosting:
+
+1. Masuk ke **cPanel** > **File Manager**.
+2. Masuk ke direktori webroot aplikasi (misalnya `/home/sistnian/htdocs/pertanian.sistemdata.id`).
+3. Cadangkan folder yang sedang berjalan:
+   - Ganti nama folder `pertanian.sistemdata.id` menjadi `pertanian.sistemdata.id_backup_[tanggal]`.
+4. Buat folder baru dengan nama `pertanian.sistemdata.id`.
+5. Unggah berkas arsip rilis bersih (`.zip`), lalu klik kanan > **Extract**.
+6. Salin berkas `.env` dari folder cadangan ke dalam folder baru.
+7. Pastikan parameter `GEMINI_API_KEY` dan kredensial database terisi dengan benar.
+8. Masuk ke cPanel > **Setup Node.js App** > klik tombol **Restart** pada aplikasi SISPERTANI.
+9. Lakukan pembersihan cache peramban (*Hard Refresh* / `Ctrl + F5`) saat membuka situs.
+
+---
+
+## 4. Sinkronisasi Basis Data Produksi (57 Tabel Master Lengkap)
+
+Jika terdapat pembaruan skema atau data statistik dari tim pengembang (misalnya penambahan Padi 2025, 2.409 Poktan, 137 KEP, 36 Posluhdes, 156 PPS, dsb.), jalankan perintah impor master dump:
+
+```bash
+# Impor dump master basis data mutakhir (100% portabel, bebas DEFINER root & error strict mode):
+mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/dump_production_pertanian_updated.sql
+```
+
+> **Catatan Keamanan (ADR-031):**  
+> Berkas `database/dump_production_pertanian_updated.sql` telah dioptimasi khusus untuk user unprivileged cPanel (`pertalit`):
+> - Tidak mengandung klausa `DEFINER=root` (mencegah `ERROR 1227`).
+> - Menggunakan format datetime ISO standar `YYYY-MM-DD HH:MM:SS` (mencegah `ERROR 1292`).
+> - Kolom kalkulasi `nilai_rp` tidak menggunakan `GENERATED STORED` kaku saat dump (mencegah `ERROR 1906`).
+
+---
+
+## 5. Verifikasi Pasca Rilis (*Post-Deploy Verification*)
+
+Setelah kode dan basis data diperbarui, lakukan pemeriksaan berikut:
+
+1. **Uji Kesehatan Backend:**
+   ```bash
+   curl -I https://pertanian.sistemdata.id/api/health
+   # Respons wajib: HTTP/2 200 OK dengan {"ok":true,"db":"up"}
+   ```
+2. **Uji Endpoint Statistik Utama:**
+   ```bash
+   curl -s https://pertanian.sistemdata.id/api/v1/komoditas-unggulan | head -c 100
+   curl -s https://pertanian.sistemdata.id/api/v1/kelembagaan/summary | head -c 100
+   # Keduanya wajib mengembalikan status "success" / array data JSON tanpa galat 500
+   ```
+3. **Uji Antarmuka Web (Frontend SPA):**
+   - Buka `https://pertanian.sistemdata.id/` di browser.
+   - Tekan `Ctrl + F5` untuk memastikan file JS/CSS lama terhapus dari cache browser.
+   - Buka rute `/kecamatan`, pastikan profil 20 kecamatan dan peta MapLibre ter-render tanpa blank screen.
+   - Buka rute `/admin`, pastikan form login asimetris dengan foto persawahan Banjarnegara tampil rapi dan login multi-role dapat diakses tanpa crash.
+
+---
+
+## 6. Prosedur Rollback Cepat (< 1 Menit)
+
+Jika ditemukan anomali atau galat fatal setelah rilis, pulihkan layanan dalam hitungan detik:
+
+### Skenario A: Rollback via Git (SSH)
+```bash
+# Kembalikan ke commit stabil sebelumnya
+git reset --hard HEAD~1
+pm2 restart ecosystem.config.cjs
+```
+
+### Skenario B: Rollback via Folder Cadangan (cPanel)
+```bash
+mv pertanian.sistemdata.id pertanian.sistemdata.id_failed
+mv pertanian.sistemdata.id_backup_[tanggal] pertanian.sistemdata.id
+pm2 restart ecosystem.config.cjs
+```
+
+Layanan akan seketika pulih normal ke kondisi stabil sebelumnya tanpa *downtime*.

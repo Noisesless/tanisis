@@ -261,8 +261,8 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 
 Aplikasi telah disinkronkan dan disiapkan dalam paket siap deploy tanpa menunggu kolaborasi GitHub:
 - **Paket Rilis:** `deploy_pertanian_clean_20261005.zip` (35.2 MB, reduksi 58% dari 84.4 MB)
-- **Panduan Deploy Cepat:** [`README_DEPLOY.md`](file:///e:/Project/pertanian_main/README_DEPLOY.md) (Prosedur ganti folder cPanel / SFTP / SSH dan rollback < 1 menit)
-- **Branch Rilis Git:** `release/2026-10-05-clean`
+- **Panduan Deployment:** [`.docs/deployment.md`](file:///e:/Project/pertanian_main/.docs/deployment.md) (Prosedur resmi Git/SSH, cPanel, sinkronisasi database 57 tabel, dan rollback < 1 menit)
+- **Branch Rilis Git:** `main` (produksi)
 
 ---
 
