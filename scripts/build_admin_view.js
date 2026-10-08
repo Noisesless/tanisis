@@ -72,55 +72,55 @@ var CATEGORIES = [
 ];
 
 function V(){
-  let[t,n]=(0,N.useState)(()=>localStorage.getItem(F)||sessionStorage.getItem(F));
-  let[o,s]=(0,N.useState)(()=>z());
-  let c=o?.role===\`admin\`;
-  let[l,d]=(0,N.useState)(\`admin\`);
-  let[f,p]=(0,N.useState)(\`\`);
-  let[m_err,_]=(0,N.useState)(null);
-  let[v_load,y]=(0,N.useState)(!1);
-  let[b_show,x]=(0,N.useState)(!1);
-  let[T_doms,E]=(0,N.useState)(null);
-  let[B_health,V_health]=(0,N.useState)(null);
-  let[W_bantuan,G]=(0,N.useState)(null);
-  let[K_sync,be]=(0,N.useState)(null);
-  let[q_paket,xe]=(0,N.useState)(null);
-  let[J_busy,Y]=(0,N.useState)(null);
-  let[Se_err,X]=(0,N.useState)(null);
-  let[Z_res,Q]=(0,N.useState)(null);
+  let[token,setToken]=(0,N.useState)(()=>localStorage.getItem(F)||sessionStorage.getItem(F));
+  let[sessionUser,setSessionUser]=(0,N.useState)(()=>z());
+  let isAdmin=sessionUser?.role===\`admin\`;
+  let[loginUser,setLoginUser]=(0,N.useState)(\`admin\`);
+  let[loginPass,setLoginPass]=(0,N.useState)(\`\`);
+  let[loginErr,setLoginErr]=(0,N.useState)(null);
+  let[loadingAuth,setLoadingAuth]=(0,N.useState)(!1);
+  let[showPass,setShowPass]=(0,N.useState)(!1);
+  let[domsData,setDomsData]=(0,N.useState)(null);
+  let[healthData,setHealthData]=(0,N.useState)(null);
+  let[bantuanData,setBantuanData]=(0,N.useState)(null);
+  let[syncData,setSyncData]=(0,N.useState)(null);
+  let[paketData,setPaketData]=(0,N.useState)(null);
+  let[busyAction,setBusyAction]=(0,N.useState)(null);
+  let[actionErr,setActionErr]=(0,N.useState)(null);
+  let[importResult,setImportResult]=(0,N.useState)(null);
   let[searchQ,setSearchQ]=(0,N.useState)(\`\`);
   let[catActive,setCatActive]=(0,N.useState)(\`all\`);
 
   (0,N.useEffect)(()=>{
-    if(!t)return;
+    if(!token)return;
     let e=!0;
     (async()=>{
       try{
         let n=z()?.role===\`admin\`;
         let[r_h,i_d]=await Promise.all([
           fetch(\`\${D}/health\`).then(e=>e.json()),
-          fetch(\`\${D}/v1/admin/domains\`,{headers:L(t)}).then(e=>{if(e.status===401)throw Error(\`sesi berakhir\`);return e.json()})
+          fetch(\`\${D}/v1/admin/domains\`,{headers:L(token)}).then(e=>{if(e.status===401)throw Error(\`sesi berakhir\`);return e.json()})
         ]);
         if(!e)return;
-        V_health(r_h);
-        E(i_d);
+        setHealthData(r_h);
+        setDomsData(i_d);
         if(!n)return;
-        G(await O());
+        setBantuanData(await O());
         try{
-          let n_log=await ae(t,50);
-          n_log&&Array.isArray(n_log.data)&&e&&be({total:n_log.total,rows:n_log.data});
+          let n_log=await ae(token,50);
+          n_log&&Array.isArray(n_log.data)&&e&&setSyncData({total:n_log.total,rows:n_log.data});
         }catch{}
         try{
-          let n_pak=await fetch(\`\${D}/v1/admin/paket\`,{headers:L(t)}).then(e=>e.json());
-          e&&n_pak&&Array.isArray(n_pak.groups)&&xe(n_pak);
+          let n_pak=await fetch(\`\${D}/v1/admin/paket\`,{headers:L(token)}).then(e=>e.json());
+          e&&n_pak&&Array.isArray(n_pak.groups)&&setPaketData(n_pak);
         }catch{}
       }catch(t_err){
         if(!e)return;
-        R(t_err)===\`sesi berakhir\`?Ce():X(\`Gagal memuat data dasbor: \${R(t_err)}\`);
+        R(t_err)===\`sesi berakhir\`?Ce():setActionErr(\`Gagal memuat data dasbor: \${R(t_err)}\`);
       }
     })();
     return()=>{e=!1};
-  },[t]);
+  },[token]);
 
   function Ce(){
     try{
@@ -130,23 +130,23 @@ function V(){
       sessionStorage.removeItem(I);
       window.dispatchEvent(new Event("sispertani:auth-change"));
     }catch{}
-    s(null);
-    n(null);
-    E(null);
-    Q(null);
-    G(null);
-    xe(null);
+    setSessionUser(null);
+    setToken(null);
+    setDomsData(null);
+    setImportResult(null);
+    setBantuanData(null);
+    setPaketData(null);
   }
 
   async function we(e_form){
     e_form.preventDefault();
-    _(null);
-    y(!0);
+    setLoginErr(null);
+    setLoadingAuth(!0);
     try{
       let res=await fetch(\`\${D}/v1/admin/login\`,{
         method:\`POST\`,
         headers:{"Content-Type":\`application/json\`},
-        body:JSON.stringify({user:l.trim(),pass:f})
+        body:JSON.stringify({user:loginUser.trim(),pass:loginPass})
       });
       let resJson=await res.json();
       if(!res.ok)throw Error(resJson?.error??\`HTTP \${res.status}\`);
@@ -154,28 +154,28 @@ function V(){
         localStorage.setItem(F,resJson.token);
         sessionStorage.setItem(F,resJson.token);
       }catch{}
-      let r_sess={user:resJson.user??l.trim(),role:resJson.role??\`admin\`,label:resJson.label??\`Administrator\`};
+      let r_sess={user:resJson.user??loginUser.trim(),role:resJson.role??\`admin\`,label:resJson.label??\`Administrator\`};
       try{
         localStorage.setItem(I,JSON.stringify(r_sess));
         sessionStorage.setItem(I,JSON.stringify(r_sess));
         window.dispatchEvent(new Event("sispertani:auth-change"));
       }catch{}
-      s(r_sess);
-      n(resJson.token);
-      p(\`\`);
+      setSessionUser(r_sess);
+      setToken(resJson.token);
+      setLoginPass(\`\`);
     }catch(e_err){
-      _(R(e_err));
+      setLoginErr(R(e_err));
     }finally{
-      y(!1);
+      setLoadingAuth(!1);
     }
   }
 
   async function Te(domKey,mode){
-    if(!t)return;
-    Y(\`\${domKey}:\${mode}\`);
-    X(null);
+    if(!token)return;
+    setBusyAction(\`\${domKey}:\${mode}\`);
+    setActionErr(null);
     try{
-      let res=await fetch(\`\${D}/v1/admin/\${mode}/\${domKey}\`,{headers:L(t)});
+      let res=await fetch(\`\${D}/v1/admin/\${mode}/\${domKey}\`,{headers:L(token)});
       if(!res.ok)throw Error((await res.json().catch(()=>null))?.error??\`HTTP \${res.status}\`);
       let blob=await res.blob();
       let aElem=document.createElement(\`a\`);
@@ -184,18 +184,18 @@ function V(){
       aElem.click();
       URL.revokeObjectURL(aElem.href);
     }catch(err){
-      X(\`Gagal mengunduh \${mode} \${domKey}: \${R(err)}\`);
+      setActionErr(\`Gagal mengunduh \${mode} \${domKey}: \${R(err)}\`);
     }finally{
-      Y(null);
+      setBusyAction(null);
     }
   }
 
   async function Ee(packId,fileName){
-    if(!t)return;
-    Y(\`paket:\${packId}:\${fileName}\`);
-    X(null);
+    if(!token)return;
+    setBusyAction(\`paket:\${packId}:\${fileName}\`);
+    setActionErr(null);
     try{
-      let res=await fetch(\`\${D}/v1/admin/paket/\${packId}/\${encodeURIComponent(fileName)}\`,{headers:L(t)});
+      let res=await fetch(\`\${D}/v1/admin/paket/\${packId}/\${encodeURIComponent(fileName)}\`,{headers:L(token)});
       if(!res.ok)throw Error((await res.json().catch(()=>null))?.error??\`HTTP \${res.status}\`);
       let blob=await res.blob();
       let aElem=document.createElement(\`a\`);
@@ -204,37 +204,37 @@ function V(){
       aElem.click();
       URL.revokeObjectURL(aElem.href);
     }catch(err){
-      X(\`Gagal mengunduh \${fileName}: \${R(err)}\`);
+      setActionErr(\`Gagal mengunduh \${fileName}: \${R(err)}\`);
     }finally{
-      Y(null);
+      setBusyAction(null);
     }
   }
 
   async function De(domKey,domLabel,fileObj){
-    if(!fileObj||!t)return;
-    Y(\`\${domKey}:import\`);
-    X(null);
-    Q(null);
+    if(!fileObj||!token)return;
+    setBusyAction(\`\${domKey}:import\`);
+    setActionErr(null);
+    setImportResult(null);
     try{
       let fd=new FormData();
       fd.append(\`file\`,fileObj);
-      let res=await fetch(\`\${D}/v1/admin/import/\${domKey}\`,{method:\`POST\`,headers:L(t),body:fd});
+      let res=await fetch(\`\${D}/v1/admin/import/\${domKey}\`,{method:\`POST\`,headers:L(token),body:fd});
       let outJson=await res.json();
       if(!res.ok)throw Error(outJson?.error??\`HTTP \${res.status}\`);
-      Q({...outJson,label:domLabel});
+      setImportResult({...outJson,label:domLabel});
       if(domKey.startsWith(\`bantuan-\`)){
         se();
-        G(await O());
+        setBantuanData(await O());
       }
     }catch(err){
-      X(\`Gagal import \${domKey}: \${R(err)}\`);
+      setActionErr(\`Gagal import \${domKey}: \${R(err)}\`);
     }finally{
-      Y(null);
+      setBusyAction(null);
     }
   }
 
   // Filtered domains by Category & Search
-  let filteredDoms = (T_doms || []).filter(item => {
+  let filteredDoms = (domsData || []).filter(item => {
     let q = searchQ.trim().toLowerCase();
     let matchSearch = !q || (
       item.label.toLowerCase().includes(q) ||
@@ -247,11 +247,11 @@ function V(){
     return targetCat?.match ? targetCat.match.includes(item.domain) : true;
   });
 
-  let totalSheets = (T_doms ?? []).reduce((acc, cur) => acc + cur.sheets.length, 0);
-  let totalBantuanNominal = (W_bantuan?.program ?? []).reduce((acc, cur) => acc + cur.nilaiRupiah, 0);
-  let totalPenerima = (W_bantuan?.program ?? []).reduce((acc, cur) => acc + cur.penerimaJumlah, 0);
+  let totalSheets = (domsData ?? []).reduce((acc, cur) => acc + cur.sheets.length, 0);
+  let totalBantuanNominal = (bantuanData?.program ?? []).reduce((acc, cur) => acc + cur.nilaiRupiah, 0);
+  let totalPenerima = (bantuanData?.program ?? []).reduce((acc, cur) => acc + cur.penerimaJumlah, 0);
 
-  return t ? (0,P.jsxs)(\`div\`,{
+  return token ? (0,P.jsxs)(\`div\`,{
     className:\`flex min-h-screen flex-col bg-slate-100 text-slate-800 antialiased\`,
     children:[
       // Header Bar
@@ -283,19 +283,19 @@ function V(){
               className:\`flex flex-wrap items-center gap-2.5\`,
               children:[
                 (0,P.jsxs)(S,{
-                  tone:c?\`emerald\`:\`blue\`,
+                  tone:isAdmin?\`emerald\`:\`blue\`,
                   children:[
                     (0,P.jsx)(Sh_icon,{className:\`h-3.5 w-3.5\`}),
                     \` \`,
-                    o?.label??\`Administrator\`
+                    sessionUser?.label??\`Administrator\`
                   ]
                 }),
-                B_health?.db===\`up\`?(0,P.jsxs)(S,{
+                healthData?.db===\`up\`?(0,P.jsxs)(S,{
                   tone:\`emerald\`,
                   children:[
                     (0,P.jsx)(M,{className:\`h-3 w-3\`}),
                     \` Backend \`,
-                    B_health?.ok?\`OK\`:\`?\`,
+                    healthData?.ok?\`OK\`:\`?\`,
                     \` · MySQL Aktif\`
                   ]
                 }):(0,P.jsxs)(S,{
@@ -303,7 +303,7 @@ function V(){
                   children:[
                     (0,P.jsx)(M,{className:\`h-3 w-3\`}),
                     \` MySQL \`,
-                    B_health?.db??\`...\`
+                    healthData?.db??\`...\`
                   ]
                 }),
                 (0,P.jsxs)(C,{
@@ -333,7 +333,7 @@ function V(){
         className:\`mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6\`,
         children:[
           // Role Banner Section
-          c ? (
+          isAdmin ? (
             // Super Admin Title & Subtitle
             (0,P.jsxs)(\`div\`,{
               className:\`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
@@ -377,7 +377,7 @@ function V(){
                         (0,P.jsxs)(\`div\`,{
                           className:\`flex flex-wrap items-center gap-2\`,
                           children:[
-                            (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold text-slate-900\`,children:\`Ruang Kerja \${o?.label}\`}),
+                            (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold text-slate-900\`,children:\`Ruang Kerja \${sessionUser?.label??'Bidang Teknis'}\`}),
                             (0,P.jsx)(\`span\`,{className:\`rounded-md bg-blue-100 px-2 py-0.5 text-[11px] font-semibold text-blue-800 border border-blue-200\`,children:\`Role RBAC Terverifikasi\`})
                           ]
                         }),
@@ -394,11 +394,11 @@ function V(){
           ),
 
           // Action Error Notice
-          Se_err&&(0,P.jsxs)(\`div\`,{
+          actionErr&&(0,P.jsxs)(\`div\`,{
             className:\`mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-medium text-red-800 shadow-sm\`,
             children:[
               (0,P.jsx)(w,{className:\`mt-0.5 h-4 w-4 shrink-0 text-red-600\`}),
-              (0,P.jsx)(\`span\`,{children:Se_err})
+              (0,P.jsx)(\`span\`,{children:actionErr})
             ]
           }),
 
@@ -409,33 +409,33 @@ function V(){
               (0,P.jsx)(H,{
                 icon:(0,P.jsx)(i,{className:\`h-5 w-5\`}),
                 color:\`bg-emerald-50 text-emerald-700 border border-emerald-200\`,
-                label:c?\`Domain Terdaftar\`:\`Domain Wewenang Bidang\`,
-                value:T_doms?T_doms.length:null,
+                label:isAdmin?\`Domain Terdaftar\`:\`Domain Wewenang Bidang\`,
+                value:domsData?domsData.length:null,
                 hint:\`Katalog tabel siap kelola\`
               }),
               (0,P.jsx)(H,{
                 icon:(0,P.jsx)(g,{className:\`h-5 w-5\`}),
                 color:\`bg-blue-50 text-blue-700 border border-blue-200\`,
                 label:\`Total Tabel / Sheet\`,
-                value:T_doms?totalSheets:null,
+                value:domsData?totalSheets:null,
                 hint:\`Template · export · import\`
               }),
-              c ? (
+              isAdmin ? (
                 (0,P.jsxs)(P.Fragment,{
                   children:[
                     (0,P.jsx)(H,{
                       icon:(0,P.jsx)(a,{className:\`h-5 w-5\`}),
                       color:\`bg-amber-50 text-amber-700 border border-amber-200\`,
                       label:\`Program Bantuan\`,
-                      value:W_bantuan?W_bantuan.program.length:null,
-                      hint:W_bantuan&&W_bantuan.program.length>0?\`Pagu \${k(totalBantuanNominal)} · \${totalPenerima.toLocaleString(\`id-ID\`)} penerima\`:\`Belum ada data bantuan\`
+                      value:bantuanData?bantuanData.program.length:null,
+                      hint:bantuanData&&bantuanData.program.length>0?\`Pagu \${k(totalBantuanNominal)} · \${totalPenerima.toLocaleString(\`id-ID\`)} penerima\`:\`Belum ada data bantuan\`
                     }),
                     (0,P.jsx)(H,{
                       icon:(0,P.jsx)(fe,{className:\`h-5 w-5\`}),
                       color:\`bg-indigo-50 text-indigo-700 border border-indigo-200\`,
                       label:\`Riwayat Sinkronisasi\`,
-                      value:K_sync?K_sync.total:null,
-                      hint:K_sync&&K_sync.rows.length>0?\`Terakhir: \${new Date(K_sync.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
+                      value:syncData?syncData.total:null,
+                      hint:syncData&&syncData.rows.length>0?\`Terakhir: \${new Date(syncData.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
                     })
                   ]
                 })
@@ -463,25 +463,25 @@ function V(){
           }),
 
           // Import Result Banner
-          Z_res&&(0,P.jsxs)(\`section\`,{
-            className:\`mt-6 overflow-hidden rounded-xl border shadow-sm \${Z_res.errors.length?\`border-amber-300 bg-amber-50/40\`:\`border-emerald-300 bg-emerald-50/40\`}\`,
+          importResult&&(0,P.jsxs)(\`section\`,{
+            className:\`mt-6 overflow-hidden rounded-xl border shadow-sm \${importResult.errors.length?\`border-amber-300 bg-amber-50/40\`:\`border-emerald-300 bg-emerald-50/40\`}\`,
             children:[
               (0,P.jsxs)(\`div\`,{
-                className:\`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 \${Z_res.errors.length?\`border-amber-200 bg-amber-100/70\`:\`border-emerald-200 bg-emerald-100/70\`}\`,
+                className:\`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 \${importResult.errors.length?\`border-amber-200 bg-amber-100/70\`:\`border-emerald-200 bg-emerald-100/70\`}\`,
                 children:[
                   (0,P.jsxs)(\`div\`,{
                     className:\`flex items-center gap-2\`,
                     children:[
-                      Z_res.errors.length?(0,P.jsx)(w,{className:\`h-5 w-5 text-amber-700\`}):(0,P.jsx)(te,{className:\`h-5 w-5 text-emerald-700\`}),
-                      (0,P.jsxs)(\`span\`,{className:\`text-sm font-bold text-slate-800\`,children:[\`Laporan Hasil Import — \`,Z_res.label]}),
+                      importResult.errors.length?(0,P.jsx)(w,{className:\`h-5 w-5 text-amber-700\`}):(0,P.jsx)(te,{className:\`h-5 w-5 text-emerald-700\`}),
+                      (0,P.jsxs)(\`span\`,{className:\`text-sm font-bold text-slate-800\`,children:[\`Laporan Hasil Import — \`,importResult.label]}),
                       (0,P.jsxs)(S,{
-                        tone:Z_res.errors.length?\`amber\`:\`emerald\`,
-                        children:[Z_res.inserted,\` baru • \`,Z_res.updated,\` diperbarui\`,Z_res.errors.length?\` • \${Z_res.errors.length} baris ditolak\`:\` • sukses penuh\`]
+                        tone:importResult.errors.length?\`amber\`:\`emerald\`,
+                        children:[importResult.inserted,\` baru • \`,importResult.updated,\` diperbarui\`,importResult.errors.length?\` • \${importResult.errors.length} baris ditolak\`:\` • sukses penuh\`]
                       })
                     ]
                   }),
                   (0,P.jsx)(\`button\`,{
-                    onClick:()=>Q(null),
+                    onClick:()=>setImportResult(null),
                     className:\`rounded-md p-1 text-slate-500 hover:bg-white hover:text-slate-800 transition\`,
                     children:(0,P.jsx)(ee,{className:\`h-4 w-4\`})
                   })
@@ -490,10 +490,10 @@ function V(){
               (0,P.jsx)(\`div\`,{
                 className:\`grid grid-cols-2 gap-px bg-slate-200/70 sm:grid-cols-4\`,
                 children:[
-                  {label:\`Ditambahkan\`,val:Z_res.inserted,tone:\`text-emerald-700\`},
-                  {label:\`Diperbarui\`,val:Z_res.updated,tone:\`text-blue-700\`},
-                  {label:\`Dilewati\`,val:Z_res.skipped,tone:\`text-slate-600\`},
-                  {label:\`Ditolak\`,val:Z_res.errors.length,tone:Z_res.errors.length?\`text-rose-600\`:\`text-slate-500\`}
+                  {label:\`Ditambahkan\`,val:importResult.inserted,tone:\`text-emerald-700\`},
+                  {label:\`Diperbarui\`,val:importResult.updated,tone:\`text-blue-700\`},
+                  {label:\`Dilewati\`,val:importResult.skipped,tone:\`text-slate-600\`},
+                  {label:\`Ditolak\`,val:importResult.errors.length,tone:importResult.errors.length?\`text-rose-600\`:\`text-slate-500\`}
                 ].map(item=>(0,P.jsxs)(\`div\`,{
                   className:\`bg-white px-5 py-3.5\`,
                   children:[
@@ -504,7 +504,7 @@ function V(){
               }),
               (0,P.jsx)(\`div\`,{
                 className:\`space-y-2 bg-white p-5 pt-4\`,
-                children:Z_res.sheets.map(sh=>(0,P.jsxs)(\`div\`,{
+                children:importResult.sheets.map(sh=>(0,P.jsxs)(\`div\`,{
                   className:\`rounded-lg border border-slate-200/70 bg-slate-50/70 p-3 text-xs\`,
                   children:[
                     (0,P.jsxs)(\`div\`,{
@@ -544,7 +544,7 @@ function V(){
                             children:[
                               (0,P.jsx)(Fe_icon,{className:\`h-4 w-4 text-emerald-600\`}),
                               (0,P.jsx)(\`span\`,{className:\`text-sm font-bold text-slate-800\`,children:\`Katalog Domain Data\`}),
-                              (0,P.jsxs)(\`span\`,{className:\`rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600\`,children:[(T_doms?filteredDoms.length:\`...\`),\` domain\`]})
+                              (0,P.jsxs)(\`span\`,{className:\`rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600\`,children:[(domsData?filteredDoms.length:\`...\`),\` domain\`]})
                             ]
                           }),
                           (0,P.jsxs)(\`div\`,{
@@ -564,7 +564,7 @@ function V(){
                       }),
 
                       // Category Tabs (for Super Admin or All)
-                      c && (0,P.jsx)(\`div\`,{
+                      isAdmin && (0,P.jsx)(\`div\`,{
                         className:\`mt-3 flex flex-wrap gap-1.5 border-t border-slate-100 pt-3\`,
                         children:CATEGORIES.map(cat=>(0,P.jsx)(\`button\`,{
                           key:cat.id,
@@ -578,7 +578,7 @@ function V(){
                   }),
 
                   // Domain Cards Grid
-                  T_doms===null ? (
+                  domsData===null ? (
                     (0,P.jsx)(re,{height:\`h-[260px]\`,label:\`Memuat katalog domain data...\`})
                   ) : filteredDoms.length===0 ? (
                     (0,P.jsxs)(\`div\`,{
@@ -594,7 +594,7 @@ function V(){
                       className:\`grid grid-cols-1 gap-4 xl:grid-cols-2\`,
                       children:filteredDoms.map(domItem=>{
                         let inpId=\`file-\${domItem.domain}\`;
-                        let isBusy=J_busy?.startsWith(\`\${domItem.domain}:\`);
+                        let isBusy=busyAction?.startsWith(\`\${domItem.domain}:\`);
                         let styleMeta=ye(domItem.domain);
                         let DomIcon=styleMeta.icon;
 
@@ -672,7 +672,7 @@ function V(){
                                       className:\`flex items-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50/50 px-2.5 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100 disabled:opacity-50\`,
                                       children:[
                                         (0,P.jsx)(le,{className:\`h-3.5 w-3.5 text-emerald-600\`}),
-                                        J_busy===\`\${domItem.domain}:template\`?\`Menyiapkan...\`:\`Template\`
+                                        busyAction===\`\${domItem.domain}:template\`?\`Menyiapkan...\`:\`Template\`
                                       ]
                                     }),
                                     (0,P.jsxs)(\`button\`,{
@@ -682,7 +682,7 @@ function V(){
                                       className:\`flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50\`,
                                       children:[
                                         (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-slate-400\`}),
-                                        J_busy===\`\${domItem.domain}:export\`?\`Menyiapkan...\`:\`Ekspor\`
+                                        busyAction===\`\${domItem.domain}:export\`?\`Menyiapkan...\`:\`Ekspor\`
                                       ]
                                     })
                                   ]
@@ -692,7 +692,7 @@ function V(){
                                     (0,P.jsx)(\`label\`,{
                                       htmlFor:inpId,
                                       className:\`flex cursor-pointer items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold text-white shadow-sm transition \${isBusy?\`bg-emerald-400\`:\`bg-emerald-600 hover:bg-emerald-700\`}\`,
-                                      children:J_busy===\`\${domItem.domain}:import\`?(0,P.jsxs)(P.Fragment,{
+                                      children:busyAction===\`\${domItem.domain}:import\`?(0,P.jsxs)(P.Fragment,{
                                         children:[(0,P.jsx)(j,{className:\`h-3.5 w-3.5 animate-spin\`}),\`Mengunggah...\`]
                                       }):(0,P.jsxs)(P.Fragment,{
                                         children:[(0,P.jsx)(he,{className:\`h-3.5 w-3.5\`}),\`Impor Excel\`]
@@ -749,14 +749,14 @@ function V(){
                 className:\`space-y-4 lg:sticky lg:top-20 lg:self-start\`,
                 children:[
                   // If Admin: Bantuan Overview Card
-                  c && (0,P.jsxs)(P.Fragment,{
+                  isAdmin && (0,P.jsxs)(P.Fragment,{
                     children:[
                       (0,P.jsx)(U,{icon:(0,P.jsx)(a,{className:\`h-3.5 w-3.5\`}),title:\`Ringkasan Bantuan Pemerintah\`}),
                       (0,P.jsx)(\`section\`,{
                         className:\`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
-                        children:W_bantuan===null ? (
+                        children:bantuanData===null ? (
                           (0,P.jsx)(\`div\`,{className:\`px-5 py-6 text-center text-xs text-slate-400\`,children:\`Memuat data bantuan...\`})
-                        ) : W_bantuan.program.length===0 ? (
+                        ) : bantuanData.program.length===0 ? (
                           (0,P.jsxs)(\`div\`,{
                             className:\`px-5 py-6 text-center\`,
                             children:[
@@ -770,10 +770,10 @@ function V(){
                               (0,P.jsx)(\`dl\`,{
                                 className:\`divide-y divide-slate-100\`,
                                 children:[
-                                  {k:\`Program Terdaftar\`,v:\`\${W_bantuan.program.length} program\`},
+                                  {k:\`Program Terdaftar\`,v:\`\${bantuanData.program.length} program\`},
                                   {k:\`Total Alokasi\`,v:k(totalBantuanNominal)},
                                   {k:\`Total Penerima\`,v:\`\${totalPenerima.toLocaleString(\`id-ID\`)} orang\`},
-                                  {k:\`Rasio APBD / APBN\`,v:\`\${W_bantuan.program.filter(e=>e.sumber===\`APBD\`).length} / \${W_bantuan.program.filter(e=>e.sumber===\`APBN\`).length}\`}
+                                  {k:\`Rasio APBD / APBN\`,v:\`\${bantuanData.program.filter(e=>e.sumber===\`APBD\`).length} / \${bantuanData.program.filter(e=>e.sumber===\`APBN\`).length}\`}
                                 ].map(row=>(0,P.jsxs)(\`div\`,{
                                   className:\`flex items-center justify-between px-4 py-2.5 text-xs\`,
                                   children:[
@@ -785,7 +785,7 @@ function V(){
                               (0,P.jsxs)(\`div\`,{
                                 className:\`border-t border-slate-100 bg-slate-50 px-4 py-2.5\`,
                                 children:[
-                                  (0,P.jsxs)(\`p\`,{className:\`text-[10px] text-slate-400\`,children:[\`Diperbarui \`,oe(W_bantuan.updatedAt)]}),
+                                  (0,P.jsxs)(\`p\`,{className:\`text-[10px] text-slate-400\`,children:[\`Diperbarui \`,oe(bantuanData.updatedAt)]}),
                                   (0,P.jsxs)(C,{
                                     to:\`/government-assistance\`,
                                     className:\`mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline\`,
@@ -801,7 +801,7 @@ function V(){
                   }),
 
                   // If Technical Role: Quick Step Guide Card
-                  !c && (0,P.jsxs)(P.Fragment,{
+                  !isAdmin && (0,P.jsxs)(P.Fragment,{
                     children:[
                       (0,P.jsx)(U,{icon:(0,P.jsx)(d,{className:\`h-3.5 w-3.5\`}),title:\`Panduan Alur Kerja Bidang\`}),
                       (0,P.jsxs)(\`section\`,{
@@ -838,10 +838,10 @@ function V(){
                     children:(0,P.jsx)(\`dl\`,{
                       className:\`divide-y divide-slate-100\`,
                       children:[
-                        {k:\`Backend API\`,v:B_health?.ok?\`Terhubung\`:B_health?\`Terganggu\`:\`Memeriksa...\`,tone:B_health?.ok??!1?\`emerald\`:\`amber\`},
-                        {k:\`Basis Data MySQL\`,v:B_health?.db===\`up\`?\`MariaDB Aktif\`:B_health?.db??\`...\`,tone:B_health?.db===\`up\`?\`emerald\`:\`amber\`},
+                        {k:\`Backend API\`,v:healthData?.ok?\`Terhubung\`:healthData?\`Terganggu\`:\`Memeriksa...\`,tone:healthData?.ok??!1?\`emerald\`:\`amber\`},
+                        {k:\`Basis Data MySQL\`,v:healthData?.db===\`up\`?\`MariaDB Aktif\`:healthData?.db??\`...\`,tone:healthData?.db===\`up\`?\`emerald\`:\`amber\`},
                         {k:\`Sesi Kerja\`,v:\`Aktif (12 Jam)\`,tone:\`slate\`},
-                        {k:\`Paket Snapshot\`,v:q_paket?.snapshot??\`Tersedia\`,tone:\`slate\`}
+                        {k:\`Paket Snapshot\`,v:paketData?.snapshot??\`Tersedia\`,tone:\`slate\`}
                       ].map(r=>(0,P.jsxs)(\`div\`,{
                         className:\`flex items-center justify-between gap-2 px-4 py-2.5 text-xs\`,
                         children:[
@@ -857,10 +857,10 @@ function V(){
           }),
 
           // Sync Log Section (Admin Only)
-          c && K_sync && K_sync.rows.length>0 && (0,P.jsxs)(\`section\`,{
+          isAdmin && syncData && syncData.rows.length>0 && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
-              (0,P.jsx)(U,{icon:(0,P.jsx)(fe,{className:\`h-3.5 w-3.5\`}),title:\`Riwayat Sinkronisasi Data (\${K_sync.total} entri, \${K_sync.rows.length} terbaru)\`}),
+              (0,P.jsx)(U,{icon:(0,P.jsx)(fe,{className:\`h-3.5 w-3.5\`}),title:\`Riwayat Sinkronisasi Data (\${syncData.total} entri, \${syncData.rows.length} terbaru)\`}),
               (0,P.jsx)(\`div\`,{
                 className:\`mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
                 children:(0,P.jsx)(\`div\`,{
@@ -883,7 +883,7 @@ function V(){
                       }),
                       (0,P.jsx)(\`tbody\`,{
                         className:\`divide-y divide-slate-100\`,
-                        children:K_sync.rows.map(row=>(0,P.jsxs)(\`tr\`,{
+                        children:syncData.rows.map(row=>(0,P.jsxs)(\`tr\`,{
                           className:\`align-top hover:bg-slate-50/70 transition\`,
                           children:[
                             (0,P.jsx)(\`td\`,{className:\`whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-slate-500\`,children:new Date(row.created_at).toLocaleString(\`id-ID\`)}),
@@ -903,13 +903,13 @@ function V(){
           }),
 
           // Package Downloads Section (Admin Only)
-          c && q_paket && q_paket.groups.some(g=>g.files.length>0) && (0,P.jsxs)(\`section\`,{
+          isAdmin && paketData && paketData.groups.some(g=>g.files.length>0) && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
               (0,P.jsx)(U,{icon:(0,P.jsx)(ne,{className:\`h-3.5 w-3.5\`}),title:\`Paket Unduhan Lengkap (Excel + CSV Arsip)\`}),
               (0,P.jsx)(\`div\`,{
                 className:\`mt-3 grid gap-4 lg:grid-cols-2\`,
-                children:q_paket.groups.filter(g=>g.files.length>0).map(grp=>(0,P.jsxs)(\`div\`,{
+                children:paketData.groups.filter(g=>g.files.length>0).map(grp=>(0,P.jsxs)(\`div\`,{
                   className:\`rounded-xl border border-slate-200 bg-white p-4 shadow-sm\`,
                   children:[
                     (0,P.jsxs)(\`div\`,{
@@ -922,7 +922,7 @@ function V(){
                     (0,P.jsx)(\`div\`,{
                       className:\`mt-3 flex max-h-48 flex-wrap gap-2 overflow-y-auto pr-1\`,
                       children:grp.files.map(fl=>{
-                        let isBusy=J_busy===\`paket:\${grp.id}:\${fl.file}\`;
+                        let isBusy=busyAction===\`paket:\${grp.id}:\${fl.file}\`;
                         return (0,P.jsx)(\`button\`,{
                           type:\`button\`,
                           onClick:()=>Ee(grp.id,fl.file),
@@ -1036,8 +1036,8 @@ function V(){
                 children:QUICK_ROLES.map(qr=>(0,P.jsx)(\`button\`,{
                   key:qr.id,
                   type:\`button\`,
-                  onClick:()=>{d(qr.user);_(null);},
-                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${l===qr.user?\`bg-slate-900 text-white shadow-xs\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
+                  onClick:()=>{setLoginUser(qr.user);setLoginErr(null);},
+                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${loginUser===qr.user?\`bg-slate-900 text-white shadow-xs\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
                   children:qr.label
                 }))
               }),
@@ -1057,8 +1057,8 @@ function V(){
                           (0,P.jsx)(ge,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
                           (0,P.jsx)(\`input\`,{
                             type:\`text\`,
-                            value:l,
-                            onChange:e=>d(e.target.value),
+                            value:loginUser,
+                            onChange:e=>setLoginUser(e.target.value),
                             autoComplete:\`username\`,
                             required:true,
                             className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
@@ -1076,19 +1076,19 @@ function V(){
                         children:[
                           (0,P.jsx)(pe,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
                           (0,P.jsx)(\`input\`,{
-                            type:b_show?\`text\`:\`password\`,
-                            value:f,
-                            onChange:e=>p(e.target.value),
+                            type:showPass?\`text\`:\`password\`,
+                            value:loginPass,
+                            onChange:e=>setLoginPass(e.target.value),
                             autoComplete:\`current-password\`,
                             required:true,
                             className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-9 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
                           }),
                           (0,P.jsx)(\`button\`,{
                             type:\`button\`,
-                            onClick:()=>x(e=>!e),
-                            title:b_show?\`Sembunyikan\`:\`Lihat\`,
+                            onClick:()=>setShowPass(e=>!e),
+                            title:showPass?\`Sembunyikan\`:\`Lihat\`,
                             className:\`absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition cursor-pointer\`,
-                            children:b_show?(0,P.jsx)(ue,{className:\`h-4 w-4\`}):(0,P.jsx)(de,{className:\`h-4 w-4\`})
+                            children:showPass?(0,P.jsx)(ue,{className:\`h-4 w-4\`}):(0,P.jsx)(de,{className:\`h-4 w-4\`})
                           })
                         ]
                       })
@@ -1096,18 +1096,18 @@ function V(){
                   }),
 
                   // Error Alert
-                  m_err&&(0,P.jsx)(\`div\`,{
+                  loginErr&&(0,P.jsx)(\`div\`,{
                     role:\`alert\`,
                     className:\`rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-700\`,
-                    children:(0,P.jsx)(\`span\`,{children:m_err})
+                    children:(0,P.jsx)(\`span\`,{children:loginErr})
                   }),
 
                   // Submit Button
                   (0,P.jsx)(\`button\`,{
                     type:\`submit\`,
-                    disabled:v_load,
+                    disabled:loadingAuth,
                     className:\`w-full rounded-lg bg-emerald-700 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-emerald-800 active:bg-emerald-900 active:scale-[0.99] disabled:opacity-60 cursor-pointer\`,
-                    children:v_load ? (
+                    children:loadingAuth ? (
                       (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(j,{className:\`inline mr-2 h-4 w-4 animate-spin\`}),\`Memproses...\`]})
                     ) : \`Masuk ke Dasbor\`
                   })
