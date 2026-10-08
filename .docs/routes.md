@@ -35,7 +35,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
 | `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
 | `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara | Publik | STABLE |
-| `/admin` | Portal Admin | Portal Dasbor Admin & Kelola Excel | Admin/Bidang | STABLE |
+| `/admin` | Portal Admin | Portal Dasbor Admin (Form Login Asimetris Sawah Banjarnegara & Kelola Excel RBAC 20 Domain) | Admin/Bidang | STABLE |
 | `/info` | Bantuan & Info | Informasi Umum SISPERTANI | Publik | STABLE |
 | `/manual` | Bantuan & Info | Panduan Penggunaan / Manual Book | Publik | STABLE |
 

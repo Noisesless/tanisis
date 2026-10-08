@@ -44,3 +44,85 @@
     padding: 0.75rem !important;
   }
 }
+
+/* SISPERTANI Official Login View — Asymmetric Split Layout */
+.sispertani-login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: #ffffff;
+  color: #1e293b;
+  width: 100%;
+}
+
+.sispertani-visual-panel {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sispertani-visual-panel {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    background-color: #020617;
+    color: #ffffff;
+    padding: 2.75rem 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sispertani-visual-panel {
+    padding: 3.5rem 4rem;
+  }
+}
+
+.sispertani-form-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .sispertani-form-panel {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sispertani-form-panel {
+    flex: 0 0 380px;
+    width: 380px;
+    max-width: 380px;
+    padding: 2.5rem 2rem;
+    border-left: 1px solid #e2e8f0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sispertani-form-panel {
+    flex: 0 0 420px;
+    width: 420px;
+    max-width: 420px;
+    padding: 3rem 2.5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .sispertani-form-panel {
+    flex: 0 0 440px;
+    width: 440px;
+    max-width: 440px;
+    padding: 3.5rem 3rem;
+  }
+}
+

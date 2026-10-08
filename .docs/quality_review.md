@@ -21,6 +21,7 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Kepatuhan Zero-Empty & Spesies Definitif (ADR-012)** | Sangat Baik | ✅ PASSED | Pemisahan tegas Kulit Sapi vs Kerbau vs Kambing vs Domba vs Kelinci; penambahan Susu Kambing & Telur Puyuh; eliminasi baris bernilai 0/kosong dari tabel publik; penyiapan placeholder bersih untuk UMKM Pakan, Poultry Shop, dan NKV tanpa mock dummy data. |
 | **Harmonisasi Layout & Geometri (ADR-026)** | Sangat Baik | ✅ PASSED | Eliminasi batas sempit `max-w-5xl` pada `/renstra` dan `/recommendations`, penerapan token `--radius-md: 8px`, border-left-4 pada kartu metrik, dan integrasi tabel seri tahunan ke dalam kontainer utama. |
 | **Eliminasi AI Slop & Pulsing Dot Header (ADR-027)** | Sangat Baik | ✅ PASSED | Penghapusan capsule/eyebrow kapital dan indikator pulsing dot pada header `/renstra`, `/recommendations`, dan `/farmers` demi kepatuhan mutlak pada Anti-AI-Slop Law. |
+| **Redesign Portal Login Asimetris & Anti-AI-Slop (ADR-028)** | Sangat Baik | ✅ PASSED | Rekonstruksi layout split 2-kolom asimetris (55:45), citra latar sawah lokal Banjarnegara, eliminasi buzzword/hiperbola, quick role selector, dan input password interaktif berstandar WCAG AA. |
 
 ---
 

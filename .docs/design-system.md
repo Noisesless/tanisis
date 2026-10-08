@@ -650,5 +650,28 @@ Navigasi tab pada halaman `/nilai-ekonomi/:bidang` menerapkan isolasi sektoral y
 
 ---
 
-## 7. Ringkasan Single Source of Truth
+## 7. Pola Tata Letak Portal Login Admin (/admin) — Asymmetrical Agritech Identity
+
+Sesuai pembaruan **ADR-028**, antarmuka otentikasi portal administrasi `/admin` menerapkan arsitektur split 2-kolom asimetris:
+
+### A. Geometri & Proporsi Asimetris (Desktop & Laptop)
+- **Rasio Kolom**: 55% Kolom Kiri (Visual Identity & Context) vs 45% Kolom Kanan (Focused Authentication Form).
+- **Latar Belakang Visual Kiri**: Menggunakan citra fotografi persawahan Banjarnegara (`dist/img/sawah-login.jpg`) dengan teknik dual-layer overlay:
+  ```css
+  background-image: linear-gradient(135deg, rgba(6, 78, 59, 0.88) 0%, rgba(15, 23, 42, 0.92) 100%), url('/img/sawah-login.jpg');
+  ```
+- **Konteks Institusional Kiri**: Logo resmi Pemkab Banjarnegara, tipografi identitas Distankan KP, badge enkripsi TLS/SSL, dan kartu informasi kredensial yang rapi dengan latar semi-transparan (`bg-emerald-950/40 backdrop-blur border border-emerald-500/30`).
+- **Formulir Interaktif Kanan**:
+  - Kartu putih bersih (`bg-white border border-slate-200/90 shadow-xl rounded-2xl p-6 sm:p-8`).
+  - **Quick Role Selector**: Pil tab peran (Admin, Pangan, Horti, Ternak, Perikanan) dengan state aktif `bg-emerald-50 text-emerald-800 border-emerald-400 font-semibold`.
+  - **Input Fields**: Input terstruktur dengan ikon representatif, ring fokus `focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600`, dan toggle visibilitas password.
+  - **Tombol Masuk**: Tombol solid penuh kontras `bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.99]`.
+
+### B. Adaptabilitas Layar Ponsel & Laptop 1366px
+- Pada resolusi mobile (`< 1024px`), tata letak beralih vertikal (single-column) di mana panel visual menyusut menjadi banner header ramping dengan foto sawah tetap tampak lembut, diikuti formulir login di bawahnya.
+- Pada resolusi 1366×768 (laptop), kontainer memiliki tinggi proporsional `min-h-[580px]` tanpa menciptakan scrollbar halaman ganda.
+
+---
+
+## 8. Ringkasan Single Source of Truth
 Seluruh kode CSS baru, komponen React/Vite, pembaruan rute, maupun tampilan analitik pada SISPERTANI Banjarnegara wajib mematuhi standar dokumen `.docs/design-system.md` ini tanpa deviasi.

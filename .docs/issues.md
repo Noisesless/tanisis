@@ -305,6 +305,16 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   1. Menghapus total tag eyebrow dan animasi pulsing dot di atas judul `<h1>` pada ketiga halaman.
   2. Menempatkan `<h1>` langsung di posisi teratas header kolom, menciptakan hierarki visual yang tenang, resmi, dan konsisten di seluruh aplikasi.
 
+### [ISSUE-025] Redesign Halaman Login Admin Portal SISPERTANI (/admin) Anti-AI-Slop & Citra Pertanian Sawah
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Tampilan formulir login `/admin` sebelumnya terkesan kaku, membawa teks deskripsi dan buzzword berlebihan, proporsi kartu kurang seimbang antara panel visual dan panel input, serta latar belakang visual tidak mencerminkan identitas persawahan Banjarnegara.
+- **Akar Masalah:** Komponen login membawa template bawaan yang belum menerapkan prinsip tata letak asimetris UUPM dan Taste-Skill, serta menggunakan citra latar gandum generik.
+- **Solusi (ADR-028):**
+  1. Menerapkan tata letak split 2 kolom asimetris: sisi kiri lebih dominan (~55%) dengan citra fotografi persawahan Banjarnegara (`dist/img/sawah-login.jpg`), logo resmi Pemkab, identitas institusional Distankan KP, dan kartu informasi kredensial yang elegan.
+  2. Merancang form login sisi kanan (~45%) yang ringkas, bersih, dan berwibawa: Quick Role selector (Administrator, Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan), toggle visibilitas kata sandi, dan enkripsi status koneksi aman.
+  3. Mengeliminasi seluruh teks hiperbolis/buzzword sesuai kaidah Anti-AI-Slop Law dan memastikan tampilan sepenuhnya responsif pada laptop 1366×768 maupun layar smartphone.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Clean Release done=ALL last=Pembersihan total leftover code, dead assets, arsip zip, file scraper _tmp, dan file analisa usang (206 MB dibebaskan)
+phase=Clean Release done=ALL last=Redesign Halaman Login Admin Portal (/admin) Anti-AI-Slop dengan arsitektur asimetris, latar fotografi sawah Banjarnegara, tipografi institusional resmi, dan quick-role selector (ADR-028)
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -154,6 +154,12 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Penghapusan Total Indikator Slop: Menghapus elemen tag eyebrow huruf kapital disertai pulsing dot hijau (`● PERENCANAAN & EVALUASI KINERJA DAERAH`, `● KEBIJAKAN & ANALITIKA PERTANIAN`, `● BIDANG SEKTORAL & LEMBAGA PENDUKUNG`) di atas judul <h1> pada halaman /renstra, /recommendations, dan /farmers.
 - Penyelarasan Hierarki Header: Judul <h1> kini langsung menempati posisi teratas header kolom secara bersih, tenang, dan selaras dengan standar tata letak halaman lainnya (seperti /food-crops, /livestock, /plantation, /dashboard).
 
+[ADR-028] Redesign Login Admin Portal (/admin) — Asymmetrical Layout & Agritech Photographic Identity:
+- Komposisi Asimetris Seimbang: Mengubah tata letak form login `/admin` menjadi arsitektur split 2 kolom di mana sisi kiri lebih dominan (~55%) menyajikan identitas visual dan konteks institusional, sedangkan sisi kanan (~45%) menyediakan antarmuka formulir yang kompak, bersih, dan fokus.
+- Citra Fotografi Pertanian Lokal: Menggantikan latar gandum/stok foto generic dengan fotografi persawahan Banjarnegara (`dist/img/sawah-login.jpg`) yang dipadukan dengan overlay gradien emerald-slate elegan serta kartu informasi kredensial yang rapi.
+- Quick Role Selector & Form Interaktif: Menyediakan pemilih peran cepat (Administrator, Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan), toggle sembunyikan/tampilkan kata sandi, indikator keamanan SSL terenkripsi, dan feedback status login yang jernih.
+- Kepatuhan Anti-AI-Slop & Responsivitas Layar: Mengeliminasi teks hiperbolis dan buzzword, menerapkan tipografi Inter tabular-nums, serta adaptif mulus mulai dari layar laptop 1366×768 hingga smartphone Android 3M (360/393/412px).
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -184,6 +190,7 @@ mysql=root=
 [x] Isolasi Tampilan View Kelembagaan Sesuai Submenu Navbar Terpilih (Penghapusan Switcher 3-Tombol di Halaman)
 [x] Harmonisasi Layout, Lebar & Geometri Halaman /renstra & /recommendations Sesuai design-system.md
 [x] Eliminasi AI Slop Eyebrow Badge & Pulsing Dot pada Header /renstra, /recommendations, dan /farmers
+[x] Redesign Halaman Login Admin (/admin) Asimetris dengan Latar Foto Sawah Banjarnegara & Form Ringkas Resmi (ADR-028)
 
 
 

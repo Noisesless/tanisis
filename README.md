@@ -45,6 +45,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 > - **Parent Indicator:** Kategori induk otomatis mendapatkan sorotan halus saat salah satu halamannya aktif.
 > - **Floating Executive Card:** Dasar sidebar memuat kartu institusional resmi *"Portal Data Dinas — Distankan KP Banjarnegara"*, indikator koneksi `● Basis Data Terhubung`, serta tombol aksi *"Masuk Dasbor Admin"*.
 > - **Strict Zero-Empty Law & Anti-AI-Slop:** Seluruh tabel menyaring baris bernilai kosong/0 secara otomatis dan membersihkan seluruh emoji mentah/simbol anak-anak dari antarmuka.
+> - **Redesign Portal Login Asimetris Sawah Banjarnegara (/admin):** Formulir login portal administrasi mengusung komposisi split 2-kolom asimetris (55:45) dengan latar fotografi sawah lokal Banjarnegara, logo resmi daerah, Quick Role selector, dan antarmuka form ringkas anti-buzzword berstandar WCAG AA.
 
 ## Arsitektur & Teknologi
 

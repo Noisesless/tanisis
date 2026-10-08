@@ -54,11 +54,11 @@ var B={
 var ye=e=>B[e]??{icon:i,color:\`bg-slate-100 text-slate-700 border border-slate-200\`};
 
 var QUICK_ROLES = [
-  { id: "admin", label: "Administrator", user: "admin", desc: "Akses Penuh Semua Domain" },
-  { id: "tanaman-pangan", label: "Tanaman Pangan", user: "tanaman-pangan", desc: "Padi, Palawija, LTT, Poktan" },
-  { id: "horti-perkebunan", label: "Horti & Kebun", user: "horti-perkebunan", desc: "Sayur, Buah, Perkebunan" },
-  { id: "peternakan", label: "Peternakan", user: "peternakan", desc: "Populasi, Susu, HPT, JULEHA" },
-  { id: "perikanan", label: "Perikanan", user: "perikanan", desc: "Budidaya, Tangkap, Pokdakan" }
+  { id: "admin", label: "Admin", user: "admin" },
+  { id: "tanaman-pangan", label: "Tanaman Pangan", user: "tanaman-pangan" },
+  { id: "horti-perkebunan", label: "Horti & Kebun", user: "horti-perkebunan" },
+  { id: "peternakan", label: "Peternakan", user: "peternakan" },
+  { id: "perikanan", label: "Perikanan", user: "perikanan" }
 ];
 
 var CATEGORIES = [
@@ -959,166 +959,168 @@ function V(){
       })
     ]
   }) : (
-    // Login Screen View (!t)
+    // Login Screen View (!t) — Asymmetric Editorial Agritech (Taste-Skill Bridge)
     (0,P.jsxs)(\`div\`,{
-      className:\`flex min-h-screen bg-slate-100\`,
+      className:\`sispertani-login-wrapper antialiased\`,
       children:[
-        // Left Decorative Sidebar
-        (0,P.jsxs)(\`aside\`,{
-          className:\`relative hidden w-[42%] flex-col justify-between overflow-hidden bg-slate-900 p-10 lg:flex shadow-xl\`,
+        // Left Visual Panel (Dominant Width — Peaceful Banjarnegara terraced landscape)
+        (0,P.jsxs)(\`div\`,{
+          className:\`sispertani-visual-panel\`,
           children:[
-            (0,P.jsx)(\`div\`,{className:\`pointer-events-none absolute -left-20 -top-20 h-80 w-80 rounded-full bg-emerald-600/20 blur-3xl\`}),
-            (0,P.jsx)(\`div\`,{className:\`pointer-events-none absolute -bottom-24 -right-12 h-80 w-80 rounded-full bg-teal-500/15 blur-3xl\`}),
+            (0,P.jsx)(\`img\`,{
+              src:\`/img/sawah-login.jpg\`,
+              alt:\`Hamparan Sawah Terasering Pertanian Banjarnegara\`,
+              className:\`absolute inset-0 h-full w-full object-cover object-center opacity-65\`
+            }),
+            (0,P.jsx)(\`div\`,{
+              className:\`absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/30\`
+            }),
+            // Top: Official Regency Crest & Department
             (0,P.jsxs)(\`div\`,{
-              className:\`relative\`,
+              className:\`relative z-10 flex items-center gap-3.5\`,
               children:[
-                (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI\`,className:\`h-20 w-auto drop-shadow-md\`}),
-                (0,P.jsx)(\`p\`,{className:\`mt-6 text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-400\`,children:\`Sistem Informasi Pertanian Terintegrasi\`}),
-                (0,P.jsx)(\`h1\`,{className:\`mt-1 text-3xl font-extrabold tracking-tight text-white\`,children:\`SISPERTANI\`}),
-                (0,P.jsx)(\`p\`,{className:\`mt-3 text-xs leading-relaxed text-slate-300 max-w-sm\`,children:\`Portal pengelolaan data resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara. Terintegrasi dengan basis data MariaDB daerah dan Open Data.\`})
+                (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI Banjarnegara\`,className:\`h-11 w-auto object-contain drop-shadow\`}),
+                (0,P.jsxs)(\`div\`,{
+                  className:\`border-l border-white/20 pl-3.5\`,
+                  children:[
+                    (0,P.jsx)(\`p\`,{className:\`text-[11px] font-semibold tracking-wider text-emerald-400 uppercase\`,children:\`Pemerintah Kabupaten Banjarnegara\`}),
+                    (0,P.jsx)(\`p\`,{className:\`text-xs font-medium text-slate-200\`,children:\`Dinas Pertanian, Perikanan dan Ketahanan Pangan\`})
+                  ]
+                })
               ]
             }),
-            (0,P.jsx)(\`ul\`,{
-              className:\`relative space-y-3 text-xs text-slate-300\`,
+            // Bottom: Title, Subtitle, & Official Attribution
+            (0,P.jsxs)(\`div\`,{
+              className:\`relative z-10\`,
               children:[
-                {icon:Sh_icon,text:\`Keamanan RBAC berbasis peran per-bidang dinas\`},
-                {icon:g,text:\`Mendukung impor & ekspor 20 domain Excel terpandu\`},
-                {icon:M,text:\`Koneksi langsung ke server basis data MariaDB daerah\`}
-              ].map(item=>(0,P.jsxs)(\`li\`,{
-                className:\`flex items-center gap-3\`,
-                children:[
-                  (0,P.jsx)(\`span\`,{className:\`flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-emerald-300\`,children:(0,P.jsx)(item.icon,{className:\`h-3.5 w-3.5\`})}),
-                  item.text
-                ]
-              },item.text))
-            }),
-            (0,P.jsxs)(\`p\`,{className:\`relative text-[11px] text-slate-500\`,children:[\`© \`,new Date().getFullYear(),\` Distankan KP Kab. Banjarnegara\`]})
+                (0,P.jsx)(\`h1\`,{className:\`text-3xl xl:text-4xl font-extrabold tracking-tight text-white\`,children:\`SISPERTANI\`}),
+                (0,P.jsx)(\`p\`,{className:\`mt-1.5 text-sm xl:text-base font-medium text-slate-300\`,children:\`Sistem Informasi Statistik Pertanian Terpadu\`}),
+                (0,P.jsx)(\`p\`,{className:\`mt-3 text-xs xl:text-sm text-slate-400 max-w-md leading-relaxed\`,children:\`Pusat kendali data komoditas pangan, hortikultura, perkebunan, peternakan, dan perikanan daerah.\`}),
+                (0,P.jsxs)(\`p\`,{
+                  className:\`mt-6 text-[11px] text-slate-500 font-normal\`,
+                  children:[\`© \`,new Date().getFullYear(),\` Distankan KP Kabupaten Banjarnegara\`]
+                })
+              ]
+            })
           ]
         }),
 
-        // Right Login Form Area
+        // Right Panel (Compact, Focused Authentication Column)
         (0,P.jsx)(\`div\`,{
-          className:\`flex flex-1 flex-col items-center justify-center p-6 sm:p-10\`,
+          className:\`sispertani-form-panel\`,
           children:(0,P.jsxs)(\`div\`,{
-            className:\`w-full max-w-md\`,
+            className:\`w-full max-w-[340px]\`,
             children:[
-              (0,P.jsx)(\`div\`,{
-                className:\`mb-6 text-center lg:hidden\`,
-                children:(0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI\`,className:\`mx-auto h-16 w-auto\`})
-              }),
+              // Mobile Header (< 1024px)
               (0,P.jsxs)(\`div\`,{
-                className:\`rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50\`,
+                className:\`mb-6 text-center lg:hidden\`,
                 children:[
-                  (0,P.jsx)(\`p\`,{className:\`text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-600\`,children:\`Dasbor Internal\`}),
-                  (0,P.jsx)(\`h2\`,{className:\`mt-1 text-2xl font-extrabold tracking-tight text-slate-900\`,children:\`Masuk SISPERTANI\`}),
-                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500\`,children:\`Portal Manajemen & Sinkronisasi Data Daerah\`}),
+                  (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI\`,className:\`mx-auto h-12 w-auto object-contain\`}),
+                  (0,P.jsx)(\`p\`,{className:\`mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500\`,children:\`Pemerintah Kab. Banjarnegara\`}),
+                  (0,P.jsx)(\`h2\`,{className:\`text-base font-bold text-slate-900\`,children:\`SISPERTANI\`})
+                ]
+              }),
 
-                  // Quick Role Selector Pill
-                  (0,P.jsxs)(\`div\`,{
-                    className:\`mt-5 rounded-xl border border-slate-200 bg-slate-50/70 p-3\`,
+              // Form Header
+              (0,P.jsxs)(\`div\`,{
+                className:\`mb-5 text-left\`,
+                children:[
+                  (0,P.jsx)(\`h2\`,{className:\`text-xl font-bold tracking-tight text-slate-900\`,children:\`Masuk Akun Dinas\`}),
+                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500\`,children:\`Pilih bidang tugas atau masukkan kredensial akun\`})
+                ]
+              }),
+
+              // Quick Role Desk Switcher
+              (0,P.jsx)(\`div\`,{
+                className:\`mb-5 flex flex-wrap gap-1.5\`,
+                children:QUICK_ROLES.map(qr=>(0,P.jsx)(\`button\`,{
+                  key:qr.id,
+                  type:\`button\`,
+                  onClick:()=>{d(qr.user);_(null);},
+                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${l===qr.user?\`bg-slate-900 text-white shadow-xs\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
+                  children:qr.label
+                }))
+              }),
+
+              // Credentials Form
+              (0,P.jsxs)(\`form\`,{
+                onSubmit:we,
+                className:\`space-y-3.5\`,
+                children:[
+                  (0,P.jsxs)(\`label\`,{
+                    className:\`block\`,
                     children:[
-                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2\`,children:\`Pilih Akun / Peran Cepat:\`}),
-                      (0,P.jsx)(\`div\`,{
-                        className:\`flex flex-wrap gap-1.5\`,
-                        children:QUICK_ROLES.map(qr=>(0,P.jsx)(\`button\`,{
-                          key:qr.id,
-                          type:\`button\`,
-                          onClick:()=>{d(qr.user);_(null);},
-                          title:qr.desc,
-                          className:\`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition \${l===qr.user?\`bg-emerald-600 text-white shadow-sm\`:\`bg-white border border-slate-200 text-slate-700 hover:border-emerald-400 hover:text-emerald-700\`}\`,
-                          children:qr.label
-                        }))
+                      (0,P.jsx)(\`span\`,{className:\`mb-1.5 block text-xs font-medium text-slate-700\`,children:\`Nama Pengguna\`}),
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`relative\`,
+                        children:[
+                          (0,P.jsx)(ge,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
+                          (0,P.jsx)(\`input\`,{
+                            type:\`text\`,
+                            value:l,
+                            onChange:e=>d(e.target.value),
+                            autoComplete:\`username\`,
+                            required:true,
+                            className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
+                          })
+                        ]
+                      })
+                    ]
+                  }),
+                  (0,P.jsxs)(\`label\`,{
+                    className:\`block\`,
+                    children:[
+                      (0,P.jsx)(\`span\`,{className:\`mb-1.5 block text-xs font-medium text-slate-700\`,children:\`Kata Sandi\`}),
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`relative\`,
+                        children:[
+                          (0,P.jsx)(pe,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
+                          (0,P.jsx)(\`input\`,{
+                            type:b_show?\`text\`:\`password\`,
+                            value:f,
+                            onChange:e=>p(e.target.value),
+                            autoComplete:\`current-password\`,
+                            required:true,
+                            className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-9 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
+                          }),
+                          (0,P.jsx)(\`button\`,{
+                            type:\`button\`,
+                            onClick:()=>x(e=>!e),
+                            title:b_show?\`Sembunyikan\`:\`Lihat\`,
+                            className:\`absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition cursor-pointer\`,
+                            children:b_show?(0,P.jsx)(ue,{className:\`h-4 w-4\`}):(0,P.jsx)(de,{className:\`h-4 w-4\`})
+                          })
+                        ]
                       })
                     ]
                   }),
 
-                  // Form Inputs
-                  (0,P.jsxs)(\`form\`,{
-                    onSubmit:we,
-                    className:\`mt-5 space-y-4\`,
-                    children:[
-                      (0,P.jsxs)(\`label\`,{
-                        className:\`block\`,
-                        children:[
-                          (0,P.jsx)(\`span\`,{className:\`mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-600\`,children:\`Nama Pengguna (Username)\`}),
-                          (0,P.jsxs)(\`div\`,{
-                            className:\`relative\`,
-                            children:[
-                              (0,P.jsx)(ge,{className:\`pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
-                              (0,P.jsx)(\`input\`,{
-                                type:\`text\`,
-                                value:l,
-                                onChange:e=>d(e.target.value),
-                                autoComplete:\`username\`,
-                                required:true,
-                                placeholder:\`mis. admin, peternakan, perikanan\`,
-                                className:\`w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20\`
-                              })
-                            ]
-                          })
-                        ]
-                      }),
-                      (0,P.jsxs)(\`label\`,{
-                        className:\`block\`,
-                        children:[
-                          (0,P.jsx)(\`span\`,{className:\`mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-600\`,children:\`Kata Sandi (Password)\`}),
-                          (0,P.jsxs)(\`div\`,{
-                            className:\`relative\`,
-                            children:[
-                              (0,P.jsx)(pe,{className:\`pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
-                              (0,P.jsx)(\`input\`,{
-                                type:b_show?\`text\`:\`password\`,
-                                value:f,
-                                onChange:e=>p(e.target.value),
-                                autoComplete:\`current-password\`,
-                                required:true,
-                                placeholder:\`Masukkan kata sandi akun\`,
-                                className:\`w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-10 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20\`
-                              }),
-                              (0,P.jsx)(\`button\`,{
-                                type:\`button\`,
-                                onClick:()=>x(e=>!e),
-                                title:b_show?\`Sembunyikan\`:\`Lihat kata sandi\`,
-                                className:\`absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-slate-700 transition\`,
-                                children:b_show?(0,P.jsx)(ue,{className:\`h-4 w-4\`}):(0,P.jsx)(de,{className:\`h-4 w-4\`})
-                              })
-                            ]
-                          })
-                        ]
-                      }),
+                  // Error Alert
+                  m_err&&(0,P.jsx)(\`div\`,{
+                    role:\`alert\`,
+                    className:\`rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-700\`,
+                    children:(0,P.jsx)(\`span\`,{children:m_err})
+                  }),
 
-                      // Error Alert
-                      m_err&&(0,P.jsxs)(\`div\`,{
-                        className:\`flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3 text-xs leading-relaxed text-red-700\`,
-                        children:[
-                          (0,P.jsx)(w,{className:\`mt-0.5 h-4 w-4 shrink-0 text-red-600\`}),
-                          (0,P.jsx)(\`span\`,{children:m_err})
-                        ]
-                      }),
-
-                      // Submit Button
-                      (0,P.jsx)(\`button\`,{
-                        type:\`submit\`,
-                        disabled:v_load,
-                        className:\`flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-600/20 transition hover:bg-emerald-700 disabled:opacity-60\`,
-                        children:v_load ? (
-                          (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(j,{className:\`h-4 w-4 animate-spin\`}),\`Memeriksa Kredensial...\`]})
-                        ) : (
-                          (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(r,{className:\`h-4 w-4\`}),\`Masuk ke Dasbor\`]})
-                        )
-                      })
-                    ]
+                  // Submit Button
+                  (0,P.jsx)(\`button\`,{
+                    type:\`submit\`,
+                    disabled:v_load,
+                    className:\`w-full rounded-lg bg-emerald-700 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-emerald-800 active:bg-emerald-900 active:scale-[0.99] disabled:opacity-60 cursor-pointer\`,
+                    children:v_load ? (
+                      (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(j,{className:\`inline mr-2 h-4 w-4 animate-spin\`}),\`Memproses...\`]})
+                    ) : \`Masuk ke Dasbor\`
                   })
                 ]
               }),
 
-              // Back to Public
+              // Back to Public Link
               (0,P.jsxs)(C,{
                 to:\`/\`,
-                className:\`mt-6 flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 transition hover:text-emerald-700\`,
+                className:\`mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 transition hover:text-slate-800\`,
                 children:[
                   (0,P.jsx)(e,{className:\`h-3.5 w-3.5\`}),
-                  \`Kembali ke Portal Publik SISPERTANI\`
+                  \`Kembali ke Portal Publik\`
                 ]
               })
             ]
