@@ -342,13 +342,29 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menurunkan breakpoint panel visual kiri ke `≥ 768px` (50:50 pada mode jendela 948px / tablet, 60:40 pada desktop 1366px+) dengan gambar persawahan Banjarnegara dan gradien gelap resmi.
   3. Membungkus formulir dalam kelas CSS `.sispertani-form-card` (`max-width: 380px`), menyembunyikan header mobile pada `≥ 768px`, dan menyematkan cache buster `?v=2` pada referensi CSS di `dist/index.html`. Pengujian visual headless Edge mengonfirmasi tata letak kini simetris, berwibawa, dan responsif.
 
+### [ISSUE-029] Galat Impor Skema Basis Data di Server Produksi (DEFINER 1227, Datetime JS 1292, Generated Column 1906)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Saat administrator mengeksekusi `database/production_migration_patch.sql` di terminal SSH server produksi menggunakan akun standar database (`pertalit`), muncul 3 kendala beruntun yang menghentikan proses eksekusi:
+  1. `ERROR 1227 (42000): Access denied; you need (at least one of) the SET USER privilege(s) for this operation` pada pembuatan VIEW `log_aktivitas`.
+  2. `ERROR 1292 (22007): Incorrect datetime value 'Wed Sep 23 2026 12:25:25 GMT+0700...' for column created_at`.
+  3. `ERROR 1906 (HY000): The value specified for generated column 'nilai_rp' in table 'nilai_ekonomi_tahunan' has been ignored`.
+- **Akar Masalah:**
+  1. DDL `CREATE VIEW log_aktivitas` membawa klausa `DEFINER=\`root\`@\`localhost\``. Pengguna non-root MySQL/MariaDB (`pertalit`) tidak memiliki wewenang `SUPER` / `SET_USER_ID`.
+  2. Data awal hasil dump skrip Node memuat representasi string JavaScript `Date().toString()` pada kolom `created_at` sebanyak 653 baris alih-alih standar SQL `YYYY-MM-DD HH:MM:SS`.
+  3. Kolom `nilai_rp` pada tabel `nilai_ekonomi_tahunan` didefinisikan sebagai `GENERATED ALWAYS AS (volume * harga_produsen) STORED`. Pada mode strict MariaDB, penyisipan nilai eksplisit manual selain `DEFAULT` ditolak.
+- **Solusi (ADR-031):**
+  1. Menghapus klausa `DEFINER=\`root\`@\`localhost\` SQL SECURITY DEFINER` pada patch dan dump, menggantikannya dengan `CREATE OR REPLACE VIEW \`log_aktivitas\` AS select...` yang portabel.
+  2. Menjalankan konversi otomatis seluruh 653 format tanggal ke standar SQL datetime `YYYY-MM-DD HH:MM:SS`.
+  3. Mengeluarkan kolom `nilai_rp` dari klausul `INSERT INTO nilai_ekonomi_tahunan` (sehingga dihitung otomatis oleh MariaDB) dan menambahkan konfigurasi proteksi `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO'`.
+  4. Eksekusi ulang di terminal server SSH terkonfirmasi berhasil 100% tanpa galat dan status endpoint `/api/health` mengembalikan `{"ok":true,"db":"up"}`.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-1. **Pengerjaan PR / Revisi Lanjutan dari Klien di DEV:** Menuntaskan daftar revisi dan fitur baru dari klien di lingkungan lokal sebelum merilis ke server produksi.
-2. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
-3. **Eksekusi Migrasi di Server Produksi (Saat Rilis):** Menjalankan `database/production_migration_patch.sql` di server saat seluruh PR klien telah selesai dan disetujui.
+1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
+2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
 
-*(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan pembaruan dokumentasi telah tuntas 100%).*
+*(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan perbaikan migrasi produksi telah tuntas 100%).*
 

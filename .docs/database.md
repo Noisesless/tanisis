@@ -12,6 +12,14 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 - **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan.
 - **Harmonisasi Baseline & Dump:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql`, serta dump basis data dev mutakhir berformat UTF-8 tersimpan di `database/dump_production_pertanian_updated.sql` (1.89 MB, 2.421 baris DDL & data per 2026-10-08).
 
+### 1.1 Portabilitas Eksekusi & Kompatibilitas Hosting (ADR-031)
+
+Skrip patch `database/production_migration_patch.sql` dan dump `database/dump_production_pertanian_updated.sql` telah dirancang dengan kepatuhan portabilitas tinggi untuk lingkungan hosting bersama / unprivileged database user:
+1. **Bebas Klausa DEFINER Root:** Seluruh pembuatan VIEW (`log_aktivitas`) tidak menggunakan penanda `DEFINER=\`root\`@\`localhost\`` sehingga akun database cPanel biasa (seperti `pertalit`) dapat mengimpor basis data tanpa memicu galat `ERROR 1227 (SET USER privilege)`.
+2. **Standar ISO/SQL Datetime:** Seluruh 653 representasi tanggal yang sebelumnya berformat JavaScript `Date().toString()` telah distandardisasi menjadi format baku `YYYY-MM-DD HH:MM:SS` untuk mencegah galat `ERROR 1292 (Incorrect datetime value)`.
+3. **Pengecualian Kolom Terhitung Otomatis (Generated Columns):** Kolom `nilai_rp` pada tabel `nilai_ekonomi_tahunan` yang memiliki ekspresi `GENERATED ALWAYS AS (volume * harga_produsen) STORED` dikecualikan dari klausa `INSERT`, sehingga kalkulasi nilai rupiah dilakukan secara otomatis oleh mesin database tanpa memicu galat `ERROR 1906`.
+4. **Relaksasi SQL_MODE Otomatis:** Skrip diawali dengan `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';` dan ditutup dengan pemulihan `SET SQL_MODE=@OLD_SQL_MODE;` serta `SET FOREIGN_KEY_CHECKS = 1;`.
+
 ---
 
 ## 2. Tabel Master Geografi & Referensi

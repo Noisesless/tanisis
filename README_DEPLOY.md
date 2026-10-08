@@ -59,6 +59,15 @@ curl -s http://127.0.0.1:5173/api/health
 
 ---
 
+## Sinkronisasi Basis Data Lengkap (57 Tabel)
+
+Untuk menyinkronkan seluruh struktur dan data termutakhir (Padi 2025, 2.409 Poktan, 278 Gapoktan, 137 KEP, 36 Posluhdes, 156 PPS, Ternak, Horti, dsb.):
+```bash
+mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/dump_production_pertanian_updated.sql
+```
+
+---
+
 ## Prosedur Rollback Cepat (< 1 Menit)
 
 Jika ada kendala yang tidak diinginkan di server:

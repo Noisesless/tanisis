@@ -1,5 +1,5 @@
 <!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-08T16:45:00+07:00 | Phase: Clean Release | Build: OK -->
+<!-- Last: 2026-10-08T17:15:00+07:00 | Phase: Clean Release | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Clean Release done=ALL last=Perbaikan layout responsif login split view, eliminasi variable shadowing role dashboard, dan sinkronisasi dump database dev pertasis (ADR-030)
+phase=Clean Release done=ALL last=Sinkronisasi tuntas basis data produksi pertasis (ADR-031), eliminasi error DEFINER 1227, format datetime JS 1292, dan generated column 1906 pada patch migrasi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -169,6 +169,12 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Cross-Resolution Layout Hardening: Menurunkan breakpoint panel visual kiri (latar foto sawah Banjarnegara) dari ≥1024px ke ≥768px (50:50 pada mode split window/tablet, 60:40 pada laptop 1366px+). Mengisolasi wadah formulir dalam kelas CSS khusus '.sispertani-form-card' ('max-width: 380px'), mencegah form merenggang 100% pada resolusi layar/jendela di bawah 1024px tanpa ketergantungan pada arbitrary classes Tailwind yang tidak terkompilasi.
 - Database Dev Snapshot: Menghasilkan dump skema dan data MySQL/MariaDB dev 'pertasis' mutakhir dalam format UTF-8 standar ('database/dump_production_pertanian_updated.sql', 1.89 MB) mencakup seluruh 57 tabel terintegrasi.
 
+[ADR-031] SQL Patch Portability & Unprivileged User Compatibility:
+- Eliminasi Error 1227 (SET USER privilege): Menghapus klausa DEFINER=`root`@`localhost` dari VIEW log_aktivitas pada berkas patch dan dump basis data sehingga user standar cPanel/hosting ('pertalit') dapat mengimpor basis data tanpa membutuhkan privilege SUPER / root.
+- Eliminasi Error 1292 (Incorrect datetime value): Mengonversi 653 kemunculan string format JavaScript 'Date().toString()' ('Wed Sep 23 2026...') menjadi format standar SQL datetime 'YYYY-MM-DD HH:MM:SS'.
+- Eliminasi Error 1906 (Generated column value rejected): Mengeluarkan kolom kalkulasi otomatis 'nilai_rp' ('GENERATED ALWAYS AS (volume * harga_produsen) STORED') dari klausul INSERT tabel 'nilai_ekonomi_tahunan' agar dihitung secara otomatis oleh MariaDB tanpa pelanggaran strict SQL mode, serta menambahkan proteksi 'SQL_MODE=NO_AUTO_VALUE_ON_ZERO'.
+- Verifikasi Produksi: Patch basis data berhasil diuji dan dieksekusi 100% tuntas di server produksi nargaroth ('pertanian.sistemdata.id').
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -203,6 +209,7 @@ mysql=root=
 [x] Eliminasi Infinite Client-Side Redirect Loop /kecamatan/ pada React Router v6 Bundle (ADR-029)
 [x] Resolusi Variable Shadowing Role Dashboard & Layout Asimetris Login Responsif Cross-Resolution (ADR-030)
 [x] Pembaruan Dump Database Development MariaDB pertasis UTF-8 (dump_production_pertanian_updated.sql)
+[x] Eksekusi & Validasi Migrasi Basis Data di Server Produksi (ADR-031: Status 100% Aman & Terverifikasi)
 
 
 
