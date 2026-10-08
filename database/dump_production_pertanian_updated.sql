@@ -1596,7 +1596,7 @@ CREATE TABLE `nilai_ekonomi_tahunan` (
   `triwulan` tinyint(3) unsigned DEFAULT NULL,
   `volume` decimal(14,2) NOT NULL,
   `harga_produsen` decimal(14,2) NOT NULL,
-  `nilai_rp` decimal(16,2) GENERATED ALWAYS AS (`volume` * `harga_produsen`) STORED,
+  `nilai_rp` decimal(16,2) DEFAULT NULL,
   `sumber` varchar(100) NOT NULL DEFAULT 'manual',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
