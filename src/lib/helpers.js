@@ -1,7 +1,7 @@
 // Helper bersama untuk semua route.
 import { q } from "../db.js";
 
-/** Bungkus handler async: error -> JSON (err.status dihormuai, default 500). */
+/** Bungkus handler async: error -> JSON (err.status dihormati, default 500). */
 export function route(handler) {
   return async (req, res) => {
     try {
@@ -9,8 +9,17 @@ export function route(handler) {
       res.json(data);
     } catch (err) {
       const status = err?.status || 500;
-      if (status >= 500) console.error("[api] error:", err.message);
-      res.status(status).json({ error: status === 404 ? "not_found" : "internal", message: String(err?.message || err) });
+      if (status >= 500) {
+        console.error("[api] error:", err.message);
+        return res.status(status).json({
+          error: "internal",
+          message: "Terjadi kesalahan internal pada server.",
+        });
+      }
+      res.status(status).json({
+        error: status === 404 ? "not_found" : "bad_request",
+        message: String(err?.message || err),
+      });
     }
   };
 }
@@ -54,3 +63,8 @@ export const KEC_JOIN = "JOIN kecamatan k ON k.id = t.kecamatan_id";
 
 export const num = (v) => (v === null || v === undefined ? 0 : Number(v));
 export const numOrNull = (v) => (v === null || v === undefined ? null : Number(v));
+export const toIntOrNull = (v) => {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isInteger(n) ? n : null;
+};

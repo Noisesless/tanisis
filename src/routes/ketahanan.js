@@ -2,7 +2,7 @@
 // Single Source of Truth dari MariaDB pertasis (DKPP Kab. Banjarnegara)
 import { Router } from "express";
 import { q } from "../db.js";
-import { route } from "../lib/helpers.js";
+import { route, toIntOrNull } from "../lib/helpers.js";
 
 export const ketahananRouter = Router();
 
@@ -67,13 +67,14 @@ ketahananRouter.get(
 ketahananRouter.get(
   "/fsva-kabupaten",
   route(async (req) => {
-    const { tahun, pilar } = req.query;
+    const { pilar } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
     let where = "WHERE 1=1";
     const params = [];
 
-    if (tahun) {
+    if (thn !== null) {
       where += " AND tahun = ?";
-      params.push(Number(tahun));
+      params.push(thn);
     }
     if (pilar && pilar !== "all") {
       where += " AND pilar = ?";
@@ -116,13 +117,13 @@ ketahananRouter.get(
 ketahananRouter.get(
   "/neraca-komposit",
   route(async (req) => {
-    const { tahun } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
     let where = "WHERE 1=1";
     const params = [];
 
-    if (tahun) {
+    if (thn !== null) {
       where += " AND tahun = ?";
-      params.push(Number(tahun));
+      params.push(thn);
     }
 
     const rows = await q(

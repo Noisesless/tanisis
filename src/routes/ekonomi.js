@@ -2,7 +2,7 @@
 // Replika fetchInflationData, fetchMarketData, fetchLumbungPangan.
 import { Router } from "express";
 import { q } from "../db.js";
-import { route } from "../lib/helpers.js";
+import { route, toIntOrNull } from "../lib/helpers.js";
 
 export const ekonomiRouter = Router();
 export const lumbungRouter = Router();
@@ -39,16 +39,17 @@ ekonomiRouter.get(
 ekonomiRouter.get(
   "/harga-kabupaten",
   route(async (req) => {
-    const { sektor, tahun } = req.query;
+    const { sektor } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
     let where = "WHERE 1=1";
     const params = [];
     if (sektor) {
       where += " AND sektor = ?";
       params.push(String(sektor).toLowerCase());
     }
-    if (tahun) {
+    if (thn !== null) {
       where += " AND tahun = ?";
-      params.push(Number(tahun));
+      params.push(thn);
     }
     const rows = await q(
       `SELECT id, sektor, komoditas, satuan, harga_per_satuan, tahun, sumber, created_at
@@ -117,7 +118,7 @@ ekonomiRouter.get(
     }
 
     // Tentukan tahun & ambil daftar komoditas utama
-    let tahun = req.query.tahun ? Number(req.query.tahun) : null;
+    let tahun = toIntOrNull(req.query.tahun);
     let items = [];
 
     const subsektor = String(req.query.subsektor ?? "").toLowerCase();

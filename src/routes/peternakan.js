@@ -3,7 +3,8 @@
 // fetchLuarRPH, fetchDagingUnggas (semua bentuk TernakFlow memakai items + label fix).
 import { Router } from "express";
 import { q } from "../db.js";
-import { route, pivotLong } from "../lib/helpers.js";
+import { route, pivotLong, toIntOrNull } from "../lib/helpers.js";
+import { requireAdmin } from "./admin.js";
 
 export const peternakanRouter = Router();
 
@@ -158,7 +159,7 @@ peternakanRouter.get(
 peternakanRouter.get(
   "/domba-batur",
   route(async (req) => {
-    const { tahun } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
     let sql = `
       SELECT k.nama AS kecamatan, t.tahun, t.jumlah_ekor AS ekor
       FROM ternak_populasi t
@@ -166,9 +167,9 @@ peternakanRouter.get(
       WHERE (t.jenis = 'Domba Batur' OR (t.jenis = 'Domba' AND k.nama IN ('Batur', 'Pejawaran', 'Wanayasa', 'Kalibening', 'Karangkobar')))
     `;
     const params = [];
-    if (tahun) {
+    if (thn !== null) {
       sql += ` AND t.tahun = ?`;
-      params.push(Number(tahun));
+      params.push(thn);
     }
     sql += ` ORDER BY t.tahun DESC, t.jumlah_ekor DESC`;
     const rows = await q(sql, params);
@@ -193,11 +194,12 @@ peternakanRouter.get(
 peternakanRouter.get(
   "/hpt",
   route(async (req) => {
-    const { tahun, kecamatan_id } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
+    const kecId = toIntOrNull(req.query.kecamatan_id);
     let where = "WHERE 1=1";
     const params = [];
-    if (tahun) { where += " AND h.tahun = ?"; params.push(Number(tahun)); }
-    if (kecamatan_id) { where += " AND h.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    if (thn !== null) { where += " AND h.tahun = ?"; params.push(thn); }
+    if (kecId !== null) { where += " AND h.kecamatan_id = ?"; params.push(kecId); }
     return q(
       `SELECT h.*, k.nama AS kecamatan 
        FROM ternak_hpt h JOIN kecamatan k ON k.id = h.kecamatan_id 
@@ -211,11 +213,12 @@ peternakanRouter.get(
 peternakanRouter.get(
   "/umkm-pakan",
   route(async (req) => {
-    const { tahun, kecamatan_id } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
+    const kecId = toIntOrNull(req.query.kecamatan_id);
     let where = "WHERE 1=1";
     const params = [];
-    if (tahun) { where += " AND u.tahun = ?"; params.push(Number(tahun)); }
-    if (kecamatan_id) { where += " AND u.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    if (thn !== null) { where += " AND u.tahun = ?"; params.push(thn); }
+    if (kecId !== null) { where += " AND u.kecamatan_id = ?"; params.push(kecId); }
     return q(
       `SELECT u.*, k.nama AS kecamatan 
        FROM ternak_umkm_pakan u JOIN kecamatan k ON k.id = u.kecamatan_id 
@@ -229,11 +232,12 @@ peternakanRouter.get(
 peternakanRouter.get(
   "/poultry-shop",
   route(async (req) => {
-    const { tahun, kecamatan_id } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
+    const kecId = toIntOrNull(req.query.kecamatan_id);
     let where = "WHERE 1=1";
     const params = [];
-    if (tahun) { where += " AND p.tahun = ?"; params.push(Number(tahun)); }
-    if (kecamatan_id) { where += " AND p.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    if (thn !== null) { where += " AND p.tahun = ?"; params.push(thn); }
+    if (kecId !== null) { where += " AND p.kecamatan_id = ?"; params.push(kecId); }
     return q(
       `SELECT p.*, k.nama AS kecamatan 
        FROM ternak_poultry_shop p JOIN kecamatan k ON k.id = p.kecamatan_id 
@@ -247,11 +251,12 @@ peternakanRouter.get(
 peternakanRouter.get(
   "/nkv",
   route(async (req) => {
-    const { tahun, kecamatan_id } = req.query;
+    const thn = toIntOrNull(req.query.tahun);
+    const kecId = toIntOrNull(req.query.kecamatan_id);
     let where = "WHERE 1=1";
     const params = [];
-    if (tahun) { where += " AND n.tahun = ?"; params.push(Number(tahun)); }
-    if (kecamatan_id) { where += " AND n.kecamatan_id = ?"; params.push(Number(kecamatan_id)); }
+    if (thn !== null) { where += " AND n.tahun = ?"; params.push(thn); }
+    if (kecId !== null) { where += " AND n.kecamatan_id = ?"; params.push(kecId); }
     return q(
       `SELECT n.*, k.nama AS kecamatan 
        FROM ternak_nkv n JOIN kecamatan k ON k.id = n.kecamatan_id 
@@ -261,10 +266,16 @@ peternakanRouter.get(
   }),
 );
 
-/** POST /api/v1/peternakan/entry -> Endpoint entry manual bagian peternakan yang kosong */
+/** POST /api/v1/peternakan/entry -> Endpoint entry manual bagian peternakan (Admin/Peternakan only) */
 peternakanRouter.post(
   "/entry",
+  requireAdmin,
   route(async (req) => {
+    if (req.adminRole !== "admin" && req.adminRole !== "peternakan") {
+      const err = new Error("Akses terbatas untuk administrator atau bidang peternakan.");
+      err.status = 403;
+      throw err;
+    }
     const { kategori, kecamatan, tahun, bulan, nama, jenis, jumlah, nilai, satuan, catatan, alamat, kontak, koordinat, nomor_nkv, status } = req.body || {};
     if (!kategori) throw Object.assign(new Error("Kategori entry wajib ditentukan (populasi, hpt, umkm_pakan, poultry_shop, nkv, susu_kulit, daging, telur)."), { status: 400 });
     if (!kecamatan) throw Object.assign(new Error("Kecamatan wajib diisi."), { status: 400 });

@@ -1,5 +1,5 @@
 <!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-08T17:15:00+07:00 | Phase: Clean Release | Build: OK -->
+<!-- Last: 2026-10-08T19:30:00+07:00 | Phase: Security Hardening & Documentation | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Clean Release done=ALL last=Sinkronisasi tuntas basis data produksi pertasis (ADR-031), eliminasi error DEFINER 1227, format datetime JS 1292, dan generated column 1906 pada patch migrasi
+phase=Security Hardening & Documentation done=ALL last=Hardening keamanan endpoint API (SP-001 s/d SP-026), proteksi autentikasi Bearer rute tulis, mitigasi kebocoran database NaN/500, security headers, dan perampingan footer non-slop (ADR-032)
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -175,6 +175,14 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Eliminasi Error 1906 (Generated column value rejected): Mengeluarkan kolom kalkulasi otomatis 'nilai_rp' ('GENERATED ALWAYS AS (volume * harga_produsen) STORED') dari klausul INSERT tabel 'nilai_ekonomi_tahunan' agar dihitung secara otomatis oleh MariaDB tanpa pelanggaran strict SQL mode, serta menambahkan proteksi 'SQL_MODE=NO_AUTO_VALUE_ON_ZERO'.
 - Verifikasi Produksi: Patch basis data berhasil diuji dan dieksekusi 100% tuntas di server produksi nargaroth ('pertanian.sistemdata.id').
 
+[ADR-032] API Security Hardening, Write Protection & Clean Minimalist Footer:
+- Proteksi Autentikasi Rute Tulis: Menambahkan guard `requireAdmin` (Bearer token) pada rute `POST /api/v1/peternakan/entry` dan `POST /api/v1/psat-pduk` serta verifikasi peran (SP-006 & SP-024) sehingga operasi tulis tidak dapat diakses anonim.
+- Sanitasi Input & Eliminasi Kebocoran Database: Mengganti parsing nilai `Number()` dengan helper `toIntOrNull()` pada parameter `tahun` dan `kecamatan_id` di modul peternakan, ekonomi, dan ketahanan untuk mencegah nilai `NaN` diteruskan ke SQL driver (SP-026). Standardisasi wrapper `route()` agar galat status 500 mengembalikan pesan internal generik tanpa membocorkan pesan/struktur SQL ke client (SP-019).
+- Browser Security Headers: Mengaktifkan middleware proteksi global `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, dan `Permissions-Policy` (SP-011, SP-023).
+- Isolasi Host Proksi CKAN (Anti-SSRF): Memvalidasi target URL proksi CKAN `/3/*` agar strictly terkunci pada host resmi `opendata.banjarnegarakab.go.id` (SP-020).
+- Koreksi Resolusi Path Paket Ekspor: Memperbaiki kalkulasi path traversal `PAKET_ROOT` di `routes/admin.js` agar tepat mengarah ke direktori `./database/template-import-export/`.
+- Perampingan Footer Anti-AI-Slop: Menghilangkan tumpukan informasi berlebih dan tautan institusional verbose pada footer publik (`default-CAKe9ffW.js`), menggantinya dengan komposisi ringkas elegan: `© 2026 SISPERTANI Kab. Banjarnegara` | `v2.4.0`.
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -210,6 +218,9 @@ mysql=root=
 [x] Resolusi Variable Shadowing Role Dashboard & Layout Asimetris Login Responsif Cross-Resolution (ADR-030)
 [x] Pembaruan Dump Database Development MariaDB pertasis UTF-8 (dump_production_pertanian_updated.sql)
 [x] Eksekusi & Validasi Migrasi Basis Data di Server Produksi (ADR-031: Status 100% Aman & Terverifikasi)
+[x] Audit Keamanan & Hardening Endpoint API (SP Compliance 100% Lolos Uji)
+[x] Perampingan Footer Non-Slop (Minimalis, Elegan, Versi 2.4.0)
+[x] Penyusunan Dokumentasi Keamanan Sistem (.docs/security-audit.md)
 
 
 

@@ -78,7 +78,7 @@ router.post("/login", async (req, res) => {
   });
 });
 
-function requireAdmin(req, res, next) {
+export function requireAdmin(req, res, next) {
   const auth = req.headers.authorization ?? "";
   const m = /^Bearer\s+(.+)$/i.exec(auth);
   const t = m ? tokens.get(m[1]) : null;
@@ -92,7 +92,7 @@ function requireAdmin(req, res, next) {
 }
 
 /** Guard: hanya administrator (melihat semua + sinkronisasi data). */
-function requireAdminRole(req, res, next) {
+export function requireAdminRole(req, res, next) {
   if (req.adminRole !== "admin") {
     return res.status(403).json({ error: "Akses terbatas untuk administrator." });
   }
@@ -124,7 +124,8 @@ router.get("/sync-log", requireAdmin, requireAdminRole, async (req, res) => {
     const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
     const data = await q(
       `SELECT id, dataset, sumber, aksi, baris, status, pesan, created_at
-       FROM sync_log ORDER BY id DESC LIMIT ${limit}`,
+       FROM sync_log ORDER BY id DESC LIMIT ?`,
+      [limit]
     );
     const [{ total }] = await q("SELECT COUNT(*) AS total FROM sync_log");
     res.json({ total, limit, data });
@@ -172,7 +173,7 @@ router.post("/import/:domain", requireAdmin, requireDomainAccess, upload.single(
 // Paket template & export statis (database/template-import-export) - hasil
 // generator `npm run generate`: 16 domain xlsx + 37 tabel csv, template & snapshot.
 // ---------------------------------------------------------------------------
-const PAKET_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "database", "template-import-export");
+const PAKET_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "database", "template-import-export");
 const PAKET_TIPE = {
   "template-xlsx": "templates",
   "template-csv": "templates/csv",

@@ -3,6 +3,7 @@
 import { Router } from "express";
 import { q } from "../db.js";
 import { route } from "../lib/helpers.js";
+import { requireAdmin } from "./admin.js";
 
 export const psatRouter = Router();
 
@@ -82,10 +83,11 @@ psatRouter.get(
 
 /**
  * POST /api/v1/psat-pduk
- * Input data hasil uji petik pasar / registrasi PSAT-PDUK
+ * Input data hasil uji petik pasar / registrasi PSAT-PDUK (Admin/Operator only)
  */
 psatRouter.post(
   "/",
+  requireAdmin,
   route(async (req) => {
     const {
       tanggalUji,

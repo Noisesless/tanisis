@@ -25,6 +25,15 @@ import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
 const app = express();
 app.disable("x-powered-by");
 
+// Security Headers Hygiene (SP-011, SP-023)
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+  next();
+});
+
 // CORS sederhana berbasis allowlist (tanpa dependensi tambahan).
 const allowed = (process.env.CORS_ORIGIN || "*")
   .split(",")
@@ -57,7 +66,13 @@ api.use("/3", async (req, res) => {
   if (!CKAN_PROXY) return res.status(501).json({ error: "ckan_proxy_disabled" });
   if (req.method !== "GET") return res.status(405).json({ error: "method_not_allowed" });
   try {
-    const upstream = await fetch(CKAN_ORIGIN + req.originalUrl, {
+    const safeSubPath = req.url.startsWith("/") ? req.url : `/${req.url}`;
+    const targetUrl = new URL(`/api/3${safeSubPath}`, CKAN_ORIGIN);
+    const expectedHost = new URL(CKAN_ORIGIN).host;
+    if (targetUrl.host !== expectedHost) {
+      return res.status(400).json({ error: "invalid_upstream_host" });
+    }
+    const upstream = await fetch(targetUrl.href, {
       headers: { accept: req.headers.accept || "application/json" },
       signal: AbortSignal.timeout(15000),
     });

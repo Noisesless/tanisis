@@ -1,7 +1,7 @@
 var e = {
   name: `SISPERTANI`,
-  version: `1.0.0`,
-  releaseDate: `19 September 2026`,
+  version: `2.4.0`,
+  releaseDate: `Oktober 2026`,
   description: `Sistem Informasi Pertanian Kabupaten Banjarnegara.`,
   navGroups: [
     {

@@ -78,7 +78,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/peternakan/poultry-shop` | `src/routes/peternakan.js` | Publik | Sebaran toko peternakan & poultry shop per kecamatan |
 | `GET` | `/v1/peternakan/nkv` | `src/routes/peternakan.js` | Publik | Register unit usaha bersertifikat Nomor Kontrol Veteriner |
 | `GET` | `/v1/peternakan/domba-batur` | `src/routes/peternakan.js` | Publik | Populasi Domba Batur (ternak hias & bibit unggul Dieng dalam satuan ekor) |
-| `POST`| `/v1/peternakan/entry` | `src/routes/peternakan.js` | Publik/Admin | Endpoint entry manual data bagian peternakan yang kosong (populasi, HPT, dll) |
+| `POST`| `/v1/peternakan/entry` | `src/routes/peternakan.js` | Bearer (Admin/Peternakan) | Endpoint entry manual data bagian peternakan yang kosong (populasi, HPT, dll) |
 | `GET` | `/v1/perikanan/jenis-ikan` | `src/routes/perikanan.js` | Publik | Data 10 jenis ikan definitif budidaya 2020–2025 (Lele, Nila, Gurami, Bawal, dll) |
 | `GET` | `/v1/perikanan/budidaya-luasan` | `src/routes/perikanan.js` | Publik | Luas lahan vs produksi perikanan & rasio produktivitas per kecamatan |
 | `GET` | `/v1/perikanan/hias` | `src/routes/perikanan.js` | Publik | Data perikanan ikan hias per kecamatan & varietas |
@@ -106,11 +106,11 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/kelembagaan/juleha` | `src/routes/kelembagaan.js` | Publik | Data Juru Sembelih Halal (JULEHA) tersertifikasi RPH & RPU |
 | `GET` | `/v1/kelembagaan/p4s` | `src/routes/kelembagaan.js` | Publik | Data Pusat Pelatihan Pertanian Perdesaan Swadaya (P4S) |
 | `GET` | `/v1/kelembagaan/upja` | `src/routes/kelembagaan.js` | Publik | Data Usaha Pelayanan Jasa Alsintan (UPJA) |
-| `GET` | `/v1/psat-pduk/sampel` | `src/routes/psat.js` | Publik | Hasil uji petik residu pestisida & keamanan pangan PSAT |
-| `GET` | `/v1/psat-pduk/izin-edar` | `src/routes/psat.js` | Publik | Register izin edar Pangan Segar Asal Tumbuhan (PDUK) |
-| `GET` | `/v1/ketahanan/fsva` | `src/routes/ketahanan.js` | Publik | Data 12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) |
-| `GET` | `/v1/ketahanan/neraca` | `src/routes/ketahanan.js` | Publik | Neraca pangan komposit ketersediaan komoditas pokok daerah |
-| `GET` | `/v1/ketahanan/logistik` | `src/routes/ketahanan.js` | Publik | Survei rantai pasok beras & penggilingan padi (RMU) |
+| `GET` | `/v1/psat-pduk` | `src/routes/psat.js` | Publik | Hasil uji petik residu pestisida & keamanan pangan PSAT pasar |
+| `POST`| `/v1/psat-pduk` | `src/routes/psat.js` | Bearer (Admin) | Input data pengawasan uji petik keamanan pangan PSAT-PDUK |
+| `GET` | `/v1/ketahanan/fsva-kabupaten` | `src/routes/ketahanan.js` | Publik | Data 12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) |
+| `GET` | `/v1/ketahanan/neraca-komposit` | `src/routes/ketahanan.js` | Publik | Neraca pangan komposit ketersediaan komoditas pokok daerah |
+| `GET` | `/v1/ketahanan/harga-pasar` | `src/routes/ketahanan.js` | Publik | Data harian komoditas pasar tradisional Banjarnegara |
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
 | `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token (rate-limited) |
@@ -130,13 +130,16 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | Middleware | Diaplikasikan Pada | Tujuan & Fungsi |
 |---|---|---|
 | `x-powered-by disable` | Seluruh aplikasi | Menyembunyikan header `X-Powered-By: Express` untuk proteksi fingerprinting |
-| `CORS Allowlist` | Seluruh permintaan HTTP | Memvalidasi header Origin terhadap konfigurasi `CORS_ORIGIN` atau wildcard |
+| `Security Headers (SP-011, SP-023)` | Seluruh permintaan HTTP | Proteksi browser: `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` |
+| `Sensitive File Guard (SP-007)` | Seluruh permintaan HTTP | Blokir akses langsung ke ekstensi `.sql`, `.env`, `.bak`, `.sh`, `.yml`, `.config`, dan dot-files (`403 Forbidden`) |
+| `CORS Allowlist (SP-008)` | Seluruh permintaan HTTP | Memvalidasi header Origin terhadap konfigurasi `CORS_ORIGIN` atau wildcard |
 | `express.json({ limit: "256kb" })` | API routes | Mem-parsing payload JSON (termasuk kredensial login admin) |
 | `express.static(distRoot)` | Berkas frontend `./dist` | Melayani aset web statis (JS, CSS, ikon, GeoJSON) dengan cache header |
-| `Rate Limiter Login` | `POST /api/v1/admin/login` | Membatasi maksimal 5 kali kegagalan login per 15 menit per IP |
-| `Rate Limiter AI Chat`| `POST /api/v1/ai/chat` | In-memory sliding rate limiter maks. 30 request/menit per IP |
-| `Bearer Auth Token` | Seluruh `/api/v1/admin/*` (kecuali login) | Memverifikasi keberadaan dan masa berlaku in-memory Bearer token |
-| `RBAC Domain Guard` | `template`, `export`, `import` admin | Memvalidasi kewenangan akun bidang terhadap domain yang diminta |
-| `Multer MemoryStorage` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |
+| `Rate Limiter Login (SP-014)` | `POST /api/v1/admin/login` | Membatasi maksimal 5 kali kegagalan login per 15 menit per IP |
+| `Rate Limiter AI Chat (SP-014)`| `POST /api/v1/ai/chat` | In-memory sliding rate limiter maks. 30 request/menit per IP |
+| `Bearer Auth Token (SP-006)` | Seluruh rute tulis & `/admin/*` | Memverifikasi keberadaan dan masa berlaku in-memory Bearer token |
+| `RBAC Domain Guard (SP-024)` | `template`, `export`, `import`, `entry` | Memvalidasi kewenangan akun bidang terhadap domain yang diminta |
+| `Multer MemoryStorage (SP-003)` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |
+| `Safe Error Masking (SP-019)` | Seluruh route API (`route()`) | Mengisolasi pesan internal error database saat HTTP 500 (mencegah kebocoran skema SQL) |
 | `Trailing-Slash Normalizer` | `GET /kecamatan/`, `GET /sebaran/` | Mengalihkan rute bertrailing slash (302 redirect) ke path kanonikal untuk mencegah redirect loop di sisi klien |
 | `SPA HTML Fallback` | Seluruh `GET` non-API non-ekstensi | Mengarahkan navigasi peramban ke `index.html` untuk mendukung routing klien |

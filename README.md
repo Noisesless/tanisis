@@ -268,13 +268,14 @@ Aplikasi telah disinkronkan dan disiapkan dalam paket siap deploy tanpa menunggu
 
 ## Indeks Dokumentasi `.docs/`
 
-Detail teknis mendalam tersedia pada direktori [`/.docs/`](file:///e:/Project/pertanian_main/.docs):
-- [**Arsitektur Sistem**](file:///e:/Project/pertanian_main/.docs/architecture.md) — Aliran data, struktur micro-monolith, integrasi GIS dan CKAN.
-- [**Spesifikasi API**](file:///e:/Project/pertanian_main/.docs/api-spec.md) — Rincian request/response, parameter query, schema JSON, dan kode error.
-- [**Skema Basis Data**](file:///e:/Project/pertanian_main/.docs/database.md) — Struktur tabel, indeks, foreign key, dan aturan natural key.
-- [**Peta Rute**](file:///e:/Project/pertanian_main/.docs/routes.md) — Matriks pemetaan route frontend dan endpoint backend.
-- [**Graf Ketergantungan**](file:///e:/Project/pertanian_main/.docs/dependency-graph.md) — Keterkaitan antar-modul dan file beresiko tinggi.
-- [**Panduan Deployment**](file:///e:/Project/pertanian_main/.docs/deployment.md) — Prosedur rilis, konfigurasi Nginx/CloudPanel, SSL, dan rollback plan.
-- [**Sistem Desain Visual**](file:///e:/Project/pertanian_main/.docs/design-system.md) — Visual DNA, palet warna, tipografi, dan token UI.
-- [**Catatan Isu & Pelacakan**](file:///e:/Project/pertanian_main/.docs/issues.md) — Log isu aktif dan riwayat perbaikan bug.
-- [**Tinjauan Kualitas Kode**](file:///e:/Project/pertanian_main/.docs/quality_review.md) — Analisis keamanan, performa, dan standar kode.
+Detail teknis mendalam tersedia pada direktori [`.docs/`](./.docs):
+- [**Arsitektur Sistem**](./.docs/architecture.md) — Aliran data, struktur micro-monolith, integrasi GIS dan CKAN.
+- [**Spesifikasi API**](./.docs/api-spec.md) — Rincian request/response, parameter query, schema JSON, dan kode error.
+- [**Skema Basis Data**](./.docs/database.md) — Struktur tabel, indeks, foreign key, dan aturan natural key.
+- [**Peta Rute**](./.docs/routes.md) — Matriks pemetaan route frontend dan endpoint backend.
+- [**Graf Ketergantungan**](./.docs/dependency-graph.md) — Keterkaitan antar-modul dan file beresiko tinggi.
+- [**Panduan Deployment**](./.docs/deployment.md) — Prosedur rilis, konfigurasi Nginx/CloudPanel, SSL, dan rollback plan.
+- [**Sistem Desain Visual**](./.docs/design-system.md) — Visual DNA, palet warna, tipografi, dan token UI.
+- [**Catatan Isu & Pelacakan**](./.docs/issues.md) — Log isu aktif dan riwayat perbaikan bug.
+- [**Tinjauan Kualitas Kode**](./.docs/quality_review.md) — Analisis performa dan standar kode.
+- [**Laporan Audit Keamanan**](./.docs/security-audit.md) — Pemenuhan Security Patterns (SP-001 s/d SP-026), mitigasi exploit, dan verifikasi faktual.

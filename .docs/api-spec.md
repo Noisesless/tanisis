@@ -110,7 +110,9 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
 - **`GET /api/v1/peternakan/domba-batur`**  
   Data sebaran populasi Domba Batur (ternak hias & bibit unggul per ekor) di sentra Dataran Tinggi Dieng (Batur, Pejawaran, Wanayasa, Kalibening, Karangkobar) per tahun dalam satuan ekor.
 - **`POST /api/v1/peternakan/entry`**  
-  Endpoint entry data manual bagian peternakan yang kosong (kategori: `populasi`, `hpt`, `umkm_pakan`, `poultry_shop`, `nkv`, `susu_kulit`, `daging`, `telur`). Parameter: `kecamatan`, `tahun`, `bulan`, `jenis/nama`, `jumlah/nilai`, `satuan`, `catatan/alamat/kontak`.
+  Endpoint entry data manual bagian peternakan yang kosong (kategori: `populasi`, `hpt`, `umkm_pakan`, `poultry_shop`, `nkv`, `susu_kulit`, `daging`, `telur`).
+  - **Autentikasi:** Wajib `Authorization: Bearer <token>` (Peran: `admin` atau `peternakan`).
+  - **Parameter:** `kecamatan`, `tahun`, `bulan`, `jenis/nama`, `jumlah/nilai`, `satuan`, `catatan/alamat/kontak`.
 
 ### D. Perikanan
 - **`GET /api/v1/perikanan/jenis-ikan`**  
