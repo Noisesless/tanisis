@@ -4,6 +4,7 @@
 -- Tujuan: Menyelaraskan skema & data production dengan development tanpa merusak data lama.
 -- =========================================================================
 
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 SET FOREIGN_KEY_CHECKS = 0;
 SET NAMES utf8mb4;
 
@@ -852,56 +853,56 @@ CREATE TABLE `nilai_ekonomi_tahunan` (
   KEY `idx_ekonomi_bidang` (`bidang`,`tahun`),
   KEY `idx_ekonomi_tahun` (`tahun`)
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Nilai ekonomi per bidang/komoditas/tahun/triwulan (input dinas; Rp = volume x harga_produsen)';
-INSERT INTO `nilai_ekonomi_tahunan` (`id`, `bidang`, `komoditas`, `satuan`, `tahun`, `triwulan`, `volume`, `harga_produsen`, `nilai_rp`, `sumber`, `created_at`, `updated_at`) VALUES
-(1, 'pangan', 'Padi Sawah', 'Ton', 2024, NULL, '5424.00', '6800000.00', '36883200000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(2, 'pangan', 'Padi Ladang', 'Ton', 2024, NULL, '686.00', '6500000.00', '4459000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(3, 'pangan', 'Jagung', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(4, 'pangan', 'Ubi Kayu', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(5, 'pangan', 'Ubi Jalar', 'Ton', 2024, NULL, '2719.00', '3500000.00', '9516500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(6, 'pangan', 'Kacang Tanah', 'Ton', 2024, NULL, '986.00', '18000000.00', '17748000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(7, 'pangan', 'Kedelai', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(8, 'pangan', 'Kacang Hijau', 'Ton', 2024, NULL, '8.00', '17000000.00', '136000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(9, 'pangan', 'Porang', 'Ton', 2024, NULL, '1280.00', '8500000.00', '10880000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(10, 'pangan', 'Talas', 'Ton', 2024, NULL, '1340.00', '4500000.00', '6030000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(11, 'hortikultura', 'Kentang', 'Ton', 2024, NULL, '139726.00', '11000000.00', '1536986000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(12, 'hortikultura', 'Kubis', 'Ton', 2024, NULL, '31549.00', '3500000.00', '110421500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(13, 'hortikultura', 'Wortel', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(14, 'hortikultura', 'Cabai Rawit', 'Ton', 2024, NULL, '13720.00', '32000000.00', '439040000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(15, 'hortikultura', 'Cabai Merah', 'Ton', 2024, NULL, '14119.00', '28000000.00', '395332000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(16, 'hortikultura', 'Bawang Merah', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(17, 'hortikultura', 'Tomat', 'Ton', 2024, NULL, '19082.00', '5000000.00', '95410000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(18, 'hortikultura', 'Salak', 'Ton', 2024, NULL, '199676.00', '6000000.00', '1198056000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(19, 'hortikultura', 'Pisang', 'Ton', 2024, NULL, '30593.00', '5000000.00', '152965000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(20, 'hortikultura', 'Durian', 'Ton', 2024, NULL, '5412.00', '25000000.00', '135300000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(21, 'hortikultura', 'Mangga', 'Ton', 2024, NULL, '577.00', '10000000.00', '5770000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(22, 'perkebunan', 'Kelapa', 'Ton', 2024, NULL, '16921.00', '16000000.00', '270736000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(23, 'perkebunan', 'Kopi Arabika', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(24, 'perkebunan', 'Kopi Robusta', 'Ton', 2024, NULL, '2167.00', '38000000.00', '82346000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(25, 'perkebunan', 'Teh', 'Ton', 2024, NULL, '3731.00', '4500000.00', '16789500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(26, 'perkebunan', 'Kapulaga', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(27, 'perkebunan', 'Cengkeh', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(28, 'perkebunan', 'Tebu', 'Ton', 2024, NULL, '0.00', '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(29, 'perkebunan', 'Tembakau', 'Ton', 2024, NULL, '431.00', '45000000.00', '19395000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(30, 'perkebunan', 'Kelapa Deres (Gula Semut)', 'Ton', 2024, NULL, '5923.00', '18000000.00', '106614000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(31, 'perkebunan', 'Porang', 'Ton', 2024, NULL, '1280.00', '8500000.00', '10880000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(32, 'perkebunan', 'Talas', 'Ton', 2024, NULL, '1340.00', '4500000.00', '6030000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(33, 'peternakan', 'Sapi Potong', 'Ekor', 2024, NULL, '21052.00', '22000000.00', '463144000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(34, 'peternakan', 'Sapi Perah', 'Ekor', 2024, NULL, '76.00', '25000000.00', '1900000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(35, 'peternakan', 'Kambing', 'Ekor', 2024, NULL, '205618.00', '2800000.00', '575730400000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(36, 'peternakan', 'Domba Batur', 'Ekor', 2024, NULL, '52271.00', '3500000.00', '182948500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(37, 'peternakan', 'Kelinci', 'Ekor', 2024, NULL, '12361.00', '150000.00', '1854150000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(38, 'peternakan', 'Ayam Broiler', 'Ekor', 2024, NULL, '3019269.00', '38000.00', '114732222000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(39, 'peternakan', 'Ayam Kampung', 'Ekor', 2024, NULL, '467418.00', '65000.00', '30382170000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(40, 'peternakan', 'Ayam Layer', 'Ekor', 2024, NULL, '474288.00', '85000.00', '40314480000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(41, 'peternakan', 'Itik', 'Ekor', 2024, NULL, '35220.00', '55000.00', '1937100000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(42, 'peternakan', 'Burung Puyuh', 'Ekor', 2024, NULL, '189714.00', '15000.00', '2845710000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(43, 'peternakan', 'Daging Sapi', 'Kg', 2024, NULL, '1869481.00', '130000.00', '243032530000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(44, 'peternakan', 'Daging Kambing & Domba', 'Kg', 2024, NULL, '114891.00', '140000.00', '16084740000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(45, 'peternakan', 'Daging Ayam Broiler', 'Kg', 2024, NULL, '17131382.00', '38000.00', '650992516000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(46, 'peternakan', 'Telur Ayam Layer', 'Kg', 2024, NULL, '88416596.00', '26000.00', '2298831496000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(47, 'peternakan', 'Telur Ayam Kampung', 'Kg', 2024, NULL, '24102337.00', '45000.00', '1084605165000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(48, 'peternakan', 'Susu Sapi Segar', 'Liter', 2024, NULL, '243200.00', '9000.00', '2188800000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
-(49, 'peternakan', 'Kulit Sapi & Kambing', 'Lembar', 2024, NULL, '22561.00', '250000.00', '5640250000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26');
+INSERT INTO `nilai_ekonomi_tahunan` (`id`, `bidang`, `komoditas`, `satuan`, `tahun`, `triwulan`, `volume`, `harga_produsen`, `sumber`, `created_at`, `updated_at`) VALUES
+(1, 'pangan', 'Padi Sawah', 'Ton', 2024, NULL, '5424.00', '6800000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(2, 'pangan', 'Padi Ladang', 'Ton', 2024, NULL, '686.00', '6500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(3, 'pangan', 'Jagung', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(4, 'pangan', 'Ubi Kayu', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(5, 'pangan', 'Ubi Jalar', 'Ton', 2024, NULL, '2719.00', '3500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(6, 'pangan', 'Kacang Tanah', 'Ton', 2024, NULL, '986.00', '18000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(7, 'pangan', 'Kedelai', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(8, 'pangan', 'Kacang Hijau', 'Ton', 2024, NULL, '8.00', '17000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(9, 'pangan', 'Porang', 'Ton', 2024, NULL, '1280.00', '8500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(10, 'pangan', 'Talas', 'Ton', 2024, NULL, '1340.00', '4500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(11, 'hortikultura', 'Kentang', 'Ton', 2024, NULL, '139726.00', '11000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(12, 'hortikultura', 'Kubis', 'Ton', 2024, NULL, '31549.00', '3500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(13, 'hortikultura', 'Wortel', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(14, 'hortikultura', 'Cabai Rawit', 'Ton', 2024, NULL, '13720.00', '32000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(15, 'hortikultura', 'Cabai Merah', 'Ton', 2024, NULL, '14119.00', '28000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(16, 'hortikultura', 'Bawang Merah', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(17, 'hortikultura', 'Tomat', 'Ton', 2024, NULL, '19082.00', '5000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(18, 'hortikultura', 'Salak', 'Ton', 2024, NULL, '199676.00', '6000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(19, 'hortikultura', 'Pisang', 'Ton', 2024, NULL, '30593.00', '5000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(20, 'hortikultura', 'Durian', 'Ton', 2024, NULL, '5412.00', '25000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(21, 'hortikultura', 'Mangga', 'Ton', 2024, NULL, '577.00', '10000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(22, 'perkebunan', 'Kelapa', 'Ton', 2024, NULL, '16921.00', '16000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(23, 'perkebunan', 'Kopi Arabika', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(24, 'perkebunan', 'Kopi Robusta', 'Ton', 2024, NULL, '2167.00', '38000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(25, 'perkebunan', 'Teh', 'Ton', 2024, NULL, '3731.00', '4500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(26, 'perkebunan', 'Kapulaga', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(27, 'perkebunan', 'Cengkeh', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(28, 'perkebunan', 'Tebu', 'Ton', 2024, NULL, '0.00', '0.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(29, 'perkebunan', 'Tembakau', 'Ton', 2024, NULL, '431.00', '45000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(30, 'perkebunan', 'Kelapa Deres (Gula Semut)', 'Ton', 2024, NULL, '5923.00', '18000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(31, 'perkebunan', 'Porang', 'Ton', 2024, NULL, '1280.00', '8500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(32, 'perkebunan', 'Talas', 'Ton', 2024, NULL, '1340.00', '4500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(33, 'peternakan', 'Sapi Potong', 'Ekor', 2024, NULL, '21052.00', '22000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(34, 'peternakan', 'Sapi Perah', 'Ekor', 2024, NULL, '76.00', '25000000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(35, 'peternakan', 'Kambing', 'Ekor', 2024, NULL, '205618.00', '2800000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(36, 'peternakan', 'Domba Batur', 'Ekor', 2024, NULL, '52271.00', '3500000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(37, 'peternakan', 'Kelinci', 'Ekor', 2024, NULL, '12361.00', '150000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(38, 'peternakan', 'Ayam Broiler', 'Ekor', 2024, NULL, '3019269.00', '38000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(39, 'peternakan', 'Ayam Kampung', 'Ekor', 2024, NULL, '467418.00', '65000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(40, 'peternakan', 'Ayam Layer', 'Ekor', 2024, NULL, '474288.00', '85000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(41, 'peternakan', 'Itik', 'Ekor', 2024, NULL, '35220.00', '55000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(42, 'peternakan', 'Burung Puyuh', 'Ekor', 2024, NULL, '189714.00', '15000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(43, 'peternakan', 'Daging Sapi', 'Kg', 2024, NULL, '1869481.00', '130000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(44, 'peternakan', 'Daging Kambing & Domba', 'Kg', 2024, NULL, '114891.00', '140000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(45, 'peternakan', 'Daging Ayam Broiler', 'Kg', 2024, NULL, '17131382.00', '38000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(46, 'peternakan', 'Telur Ayam Layer', 'Kg', 2024, NULL, '88416596.00', '26000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(47, 'peternakan', 'Telur Ayam Kampung', 'Kg', 2024, NULL, '24102337.00', '45000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(48, 'peternakan', 'Susu Sapi Segar', 'Liter', 2024, NULL, '243200.00', '9000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26'),
+(49, 'peternakan', 'Kulit Sapi & Kambing', 'Lembar', 2024, NULL, '22561.00', '250000.00', 'Distankan Matrix 2024', '2026-09-23 12:25:26', '2026-09-23 12:25:26');
 
 -- -------------------------------------------------------------------------
 -- 4. REFACTORING ADR-012: NORMALISASI SPESIES KULIT DI PRODUCTION
@@ -1159,3 +1160,7 @@ INSERT IGNORE INTO `kelembagaan_upja` (`id`, `nama_upja`, `manajer`, `kecamatan`
 
 SET FOREIGN_KEY_CHECKS = 1;
 -- SELESAI SINKRONISASI
+
+
+SET FOREIGN_KEY_CHECKS = 1;
+SET SQL_MODE=@OLD_SQL_MODE;
