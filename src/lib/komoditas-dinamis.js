@@ -179,15 +179,15 @@ export async function getDynamicKomoditasUnggulan() {
       FROM (
         SELECT tahun, komoditas, MAX(nilai) as max_val
         FROM horti_produksi
-        WHERE nilai > 0 AND satuan = 'ton'
+        WHERE nilai > 0
         GROUP BY tahun, komoditas
       ) sub
-      JOIN horti_produksi h ON h.tahun = sub.tahun AND h.komoditas = sub.komoditas AND h.nilai = sub.max_val AND h.satuan = 'ton'
+      JOIN horti_produksi h ON h.tahun = sub.tahun AND h.komoditas = sub.komoditas AND h.nilai = sub.max_val
       JOIN kecamatan k ON h.kecamatan_id = k.id
       JOIN (
         SELECT tahun, komoditas, SUM(nilai) as total_produksi
         FROM horti_produksi
-        WHERE nilai > 0 AND satuan = 'ton'
+        WHERE nilai > 0
         GROUP BY tahun, komoditas
       ) tot ON tot.tahun = sub.tahun AND tot.komoditas = sub.komoditas
       GROUP BY h.tahun, h.komoditas
@@ -304,16 +304,16 @@ export async function getDynamicKomoditasUnggulan() {
           ELSE sektor
         END AS bidang,
         nama_komoditas AS komoditas,
-        'Spesifik Dinas' AS varietas,
-        kecamatan_sentra AS kecamatan,
-        0 AS luas_lahan,
-        0 AS produktivitas,
-        ROUND(total_produksi, 2) AS produksi,
-        satuan,
-        'Tersedia' AS ketersediaan_benih,
+        COALESCE(varietas, 'Spesifik Dinas') AS varietas,
+        COALESCE(kecamatan, sentra, 'Kabupaten Banjarnegara') AS kecamatan,
+        COALESCE(luas_lahan, 0) AS luas_lahan,
+        COALESCE(produktivitas, 0) AS produktivitas,
+        ROUND(COALESCE(produksi, volume, 0), 2) AS produksi,
+        COALESCE(satuan, 'Ton') AS satuan,
+        COALESCE(ketersediaan_benih, 'Tersedia') AS ketersediaan_benih,
         tahun
       FROM komoditas_unggulan
-      WHERE total_produksi > 0
+      WHERE (produksi > 0 OR volume > 0)
     `);
 
     // Tambahkan entri kustom jika belum ada di results untuk bidang, komoditas, dan tahun yang sama

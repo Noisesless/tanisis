@@ -1,5 +1,5 @@
 <!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-08T19:30:00+07:00 | Phase: Security Hardening & Documentation | Build: OK -->
+<!-- Last: 2026-10-08T20:10:00+07:00 | Phase: Chatbot AI Resilience & Database Alignment | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Security Hardening & Documentation done=ALL last=Hardening keamanan endpoint API (SP-001 s/d SP-026), proteksi autentikasi Bearer rute tulis, mitigasi kebocoran database NaN/500, security headers, dan perampingan footer non-slop (ADR-032)
+phase=Chatbot AI Resilience & Database Alignment done=ALL last=Integrasi key resmi Google Gemini, penyelarasan skema RAG komoditas_unggulan/horti/ekonomi, dan local RAG streaming fallback (ADR-033)
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -182,6 +182,12 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Isolasi Host Proksi CKAN (Anti-SSRF): Memvalidasi target URL proksi CKAN `/3/*` agar strictly terkunci pada host resmi `opendata.banjarnegarakab.go.id` (SP-020).
 - Koreksi Resolusi Path Paket Ekspor: Memperbaiki kalkulasi path traversal `PAKET_ROOT` di `routes/admin.js` agar tepat mengarah ke direktori `./database/template-import-export/`.
 - Perampingan Footer Anti-AI-Slop: Menghilangkan tumpukan informasi berlebih dan tautan institusional verbose pada footer publik (`default-CAKe9ffW.js`), menggantinya dengan komposisi ringkas elegan: `© 2026 SISPERTANI Kab. Banjarnegara` | `v2.4.0`.
+
+[ADR-033] Chatbot AI Resilience, Google Gemini Key Integration & Local RAG Fallback:
+- Kredensial Valid & Model Resmi: Mengintegrasikan Google Gemini API Key resmi dan memperbarui daftar model yang didukung (`gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-3.5-flash`) untuk koneksi cepat dan stabil.
+- Penyelarasan Skema Kolom RAG: Menyelaraskan query RAG ke tabel `komoditas_unggulan` (`kecamatan`, `produksi`, `nilai_ekonomi`), `horti_produksi` (`COALESCE(produksi_ton, nilai)`), dan `nilai_ekonomi_tahunan` (`nilai_rp`), mengeliminasi galat 1054 kolom tidak ditemukan.
+- Smart Local/Offline RAG Streaming Fallback: Mengimplementasikan mekanisme fallback SSE cerdas di mana jika upstream AI mengalami kelebihan beban atau gangguan jaringan, backend tetap merangkum data statistik resmi dari MySQL `pertasis` dan mengalirkannya secara langsung ke UI chatbot, mencegah galat 'kesalahan koneksi'.
+
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR

@@ -359,12 +359,29 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Mengeluarkan kolom `nilai_rp` dari klausul `INSERT INTO nilai_ekonomi_tahunan` (sehingga dihitung otomatis oleh MariaDB) dan menambahkan konfigurasi proteksi `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO'`.
   4. Eksekusi ulang di terminal server SSH terkonfirmasi berhasil 100% tanpa galat dan status endpoint `/api/health` mengembalikan `{"ok":true,"db":"up"}`.
 
+### [ISSUE-030] Chatbot Si Pertani Mengalami 'Kesalahan Koneksi' Akibat Placeholder GEMINI_API_KEY & Kolom RAG Mismatch
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Pengguna mendapati pesan *"Maaf, terjadi kesalahan koneksi. Pastikan jaringan internet tersedia dan coba lagi. Jika masalah berlanjut, hubungi administrator sistem."* saat mengirimkan pertanyaan pada chatbot "Si Pertani" di halaman rekomendasi (`/recommendations`).
+- **Akar Masalah:**
+  1. Parameter `GEMINI_API_KEY` pada file `.env` awalnya bernilai placeholder dummy (`AIzaSyYourGeminiApiKeyHere`, panjang 26 karakter). Google Generative Language mengembalikan penolakan `HTTP 400: Please pass a valid API key (INVALID_ARGUMENT)`.
+  2. Frontend menangani segala HTTP status non-OK (400, 500, 503) dengan melempar exception generik ke blok `catch` dan menampilkan teks *"kesalahan koneksi"*.
+  3. Query live RAG pada `src/routes/ai.js` dan `src/lib/komoditas-dinamis.js` memanggil kolom yang tidak ada (`kecamatan_sentra`, `total_produksi`, `satuan` pada `horti_produksi`), memicu database warning `ER_BAD_FIELD_ERROR 1054`.
+  4. Ketiadaan mode fallback lokal jika upstream Google AI mengalami throttling atau offline.
+- **Solusi (ADR-033):**
+  1. Memasang API Key resmi Google Gemini yang valid pada file konfigurasi `.env`.
+  2. Menyelaraskan query tabel `komoditas_unggulan` (`kecamatan`, `produksi`, `nilai_ekonomi`) dan tabel `horti_produksi` (`COALESCE(produksi_ton, nilai) AS nilai`) pada `src/routes/ai.js` dan `src/lib/komoditas-dinamis.js`.
+  3. Memperbarui daftar model resmi Google Gemini (`gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-3.5-flash`).
+  4. Mengimplementasikan fitur **Smart Local/Offline RAG Streaming Fallback**: Jika koneksi upstream ke Google API mengalami beban tinggi atau terputus, backend secara otomatis merangkum data riil dari basis data MySQL `pertasis` dan mengalirkannya via SSE stream langsung ke antarmuka chatbot.
+  5. Pengujian live end-to-end melalui curl dan browser terkonfirmasi berhasil mengalirkan jawaban interaktif dengan status HTTP 200 tanpa galat.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
 *(Saat ini seluruh sinkronisasi kode, skema basis data, sanitasi aset visual, dan perbaikan migrasi produksi telah tuntas 100%).*
 

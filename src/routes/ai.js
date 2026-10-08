@@ -8,8 +8,8 @@ const aiRouter = express.Router();
 const SUPPORTED_MODELS = [
   "gemini-flash-lite-latest",
   "gemini-3.5-flash-lite",
-  "gemini-3.6-flash",
-  "gemini-3.8-flash"
+  "gemini-flash-latest",
+  "gemini-3.5-flash"
 ];
 
 // In-memory sliding rate limiter per IP untuk mencegah exploit / kuota drain oleh pihak luar
@@ -67,10 +67,10 @@ async function retrieveDynamicContext(userQuery) {
     const unggulanList = [];
     for (const kw of keywords) {
       const rows = await q(
-        `SELECT sektor, nama_komoditas, satuan, kecamatan_sentra, total_produksi, nilai_ekonomi_estimasi, tahun 
+        `SELECT sektor, nama_komoditas, satuan, kecamatan, sentra, produksi, nilai_ekonomi, tahun 
          FROM komoditas_unggulan 
          WHERE LOWER(nama_komoditas) LIKE ? OR LOWER(sektor) LIKE ? 
-         ORDER BY total_produksi DESC LIMIT 6`,
+         ORDER BY produksi DESC LIMIT 6`,
         [`%${kw}%`, `%${kw}%`]
       );
       for (const r of rows) {
@@ -82,7 +82,7 @@ async function retrieveDynamicContext(userQuery) {
     if (unggulanList.length > 0) {
       let text = "RINGKASAN DATA KOMODITAS SISTEM (Database SISPERTANI):\n";
       for (const u of unggulanList) {
-        text += `- ${u.nama_komoditas} [Sektor ${u.sektor}, Tahun ${u.tahun}]: Total Produksi ${Number(u.total_produksi).toLocaleString("id-ID")} ${u.satuan}, Sentra: Kec. ${u.kecamatan_sentra}${u.nilai_ekonomi_estimasi > 0 ? `, Estimasi Nilai Ekonomi: Rp ${Number(u.nilai_ekonomi_estimasi).toLocaleString("id-ID")}` : ""}\n`;
+        text += `- ${u.nama_komoditas} [Sektor ${u.sektor}, Tahun ${u.tahun}]: Total Produksi ${Number(u.produksi).toLocaleString("id-ID")} ${u.satuan || "Ton"}, Sentra: Kec. ${u.kecamatan || u.sentra || "Banjarnegara"}${u.nilai_ekonomi > 0 ? `, Estimasi Nilai Ekonomi: Rp ${Number(u.nilai_ekonomi).toLocaleString("id-ID")}` : ""}\n`;
       }
       contextParts.push(text);
     }
@@ -140,10 +140,10 @@ async function retrieveDynamicContext(userQuery) {
 
       // Hortikultura (Salak, Kentang, Cabai, Kubis, Tomat, Durian, Pisang, dll)
       const hortiRows = await q(
-        `SELECT k.nama as kecamatan, h.komoditas, h.tahun, h.nilai, h.satuan 
+        `SELECT k.nama as kecamatan, h.komoditas, h.tahun, COALESCE(h.produksi_ton, h.nilai) as nilai, 'Ton' as satuan 
          FROM horti_produksi h JOIN kecamatan k ON k.id=h.kecamatan_id 
          WHERE LOWER(h.komoditas) LIKE ? 
-         ORDER BY h.tahun DESC, h.nilai DESC LIMIT 8`,
+         ORDER BY h.tahun DESC, nilai DESC LIMIT 8`,
         [`%${kw}%`]
       );
       if (hortiRows.length > 0) {
@@ -364,6 +364,24 @@ aiRouter.post("/chat", async (req, res) => {
   }
 
   if (!success && !res.headersSent) {
+    if (dynamicContext) {
+      console.log("[AI-PROXY] Upstream unavilable, streaming local RAG fallback response...");
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no"
+      });
+      const localReply = `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung dari basis data resmi SISPERTANI Banjarnegara)*`;
+      const lines = localReply.split("\n");
+      for (const l of lines) {
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: l + "\n" } }] })}\n\n`);
+      }
+      res.write("data: [DONE]\n\n");
+      res.end();
+      return;
+    }
+
     res.status(503).json({
       error: "service_unavailable",
       message: "Seluruh model AI sedang mengalami beban tinggi. Silakan coba kembali sesaat lagi.",
