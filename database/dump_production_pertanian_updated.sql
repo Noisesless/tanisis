@@ -2402,7 +2402,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `log_aktivitas` AS select `activity_logs`.`id` AS `id`,`activity_logs`.`user_id` AS `user_id`,`activity_logs`.`username` AS `username`,`activity_logs`.`nama_lengkap` AS `nama_lengkap`,`activity_logs`.`role` AS `role`,`activity_logs`.`action` AS `action`,`activity_logs`.`entity` AS `entity`,`activity_logs`.`description` AS `description`,`activity_logs`.`ip_address` AS `ip_address`,`activity_logs`.`user_agent` AS `user_agent`,`activity_logs`.`status` AS `status`,`activity_logs`.`metadata` AS `metadata`,`activity_logs`.`created_at` AS `created_at` from `activity_logs` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
