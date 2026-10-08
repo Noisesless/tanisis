@@ -1,5 +1,5 @@
 <!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-05T11:26:00+07:00 | Phase: Clean Release | Build: OK -->
+<!-- Last: 2026-10-08T08:58:00+07:00 | Phase: Clean Release | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Clean Release done=ALL last=Redesign Halaman Login Admin Portal (/admin) Anti-AI-Slop dengan arsitektur asimetris, latar fotografi sawah Banjarnegara, tipografi institusional resmi, dan quick-role selector (ADR-028)
+phase=Clean Release done=ALL last=Perbaikan blank page /kecamatan via eliminasi infinite redirect loop React Router v6 (ADR-029) dan sinkronisasi dokumentasi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -160,6 +160,10 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Quick Role Selector & Form Interaktif: Menyediakan pemilih peran cepat (Administrator, Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan), toggle sembunyikan/tampilkan kata sandi, indikator keamanan SSL terenkripsi, dan feedback status login yang jernih.
 - Kepatuhan Anti-AI-Slop & Responsivitas Layar: Mengeliminasi teks hiperbolis dan buzzword, menerapkan tipografi Inter tabular-nums, serta adaptif mulus mulai dari layar laptop 1366×768 hingga smartphone Android 3M (360/393/412px).
 
+[ADR-029] React Router v6 Path Scoring & Client-Side Redirect Elimination (/kecamatan):
+- Root Cause: Di file bundle 'dist/assets/index-CI1XYnwk.js', terdapat rute redirect '<Route path="/kecamatan/" element={<Navigate to="/kecamatan" replace />} />' tepat sebelum '<Route path="/kecamatan" element={<KecamatanPage />} />'. Dalam algoritma scoring React Router v6, rute bertrailing slash mendapat skor lebih tinggi (15 vs 13) dan dicocokkan lebih awal dengan regex yang sama, memicu infinite client-side redirect loop pada dirinya sendiri saat pengguna mengakses /kecamatan (menjadikan container #root kosong 0 byte).
+- Solusi: Menghapus rute redirect redundan /kecamatan/ di sisi React Router. Normalisasi trailing-slash (/kecamatan/ -> /kecamatan) secara aman dan definitif telah ditangani di layer Express HTTP server (src/server.js: 302 redirect), sehingga halaman profil 20 kecamatan beserta peta spasial MapLibre kini ter-render sempurna tanpa blocking.
+
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
 mysql=root=
@@ -191,6 +195,7 @@ mysql=root=
 [x] Harmonisasi Layout, Lebar & Geometri Halaman /renstra & /recommendations Sesuai design-system.md
 [x] Eliminasi AI Slop Eyebrow Badge & Pulsing Dot pada Header /renstra, /recommendations, dan /farmers
 [x] Redesign Halaman Login Admin (/admin) Asimetris dengan Latar Foto Sawah Banjarnegara & Form Ringkas Resmi (ADR-028)
+[x] Eliminasi Infinite Client-Side Redirect Loop /kecamatan/ pada React Router v6 Bundle (ADR-029)
 
 
 

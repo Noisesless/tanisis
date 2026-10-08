@@ -22,6 +22,7 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Harmonisasi Layout & Geometri (ADR-026)** | Sangat Baik | ✅ PASSED | Eliminasi batas sempit `max-w-5xl` pada `/renstra` dan `/recommendations`, penerapan token `--radius-md: 8px`, border-left-4 pada kartu metrik, dan integrasi tabel seri tahunan ke dalam kontainer utama. |
 | **Eliminasi AI Slop & Pulsing Dot Header (ADR-027)** | Sangat Baik | ✅ PASSED | Penghapusan capsule/eyebrow kapital dan indikator pulsing dot pada header `/renstra`, `/recommendations`, dan `/farmers` demi kepatuhan mutlak pada Anti-AI-Slop Law. |
 | **Redesign Portal Login Asimetris & Anti-AI-Slop (ADR-028)** | Sangat Baik | ✅ PASSED | Rekonstruksi layout split 2-kolom asimetris (55:45), citra latar sawah lokal Banjarnegara, eliminasi buzzword/hiperbola, quick role selector, dan input password interaktif berstandar WCAG AA. |
+| **Stabilitas Routing SPA & Anti-Redirect-Loop (ADR-029)** | Sangat Baik | ✅ PASSED | Eliminasi *infinite client-side redirect loop* pada rute `/kecamatan` akibat anomali scoring trailing-slash React Router v6; normalisasi rute didelegasikan secara terpusat ke layer Express HTTP redirect. |
 
 ---
 

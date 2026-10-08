@@ -34,7 +34,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
 | `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
 | `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
-| `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara | Publik | STABLE |
+| `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara (Peta Spasial & Rekapitulasi) | Publik | STABLE |
+| `/kecamatan/:slug` | Kelembagaan & Data | Profil Statistik Komoditas & Wilayah Kecamatan Spesifik | Publik | STABLE |
 | `/admin` | Portal Admin | Portal Dasbor Admin (Form Login Asimetris Sawah Banjarnegara & Kelola Excel RBAC 20 Domain) | Admin/Bidang | STABLE |
 | `/info` | Bantuan & Info | Informasi Umum SISPERTANI | Publik | STABLE |
 | `/manual` | Bantuan & Info | Panduan Penggunaan / Manual Book | Publik | STABLE |
@@ -137,4 +138,5 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `Bearer Auth Token` | Seluruh `/api/v1/admin/*` (kecuali login) | Memverifikasi keberadaan dan masa berlaku in-memory Bearer token |
 | `RBAC Domain Guard` | `template`, `export`, `import` admin | Memvalidasi kewenangan akun bidang terhadap domain yang diminta |
 | `Multer MemoryStorage` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |
+| `Trailing-Slash Normalizer` | `GET /kecamatan/`, `GET /sebaran/` | Mengalihkan rute bertrailing slash (302 redirect) ke path kanonikal untuk mencegah redirect loop di sisi klien |
 | `SPA HTML Fallback` | Seluruh `GET` non-API non-ekstensi | Mengarahkan navigasi peramban ke `index.html` untuk mendukung routing klien |

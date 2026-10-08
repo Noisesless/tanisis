@@ -315,6 +315,16 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Merancang form login sisi kanan (~45%) yang ringkas, bersih, dan berwibawa: Quick Role selector (Administrator, Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan), toggle visibilitas kata sandi, dan enkripsi status koneksi aman.
   3. Mengeliminasi seluruh teks hiperbolis/buzzword sesuai kaidah Anti-AI-Slop Law dan memastikan tampilan sepenuhnya responsif pada laptop 1366×768 maupun layar smartphone.
 
+### [ISSUE-026] Halaman Profil Kecamatan (/kecamatan) Mengalami Blank Page Akibat Infinite Client-Side Redirect Loop
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-08
+- **Deskripsi:** Membuka URL `http://localhost:5173/kecamatan` menghasilkan tampilan layar kosong putih (*blank page* total), di mana container `#root` tidak merender elemen DOM apapun (0 byte).
+- **Akar Masalah:** Pada file bundel `dist/assets/index-CI1XYnwk.js`, terdaftar rute `<Route path="/kecamatan/" element={<Navigate to="/kecamatan" replace />} />` persis sebelum `<Route path="/kecamatan" element={<KecamatanPage />} />`. Dalam algoritma scoring React Router v6, rute dengan trailing slash (`/kecamatan/`) memperoleh skor lebih tinggi (15) dibanding tanpa trailing slash (13) dan dievaluasi lebih awal menggunakan regex identik `/^\/kecamatan\/*$/i`. Akibatnya, setiap kali browser membuka `/kecamatan`, rute `/kecamatan/` terpicu dan mengeksekusi `<Navigate to="/kecamatan" replace={true} />`, menghasilkan infinite loop pada dirinya sendiri sehingga komponen halaman kecamatan tidak pernah termuat.
+- **Solusi (ADR-029):**
+  1. Menghapus rute redirect redundan `/kecamatan/` pada `dist/assets/index-CI1XYnwk.js`.
+  2. Normalisasi URL `/kecamatan/` ke `/kecamatan` sudah ditangani secara aman dan terpusat di sisi server HTTP Express (`src/server.js: 190` dengan status 302).
+  3. Verifikasi headless browser mengonfirmasi `#root` kini merender DOM lengkap (32.574 karakter), memuat peta spasial MapLibre GL 20 kecamatan, metrik agregat, dan pemilih wilayah tanpa galat.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

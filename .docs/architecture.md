@@ -43,7 +43,7 @@ graph TD
 1. **Aplikasi Single-Page (SPA):**
    - Dibangun dengan Vite, React, dan Tailwind/CSS modern.
    - Dikompilasi ke direktori `./dist` dan disajikan langsung oleh Express melalui middleware `express.static(distRoot)`.
-   - **SPA Fallback Routing:** Seluruh permintaan `GET` tanpa ekstensi berkas yang bukan merupakan rute `/api` atau `/sispertani-api` dialihkan secara otomatis ke `./dist/index.html`. Hal ini memastikan fitur reload/refresh halaman pada rute dalam (seperti `/desa/:kecamatan/:desa` atau `/bidang/:nama`) tetap berjalan tanpa galat 404.
+   - **SPA Fallback Routing:** Seluruh permintaan `GET` tanpa ekstensi berkas yang bukan merupakan rute `/api` atau `/sispertani-api` dialihkan secara otomatis ke `./dist/index.html`. Hal ini memastikan fitur reload/refresh halaman pada rute dalam (seperti `/desa/:kecamatan/:desa` atau `/bidang/:nama`) tetap berjalan tanpa galat 404. Normalisasi rute bertrailing slash (seperti `/kecamatan/` -> `/kecamatan` dan `/sebaran/` -> `/sebaran/pangan`) ditangani secara definitif pada layer HTTP server Express sebelum SPA fallback, mencegah potensi konflik scoring regex rute React Router v6 di sisi klien.
 
 2. **Lapisan Spasial GIS (Geographic Information System):**
    - Menggunakan pustaka MapLibre GL untuk merender peta interaktif.
