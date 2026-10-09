@@ -108,6 +108,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/kelembagaan/upja` | `src/routes/kelembagaan.js` | Publik | Data Usaha Pelayanan Jasa Alsintan (UPJA) |
 | `GET` | `/v1/psat-pduk` | `src/routes/psat.js` | Publik | Hasil uji petik residu pestisida & keamanan pangan PSAT pasar |
 | `POST`| `/v1/psat-pduk` | `src/routes/psat.js` | Bearer (Admin) | Input data pengawasan uji petik keamanan pangan PSAT-PDUK |
+| `GET` | `/v1/ketahanan/fsva-desa` | `src/routes/ketahanan.js` | Publik | Data 16 indikator FSVA-Desa (10 data fisik/demografi, 5 rasio, IKP 0–100, komposit prioritas 1–6, ranking) 278 desa |
+| `GET` | `/v1/ketahanan/fsva-desa/ringkasan` | `src/routes/ketahanan.js` | Publik | Ringkasan agregat capaian FSVA-Desa kabupaten (rata-rata IKP, total lahan, total miskin, sebaran prioritas) |
 | `GET` | `/v1/ketahanan/fsva-kabupaten` | `src/routes/ketahanan.js` | Publik | Data 12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) |
 | `GET` | `/v1/ketahanan/neraca-komposit` | `src/routes/ketahanan.js` | Publik | Neraca pangan komposit ketersediaan komoditas pokok daerah |
 | `GET` | `/v1/ketahanan/harga-pasar` | `src/routes/ketahanan.js` | Publik | Data harian komoditas pasar tradisional Banjarnegara |

@@ -93,6 +93,17 @@ async function main() {
     }
   }
 
+  // Jalankan import validasi FSVA-Desa (16 indikator fisik + rasio 2024)
+  const importFsvaScript = path.resolve(process.cwd(), "scripts/import_fsva_desa.js");
+  if (fs.existsSync(importFsvaScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Mengimpor validasi FSVA-Desa 2024...`);
+      execSync(`node "${importFsvaScript}"`, { stdio: "inherit", env: process.env });
+    } catch (fsvaErr) {
+      console.warn(`[Migrasi Patch Warning] Import FSVA gagal:`, fsvaErr.message);
+    }
+  }
+
   // Verifikasi tabel-tabel baru hari ini
   const verifyConn = await mysql.createConnection({
     host: envHost,
@@ -106,6 +117,7 @@ async function main() {
     const checkTables = [
       "psat_pduk",
       "fsva_indikator_kabupaten",
+      "fsva_desa_indikator",
       "harga_pasar_banjarnegara",
       "neraca_pangan_komposit",
       "kelembagaan_pertanian",

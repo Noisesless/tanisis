@@ -506,21 +506,32 @@ async function retrieveDynamicContext(userQuery) {
       }
     }
 
-    // 12. FSVA & KETAHANAN PANGAN
-    if (queryLower.includes("fsva") || queryLower.includes("ketahanan pangan") || queryLower.includes("kerentanan") || queryLower.includes("rawan pangan")) {
-      const fsvaRows = await q(
-        `SELECT nomor_indikator, nama_indikator, satuan, standar_norma, nilai_capaian, status_data, tahun 
-         FROM fsva_indikator_kabupaten 
-         ORDER BY tahun DESC, nomor_indikator ASC LIMIT 8`
+    // 12. FSVA & KETAHANAN PANGAN (KABUPATEN & 278 DESA VALIDASI)
+    if (queryLower.includes("fsva") || queryLower.includes("ketahanan pangan") || queryLower.includes("kerentanan") || queryLower.includes("rawan pangan") || queryLower.includes("ikp")) {
+      // Cek apakah user menanyakan desa/kecamatan tertentu
+      let filterSql = "WHERE 1=1";
+      const filterParams = [];
+      if (kecamatanParam) {
+        filterSql += " AND LOWER(nama_kecamatan) = LOWER(?)";
+        filterParams.push(kecamatanParam);
+      }
+
+      const fsvaDesaRows = await q(
+        `SELECT nama_desa, nama_kecamatan, ikp, komposit, ikp_ranking, luas_lahan_ha, penduduk_miskin_jiwa, sarpras_pangan_unit, tahun
+         FROM fsva_desa_indikator
+         ${filterSql}
+         ORDER BY ikp ASC LIMIT 6`,
+        filterParams
       );
-      if (fsvaRows.length > 0) {
-        let text = `INDIKATOR KETAHANAN & KERENTANAN PANGAN (FSVA ${fsvaRows[0].tahun}):\n`;
-        for (const f of fsvaRows) {
-          text += `- Indikator #${f.nomor_indikator} ${f.nama_indikator}: Capaian ${f.nilai_capaian} ${f.satuan} (Standar: ${f.standar_norma}) [${f.status_data}]\n`;
+      if (fsvaDesaRows.length > 0) {
+        let text = `VALIDASI FSVA-DESA BANJARNEGARA (${fsvaDesaRows[0].tahun}) — Paling Rentan / Relevan:\n`;
+        for (const f of fsvaDesaRows) {
+          text += `- Desa ${f.nama_desa} (${f.nama_kecamatan}): IKP ${f.ikp} (Prioritas ${f.komposit}, Rank #${f.ikp_ranking}), Lahan Pangan ${f.luas_lahan_ha} Ha, Penduduk Miskin DTKS ${Number(f.penduduk_miskin_jiwa).toLocaleString("id-ID")} Jiwa, Sarpras ${f.sarpras_pangan_unit} Unit\n`;
         }
         contextParts.push(text);
       }
     }
+
 
     // 13. KELEMBAGAAN TANI, KWT, GAPOKTAN, POKDAKAN & PENYULUH
     const isKelembagaanQuery = 

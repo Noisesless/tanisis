@@ -11,6 +11,7 @@
     "db:patch": "node --env-file=.env scripts/apply_production_patch.js",
     "db:patch-unggulan": "node --env-file=.env scripts/patch_komoditas_unggulan.js",
     "db:import-distankan": "node --env-file=.env scripts/import_unmerged_distankan.js",
+    "db:import-fsva": "node --env-file=.env scripts/import_fsva_desa.js",
     "rag:offline": "python scripts/offline_rag.py"
   },
   "dependencies": {

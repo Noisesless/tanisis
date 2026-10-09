@@ -44,9 +44,14 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,kwt_kelompok_wanita_tani,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,neraca_pangan_komposit)
+pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,kwt_kelompok_wanita_tani,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,fsva_desa_indikator,neraca_pangan_komposit)
 
 ## [ADR]
+[ADR-037] FSVA Desa Single Source of Truth & 16-Variable Dynamic Integration:
+- Tabel `fsva_desa_indikator` di MariaDB menyimpan 16 variabel lengkap (10 fisik & demografi riil: Luas Sawah Ha, Sarpras Pangan Unit, Penduduk Miskin DTKS Jiwa, Status Akses, RT Tanpa Air Bersih, Jumlah Tenaga Kesehatan, Luas Wilayah Ha, Penduduk Jiwa, RT, Kepadatan; 5 rasio FSVA Tiga Pilar; IKP 0–100, komposit prioritas 1–6, ranking) dari 5 berkas validasi Bapanas & Distankan KP untuk 278 desa.
+- Menghapus tab kedua 12 indikator dummy/placeholder AI yang membingungkan klien, menyatukan halaman `/fsva` menjadi dashboard peta spasial interaktif terpadu.
+- Endpoint `GET /api/v1/ketahanan/fsva-desa` & `GET /api/v1/ketahanan/fsva-desa/ringkasan` melayani data langsung dari MariaDB.
+- Skrip ETL `scripts/import_fsva_desa.js` (`npm run db:import-fsva`) siap menerima file tahun berikutnya (--tahun=2025) secara dinamis tanpa mengubah source code.
 [ADR-001] Express static + API dual mount: /api dan /sispertani-api dilayani oleh single server di port 5173
 [ADR-002] Zero Dummy Data Law: komoditas/tahun tanpa data mengembalikan status empty tanpa mock array
 [ADR-003] Sector Economic Widget: Komoditas utama & nilai ekonomi terpadu per sektor dinamis 100% dari MySQL/OpenData

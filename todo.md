@@ -1,9 +1,14 @@
 # TODO: SISPERTANI — Data Readiness & Audit Dashboard
 
-## Status: Siap Eksekusi (Pragmatic & Anti-Over-Engineering)
-Fitur monitoring kesiapan data (Data Readiness Radar) untuk Super Admin guna memantau kelengkapan data database per bidang/menu publik dan mempermudah rekonsiliasi data.
-
----
+## Status: 100% Selesai (FSVA Desa 16 Indikator Terintegrasi Database & Peta Web)
+- [x] Analisis 5 berkas Excel validasi FSVA Bapanas 2024 (278 desa se-Banjarnegara)
+- [x] Buat tabel MariaDB `fsva_desa_indikator` (16 variabel data fisik, demografi, rasio, IKP, komposit, ranking)
+- [x] Buat skrip ETL parser `scripts/import_fsva_desa.js` (`npm run db:import-fsva`) yang dinamis untuk tahun berikutnya
+- [x] Integrasikan runner impor FSVA ke `scripts/apply_production_patch.js` (`npm run db:patch`)
+- [x] Tambahkan endpoint API `/api/v1/ketahanan/fsva-desa` & `/api/v1/ketahanan/fsva-desa/ringkasan` di `src/routes/ketahanan.js`
+- [x] Integrasikan konteks data desa ke RAG Chatbot Si Pertani di `src/routes/ai.js`
+- [x] Hapus tab 2 dummy/karangan AI di antarmuka web `/fsva` dan satukan menjadi dashboard 16-indikator lengkap dengan cache buster
+- [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `app-context.md`, `README.md`)
 
 ### Fase 1: Backend Audit Kesiapan Data (/api/v1/admin/readiness)
 - [ ] Buat fungsi audit `getReadinessAudit()` di `src/lib/domains.js` yang menghitung baris tabel-tabel di `DOMAINS` secara batch via `COUNT(*)` dan mendeteksi ketersediaan fallback disk

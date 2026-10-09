@@ -27,7 +27,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Peternakan & Keswan` — Populasi Ternak Murni & Estimasi Dijual Hidup (`/livestock` inc. Domba Batur), Komoditas Unggulan Peternakan, Nilai Ekonomi & Ekosistem Usaha (`/nilai-ekonomi/peternakan` - 4 Tab: Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV), Produksi Utama & Hasil Ikutan per Spesies + Simulasi Lahan HPT (`/peternakan/susu-kulit`), Lalu Lintas & Pemotongan RPH (`/livestock-flow`).
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
-   - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA, Rantai Pasok/RMU, Fluktuasi Harga Pasar.
+   - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA Desa (`/fsva` — 16 Indikator Fisik & Rasio Validasi Bapanas Terintegrasi Database), Rantai Pasok/RMU, Fluktuasi Harga Pasar.
    - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra`), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
 4. **Kelembagaan & Data:**
    - `Kelembagaan Tani` (3 Submenu Navbar Terisolasi):

@@ -101,6 +101,7 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Keamanan Pangan**| `psat_pduk` | `(id)` | Register izin edar & hasil uji petik residu pestisida pangan segar pasar (5 entitas aktif) |
 | **Keamanan Pangan**| `psat_sampel_uji` | `(kecamatan_id, pasar, tanggal_uji, jenis_pangan)` | Uji petik acak residu pestisida & cemaran bahan pangan |
 | **Keamanan Pangan**| `psat_izin_edar` | `(nomor_izin_pduk)` | Register sertifikasi izin edar PSAT-PDUK pelaku usaha |
+| **Ketahanan Pangan**| `fsva_desa_indikator` | `(kode_desa, tahun)` | Validasi 16 indikator FSVA-Desa Bapanas & Distankan KP (10 fisik & demografi: lahan Ha, sarpras unit, miskin DTKS jiwa, air bersih RT, nakes orang, luas desa Ha, penduduk jiwa, RT, kepadatan; 5 rasio; IKP 0–100, komposit prioritas 1–6, ranking) untuk 278 desa se-Banjarnegara |
 | **Ketahanan Pangan**| `fsva_indikator_kabupaten` | `(tahun, nomor_indikator)` | Capaian 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas tingkat kabupaten |
 | **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas per kecamatan |
 | **Ketahanan Pangan**| `harga_pasar_banjarnegara` | `(id)` | Pemantauan harga harian komoditas pangan di pasar tradisional Banjarnegara (16 komoditas terpantau) |
