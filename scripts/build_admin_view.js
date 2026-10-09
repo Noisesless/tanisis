@@ -21,7 +21,7 @@ var Sh_icon=E(\`shield\`,[[\`path\`,{d:\`M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8
 
 var N=b(x(),1);
 var P=T();
-var _e={"template-xlsx":\`Template Excel — 20 domain (siap isi)\`,"template-csv":\`Template CSV — 40 tabel (header + baris contoh)\`,"export-xlsx":\`Export Excel — snapshot data live\`,"export-csv":\`Export CSV — 40 tabel (data penuh)\`};
+var _e={"template-xlsx":\`Template Excel (format resmi)\`,"template-csv":\`Template CSV (format standar)\`,"export-xlsx":\`Ekspor Excel data terbaru\`,"export-csv":\`Ekspor CSV data lengkap\`};
 var ve=e=>e>=1024*1024?\`\${(e/(1024*1024)).toFixed(1)} MB\`:\`\${Math.max(1,Math.round(e/1024))} KB\`;
 var F=\`sispertani:admin-token\`;
 var I=\`sispertani:admin-session\`;
@@ -288,30 +288,20 @@ function V(){
             (0,P.jsxs)(\`div\`,{
               className:\`flex flex-wrap items-center gap-2.5\`,
               children:[
-                (0,P.jsxs)(S,{
-                  tone:isAdmin?\`emerald\`:\`blue\`,
+                (0,P.jsxs)(\`div\`,{
+                  className:\`flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700\`,
                   children:[
-                    (0,P.jsx)(Sh_icon,{className:\`h-3.5 w-3.5\`}),
-                    \` \`,
+                    (0,P.jsx)(ge,{className:\`h-3.5 w-3.5 text-slate-400\`}),
                     sessionUser?.label??\`Administrator\`
                   ]
                 }),
-                healthData?.db===\`up\`?(0,P.jsxs)(S,{
-                  tone:\`emerald\`,
-                  children:[
-                    (0,P.jsx)(M,{className:\`h-3 w-3\`}),
-                    \` Backend \`,
-                    healthData?.ok?\`OK\`:\`?\`,
-                    \` · MySQL Aktif\`
-                  ]
-                }):(0,P.jsxs)(S,{
+                healthData?.db && healthData.db !== \`up\` ? (0,P.jsxs)(S,{
                   tone:\`amber\`,
                   children:[
                     (0,P.jsx)(M,{className:\`h-3 w-3\`}),
-                    \` MySQL \`,
-                    healthData?.db??\`...\`
+                    \` Basis Data Terganggu\`
                   ]
-                }),
+                }) : null,
                 (0,P.jsxs)(C,{
                   to:\`/\`,
                   className:\`flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700\`,
@@ -341,61 +331,25 @@ function V(){
           // Role Banner Section
           isAdmin ? (
             // Super Admin Title & Subtitle
-            (0,P.jsxs)(\`div\`,{
+            (0,P.jsx)(\`div\`,{
               className:\`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
-              children:[
-                (0,P.jsxs)(\`div\`,{
-                  className:\`flex flex-wrap items-center justify-between gap-3\`,
-                  children:[
-                    (0,P.jsxs)(\`div\`,{
-                      children:[
-                        (0,P.jsx)(\`p\`,{className:\`text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-600\`,children:\`Portal Eksekutif & Administrator\`}),
-                        (0,P.jsx)(\`h1\`,{className:\`mt-1 text-2xl font-extrabold tracking-tight text-slate-900\`,children:\`Panel Pengelolaan Data Terintegrasi\`}),
-                        (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed\`,children:\`Kelola template Excel, ekspor data MySQL, dan impor pembaruan tabel (upsert) untuk seluruh 20 domain sektor pertanian, peternakan, perikanan, dan kelembagaan daerah.\`})
-                      ]
-                    }),
-                    (0,P.jsxs)(\`div\`,{
-                      className:\`flex items-center gap-2\`,
-                      children:[
-                        (0,P.jsxs)(\`span\`,{className:\`inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 border border-emerald-200/80\`,children:[(0,P.jsx)(Sh_icon,{className:\`h-3.5 w-3.5\`}),\`Hak Akses Penuh\`]}),
-                        (0,P.jsxs)(\`span\`,{className:\`inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200\`,children:[(0,P.jsx)(i,{className:\`h-3.5 w-3.5\`}),\`MariaDB pertasis\`]})
-                      ]
-                    })
-                  ]
-                })
-              ]
+              children:(0,P.jsxs)(\`div\`,{
+                children:[
+                  (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold tracking-tight text-slate-900\`,children:\`Pengelolaan Data Sektoral\`}),
+                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed\`,children:\`Unduh format template, perbarui berkas Excel, atau ekspor data komoditas dan kelembagaan daerah.\`})
+                ]
+              })
             })
           ) : (
             // Technical Bidang Workspace Banner
-            (0,P.jsxs)(\`div\`,{
-              className:\`mb-6 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50/80 via-white to-slate-50 p-5 shadow-sm\`,
-              children:[
-                (0,P.jsxs)(\`div\`,{
-                  className:\`flex items-start gap-4\`,
-                  children:[
-                    (0,P.jsx)(\`div\`,{
-                      className:\`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm\`,
-                      children:(0,P.jsx)(f,{className:\`h-6 w-6\`})
-                    }),
-                    (0,P.jsxs)(\`div\`,{
-                      className:\`min-w-0 flex-1\`,
-                      children:[
-                        (0,P.jsxs)(\`div\`,{
-                          className:\`flex flex-wrap items-center gap-2\`,
-                          children:[
-                            (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold text-slate-900\`,children:\`Ruang Kerja \${sessionUser?.label??'Bidang Teknis'}\`}),
-                            (0,P.jsx)(\`span\`,{className:\`rounded-md bg-blue-100 px-2 py-0.5 text-[11px] font-semibold text-blue-800 border border-blue-200\`,children:\`Role RBAC Terverifikasi\`})
-                          ]
-                        }),
-                        (0,P.jsx)(\`p\`,{
-                          className:\`mt-1 text-xs leading-relaxed text-slate-600 max-w-3xl\`,
-                          children:\`Anda memiliki kewenangan operasional untuk mengunduh template resmi, mengekspor data aktif, dan mengunggah (upsert) pembaruan tabel Excel untuk seluruh domain teknis bidang Anda.\`
-                        })
-                      ]
-                    })
-                  ]
-                })
-              ]
+            (0,P.jsx)(\`div\`,{
+              className:\`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
+              children:(0,P.jsxs)(\`div\`,{
+                children:[
+                  (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold tracking-tight text-slate-900\`,children:\`Pengelolaan Data — \${sessionUser?.label??'Bidang Teknis'}\`}),
+                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed\`,children:\`Unduh format template, perbarui berkas Excel, atau ekspor data sesuai wewenang bidang tugas Anda.\`})
+                ]
+              })
             })
           ),
 
@@ -410,61 +364,40 @@ function V(){
 
           // KPI Stats Row
           (0,P.jsxs)(\`div\`,{
-            className:\`grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4\`,
+            className:isAdmin?\`grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4\`:\`grid grid-cols-1 gap-4 sm:grid-cols-2\`,
             children:[
               (0,P.jsx)(H,{
                 icon:(0,P.jsx)(i,{className:\`h-5 w-5\`}),
                 color:\`bg-emerald-50 text-emerald-700 border border-emerald-200\`,
-                label:isAdmin?\`Domain Terdaftar\`:\`Domain Wewenang Bidang\`,
+                label:isAdmin?\`Domain Terdaftar\`:\`Domain Tugas Bidang\`,
                 value:domsData?domsData.length:null,
-                hint:\`Katalog tabel siap kelola\`
+                hint:\`Katalog sektor data\`
               }),
               (0,P.jsx)(H,{
                 icon:(0,P.jsx)(g,{className:\`h-5 w-5\`}),
                 color:\`bg-blue-50 text-blue-700 border border-blue-200\`,
-                label:\`Total Tabel / Sheet\`,
+                label:\`Total Tabel Data\`,
                 value:domsData?totalSheets:null,
-                hint:\`Template · export · import\`
+                hint:\`Format lembar data\`
               }),
-              isAdmin ? (
-                (0,P.jsxs)(P.Fragment,{
-                  children:[
-                    (0,P.jsx)(H,{
-                      icon:(0,P.jsx)(a,{className:\`h-5 w-5\`}),
-                      color:\`bg-amber-50 text-amber-700 border border-amber-200\`,
-                      label:\`Program Bantuan\`,
-                      value:bantuanData?bantuanData.program.length:null,
-                      hint:bantuanData&&bantuanData.program.length>0?\`Pagu \${k(totalBantuanNominal)} · \${totalPenerima.toLocaleString(\`id-ID\`)} penerima\`:\`Belum ada data bantuan\`
-                    }),
-                    (0,P.jsx)(H,{
-                      icon:(0,P.jsx)(fe,{className:\`h-5 w-5\`}),
-                      color:\`bg-indigo-50 text-indigo-700 border border-indigo-200\`,
-                      label:\`Riwayat Sinkronisasi\`,
-                      value:syncData?syncData.total:null,
-                      hint:syncData&&syncData.rows.length>0?\`Terakhir: \${new Date(syncData.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
-                    })
-                  ]
-                })
-              ) : (
-                (0,P.jsxs)(P.Fragment,{
-                  children:[
-                    (0,P.jsx)(H,{
-                      icon:(0,P.jsx)(Sh_icon,{className:\`h-5 w-5\`}),
-                      color:\`bg-teal-50 text-teal-700 border border-teal-200\`,
-                      label:\`Status Otoritas\`,
-                      value:\`Terkonfirmasi\`,
-                      hint:\`Hanya mengelola bidang sendiri\`
-                    }),
-                    (0,P.jsx)(H,{
-                      icon:(0,P.jsx)(M,{className:\`h-5 w-5\`}),
-                      color:\`bg-slate-50 text-slate-700 border border-slate-200\`,
-                      label:\`Koneksi Basis Data\`,
-                      value:\`Terhubung\`,
-                      hint:\`Sinkronisasi live MySQL\`
-                    })
-                  ]
-                })
-              )
+              isAdmin && (0,P.jsxs)(P.Fragment,{
+                children:[
+                  (0,P.jsx)(H,{
+                    icon:(0,P.jsx)(a,{className:\`h-5 w-5\`}),
+                    color:\`bg-amber-50 text-amber-700 border border-amber-200\`,
+                    label:\`Program Bantuan\`,
+                    value:bantuanData?bantuanData.program.length:null,
+                    hint:bantuanData&&bantuanData.program.length>0?\`Pagu \${k(totalBantuanNominal)} · \${totalPenerima.toLocaleString(\`id-ID\`)} penerima\`:\`Belum ada data bantuan\`
+                  }),
+                  (0,P.jsx)(H,{
+                    icon:(0,P.jsx)(fe,{className:\`h-5 w-5\`}),
+                    color:\`bg-indigo-50 text-indigo-700 border border-indigo-200\`,
+                    label:\`Riwayat Impor\`,
+                    value:syncData?syncData.total:null,
+                    hint:syncData&&syncData.rows.length>0?\`Terakhir: \${new Date(syncData.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
+                  })
+                ]
+              })
             ]
           }),
 
@@ -733,16 +666,16 @@ function V(){
                         className:\`flex items-center gap-2 text-sm font-bold text-slate-800\`,
                         children:[
                           (0,P.jsx)(u,{className:\`h-4 w-4 text-emerald-600\`}),
-                          \`Ketentuan & Tata Cara Pengelolaan Data\`
+                          \`Petunjuk Pengelolaan Data\`
                         ]
                       }),
                       (0,P.jsxs)(\`ol\`,{
                         className:\`mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-slate-600\`,
                         children:[
-                          (0,P.jsxs)(\`li\`,{children:[\`Mekanisme impor bersifat \`,(0,P.jsx)(\`b\`,{children:\`upsert\`}),\`: baris dengan kombinasi kunci unik yang identik dengan data di MySQL akan secara otomatis memperbarui record lama tanpa membuat duplikasi.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Pastikan penamaan kecamatan mengikuti standar resmi kabupaten (tersedia di sheet \`,(0,P.jsx)(\`b\`,{children:\`PETUNJUK\`}),\` file template). Variasi umum seperti \`,(0,P.jsx)(\`i\`,{children:\`Purwonegoro\`}),\` telah didukung sistem resolver.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Baris yang tidak lolos validasi (format data salah atau nilai enum tidak terdaftar) akan ditolak dan dilaporkan detail nomor barisnya pada laporan impor.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Setiap pembaruan data bantuan pemerintah akan otomatis mengosongkan cache lama sehingga halaman publik langsung memuat data terkini.\`]})
+                          (0,P.jsxs)(\`li\`,{children:[\`Pembaruan data otomatis: Baris dengan tahun dan wilayah yang sama akan memperbarui data sebelumnya tanpa membuat duplikasi.\`]}),
+                          (0,P.jsxs)(\`li\`,{children:[\`Pastikan penamaan kecamatan sesuai daftar standar pada lembar petunjuk template.\`]}),
+                          (0,P.jsxs)(\`li\`,{children:[\`Baris data yang tidak sesuai format akan dilewati dan dilaporkan nomor barisnya pada ringkasan impor.\`]}),
+                          (0,P.jsxs)(\`li\`,{children:[\`Pembaruan data bantuan pemerintah akan langsung tersinkronisasi ke portal publik.\`]})
                         ]
                       })
                     ]
@@ -809,20 +742,20 @@ function V(){
                   // If Technical Role: Quick Step Guide Card
                   !isAdmin && (0,P.jsxs)(P.Fragment,{
                     children:[
-                      (0,P.jsx)(U,{icon:(0,P.jsx)(d,{className:\`h-3.5 w-3.5\`}),title:\`Panduan Alur Kerja Bidang\`}),
+                      (0,P.jsx)(U,{icon:(0,P.jsx)(d,{className:\`h-3.5 w-3.5\`}),title:\`Panduan Pembaruan Data\`}),
                       (0,P.jsxs)(\`section\`,{
                         className:\`rounded-xl border border-slate-200 bg-white p-4 shadow-sm\`,
                         children:[
                           (0,P.jsxs)(\`div\`,{
                             className:\`space-y-3\`,
                             children:[
-                              {num:\`1\`,title:\`Unduh Template\`,desc:\`Klik tombol 'Template' pada domain yang ingin diperbarui untuk mendapatkan file Excel resmi berpanduan.\`},
-                              {num:\`2\`,title:\`Pengisian Data\`,desc:\`Isi tabel data sesuai sheet 'PETUNJUK'. Pastikan nama kecamatan dan tahun terisi dengan benar.\`},
-                              {num:\`3\`,title:\`Impor Pembaruan\`,desc:\`Gunakan tombol 'Impor Excel'. Data lama yang memiliki kunci sama akan diperbarui secara otomatis (upsert).\`}
+                              {num:\`1\`,title:\`Unduh Template\`,desc:\`Unduh berkas template Excel resmi sesuai domain yang ingin diperbarui.\`},
+                              {num:\`2\`,title:\`Pengisian Data\`,desc:\`Isi tabel data sesuai petunjuk. Pastikan nama kecamatan dan tahun terisi benar.\`},
+                              {num:\`3\`,title:\`Unggah Berkas\`,desc:\`Gunakan tombol 'Impor Excel' untuk memperbarui data ke sistem.\`}
                             ].map(st=>(0,P.jsxs)(\`div\`,{
                               className:\`flex items-start gap-2.5 text-xs\`,
                               children:[
-                                (0,P.jsx)(\`span\`,{className:\`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-800 text-[10px]\`,children:st.num}),
+                                (0,P.jsx)(\`span\`,{className:\`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-700 text-[10px]\`,children:st.num}),
                                 (0,P.jsxs)(\`div\`,{
                                   children:[
                                     (0,P.jsx)(\`p\`,{className:\`font-bold text-slate-800\`,children:st.title}),
@@ -838,16 +771,16 @@ function V(){
                   }),
 
                   // System Status Card
-                  (0,P.jsx)(U,{icon:(0,P.jsx)(M,{className:\`h-3.5 w-3.5\`}),title:\`Status Sistem & Konektivitas\`}),
+                  (0,P.jsx)(U,{icon:(0,P.jsx)(M,{className:\`h-3.5 w-3.5\`}),title:\`Informasi Sistem\`}),
                   (0,P.jsx)(\`section\`,{
                     className:\`rounded-xl border border-slate-200 bg-white shadow-sm\`,
                     children:(0,P.jsx)(\`dl\`,{
                       className:\`divide-y divide-slate-100\`,
                       children:[
-                        {k:\`Backend API\`,v:healthData?.ok?\`Terhubung\`:healthData?\`Terganggu\`:\`Memeriksa...\`,tone:healthData?.ok??!1?\`emerald\`:\`amber\`},
-                        {k:\`Basis Data MySQL\`,v:healthData?.db===\`up\`?\`MariaDB Aktif\`:healthData?.db??\`...\`,tone:healthData?.db===\`up\`?\`emerald\`:\`amber\`},
-                        {k:\`Sesi Kerja\`,v:\`Aktif (12 Jam)\`,tone:\`slate\`},
-                        {k:\`Paket Snapshot\`,v:paketData?.snapshot??\`Tersedia\`,tone:\`slate\`}
+                        {k:\`Layanan API\`,v:healthData?.ok?\`Normal\`:healthData?\`Terganggu\`:\`Memeriksa...\`,tone:healthData?.ok??!1?\`emerald\`:\`amber\`},
+                        {k:\`Basis Data\`,v:healthData?.db===\`up\`?\`Terhubung\`:healthData?.db??\`...\`,tone:healthData?.db===\`up\`?\`emerald\`:\`amber\`},
+                        {k:\`Masa Sesi\`,v:\`Aktif (12 Jam)\`,tone:\`slate\`},
+                        {k:\`Cadangan Data\`,v:paketData?.snapshot??\`Tersedia\`,tone:\`slate\`}
                       ].map(r=>(0,P.jsxs)(\`div\`,{
                         className:\`flex items-center justify-between gap-2 px-4 py-2.5 text-xs\`,
                         children:[
@@ -866,7 +799,7 @@ function V(){
           isAdmin && syncData && syncData.rows.length>0 && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
-              (0,P.jsx)(U,{icon:(0,P.jsx)(fe,{className:\`h-3.5 w-3.5\`}),title:\`Riwayat Sinkronisasi Data (\${syncData.total} entri, \${syncData.rows.length} terbaru)\`}),
+              (0,P.jsx)(U,{icon:(0,P.jsx)(fe,{className:\`h-3.5 w-3.5\`}),title:\`Riwayat Pembaruan Data (\${syncData.total} entri)\`}),
               (0,P.jsx)(\`div\`,{
                 className:\`mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
                 children:(0,P.jsx)(\`div\`,{
@@ -912,7 +845,7 @@ function V(){
           isAdmin && paketData && paketData.groups.some(g=>g.files.length>0) && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
-              (0,P.jsx)(U,{icon:(0,P.jsx)(ne,{className:\`h-3.5 w-3.5\`}),title:\`Paket Unduhan Lengkap (Excel + CSV Arsip)\`}),
+              (0,P.jsx)(U,{icon:(0,P.jsx)(ne,{className:\`h-3.5 w-3.5\`}),title:\`Unduhan Arsip Data (Excel & CSV)\`}),
               (0,P.jsx)(\`div\`,{
                 className:\`mt-3 grid gap-4 lg:grid-cols-2\`,
                 children:paketData.groups.filter(g=>g.files.length>0).map(grp=>(0,P.jsxs)(\`div\`,{
@@ -1155,8 +1088,8 @@ function H({icon:e,color:t,label:n,value:r,hint:i}){
 }
 
 function U({icon:e,title:t}){
-  return (0,P.jsxs)(\`p\`,{
-    className:\`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500\`,
+  return (0,P.jsxs)(\`h2\`,{
+    className:\`flex items-center gap-2 text-xs font-bold text-slate-700 mb-2\`,
     children:[e,t]
   });
 }
