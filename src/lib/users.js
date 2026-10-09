@@ -22,6 +22,7 @@ export const ROLES = {
   "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan"] },
   peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan-pendukung"] },
   perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan-perikanan"] },
+  "ketahanan-pangan": { label: "Bidang Ketahanan Pangan", domains: ["harga-pasar", "fsva-kabupaten", "neraca-pangan", "psat-pduk", "lumbung"] },
 };
 
 // Daftar akun terdaftar. `passEnv` menunjuk nama variabel lingkungan tempat
@@ -32,6 +33,7 @@ export const USERS = [
   { user: "horti-perkebunan", role: "horti-perkebunan", passEnv: "PASS_HORTI_PERKEBUNAN" },
   { user: "peternakan", role: "peternakan", passEnv: "PASS_PETERNAKAN" },
   { user: "perikanan", role: "perikanan", passEnv: "PASS_PERIKANAN" },
+  { user: "ketahanan-pangan", role: "ketahanan-pangan", passEnv: "PASS_KETAHANAN_PANGAN" },
 ];
 
 /** Apakah peran berhak atas domain tertentu? admin = semua; peran tak dikenal = tidak. */

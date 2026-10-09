@@ -45,7 +45,11 @@ var B={
   lumbung:{icon:y,color:`bg-slate-100 text-slate-700 border border-slate-200`},
   ekonomi:{icon:a,color:`bg-indigo-50 text-indigo-700 border border-indigo-200`},
   st2023:{icon:d,color:`bg-blue-50 text-blue-700 border border-blue-200`},
-  renstra:{icon:m,color:`bg-cyan-50 text-cyan-700 border border-cyan-200`}
+  renstra:{icon:m,color:`bg-cyan-50 text-cyan-700 border border-cyan-200`},
+  "harga-pasar":{icon:a,color:`bg-emerald-50 text-emerald-700 border border-emerald-200`},
+  "fsva-kabupaten":{icon:d,color:`bg-amber-50 text-amber-700 border border-amber-200`},
+  "neraca-pangan":{icon:_,color:`bg-sky-50 text-sky-700 border border-sky-200`},
+  "psat-pduk":{icon:i,color:`bg-teal-50 text-teal-700 border border-teal-200`}
 };
 var ye=e=>B[e]??{icon:i,color:`bg-slate-100 text-slate-700 border border-slate-200`};
 
@@ -54,7 +58,8 @@ var QUICK_ROLES = [
   { id: "tanaman-pangan", label: "Tanaman Pangan", user: "tanaman-pangan" },
   { id: "horti-perkebunan", label: "Horti & Kebun", user: "horti-perkebunan" },
   { id: "peternakan", label: "Peternakan", user: "peternakan" },
-  { id: "perikanan", label: "Perikanan", user: "perikanan" }
+  { id: "perikanan", label: "Perikanan", user: "perikanan" },
+  { id: "ketahanan-pangan", label: "Ketahanan Pangan", user: "ketahanan-pangan" }
 ];
 
 var CATEGORIES = [
@@ -63,8 +68,9 @@ var CATEGORIES = [
   { id: "horti_kebun", label: "Horti & Perkebunan", match: ["hortikultura", "perkebunan"] },
   { id: "peternakan", label: "Peternakan & Keswan", match: ["peternakan", "kelembagaan-pendukung"] },
   { id: "perikanan", label: "Perikanan", match: ["perikanan", "kelembagaan-perikanan"] },
+  { id: "ketahanan_pangan", label: "Ketahanan Pangan", match: ["harga-pasar", "fsva-kabupaten", "neraca-pangan", "psat-pduk", "lumbung"] },
   { id: "kelembagaan", label: "Kelembagaan Lengkap", match: ["kelembagaan-pertanian", "kelembagaan-perikanan", "kelembagaan-pendukung", "kwt", "kelembagaan"] },
-  { id: "bantuan_ekonomi", label: "Bantuan & Ekonomi", match: ["bantuan-program", "bantuan-alokasi", "bantuan-korelasi", "ekonomi", "lumbung", "lahan", "st2023", "renstra"] }
+  { id: "bantuan_ekonomi", label: "Bantuan & Ekonomi", match: ["bantuan-program", "bantuan-alokasi", "bantuan-korelasi", "ekonomi", "lahan", "st2023", "renstra"] }
 ];
 
 function V(){

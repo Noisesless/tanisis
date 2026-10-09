@@ -114,8 +114,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
 | `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token (rate-limited) |
-| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 20 domain operasional terotorisasi (inc. JULEHA, P4S, UPJA, KWT, LTT) |
-| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (20 domain) |
+| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 24 domain operasional terotorisasi (inc. Harga Pasar, FSVA, Neraca Pangan, PSAT PDUK, JULEHA, UPJA) |
+| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (24 domain) |
 | `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data |
 | `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel & eksekusi upsert ke MySQL |
 | `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |

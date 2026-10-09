@@ -232,3 +232,4 @@ mysql=root=
 [x] Rekayasa Live RAG & System Instruction Si Pertani (src/routes/ai.js: Agregasi Padi 2025, integrasi harga pasar, FSVA, neraca komposit, kelembagaan tani, pengawasan PSAT)
 [x] Pembaruan Dokumentasi Utama (.docs/database.md, .docs/deployment.md, .docs/routes.md, app-context.md) untuk Kesiapan Rilis Produksi
 [x] Implementasi Faktual 3-Tier Rate Limiting (Tier 1: General API 120/min, Tier 2: AI Chat 30/min, Tier 3: Admin Auth 5 fails/15 min lockout + 400ms delay) & Debug Mode Off (SP-019 Safe Error Masking + Express Global Error Handler)
+[x] Integrasi Dasbor Admin 24 Domain & Role Ketahanan Pangan (Pendaftaran domain harga-pasar, fsva-kabupaten, neraca-pangan, psat-pduk, akun RBAC ketahanan-pangan, quick role selector, dan kategori filter UI)

@@ -105,6 +105,28 @@ const LABELS = {
   unit_kerja: "Unit Kerja (BPP)",
   wilayah_kerja: "Wilayah Kerja (Desa)",
   keterangan: "Keterangan",
+  tanggal_uji: "Tanggal Uji",
+  parameter_uji: "Parameter Uji",
+  hasil_uji: "Hasil Uji Lab",
+  no_registrasi: "No. Registrasi PDUK",
+  nama_pedagang: "Nama Pedagang",
+  ketersediaan_bersih_ton: "Ketersediaan Bersih (Ton)",
+  kebutuhan_konsumsi_ton: "Kebutuhan Konsumsi (Ton)",
+  neraca_ton: "Neraca (Ton)",
+  status_neraca: "Status Neraca",
+  nomor_indikator: "Nomor Indikator",
+  nama_indikator: "Nama Indikator FSVA",
+  nilai_capaian: "Nilai Capaian",
+  standar_norma: "Standar Norma",
+  status_data: "Status Data",
+  sumber_opd: "Sumber OPD",
+  pilar: "Pilar FSVA",
+  lokasi_pasar: "Lokasi / Nama Pasar",
+  perubahan_rp: "Perubahan Harga (Rp)",
+  status_pantau: "Status Pantau",
+  petugas_pencatat: "Petugas Pencatat",
+  harga: "Harga per Satuan (Rp)",
+  tanggal: "Tanggal Catat",
 };
 
 // Suffix kolom → satuan pada label
@@ -415,6 +437,91 @@ export const DOMAINS = {
         }
       }
     ],
+  },
+  "harga-pasar": {
+    label: "Harga Pasar — Komoditas Pangan",
+    desc: "Pemantauan harga harian komoditas pangan pokok di pasar-pasar tradisional Banjarnegara.",
+    sheets: [{
+      table: "harga_pasar_banjarnegara",
+      name: "Harga Pasar",
+      kecamatan: false,
+      key: ["tanggal", "lokasi_pasar", "komoditas"],
+      labels: {
+        lokasi_pasar: "Lokasi Pasar",
+        perubahan_rp: "Perubahan Harga (Rp)",
+        status_pantau: "Status Pantau (Stabil/Naik/Turun)",
+        petugas_pencatat: "Petugas Pencatat",
+        harga: "Harga per Satuan (Rp)"
+      },
+      enums: {
+        status_pantau: ["Stabil", "Naik", "Turun"],
+        satuan: ["kg", "butir", "liter"]
+      }
+    }],
+  },
+  "fsva-kabupaten": {
+    label: "FSVA — Indikator Ketahanan Pangan",
+    desc: "12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) tingkat Kabupaten Banjarnegara.",
+    sheets: [{
+      table: "fsva_indikator_kabupaten",
+      name: "Indikator FSVA",
+      kecamatan: false,
+      key: ["tahun", "nomor_indikator"],
+      labels: {
+        nomor_indikator: "Nomor Indikator (1-12)",
+        nama_indikator: "Nama Indikator FSVA",
+        nilai_capaian: "Nilai Capaian",
+        standar_norma: "Standar Norma Bapanas",
+        status_data: "Status Data (Tahan/Rentan/Sangat Rentan)",
+        sumber_opd: "Sumber OPD Terkait"
+      },
+      enums: {
+        pilar: ["Ketersediaan", "Akses", "Pemanfaatan"],
+        status_data: ["Tahan", "Rentan", "Sangat Rentan"]
+      }
+    }],
+  },
+  "neraca-pangan": {
+    label: "Neraca Pangan — Komposit Strategis",
+    desc: "Neraca pangan komposit ketersediaan bersih vs kebutuhan konsumsi per komoditas strategis.",
+    sheets: [{
+      table: "neraca_pangan_komposit",
+      name: "Neraca Komposit",
+      kecamatan: false,
+      key: ["tahun", "komoditas"],
+      labels: {
+        ketersediaan_bersih_ton: "Ketersediaan Bersih (Ton)",
+        kebutuhan_konsumsi_ton: "Kebutuhan Konsumsi (Ton)",
+        neraca_ton: "Surplus / Defisit (Ton)",
+        status_neraca: "Status Neraca (Surplus/Defisit)",
+        sumber_data: "Sumber Data"
+      },
+      enums: {
+        status_neraca: ["Surplus", "Defisit", "Defisit Ringan / Impor Regional"]
+      }
+    }],
+  },
+  "psat-pduk": {
+    label: "Keamanan Pangan — PSAT PDUK Pasar",
+    desc: "Pengawasan keamanan pangan segar asal tumbuhan, hasil uji petik pasar, dan registrasi izin edar.",
+    sheets: [{
+      table: "psat_pduk",
+      name: "PSAT PDUK",
+      kecamatan: false,
+      key: ["tanggal_uji", "lokasi_pasar", "komoditas", "nama_pedagang"],
+      labels: {
+        tanggal_uji: "Tanggal Uji (YYYY-MM-DD)",
+        lokasi_pasar: "Lokasi Pasar",
+        nama_pedagang: "Nama Pedagang",
+        parameter_uji: "Parameter Uji (Pestisida/Formalin/dll)",
+        hasil_uji: "Hasil Uji Lab",
+        no_registrasi: "Nomor Registrasi PDUK",
+        status: "Status (Memenuhi Syarat/Tidak Memenuhi Syarat)"
+      },
+      enums: {
+        status: ["Memenuhi Syarat (Aman)", "Tidak Memenuhi Syarat", "Dalam Pengujian"]
+      }
+    }],
   },
 };
 
