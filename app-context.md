@@ -44,9 +44,14 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,fsva_desa_indikator,neraca_pangan_komposit)
+pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit)
 
 ## [ADR]
+[ADR-039] Normalisasi Relasional Kecamatan-Desa-FSVA & Eliminasi fsva_indikator_kabupaten:
+- Drop tabel usang `fsva_indikator_kabupaten` (12 baris null, artefak lama) dan arahkan domain Admin ke `fsva-desa` (278 desa terdata, tabel aktif `fsva_desa_indikator`).
+- Normalisasi skema master: tambahkan kolom `kode` (Kode BPS resmi) ke tabel `kecamatan` (20 kecamatan) dan `desa` (278 desa/kelurahan), serta kolom `tipe` (Desa/Kelurahan).
+- Tambahkan foreign key `kecamatan_id` (tinyint unsigned) dan `desa_id` (smallint unsigned) pada `fsva_desa_indikator`, menjamin integritas referensial 100% cocok dengan master geografi.
+- Endpoint `GET /api/v1/ketahanan/fsva-desa` kini mendukung filter relasional `?kecamatan_id=` dan `?desa_id=` dengan output `kecamatanId` dan `desaId`.
 [ADR-038] Unifikasi Kelembagaan KWT ke Master `kelembagaan_pertanian`:
 - Menghapus tabel kosong dan domain redundan `kwt_kelompok_wanita_tani` (0 baris data, artefak seeder usang).
 - Menyatukan seluruh Kelompok Wanita Tani (232 KWT binaan) ke dalam satu Single Source of Truth: tabel `kelembagaan_pertanian` bersama 2.177 Poktan dan 278 Gapoktan (total 2.687 register resmi dari SK Kadistan & Simluhtan).

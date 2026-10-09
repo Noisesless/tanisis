@@ -455,25 +455,30 @@ export const DOMAINS = {
       }
     }],
   },
-  "fsva-kabupaten": {
-    label: "FSVA — Indikator Ketahanan Pangan",
-    desc: "12 Indikator Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) tingkat Kabupaten Banjarnegara.",
+  "fsva-desa": {
+    label: "FSVA — Ketahanan Pangan Desa (Bapanas)",
+    desc: "16 Variabel Peta Ketahanan & Kerentanan Pangan (FSVA Bapanas) untuk 278 desa se-Kabupaten Banjarnegara.",
     sheets: [{
-      table: "fsva_indikator_kabupaten",
-      name: "Indikator FSVA",
-      kecamatan: false,
-      key: ["tahun", "nomor_indikator"],
+      table: "fsva_desa_indikator",
+      name: "FSVA Desa",
+      kecamatan: true,
+      key: ["tahun", "kode_desa"],
       labels: {
-        nomor_indikator: "Nomor Indikator (1-12)",
-        nama_indikator: "Nama Indikator FSVA",
-        nilai_capaian: "Nilai Capaian",
-        standar_norma: "Standar Norma Bapanas",
-        status_data: "Status Data (Tahan/Rentan/Sangat Rentan)",
-        sumber_opd: "Sumber OPD Terkait"
-      },
-      enums: {
-        pilar: ["Ketersediaan", "Akses", "Pemanfaatan"],
-        status_data: ["Tahan", "Rentan", "Sangat Rentan"]
+        kode_desa: "Kode BPS Desa",
+        nama_desa: "Nama Desa",
+        luas_wilayah_ha: "Luas Wilayah (Ha)",
+        jumlah_penduduk: "Penduduk (Jiwa)",
+        jumlah_rt: "Jumlah RT",
+        kepadatan_penduduk: "Kepadatan Penduduk",
+        luas_lahan_ha: "Luas Lahan Baku Sawah (Ha)",
+        sarpras_pangan_unit: "Sarpras Pangan (Unit)",
+        penduduk_miskin_jiwa: "Penduduk Miskin DTKS (Jiwa)",
+        tanpa_akses: "Tanpa Akses Roda 4 (1/0)",
+        rt_tanpa_air_bersih: "RT Tanpa Air Bersih (Unit)",
+        jumlah_nakes: "Tenaga Kesehatan (Orang)",
+        ikp: "Indeks Ketahanan Pangan (IKP)",
+        komposit: "Prioritas Komposit (1-6)",
+        ikp_ranking: "Ranking IKP Kabupaten"
       }
     }],
   },

@@ -29,18 +29,20 @@ Skrip patch `database/production_migration_patch.sql` dan dump `database/dump_pr
 
 ### `kecamatan`
 Menyimpan 20 wilayah kecamatan resmi di Kabupaten Banjarnegara.
-- `id` (INT, Primary Key)
-- `nama` (VARCHAR(100), Unique — e.g. Banjarnegara, Batur, Purwareja Klampok, Wanadadi)
-- `kode_bps` (VARCHAR(10))
-- `latitude`, `longitude` (DECIMAL)
+- `id` (TINYINT UNSIGNED, Primary Key)
+- `kode` (VARCHAR(20), Kode BPS resmi kecamatan, mis. 3304160)
+- `nama` (VARCHAR(50), Unique — e.g. Banjarnegara, Batur, Purwareja Klampok, Wanadadi)
+- `nama_norm` (VARCHAR(50), Format UPPERCASE untuk join)
+- `varian` (JSON, Daftar alias ejaan)
 
 ### `desa`
-Menyimpan seluruh desa dan kelurahan di Kabupaten Banjarnegara.
-- `id` (INT, Primary Key)
-- `kecamatan_id` (INT, FK → `kecamatan.id`)
-- `nama` (VARCHAR(100))
-- `desa_norm` (VARCHAR(100), Index — format uppercase tanpa spasi berlebih)
-- `kode_kemendagri` (VARCHAR(20))
+Menyimpan seluruh 278 desa dan kelurahan di Kabupaten Banjarnegara.
+- `id` (SMALLINT UNSIGNED, Primary Key)
+- `kode` (VARCHAR(20), Kode BPS resmi desa, mis. 3304160005)
+- `kecamatan_id` (TINYINT UNSIGNED, FK → `kecamatan.id`)
+- `nama` (VARCHAR(80))
+- `tipe` (ENUM('Desa', 'Kelurahan'))
+- `nama_norm` (VARCHAR(80), Index — format uppercase tanpa spasi berlebih)
 
 ### `komoditas` & `varietas`
 Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Granola, Salak Pondoh, Kopi Arabika Dieng).
@@ -100,9 +102,7 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Keamanan Pangan**| `psat_pduk` | `(id)` | Register izin edar & hasil uji petik residu pestisida pangan segar pasar (5 entitas aktif) |
 | **Keamanan Pangan**| `psat_sampel_uji` | `(kecamatan_id, pasar, tanggal_uji, jenis_pangan)` | Uji petik acak residu pestisida & cemaran bahan pangan |
 | **Keamanan Pangan**| `psat_izin_edar` | `(nomor_izin_pduk)` | Register sertifikasi izin edar PSAT-PDUK pelaku usaha |
-| **Ketahanan Pangan**| `fsva_desa_indikator` | `(kode_desa, tahun)` | Validasi 16 indikator FSVA-Desa Bapanas & Distankan KP (10 fisik & demografi: lahan Ha, sarpras unit, miskin DTKS jiwa, air bersih RT, nakes orang, luas desa Ha, penduduk jiwa, RT, kepadatan; 5 rasio; IKP 0–100, komposit prioritas 1–6, ranking) untuk 278 desa se-Banjarnegara |
-| **Ketahanan Pangan**| `fsva_indikator_kabupaten` | `(tahun, nomor_indikator)` | Capaian 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas tingkat kabupaten |
-| **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas per kecamatan |
+| **Ketahanan Pangan**| `fsva_desa_indikator` | `(kode_desa, tahun)` [FK: `kecamatan_id`, `desa_id`] | Validasi 16 indikator FSVA-Desa Bapanas & Distankan KP (10 fisik & demografi: lahan Ha, sarpras unit, miskin DTKS jiwa, air bersih RT, nakes orang, luas desa Ha, penduduk jiwa, RT, kepadatan; 5 rasio; IKP 0–100, komposit prioritas 1–6, ranking) untuk 278 desa se-Banjarnegara |
 | **Ketahanan Pangan**| `harga_pasar_banjarnegara` | `(id)` | Pemantauan harga harian komoditas pangan di pasar tradisional Banjarnegara (16 komoditas terpantau) |
 | **Ketahanan Pangan**| `neraca_pangan_komposit` | `(tahun, komoditas)` | Neraca ketersediaan vs kebutuhan komoditas pokok strategis (8 komoditas utama) |
 | **Ketahanan Pangan**| `survei_logistik_beras` | `(kecamatan_id, nama_rmu, tahun)` | Kapasitas penggilingan beras (RMU) & arus distribusi pangan |

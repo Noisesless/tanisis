@@ -281,20 +281,54 @@ async function main() {
     d.komposit = komp;
   });
 
-  // 5. Simpan ke MariaDB (UPSERT)
+  // 5. Simpan ke MariaDB (UPSERT dengan relasi kecamatan_id & desa_id)
   console.log(`[ETL FSVA] Menyimpan ${scored.length} rekaman ke tabel fsva_desa_indikator...`);
+  const kRows = await q("SELECT id, nama FROM kecamatan");
+  const dRows = await q("SELECT id, kecamatan_id, nama FROM desa");
+  const kecMap = new Map();
+  for (const k of kRows) kecMap.set(cleanStr(k.nama), k);
+  kecMap.set("purwarejaklampok", kecMap.get("purwarejaklampok") || kecMap.get("klampok"));
+
+  const DESA_PHONETIC = {
+    "12_pegundungan": "pagundungan",
+    "12_sarwodadi": "sarwadadi",
+    "17_singamerta": "singomerto",
+    "17_tunggara": "tunggoro",
+    "20_pagergunung": "pegergunung",
+    "6_purwodadi": "purwadadi",
+    "18_panerusankulon": "panarusankulon",
+    "18_panerusanwetan": "panarusanwetan",
+    "14_pucungbedug": "pucungbeduk",
+  };
+
+  const desaMap = new Map();
+  for (const d of dRows) {
+    desaMap.set(`${d.kecamatan_id}_${cleanStr(d.nama)}`, d);
+  }
+
   let inserted = 0;
   for (const d of scored) {
+    const k = kecMap.get(cleanStr(d.namaKecamatan));
+    const cKey = cleanStr(d.namaDesa);
+    const lookupKey = k ? `${k.id}_${cKey}` : "";
+    const altKey = DESA_PHONETIC[lookupKey] ? `${k.id}_${DESA_PHONETIC[lookupKey]}` : lookupKey;
+    const des = desaMap.get(altKey);
+
+    const kecamatanId = k ? k.id : 1;
+    const desaId = des ? des.id : 1;
+
     await q(
       `INSERT INTO fsva_desa_indikator (
-        tahun, kode_kec, nama_kecamatan, kode_desa, nama_desa, object_id,
+        tahun, kecamatan_id, desa_id, kode_kec, nama_kecamatan, kode_desa, nama_desa, object_id,
         luas_wilayah_ha, jumlah_penduduk, jumlah_rt, kepadatan_penduduk,
         luas_lahan_ha, sarpras_pangan_unit, penduduk_miskin_jiwa, tanpa_akses,
         rt_tanpa_air_bersih, jumlah_nakes,
         rasio_lahan, rasio_sarana, rasio_miskin, rasio_air_bersih, rasio_nakes,
         ikp, komposit, ikp_ranking
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
+        kecamatan_id = VALUES(kecamatan_id),
+        desa_id = VALUES(desa_id),
         nama_kecamatan = VALUES(nama_kecamatan),
         nama_desa = VALUES(nama_desa),
         object_id = VALUES(object_id),
@@ -318,7 +352,7 @@ async function main() {
         ikp_ranking = VALUES(ikp_ranking),
         updated_at = CURRENT_TIMESTAMP`,
       [
-        d.tahun, d.kodeKec, d.namaKecamatan, d.kodeDesa, d.namaDesa, d.objectId,
+        d.tahun, kecamatanId, desaId, d.kodeKec, d.namaKecamatan, d.kodeDesa, d.namaDesa, d.objectId,
         d.luasWilayahHa, d.pendudukTotal, d.jumlahRt, d.kepadatan,
         d.luasLahanHa, d.sarprasUnit, d.miskinJiwa, d.tanpaAkses,
         d.rtTanpaAir, d.nakesOrang,

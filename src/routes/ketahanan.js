@@ -81,31 +81,11 @@ ketahananRouter.get(
       params.push(String(pilar).trim());
     }
 
-    const rows = await q(
-      `SELECT id, tahun, pilar, nomor_indikator, nama_indikator,
-              satuan, standar_norma, nilai_capaian, status_data, sumber_opd, deskripsi
-       FROM fsva_indikator_kabupaten
-       ${where}
-       ORDER BY pilar ASC, nomor_indikator ASC`,
-      params,
-    );
-
     return {
       status: "success",
-      total: rows.length,
-      rows: rows.map((r) => ({
-        id: r.id,
-        tahun: r.tahun,
-        pilar: r.pilar,
-        nomorIndikator: r.nomor_indikator,
-        namaIndikator: r.nama_indikator,
-        satuan: r.satuan,
-        standarNorma: r.standar_norma,
-        nilaiCapaian: r.nilai_capaian !== null ? Number(r.nilai_capaian) : null,
-        statusData: r.status_data,
-        sumberOpd: r.sumber_opd,
-        deskripsi: r.deskripsi,
-      })),
+      total: 0,
+      pesan: "Indikator FSVA kabupaten telah dinormalisasi ke tingkat desa (fsva-desa).",
+      rows: []
     };
   }),
 );
@@ -162,13 +142,21 @@ ketahananRouter.get(
   "/fsva-desa",
   route(async (req) => {
     const thn = toIntOrNull(req.query.tahun);
-    const { kecamatan, komposit, limit, offset } = req.query;
+    const { kecamatan, komposit, limit, offset, kecamatan_id, desa_id } = req.query;
     let where = "WHERE 1=1";
     const params = [];
 
     if (thn !== null) {
       where += " AND tahun = ?";
       params.push(thn);
+    }
+    if (kecamatan_id) {
+      where += " AND kecamatan_id = ?";
+      params.push(Number(kecamatan_id));
+    }
+    if (desa_id) {
+      where += " AND desa_id = ?";
+      params.push(Number(desa_id));
     }
     if (kecamatan && kecamatan !== "all") {
       where += " AND nama_kecamatan = ?";
@@ -187,7 +175,7 @@ ketahananRouter.get(
     }
 
     const rows = await q(
-      `SELECT id, tahun, kode_kec, nama_kecamatan, kode_desa, nama_desa, object_id,
+      `SELECT id, tahun, kecamatan_id, desa_id, kode_kec, nama_kecamatan, kode_desa, nama_desa, object_id,
               luas_wilayah_ha, jumlah_penduduk, jumlah_rt, kepadatan_penduduk,
               luas_lahan_ha, sarpras_pangan_unit, penduduk_miskin_jiwa, tanpa_akses,
               rt_tanpa_air_bersih, jumlah_nakes,
@@ -207,6 +195,8 @@ ketahananRouter.get(
       rows: rows.map((r) => ({
         id: r.id,
         tahun: r.tahun,
+        kecamatanId: r.kecamatan_id,
+        desaId: r.desa_id,
         kodeKec: r.kode_kec,
         kecamatan: r.nama_kecamatan,
         kodeDesa: r.kode_desa,
