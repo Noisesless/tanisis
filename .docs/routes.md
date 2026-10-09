@@ -23,7 +23,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/nilai-ekonomi/peternakan`| Sektor Komoditas | Nilai Ekonomi & Ekosistem Usaha Peternakan (4 Tab: Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV) | Publik | STABLE |
 | `/fisheries` | Sektor Komoditas | Produksi Perikanan & Budidaya Air Tawar | Publik | STABLE |
 | `/food-security` | Kebijakan & Ketapang | Ketersediaan Beras & Stok Lumbung Pangan | Publik | STABLE |
-| `/fsva` | Kebijakan & Ketapang | Peta Kerawanan Pangan (FSVA Bapanas) | Publik | STABLE |
+| `/fsva` | Kebijakan & Ketapang | Peta Kerentanan & Ketahanan Pangan Desa (FSVA 16 Indikator Validasi Bapanas Terintegrasi MariaDB) | Publik | STABLE |
 | `/supply-chain` | Kebijakan & Ketapang | Rantai Pasok & Distribusi Beras (RMU) | Publik | STABLE |
 | `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar & Inflasi Bahan Pangan | Publik | STABLE |
 | `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | Publik | STABLE |

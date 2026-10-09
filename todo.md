@@ -1,13 +1,14 @@
 # TODO: SISPERTANI — Data Readiness & Audit Dashboard
 
-## Status: 100% Selesai (FSVA Desa 16 Indikator Terintegrasi Database & Peta Web)
+## Status: 100% Selesai (FSVA Desa 16 Indikator Bapanas & Integritas Native Web Selesai)
 - [x] Analisis 5 berkas Excel validasi FSVA Bapanas 2024 (278 desa se-Banjarnegara)
 - [x] Buat tabel MariaDB `fsva_desa_indikator` (16 variabel data fisik, demografi, rasio, IKP, komposit, ranking)
 - [x] Buat skrip ETL parser `scripts/import_fsva_desa.js` (`npm run db:import-fsva`) yang dinamis untuk tahun berikutnya
 - [x] Integrasikan runner impor FSVA ke `scripts/apply_production_patch.js` (`npm run db:patch`)
 - [x] Tambahkan endpoint API `/api/v1/ketahanan/fsva-desa` & `/api/v1/ketahanan/fsva-desa/ringkasan` di `src/routes/ketahanan.js`
 - [x] Integrasikan konteks data desa ke RAG Chatbot Si Pertani di `src/routes/ai.js`
-- [x] Hapus tab 2 dummy/karangan AI di antarmuka web `/fsva` dan satukan menjadi dashboard 16-indikator lengkap dengan cache buster
+- [x] Hapus tab 2 dummy/karangan AI di antarmuka web `/fsva` dan satukan menjadi dashboard 16-indikator lengkap
+- [x] Pulihkan integritas native chunk bundler tanpa error `removeChild` / React error #321 di seluruh halaman
 - [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `app-context.md`, `README.md`)
 
 ### Fase 1: Backend Audit Kesiapan Data (/api/v1/admin/readiness)
