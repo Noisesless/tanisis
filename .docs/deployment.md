@@ -28,7 +28,7 @@ Dokumen ini memuat prosedur resmi dan tunggal (*Single Source of Truth*) untuk d
 | `DIST_DIR` | `./dist` | `./dist` | Direktori berkas statis frontend SPA |
 | `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data Banjarnegara |
 | `ADMIN_PASS` | `C9145qbSjR` | `[secure_password]` | Kata sandi super-admin |
-| `GEMINI_API_KEY`| `AIzaSy...` | `AIzaSy...` | API Key Google Gemini untuk gateway AI Si Pertani |
+| `GEMINI_API_KEY`| `[api_key]` | `[api_key]` | API Key Google Gemini (Wajib untuk mode generatif; otomatis fallback ke DB jika kosong) |
 
 ---
 

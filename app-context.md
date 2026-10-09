@@ -208,6 +208,13 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
   * Kelembagaan Spasial: Filter KWT, Poktan, Gapoktan, Pokdakan, UPJA, P4S, Juleha per kecamatan & desa sesuai arah sorting (paling sedikit/banyak).
 - Standalone Offline Python RAG (`scripts/offline_rag.py`): Menyediakan asisten RAG mandiri berbasis Python (`pymysql`) yang dapat dijalankan via CLI (`npm run rag:offline` atau `python scripts/offline_rag.py "<query>"`) untuk analisis offline 100% tanpa internet/API key.
 
+[ADR-036] Zero-Downtime Resilience & Direct Factual RAG Fallback on AI Gateway:
+- Eliminasi Kegagalan Kredensial Tunggal: Menangani kasus ketiadaan `GEMINI_API_KEY` di server produksi tanpa menghasilkan galat HTTP 500 pada rute `/api/v1/ai/chat`.
+- Live Context Pre-Retrieval: Ekstraksi konteks faktual MariaDB `pertasis` dijalankan sebelum evaluasi API key.
+- Graceful Direct Streaming: Jika `GEMINI_API_KEY` belum terpasang atau upstream Google Gemini mengalami limitasi/overload, server mengalirkan data faktual database secara langsung via Server-Sent Events (SSE) dengan status HTTP 200 sehingga antarmuka pengguna tidak pernah menampilkan "kesalahan koneksi".
+- Full Dual-Mode Execution: Menjamin sistem tetap berjalan interaktif baik dalam mode AI generatif penuh (saat API key aktif) maupun mode retrieval faktual langsung (fallback mandiri).
+
+
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR

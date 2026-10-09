@@ -373,7 +373,17 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Menyelaraskan query tabel `komoditas_unggulan` (`kecamatan`, `produksi`, `nilai_ekonomi`) dan tabel `horti_produksi` (`COALESCE(produksi_ton, nilai) AS nilai`) pada `src/routes/ai.js` dan `src/lib/komoditas-dinamis.js`.
   3. Memperbarui daftar model resmi Google Gemini (`gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-3.5-flash`).
   4. Mengimplementasikan fitur **Smart Local/Offline RAG Streaming Fallback**: Jika koneksi upstream ke Google API mengalami beban tinggi atau terputus, backend secara otomatis merangkum data riil dari basis data MySQL `pertasis` dan mengalirkannya via SSE stream langsung ke antarmuka chatbot.
-  5. Pengujian live end-to-end melalui curl dan browser terkonfirmasi berhasil mengalirkan jawaban interaktif dengan status HTTP 200 tanpa galat.
+### [ISSUE-031] Ketiadaan Kunci GEMINI_API_KEY pada .env Produksi & Resolusi Zero-Downtime Fallback AI Gateway
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-09
+- **Deskripsi:** Chatbot Si Pertani di server produksi (`pertanian.sistemdata.id`) memunculkan pesan *"Maaf, terjadi kesalahan koneksi. Pastikan jaringan internet tersedia dan coba lagi. Jika masalah berlanjut, hubungi administrator sistem."* saat merespons pertanyaan rekomendasi dan komoditas unggulan.
+- **Akar Masalah:**
+  1. Berkas `.env` di server produksi tidak memiliki baris konfigurasi `GEMINI_API_KEY` (karena `.env` diabaikan oleh `.gitignore` demi keamanan), sehingga pemanggilan ke `/api/v1/ai/chat` mengembalikan galat HTTP 500 (`config_error: GEMINI_API_KEY belum dikonfigurasi di server`).
+  2. Frontend menangkap status HTTP 500 dan menampilkan pesan kegagalan koneksi generik.
+- **Solusi (ADR-036):**
+  1. Pengguna memasukkan `GEMINI_API_KEY` ke dalam file `.env` di server produksi dan me-restart proses PM2.
+  2. Memperbaiki logika backend di `src/routes/ai.js` agar memvalidasi payload dan mengekstrak konteks live RAG database sebelum memeriksa API key.
+  3. Mengimplementasikan **Zero-Downtime Resilience Fallback**: Jika `GEMINI_API_KEY` tidak terpasang atau upstream gagal, server tidak lagi mengembalikan status HTTP 500, melainkan secara anggun mengalirkan jawaban faktual langsung dari MariaDB `pertasis` via SSE (HTTP 200) dengan catatan transparan, mencegah tampilan error di antarmuka pengguna.
 
 ---
 
