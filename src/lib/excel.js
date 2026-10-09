@@ -276,6 +276,27 @@ function keyWhere(spec, values) {
 }
 
 async function upsertRow(spec, values) {
+  // Resolusi otomatis desa_id jika tabel membutuhkannya
+  let resolvedDesaId = null;
+  if (spec.hasDesaId) {
+    if (values.kode_desa) {
+      const [des] = await q("SELECT id FROM desa WHERE kode = ? LIMIT 1", [values.kode_desa]);
+      if (des) resolvedDesaId = des.id;
+    }
+    if (!resolvedDesaId && (values.nama_desa || values.desa) && values.kecamatan_id) {
+      const dNorm = normDesa(values.nama_desa || values.desa);
+      const [des] = await q("SELECT id FROM desa WHERE kecamatan_id = ? AND nama_norm = ? LIMIT 1", [values.kecamatan_id, dNorm]);
+      if (des) resolvedDesaId = des.id;
+    }
+  }
+
+  // Resolusi otomatis kode_kec jika tabel membutuhkannya
+  let resolvedKodeKec = values.kode_kec ?? null;
+  if (spec.hasKodeKec && !resolvedKodeKec && values.kecamatan_id) {
+    const [kc] = await q("SELECT kode FROM kecamatan WHERE id = ? LIMIT 1", [values.kecamatan_id]);
+    if (kc) resolvedKodeKec = kc.kode;
+  }
+
   const { where, params } = keyWhere(spec, values);
   const existing = await q(`SELECT id FROM \`${spec.table}\` WHERE ${where} ORDER BY id LIMIT 1`, params);
   if (existing.length) {
@@ -289,6 +310,8 @@ async function upsertRow(spec, values) {
     }
     if (spec.hasDesaNorm && values.desa) { sets.push("desa_norm = ?"); vals.push(normDesa(values.desa)); }
     if (spec.hasNamaKecamatan && values.kecamatan) { sets.push("`nama_kecamatan` = ?"); vals.push(values.kecamatan); }
+    if (resolvedDesaId) { sets.push("`desa_id` = ?"); vals.push(resolvedDesaId); }
+    if (resolvedKodeKec) { sets.push("`kode_kec` = ?"); vals.push(resolvedKodeKec); }
     if (!sets.length) return "skipped";
     vals.push(existing[0].id);
     await q(`UPDATE \`${spec.table}\` SET ${sets.join(", ")} WHERE id = ?`, vals);
@@ -299,6 +322,8 @@ async function upsertRow(spec, values) {
   const push = (c, v) => { cols.push(`\`${c}\``); vals.push(v); };
   if (spec.kecamatan) push("kecamatan_id", values.kecamatan_id);
   if (spec.hasNamaKecamatan && values.kecamatan) push("nama_kecamatan", values.kecamatan);
+  if (resolvedDesaId) push("desa_id", resolvedDesaId);
+  if (resolvedKodeKec) push("kode_kec", resolvedKodeKec);
   for (const c of spec.cols) {
     if (c.type === "kecamatan") continue;
     if (values[c.field] === null || values[c.field] === undefined) continue;

@@ -19,7 +19,7 @@ import { q } from "../db.js";
 import fs from "node:fs";
 
 // Kolom teknis yang tidak pernah muncul di Excel
-const SKIP_COLS = new Set(["id", "kecamatan_id", "desa_norm", "created_at", "updated_at", "sumber"]);
+const SKIP_COLS = new Set(["id", "kecamatan_id", "desa_id", "desa_norm", "created_at", "updated_at", "sumber"]);
 // Tipe data yang tidak diedit via Excel
 const SKIP_TYPES = new Set(["json", "longtext"]);
 
@@ -625,6 +625,8 @@ export async function loadDomain(domainKey) {
       );
       const hasSumber = (await loadColumns(s.table)).some((c) => c.column_name === "sumber");
       const hasDesaNorm = (await loadColumns(s.table)).some((c) => c.column_name === "desa_norm");
+      const hasDesaId = (await loadColumns(s.table)).some((c) => c.column_name === "desa_id");
+      const hasKodeKec = (await loadColumns(s.table)).some((c) => c.column_name === "kode_kec");
       const cols = colsRaw.map((c) => {
         const enumDb = parseEnum(c.column_type);
         const enumCfg = s.enums?.[c.column_name] ?? null;
@@ -646,6 +648,8 @@ export async function loadDomain(domainKey) {
         kecamatan: !!s.kecamatan,
         hasSumber,
         hasDesaNorm,
+        hasDesaId,
+        hasKodeKec,
         hasNamaKecamatan: !!(s.kecamatan && hasNamaKecamatan),
         cols: s.kecamatan
           ? [{ field: "kecamatan", header: "Kecamatan", type: "kecamatan", required: true, enumValues: null }, ...cols]

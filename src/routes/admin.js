@@ -274,18 +274,39 @@ router.get("/template/:domain", requireAdmin, requireDomainAccess, async (req, r
 });
 
 router.get("/export/:domain", requireAdmin, requireDomainAccess, async (req, res) => {
-  try { await sendWorkbook(res, req.params.domain, "export"); }
-  catch (e) { res.status(e?.status ?? 500).json({ error: String(e?.message ?? e) }); }
+  try {
+    await logActivity({
+      username: req.adminUser ?? "admin",
+      role: req.adminRole ?? "admin",
+      action: "EXPORT",
+      entity: `domain:${req.params.domain}`,
+      description: `Ekspor data Excel untuk domain ${req.params.domain}`,
+      ip_address: req.ip || req.socket?.remoteAddress || null,
+      user_agent: req.headers["user-agent"] || null,
+      status: "success",
+    });
+    await sendWorkbook(res, req.params.domain, "export");
+  } catch (e) { res.status(e?.status ?? 500).json({ error: String(e?.message ?? e) }); }
 });
 
 router.post("/import/:domain", requireAdmin, requireDomainAccess, upload.single("file"), async (req, res) => {
   const domain = req.params.domain;
   try {
-    if (!req.file) return res.status(400).json({ error: "File tidak diterima — pilih file .xlsx (field \u201cfile\u201d)." });
+    if (!req.file) return res.status(400).json({ error: "File tidak diterima — pilih file .xlsx (field “file”)." });
     const report = await importWorkbook(domain, req.file.buffer);
     const total = report.inserted + report.updated;
     await logSync(`${req.adminRole ?? "admin"}:${domain}`, req.file.originalname ?? "upload.xlsx", total, report.errors.length ? "partial" : "ok",
       `${report.inserted} tambah, ${report.updated} perbarui, ${report.errors.length} baris ditolak`);
+    await logActivity({
+      username: req.adminUser ?? "admin",
+      role: req.adminRole ?? "admin",
+      action: "IMPORT",
+      entity: `domain:${domain}`,
+      description: `Impor Excel domain ${domain} (${total} baris: ${report.inserted} tambah, ${report.updated} perbarui, ${report.errors.length} tolak)`,
+      ip_address: req.ip || req.socket?.remoteAddress || null,
+      user_agent: req.headers["user-agent"] || null,
+      status: report.errors.length ? "warning" : "success",
+    });
     res.json(report);
   } catch (e) {
     res.status(e?.status ?? 500).json({ error: String(e?.message ?? e) });
