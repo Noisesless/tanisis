@@ -717,6 +717,7 @@ export async function getReadinessAudit() {
 
   for (const [key, d] of Object.entries(DOMAINS)) {
     let domainTotalRows = 0;
+    let latestYear = null;
     const sheetDetails = [];
 
     for (const s of d.sheets) {
@@ -727,6 +728,33 @@ export async function getReadinessAudit() {
         table: s.table,
         rows,
       });
+
+      if (rows > 0) {
+        try {
+          const cols = await loadColumns(s.table);
+          const colNames = cols.map((c) => c.column_name);
+          let yVal = null;
+          if (colNames.includes("tahun")) {
+            const [r] = await q(`SELECT MAX(tahun) as y FROM \`${s.table}\``);
+            yVal = r?.y;
+          } else if (colNames.includes("tahun_anggaran")) {
+            const [r] = await q(`SELECT MAX(tahun_anggaran) as y FROM \`${s.table}\``);
+            yVal = r?.y;
+          } else if (colNames.includes("tahun_target")) {
+            const [r] = await q(`SELECT MAX(tahun_target) as y FROM \`${s.table}\``);
+            yVal = r?.y;
+          } else if (colNames.includes("tanggal")) {
+            const [r] = await q(`SELECT YEAR(MAX(tanggal)) as y FROM \`${s.table}\``);
+            yVal = r?.y;
+          } else if (colNames.includes("created_at")) {
+            const [r] = await q(`SELECT YEAR(MAX(created_at)) as y FROM \`${s.table}\``);
+            yVal = r?.y;
+          }
+          if (yVal && (!latestYear || yVal > latestYear)) {
+            latestYear = yVal;
+          }
+        } catch {}
+      }
     }
 
     let hasFallback = false;
@@ -753,6 +781,7 @@ export async function getReadinessAudit() {
       desc: d.desc,
       status, // "mandiri" | "penyangga" | "kosong"
       totalRows: domainTotalRows,
+      latestYear: latestYear ? Number(latestYear) : null,
       sheets: sheetDetails,
       hasFallback,
       keyColumns: d.sheets[0]?.key || [],

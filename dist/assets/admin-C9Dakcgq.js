@@ -100,7 +100,7 @@ function V(){
   let[searchQ,setSearchQ]=(0,N.useState)(``);
   let[catActive,setCatActive]=(0,N.useState)(`all`);
   let[readinessData,setReadinessData]=(0,N.useState)(null);
-  let[showReadinessDetails,setShowReadinessDetails]=(0,N.useState)(!0);
+  let[showReadinessDetails,setShowReadinessDetails]=(0,N.useState)(!1);
   let[copiedDomain,setCopiedDomain]=(0,N.useState)(null);
 
   async function loadSyncPage(pg=1){
@@ -543,7 +543,7 @@ Unduh template Excel resmi melalui Portal Admin SISPERTANI (http://127.0.0.1:517
                           (0,P.jsx)(`th`,{className:`px-3 py-2.5`,children:`Sektor / Domain Data`}),
                           (0,P.jsx)(`th`,{className:`px-3 py-2.5`,children:`Status Kesiapan`}),
                           (0,P.jsx)(`th`,{className:`px-3 py-2.5 text-right`,children:`Baris Basis Data`}),
-                          (0,P.jsx)(`th`,{className:`px-3 py-2.5 text-center`,children:`Aksi Administrasi`})
+                          (0,P.jsx)(`th`,{className:`px-3 py-2.5 text-center`,children:`Tahun Data Terakhir`})
                         ]
                       })
                     }),
@@ -569,27 +569,12 @@ Unduh template Excel resmi melalui Portal Admin SISPERTANI (http://127.0.0.1:517
                           }),
                           (0,P.jsx)(`td`,{
                             className:`px-3 py-2.5 text-center`,
-                            children:(0,P.jsxs)(`div`,{
-                              className:`flex items-center justify-center gap-1.5`,
-                              children:[
-                                (0,P.jsx)(`button`,{
-                                  type:`button`,
-                                  title:`Filter ke katalog domain ini`,
-                                  onClick:()=>{setSearchQ(dom.domain);window.scrollTo({top:650,behavior:`smooth`})},
-                                  className:`rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition`,
-                                  children:`Katalog`
-                                }),
-                                (0,P.jsxs)(`button`,{
-                                  type:`button`,
-                                  title:`Salin format tagihan data untuk staf/bidang`,
-                                  onClick:()=>copyTagihan(dom),
-                                  className:`flex items-center gap-1 rounded border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold transition ${copiedDomain===dom.domain?`border-emerald-500 bg-emerald-50 text-emerald-800`:`text-slate-700 hover:bg-white`}`,
-                                  children:[
-                                    copiedDomain===dom.domain?(0,P.jsx)(Ch_icon,{className:`h-3 w-3 text-emerald-600`}):(0,P.jsx)(Cp_icon,{className:`h-3 w-3 text-slate-500`}),
-                                    copiedDomain===dom.domain?`Tersalin!`:`Tagihan`
-                                  ]
-                                })
-                              ]
+                            children:dom.latestYear ? (0,P.jsx)(`span`,{
+                              className:`inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 font-mono text-xs font-bold text-emerald-800 ring-1 ring-inset ring-emerald-600/20`,
+                              children:dom.latestYear
+                            }) : (0,P.jsx)(`span`,{
+                              className:`font-mono text-xs text-slate-400`,
+                              children:`-`
                             })
                           })
                         ]
