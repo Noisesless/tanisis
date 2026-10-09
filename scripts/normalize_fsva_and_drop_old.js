@@ -1,3 +1,5 @@
+import path from "node:path";
+import { execSync } from "node:child_process";
 import { q } from "../src/db.js";
 import { normKey } from "../src/lib/domains.js";
 
@@ -14,11 +16,50 @@ const DESA_PHONETIC_FIXES = {
 };
 
 async function executeMigration() {
-  console.log("=== 1. DROP TABEL USANG fsva_indikator_kabupaten ===");
+  console.log("=== 0. PASTIKAN TABEL ACTIVITY_LOGS TERSEDIA ===");
+  await q(`
+    CREATE TABLE IF NOT EXISTS activity_logs (
+      id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      user_id int(10) unsigned DEFAULT NULL,
+      username varchar(50) NOT NULL DEFAULT 'guest',
+      nama_lengkap varchar(100) DEFAULT NULL,
+      role varchar(50) NOT NULL DEFAULT 'guest',
+      action varchar(50) NOT NULL,
+      entity varchar(100) DEFAULT NULL,
+      description text NOT NULL,
+      ip_address varchar(45) DEFAULT NULL,
+      user_agent text DEFAULT NULL,
+      status enum('success','failed','warning') DEFAULT 'success',
+      metadata longtext DEFAULT NULL,
+      created_at datetime NOT NULL DEFAULT current_timestamp(),
+      PRIMARY KEY (id),
+      KEY idx_created_at (created_at),
+      KEY idx_username (username),
+      KEY idx_action (action),
+      KEY idx_role (role),
+      KEY idx_status (status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+  console.log("Tabel activity_logs siap.");
+
+  console.log("\n=== 1. DROP TABEL USANG fsva_indikator_kabupaten ===");
   await q("DROP TABLE IF EXISTS fsva_indikator_kabupaten");
   console.log("Berhasil drop tabel fsva_indikator_kabupaten.");
 
-  console.log("\n=== 2. TAMBAH KOLOM RELASIONAL & KODE BPS ===");
+  console.log("\n=== 2. PASTIKAN TABEL & DATA FSVA DESA TERSEDIA ===");
+  const [tblCheck] = await q("SELECT COUNT(*) AS c FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator'");
+  if (tblCheck.c === 0) {
+    console.log("Tabel fsva_desa_indikator belum ditemukan di database. Mengimpor data validasi FSVA Desa terlebih dahulu...");
+    execSync(`node "${path.resolve(process.cwd(), "scripts/import_fsva_desa.js")}"`, { stdio: "inherit", env: process.env });
+  } else {
+    const [{ count }] = await q("SELECT COUNT(*) AS count FROM fsva_desa_indikator");
+    if (count === 0) {
+      console.log("Tabel fsva_desa_indikator masih kosong. Mengimpor data validasi FSVA Desa...");
+      execSync(`node "${path.resolve(process.cwd(), "scripts/import_fsva_desa.js")}"`, { stdio: "inherit", env: process.env });
+    }
+  }
+
+  console.log("\n=== 3. TAMBAH KOLOM RELASIONAL & KODE BPS ===");
   const kCols = (await q("DESCRIBE kecamatan")).map(c => c.Field);
   if (!kCols.includes("kode")) {
     await q("ALTER TABLE kecamatan ADD COLUMN kode VARCHAR(20) NULL AFTER id");
@@ -45,7 +86,7 @@ async function executeMigration() {
     console.log("Kolom 'desa_id' ditambahkan ke tabel fsva_desa_indikator.");
   }
 
-  console.log("\n=== 3. SINKRONISASI RELASI 278 DESA & KODE BPS ===");
+  console.log("\n=== 4. SINKRONISASI RELASI 278 DESA & KODE BPS ===");
   const kRows = await q("SELECT id, nama FROM kecamatan");
   const dRows = await q("SELECT id, kecamatan_id, nama FROM desa");
   const fRows = await q("SELECT id, kode_kec, nama_kecamatan, kode_desa, nama_desa FROM fsva_desa_indikator");
@@ -90,30 +131,37 @@ async function executeMigration() {
 
   console.log(`Berhasil menghubungkan ${updatedCount} dari ${fRows.length} baris fsva_desa_indikator.`);
 
-  console.log("\n=== 4. TERAPKAN NOT NULL & INDEX FOREIGN KEY ===");
+  console.log("\n=== 5. TERAPKAN NOT NULL & INDEX FOREIGN KEY ===");
   try {
-    await q("ALTER TABLE fsva_desa_indikator MODIFY COLUMN kecamatan_id INT NOT NULL, MODIFY COLUMN desa_id INT NOT NULL");
-    console.log("Kolom kecamatan_id dan desa_id berhasil diubah menjadi NOT NULL.");
-  } catch (err) {
-    console.warn("Notice modify NOT NULL:", err.message);
-  }
+    const cols = await q("SHOW COLUMNS FROM fsva_desa_indikator LIKE 'desa_id'");
+    if (cols[0]?.Null === "YES") {
+      await q("ALTER TABLE fsva_desa_indikator MODIFY COLUMN kecamatan_id INT NOT NULL, MODIFY COLUMN desa_id INT NOT NULL");
+      console.log("Kolom kecamatan_id dan desa_id diubah menjadi NOT NULL.");
+    }
+  } catch {}
 
-  // Tambahkan Index
+  // Tambahkan Index jika belum ada
   try {
-    await q("ALTER TABLE fsva_desa_indikator ADD INDEX idx_fsva_kec (kecamatan_id)");
+    const [idxKec] = await q("SHOW INDEX FROM fsva_desa_indikator WHERE Key_name = 'idx_fsva_kec'");
+    if (!idxKec) await q("ALTER TABLE fsva_desa_indikator ADD INDEX idx_fsva_kec (kecamatan_id)");
   } catch {}
   try {
-    await q("ALTER TABLE fsva_desa_indikator ADD INDEX idx_fsva_desa (desa_id)");
+    const [idxDes] = await q("SHOW INDEX FROM fsva_desa_indikator WHERE Key_name = 'idx_fsva_desa'");
+    if (!idxDes) await q("ALTER TABLE fsva_desa_indikator ADD INDEX idx_fsva_desa (desa_id)");
+  } catch {}
+
+  // Tambahkan Foreign Key jika belum ada
+  try {
+    const [fkKec] = await q("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator' AND CONSTRAINT_NAME = 'fk_fsva_kecamatan'");
+    if (!fkKec) await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_kecamatan FOREIGN KEY (kecamatan_id) REFERENCES kecamatan(id) ON DELETE CASCADE");
   } catch {}
   try {
-    await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_kecamatan FOREIGN KEY (kecamatan_id) REFERENCES kecamatan(id) ON DELETE CASCADE");
+    const [fkDes] = await q("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator' AND CONSTRAINT_NAME = 'fk_fsva_desa'");
+    if (!fkDes) {
+      await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_desa FOREIGN KEY (desa_id) REFERENCES desa(id) ON DELETE CASCADE");
+      console.log("Foreign Key constraints fk_fsva_kecamatan & fk_fsva_desa aktif!");
+    }
   } catch {}
-  try {
-    await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_desa FOREIGN KEY (desa_id) REFERENCES desa(id) ON DELETE CASCADE");
-    console.log("Foreign Key constraints fk_fsva_kecamatan & fk_fsva_desa aktif!");
-  } catch (e) {
-    console.warn("Notice FK:", e.message);
-  }
 
   console.log("\n=== MIGRATION SELESAI SUKSES! ===");
 }
