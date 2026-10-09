@@ -2,14 +2,14 @@ import{t as e,u as t}from"./default-CAKe9ffW.js";
 import{t as n}from"./arrow-up-right-BGgoYqpN.js";
 import{o as r}from"./x-CXWFwwzx.js";
 import{t as i}from"./map-pinned-B8IASXIi.js";
-import{C as a,_ as o,b as s,m as c,p as l,s as u}from"./index-CI1XYnwk.js";
+import{C as a,b as s,m as c,p as l,s as u}from"./index-CI1XYnwk.js";
 import{n as d}from"./desa-BL4wG73W.js";
 import{a as f,c as p,i as m,n as h,r as g,s as _,t as v}from"./esm-C6CgEwSP.js";
 import{a as y,c as b,i as x,n as S,o as C,r as w,s as T,t as E}from"./fsva-B7L8e1cB.js";
 var D=a(s(),1),O=l(),k=`#e2e8f0`,A=`#cbd5e1`,j=`https://tiles.openfreemap.org/styles/liberty`,M=!1;
 function N(e){if(M)return;M=!0;let t=new v;e.addProtocol(`pmtiles`,t.tile)}
 function P({desaIndex:e,rows:t,indikator:n,colorOf:r,judul:a,berdata:s,total:c}){
-  let l=(0,D.useRef)(null),u=(0,D.useRef)(null),d=o();
+  let l=(0,D.useRef)(null),u=(0,D.useRef)(null);
   (0,D.useEffect)(()=>{
     if(!l.current||u.current||!e.length)return;
     N(p),g(`/maplibre-gl-worker.mjs`);
@@ -22,42 +22,58 @@ function P({desaIndex:e,rows:t,indikator:n,colorOf:r,judul:a,berdata:s,total:c})
             lahan:s?o.luasLahanHa:null,miskin:s?o.miskinJiwa:null,sarpras:s?o.sarprasUnit:null
           }}:null
         }).filter(e=>e!==null)},
-        s=new h({container:l.current,style:j,center:[109.6,-7.35],zoom:10,attributionControl:!1,cooperativeGestures:!0,scrollZoom:!0,boxZoom:!1,doubleClickZoom:!0,pitchWithRotate:!1,dragRotate:!1,touchZoomRotate:!0,dragPan:!0});
-    u.current=s;
-    s.addControl(new f({customAttribution:`© <a href="https://openfreemap.org">OpenFreeMap</a> · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>`}));
-    s.addControl(new m({showCompass:!1}),`top-right`);
-    s.on(`load`,()=>{
+        mMap=new h({container:l.current,style:j,center:[109.6,-7.35],zoom:10,attributionControl:!1,cooperativeGestures:!0,scrollZoom:!0,boxZoom:!1,doubleClickZoom:!0,pitchWithRotate:!1,dragRotate:!1,touchZoomRotate:!0,dragPan:!0});
+    u.current=mMap;
+    mMap.addControl(new f({customAttribution:`© <a href="https://openfreemap.org">OpenFreeMap</a> · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>`}));
+    mMap.addControl(new m({showCompass:!1}),`top-right`);
+    mMap.on(`load`,()=>{
       let e=`fsva-desa`;
-      s.addSource(e,{type:`geojson`,data:o,promoteId:`OBJECTID`});
-      s.addLayer({id:`${e}-fill`,type:`fill`,source:e,paint:{"fill-color":[`get`,`warna`],"fill-opacity":[`case`,[`boolean`,[`feature-state`,`hover`],!1],.95,.78]}});
-      s.addLayer({id:`${e}-outline`,type:`line`,source:e,paint:{"line-color":[`case`,[`boolean`,[`feature-state`,`hover`],!1],`#f59e0b`,`#94a3b8`],"line-width":[`case`,[`boolean`,[`feature-state`,`hover`],!1],3,.8]}});
-      let t=null,r=null;
-      s.on(`mousemove`,`${e}-fill`,i=>{
-        s.getCanvas().style.cursor=`pointer`;
-        let a=i.features;if(!a||!a.length)return;
+      mMap.addSource(e,{type:`geojson`,data:o,promoteId:`OBJECTID`});
+      mMap.addLayer({id:`${e}-fill`,type:`fill`,source:e,paint:{"fill-color":[`get`,`warna`],"fill-opacity":[`case`,[`boolean`,[`feature-state`,`hover`],!1],.95,.78]}});
+      mMap.addLayer({id:`${e}-outline`,type:`line`,source:e,paint:{"line-color":[`case`,[`boolean`,[`feature-state`,`hover`],!1],`#f59e0b`,`#94a3b8`],"line-width":[`case`,[`boolean`,[`feature-state`,`hover`],!1],3,.8]}});
+      let tHover=null,rPop=null;
+      mMap.on(`mousemove`,`${e}-fill`,iEvt=>{
+        mMap.getCanvas().style.cursor=`pointer`;
+        let a=iEvt.features;if(!a||!a.length)return;
         let o=a[0].id;
-        t!=null&&s.setFeatureState({source:e,id:t},{hover:!1});
-        o!=null&&(s.setFeatureState({source:e,id:o},{hover:!0}),t=o);
+        tHover!=null&&mMap.setFeatureState({source:e,id:tHover},{hover:!1});
+        o!=null&&(mMap.setFeatureState({source:e,id:o},{hover:!0}),tHover=o);
         let c=a[0].properties??{},l=Number(c.ada??0)===1;
         let extra=c.lahan!=null?`<div class="mt-1.5 pt-1 border-t border-slate-200 text-[10px] text-slate-600 flex flex-col gap-0.5"><span>🌾 Lahan: <b>${c.lahan} Ha</b></span><span>👥 Miskin DTKS: <b>${Number(c.miskin).toLocaleString("id-ID")} Jiwa</b></span><span>🏪 Sarpras Pangan: <b>${c.sarpras} Unit</b></span></div>`:``;
-        let u=`<div class="text-sm font-bold text-slate-900">${L(String(c.nama??``))}</div><div class="text-[11px] text-slate-500">${L(String(c.kecamatan??``))}</div>`+(l?`<div class="text-xs font-semibold text-slate-800 mt-1">${L(n.label)}: ${L(String(c.nilaiText??``))}${L(n.unit)}</div>`:`<div class="text-xs text-slate-500 italic mt-1">Data belum tercatat</div>`)+extra;
-        r?r.setLngLat(i.lngLat).setHTML(u):r=new _({closeButton:!1,closeOnClick:!1,offset:14}).setLngLat(i.lngLat).setHTML(u).addTo(s);
+        let uHtml=`<div class="text-sm font-bold text-slate-900">${L(String(c.nama??``))}</div><div class="text-[11px] text-slate-500">${L(String(c.kecamatan??``))}</div>`+(l?`<div class="text-xs font-semibold text-slate-800 mt-1">${L(n.label)}: ${L(String(c.nilaiText??``))}${L(n.unit)}</div>`:`<div class="text-xs text-slate-500 italic mt-1">Data belum tercatat</div>`)+extra;
+        rPop?rPop.setLngLat(iEvt.lngLat).setHTML(uHtml):rPop=new _({closeButton:!1,closeOnClick:!1,offset:14}).setLngLat(iEvt.lngLat).setHTML(uHtml).addTo(mMap);
       });
-      s.on(`mouseleave`,`${e}-fill`,()=>{
-        s.getCanvas().style.cursor=``;
-        t!=null&&(s.setFeatureState({source:e,id:t},{hover:!1}),t=null);
-        r&&=(r.remove(),null);
+      mMap.on(`mouseleave`,`${e}-fill`,()=>{
+        mMap.getCanvas().style.cursor=``;
+        tHover!=null&&(mMap.setFeatureState({source:e,id:tHover},{hover:!1}),tHover=null);
+        rPop&&=(rPop.remove(),null);
       });
-      s.on(`click`,`${e}-fill`,e=>{
-        let t=e.features;if(!t||!t.length)return;
-        let n=t[0].properties??{},r=String(n.routeKec??``),i=String(n.routeNama??``);
-        r&&i&&d(`/desa/${r}/${i}`);
+      mMap.on(`click`,`${e}-fill`,eEvt=>{
+        let tF=eEvt.features;if(!tF||!tF.length)return;
+        let nP=tF[0].properties??{},rK=String(nP.routeKec??``),iN=String(nP.routeNama??``);
+        if(rK&&iN){window.location.href=`/desa/${rK}/${iN}`}
       });
-      let i=I(o);
-      i&&s.fitBounds(i,{padding:24,duration:0,animate:!1,maxZoom:12});
+      let bBounds=I(o);
+      bBounds&&mMap.fitBounds(bBounds,{padding:24,duration:0,animate:!1,maxZoom:12});
     });
-    return()=>{u.current&&=(u.current.remove(),null)}
-  },[]);
+    return()=>{if(u.current){try{u.current.remove()}catch(e){}u.current=null}}
+  },[e.length]);
+  (0,D.useEffect)(()=>{
+    if(!u.current)return;
+    let src=u.current.getSource(`fsva-desa`);
+    if(src&&src.setData){
+      let i=new Map(t.map(e=>[e.objectId,e])),a=e=>Number(e[n.key]||0),
+          o={type:`FeatureCollection`,features:e.map((e,t)=>{
+            let o=i.get(e.objectId)??null,s=!!o,c=s?a(o):0,l=s?r(c):k,u=s?r(c):A,d=F(e.geometry?.geometry);
+            return d?{type:`Feature`,geometry:d,properties:{
+              OBJECTID:t+1,nama:e.namaTampil,kecamatan:e.kecamatanTampil,routeKec:e.kecamatanSlug,routeNama:e.namaSlug,
+              nilai:s?c:0,nilaiText:s?n.format(c):`·`,ada:+!!s,warna:l,warnaLine:u,
+              lahan:s?o.luasLahanHa:null,miskin:s?o.miskinJiwa:null,sarpras:s?o.sarprasUnit:null
+            }}:null
+          }).filter(e=>e!==null)};
+      src.setData(o);
+    }
+  },[t,n.key,r]);
   return(0,O.jsxs)(`div`,{className:`rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-white`,children:[
     (0,O.jsxs)(`div`,{className:`flex items-center gap-2 px-3 py-1.5 border-b border-slate-200 bg-gradient-to-r from-teal-50 to-white`,children:[
       (0,O.jsx)(i,{className:`w-3.5 h-3.5 text-teal-700`,"aria-hidden":!0}),
@@ -103,8 +119,7 @@ function B(){
         return{best:e.slice(0,10),worst:[...e].reverse().slice(0,10)}
       },[p,m]),
       v=(0,D.useMemo)(()=>p.length?p.reduce((e,t)=>e+Number(t[m.key]||0),0)/p.length:0,[p,m]);
-  return a?(0,O.jsx)(e,{children:(0,O.jsx)(`div`,{className:`py-16 flex justify-center`,children:(0,O.jsx)(u,{label:`Memuat peta ketahanan pangan...`})})}):
-  (0,O.jsx)(e,{children:(0,O.jsxs)(`section`,{className:`flex flex-col gap-6 py-2`,children:[
+  return (0,O.jsx)(e,{children:(0,O.jsxs)(`section`,{className:`flex flex-col gap-6 py-2`,children:[
     (0,O.jsxs)("header",{className:"flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5 mb-2",children:[
       (0,O.jsxs)("div",{className:"flex-1 min-w-0",children:[
         (0,O.jsx)("h1",{className:"text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight",children:"Ketahanan Pangan (FSVA Desa)"}),
@@ -125,7 +140,8 @@ function B(){
       (0,O.jsx)(V,{label:`Terendah`,value:_.worst[0]?_.worst[0].desa:`—`,detail:_.worst[0]?`${m.format(_.worst[0][m.key])}${m.unit}`:void 0})
     ]}),
     (0,O.jsxs)(`div`,{className:`grid grid-cols-1 gap-4 lg:grid-cols-[1fr_240px]`,children:[
-      (0,O.jsx)(P,{desaIndex:n,rows:p,indikator:m,colorOf:h.colorOf,judul:`${m.label} · ${s}`,berdata:p.length,total:n.length},`${s}-${l}`),
+      a ? (0,O.jsx)(`div`,{className:`rounded-lg border border-slate-200 bg-slate-50 shadow-sm flex items-center justify-center text-xs text-slate-500 font-medium`,style:{height:520},children:(0,O.jsx)(u,{label:`Memuat peta batas desa...`})})
+        : (0,O.jsx)(P,{desaIndex:n,rows:p,indikator:m,colorOf:h.colorOf,judul:`${m.label} · ${s}`,berdata:p.length,total:n.length}),
       (0,O.jsx)(H,{indicator:m,legend:h.legend,higherIsBetter:m.higherIsBetter,categorical:m.categorical})
     ]}),
     (0,O.jsx)(U,{judul:`10 Desa ${m.higherIsBetter?`Terbaik`:`Terendah`}`,subtitle:`Peringkat berdasarkan ${m.label.toLowerCase()} tahun ${s}.`,rows:_.best,indikator:m,desaByOid:g}),
@@ -154,18 +170,18 @@ function U({judul:e,subtitle:t,rows:r,indikator:i,desaByOid:a}){
         (0,O.jsx)(`th`,{className:`py-1.5 text-right font-semibold`,children:`Sarpras`}),
         (0,O.jsx)(`th`,{className:`py-1.5 pl-2`})
       ]})}),
-      (0,O.jsx)(`tbody`,{children:r.map((e,t)=>{
-        let r=a.get(e.objectId);
+      (0,O.jsx)(`tbody`,{children:r.map((eRow,tIdx)=>{
+        let dOid=a.get(eRow.objectId);
         return(0,O.jsxs)(`tr`,{className:`border-b border-slate-100 last:border-0 hover:bg-slate-50/50`,children:[
-          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 tabular-nums text-slate-400`,children:t+1}),
-          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 font-semibold text-slate-700`,children:e.desa}),
-          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 text-slate-500`,children:e.kecamatan}),
-          (0,O.jsxs)(`td`,{className:`py-1.5 text-right font-semibold tabular-nums text-slate-800`,children:[i.format(e[i.key]),i.unit]}),
-          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:e.luasLahanHa!=null?`${e.luasLahanHa} Ha`:`—`}),
-          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:e.miskinJiwa!=null?Number(e.miskinJiwa).toLocaleString("id-ID"):`—`}),
-          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:e.sarprasUnit!=null?Number(e.sarprasUnit).toLocaleString("id-ID"):`—`}),
-          (0,O.jsx)(`td`,{className:`py-1.5 pl-2 text-right`,children:r?(0,O.jsx)(c,{to:`/desa/${r.kecamatanSlug}/${r.namaSlug}`,className:`inline-flex items-center gap-0.5 text-teal-600 hover:text-teal-700`,"aria-label":`Detail ${e.desa}`,children:(0,O.jsx)(n,{className:`h-3.5 w-3.5`})}):null})
-        ]},e.objectId)
+          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 tabular-nums text-slate-400`,children:tIdx+1}),
+          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 font-semibold text-slate-700`,children:eRow.desa}),
+          (0,O.jsx)(`td`,{className:`py-1.5 pr-2 text-slate-500`,children:eRow.kecamatan}),
+          (0,O.jsxs)(`td`,{className:`py-1.5 text-right font-semibold tabular-nums text-slate-800`,children:[i.format(eRow[i.key]),i.unit]}),
+          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:eRow.luasLahanHa!=null?`${eRow.luasLahanHa} Ha`:`—`}),
+          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:eRow.miskinJiwa!=null?Number(eRow.miskinJiwa).toLocaleString("id-ID"):`—`}),
+          (0,O.jsx)(`td`,{className:`py-1.5 text-right tabular-nums text-slate-600`,children:eRow.sarprasUnit!=null?Number(eRow.sarprasUnit).toLocaleString("id-ID"):`—`}),
+          (0,O.jsx)(`td`,{className:`py-1.5 pl-2 text-right`,children:dOid?(0,O.jsx)(c,{to:`/desa/${dOid.kecamatanSlug}/${dOid.namaSlug}`,className:`inline-flex items-center gap-0.5 text-teal-600 hover:text-teal-700`,"aria-label":`Detail ${eRow.desa}`,children:(0,O.jsx)(n,{className:`h-3.5 w-3.5`})}):null})
+        ]},eRow.objectId)
       })})
     ]})})
   ]});
