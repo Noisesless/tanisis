@@ -32,6 +32,45 @@ async function logSync(dataset, sumber, baris, status, pesan) {
   } catch { /* audit log tidak boleh menggagalkan import */ }
 }
 
+export async function logActivity({
+  user_id = null,
+  username = "system",
+  nama_lengkap = null,
+  role = "admin",
+  action = "ACTION",
+  entity = null,
+  description = null,
+  ip_address = null,
+  user_agent = null,
+  status = "success",
+  metadata = null,
+}) {
+  try {
+    const metaStr = metadata ? (typeof metadata === "string" ? metadata : JSON.stringify(metadata)) : null;
+    await q(
+      `INSERT INTO activity_logs (
+        user_id, username, nama_lengkap, role, action, entity,
+        description, ip_address, user_agent, status, metadata, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      [
+        user_id,
+        username,
+        nama_lengkap,
+        role,
+        action,
+        entity,
+        description,
+        ip_address,
+        user_agent ? String(user_agent).slice(0, 255) : null,
+        status,
+        metaStr,
+      ]
+    );
+  } catch (err) {
+    console.error("[audit-log] Gagal mencatat log aktivitas:", err.message);
+  }
+}
+
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
 
@@ -62,6 +101,18 @@ router.post("/login", async (req, res) => {
     const cur = { n: (f?.n ?? 0) + 1, until: 0 };
     if (cur.n >= 5) { cur.until = now + 15 * 60 * 1000; cur.n = 0; }
     fails.set(ip, cur);
+
+    await logActivity({
+      username: user || "unknown",
+      role: "guest",
+      action: "LOGIN_FAILED",
+      entity: "auth",
+      description: `Percobaan login gagal untuk username: ${user || "-"}`,
+      ip_address: ip,
+      user_agent: req.headers["user-agent"],
+      status: "error"
+    });
+
     await new Promise((r) => setTimeout(r, 400)); // tarik pencerobohan
     return res.status(401).json({ error: "Username atau password salah." });
   }
@@ -69,6 +120,18 @@ router.post("/login", async (req, res) => {
   const token = crypto.randomBytes(24).toString("hex");
   const exp = now + TOKEN_TTL;
   tokens.set(token, { user: match.user, role: match.role, exp });
+
+  await logActivity({
+    username: match.user,
+    role: match.role,
+    action: "LOGIN",
+    entity: "auth",
+    description: `Pengguna ${match.user} berhasil masuk (${roleLabel(match.role)})`,
+    ip_address: ip,
+    user_agent: req.headers["user-agent"],
+    status: "success"
+  });
+
   res.json({
     token,
     expiresAt: new Date(exp).toISOString(),
@@ -76,6 +139,25 @@ router.post("/login", async (req, res) => {
     role: match.role,
     label: roleLabel(match.role),
   });
+});
+
+router.post("/logout", requireAdmin, async (req, res) => {
+  const auth = req.headers.authorization ?? "";
+  const m = /^Bearer\s+(.+)$/i.exec(auth);
+  if (m) tokens.delete(m[1]);
+
+  await logActivity({
+    username: req.adminUser,
+    role: req.adminRole,
+    action: "LOGOUT",
+    entity: "auth",
+    description: `Pengguna ${req.adminUser} telah keluar (logout)`,
+    ip_address: req.ip,
+    user_agent: req.headers["user-agent"],
+    status: "success"
+  });
+
+  res.json({ status: "success", message: "Logout berhasil." });
 });
 
 export function requireAdmin(req, res, next) {

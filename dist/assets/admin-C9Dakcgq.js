@@ -165,7 +165,12 @@ function V(){
     return()=>{e=!1};
   },[token]);
 
-  function Ce(){
+  async function Ce(){
+    if(token){
+      try{
+        await fetch(`${D}/v1/admin/logout`,{method:`POST`,headers:L(token)});
+      }catch{}
+    }
     try{
       localStorage.removeItem(F);
       localStorage.removeItem(I);
@@ -206,6 +211,7 @@ function V(){
       setSessionUser(r_sess);
       setToken(resJson.token);
       setLoginPass(``);
+      loadActivityPage(1);
     }catch(e_err){
       setLoginErr(R(e_err));
     }finally{
