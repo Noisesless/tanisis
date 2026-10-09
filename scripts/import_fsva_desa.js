@@ -70,6 +70,8 @@ async function ensureTable() {
     CREATE TABLE IF NOT EXISTS fsva_desa_indikator (
       id INT AUTO_INCREMENT PRIMARY KEY,
       tahun INT NOT NULL,
+      kecamatan_id TINYINT(3) UNSIGNED NOT NULL DEFAULT 1,
+      desa_id SMALLINT(5) UNSIGNED NOT NULL DEFAULT 1,
       kode_kec VARCHAR(20) NOT NULL,
       nama_kecamatan VARCHAR(100) NOT NULL,
       kode_desa VARCHAR(20) NOT NULL,
@@ -101,9 +103,20 @@ async function ensureTable() {
       UNIQUE KEY uk_desa_tahun (kode_desa, tahun),
       KEY idx_tahun (tahun),
       KEY idx_obj (object_id),
-      KEY idx_kec (nama_kecamatan)
+      KEY idx_kec (nama_kecamatan),
+      KEY idx_fsva_kec (kecamatan_id),
+      KEY idx_fsva_desa (desa_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
+
+  // Pastikan kolom kecamatan_id dan desa_id ada jika tabel sudah sempat dibuat tanpa kolom tersebut
+  const cols = (await q("DESCRIBE fsva_desa_indikator")).map(c => c.Field);
+  if (!cols.includes("kecamatan_id")) {
+    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN kecamatan_id TINYINT(3) UNSIGNED NOT NULL DEFAULT 1 AFTER tahun");
+  }
+  if (!cols.includes("desa_id")) {
+    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN desa_id SMALLINT(5) UNSIGNED NOT NULL DEFAULT 1 AFTER kecamatan_id");
+  }
 }
 
 async function main() {
