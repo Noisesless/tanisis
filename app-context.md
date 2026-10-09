@@ -10,8 +10,8 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Database Normalization, Admin Audit Logging & Production Update Pipeline Ready done=ALL last=Normalisasi relasional desa-kecamatan-fsva, drop fsva_indikator_kabupaten, activity_logs audit terintegrasi, dual-tab log dengan server-side pagination, auto-resolve desa_id pada impor excel, patch DDL produksi database/patch_production_normalization_2026.sql terverifikasi
-build=OK issues=0
+phase=Database Normalization, Admin Audit Logging & Production Update Pipeline Ready done=ALL last=Normalisasi relasional desa-kecamatan-fsva, drop fsva_indikator_kabupaten, activity_logs audit terintegrasi, dual-tab log dengan server-side pagination, auto-resolve desa_id pada impor excel, patch DDL produksi database/patch_production_normalization_2026.sql terverifikasi, pelacakan ISSUE-034
+build=OK issues=1
 
 ## [VISUAL_GATE]
 icon_lib=lucide
@@ -47,6 +47,9 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-042] Pemulihan Integritas Native Chunk Vite & Investigasi Caching Dasbor Admin (/admin):
+- Mengembalikan integritas bundler native Vite pada berkas `dist/assets/admin-C9Dakcgq.js` dan membatalkan percobaan penulisan ulang hash chunk manual (`admin-E2N4xL8p.js`), guna mencegah kesalahan DOM runtime React (`removeChild`).
+- Mencatat `ISSUE-034` terkait penundaan render komponen Matriks Kesiapan Data Sektoral di peramban klien akibat caching HTTP Nginx (`max-age=31536000`) dan memandu pengosongan cache peramban klien.
 [ADR-041] Auto-Resolve Relasi Impor Excel & SQL Patch Produksi Mandiri:
 - Mengotomatisasi resolusi `desa_id` dari `kode_desa` / pasangan `(kecamatan_id + nama_desa)` dan `kode_kec` dari `kecamatan_id` pada `src/lib/excel.js`. Kolom `desa_id` dikecualikan dari template (`SKIP_COLS`) agar tidak membebani pengguna dengan input ID angka mentah.
 - Menyiapkan berkas SQL patch produksi mandiri `database/patch_production_normalization_2026.sql` yang idempotent untuk drop `fsva_indikator_kabupaten`, penambahan kolom `kode` & `tipe`, foreign keys 278 desa, serta pembuatan tabel `activity_logs`.

@@ -157,7 +157,7 @@ Setelah kode dan basis data diperbarui, lakukan pemeriksaan berikut:
    - Tekan `Ctrl + F5` untuk memastikan file JS/CSS lama terhapus dari cache browser.
    - Buka rute `/recommendations`, pastikan metrik Capaian Pertanian 2025 menampilkan data riil (178.610 Ton, 25.871 Ha, Mandiraja).
    - Buka rute `/kecamatan`, pastikan profil 20 kecamatan dan peta MapLibre ter-render tanpa blank screen.
-   - Buka rute `/admin`, pastikan form login asimetris dengan foto persawahan Banjarnegara tampil rapi dan login multi-role dapat diakses tanpa crash.
+   - Buka rute `/admin`, pastikan form login asimetris dengan foto persawahan Banjarnegara tampil rapi dan login multi-role dapat diakses tanpa crash. Lakukan login Super Admin (`admin`), pastikan komponen "Audit Kesiapan Data Sektoral (Readiness Matrix)", dual-tab log aktivitas & sinkronisasi, serta kolom "Tahun Data Terakhir" termuat rapi. Jika peramban masih menampilkan antarmuka lama (2 kolom katalog), lakukan pengosongan cache peramban (DevTools F12 > Network > centang Disable cache, atau buka via jendela Incognito/Penyamaran).
 
 ---
 
