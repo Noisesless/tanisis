@@ -16,6 +16,7 @@
  *   kth_detail (FK kompleks — TODO), lahan_desa (kolom json/longtext).
  */
 import { q } from "../db.js";
+import fs from "node:fs";
 
 // Kolom teknis yang tidak pernah muncul di Excel
 const SKIP_COLS = new Set(["id", "kecamatan_id", "desa_norm", "created_at", "updated_at", "sumber"]);
@@ -664,4 +665,116 @@ export async function listDomains() {
     out.push({ domain: key, label: d.label, desc: d.desc, sheets });
   }
   return out;
+}
+
+/**
+ * Audit kesiapan data (Readiness) per domain untuk dasbor super admin.
+ * Menghitung jumlah baris aktual di MySQL dan mendeteksi ketersediaan file fallback disk.
+ */
+export async function getReadinessAudit() {
+  const start = Date.now();
+  const tableToDomains = new Map();
+  for (const [dKey, d] of Object.entries(DOMAINS)) {
+    for (const s of d.sheets) {
+      if (!tableToDomains.has(s.table)) tableToDomains.set(s.table, new Set());
+      tableToDomains.get(s.table).add(dKey);
+    }
+  }
+
+  const tables = Array.from(tableToDomains.keys());
+  const unionQueries = tables.map((t) => `SELECT '${t}' as tbl, COUNT(*) as cnt FROM \`${t}\``).join(" UNION ALL ");
+
+  let tableCounts = new Map();
+  try {
+    const counts = await q(unionQueries);
+    for (const r of counts) {
+      tableCounts.set(r.tbl, Number(r.cnt) || 0);
+    }
+  } catch (err) {
+    for (const t of tables) {
+      try {
+        const [res] = await q(`SELECT COUNT(*) as cnt FROM \`${t}\``);
+        tableCounts.set(t, Number(res?.cnt) || 0);
+      } catch {
+        tableCounts.set(t, 0);
+      }
+    }
+  }
+
+  const fallbackMap = {
+    lahan: ["dist/data/lahan-fallback.json"],
+    kelembagaan: ["dist/data/kelompok-tani-fallback.json", "dist/data/kelompok-tani-hutan.json"],
+    "kelembagaan-pertanian": ["dist/kelembagaan/data_kelembagaan_cleaned.json"],
+    peternakan: ["dist/data/susu-kulit-fallback.json"],
+    st2023: ["dist/data/st2023-desa-fallback.json"],
+    "harga-pasar": ["dist/data/snapshots/anomali-harga-pangan.json"],
+  };
+
+  const domainAudits = [];
+  let totalMandiri = 0;
+  let totalPenyangga = 0;
+  let totalKosong = 0;
+
+  for (const [key, d] of Object.entries(DOMAINS)) {
+    let domainTotalRows = 0;
+    const sheetDetails = [];
+
+    for (const s of d.sheets) {
+      const rows = tableCounts.get(s.table) || 0;
+      domainTotalRows += rows;
+      sheetDetails.push({
+        name: s.name,
+        table: s.table,
+        rows,
+      });
+    }
+
+    let hasFallback = false;
+    const fallbacks = fallbackMap[key];
+    if (fallbacks && fallbacks.length) {
+      hasFallback = fallbacks.some((f) => fs.existsSync(f));
+    }
+
+    let status = "kosong";
+    if (domainTotalRows > 0) {
+      status = "mandiri";
+      totalMandiri++;
+    } else if (hasFallback) {
+      status = "penyangga";
+      totalPenyangga++;
+    } else {
+      status = "kosong";
+      totalKosong++;
+    }
+
+    domainAudits.push({
+      domain: key,
+      label: d.label,
+      desc: d.desc,
+      status, // "mandiri" | "penyangga" | "kosong"
+      totalRows: domainTotalRows,
+      sheets: sheetDetails,
+      hasFallback,
+      keyColumns: d.sheets[0]?.key || [],
+    });
+  }
+
+  const totalDomains = domainAudits.length;
+  const readinessPercent = totalDomains > 0
+    ? Math.round(((totalMandiri + totalPenyangga * 0.5) / totalDomains) * 100)
+    : 0;
+
+  return {
+    status: "success",
+    timestamp: new Date().toISOString(),
+    executionMs: Date.now() - start,
+    summary: {
+      totalDomains,
+      mandiri: totalMandiri,
+      penyangga: totalPenyangga,
+      kosong: totalKosong,
+      readinessPercent,
+    },
+    domains: domainAudits,
+  };
 }

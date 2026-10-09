@@ -18,6 +18,8 @@ var ge=E(\`user\`,[[\`path\`,{d:\`M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\`,ke
 var Se_icon=E(\`search\`,[[\`circle\`,{cx:\`11\`,cy:\`11\`,r:\`8\`,key:\`s1\`}],[\`path\`,{d:\`m21 21-4.3-4.3\`,key:\`s2\`}]]);
 var Fe_icon=E(\`filter\`,[[\`polygon\`,{points:\`22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3\`,key:\`f1\`}]]);
 var Sh_icon=E(\`shield\`,[[\`path\`,{d:\`M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10\`,key:\`sh1\`}]]);
+var Cp_icon=E(\`copy\`,[[\`rect\`,{width:\`14\`,height:\`14\`,x:\`8\`,y:\`8\`,rx:\`2\`,ry:\`2\`,key:\`cp1\`}], [\`path\`,{d:\`M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\`,key:\`cp2\`}]]);
+var Ch_icon=E(\`check\`,[[\`path\`,{d:\`M20 6 9 17l-5-5\`,key:\`ch1\`}]]);
 
 var N=b(x(),1);
 var P=T();
@@ -96,6 +98,9 @@ function V(){
   let[importResult,setImportResult]=(0,N.useState)(null);
   let[searchQ,setSearchQ]=(0,N.useState)(\`\`);
   let[catActive,setCatActive]=(0,N.useState)(\`all\`);
+  let[readinessData,setReadinessData]=(0,N.useState)(null);
+  let[showReadinessDetails,setShowReadinessDetails]=(0,N.useState)(!0);
+  let[copiedDomain,setCopiedDomain]=(0,N.useState)(null);
 
   (0,N.useEffect)(()=>{
     if(!token)return;
@@ -119,6 +124,10 @@ function V(){
         try{
           let n_pak=await fetch(\`\${D}/v1/admin/paket\`,{headers:L(token)}).then(e=>e.json());
           e&&n_pak&&Array.isArray(n_pak.groups)&&setPaketData(n_pak);
+        }catch{}
+        try{
+          let n_ready=await fetch(\`\${D}/v1/admin/readiness\`,{headers:L(token)}).then(e=>e.json());
+          e&&n_ready&&n_ready.status===\`success\`&&setReadinessData(n_ready);
         }catch{}
       }catch(t_err){
         if(!e)return;
@@ -213,6 +222,16 @@ function V(){
       setActionErr(\`Gagal mengunduh \${fileName}: \${R(err)}\`);
     }finally{
       setBusyAction(null);
+    }
+  }
+
+  function copyTagihan(itemDom){
+    let txt=\`Format Permintaan Data SISPERTANI:\nSektor: \${itemDom.label} (\${itemDom.domain})\nTabel Target: \${itemDom.sheets?.map(s=>s.table).join(", ")||"Sesuai Format"}\nKolom Kunci: \${itemDom.keyColumns?.join(", ")||"Natural Key"}\nStatus Saat Ini: \${itemDom.status?.toUpperCase()||"BELUM ADA"} (\${(itemDom.totalRows||0).toLocaleString("id-ID")} baris data)\nUnduh template Excel resmi melalui Portal Admin SISPERTANI (http://127.0.0.1:5173/admin).\`;
+    if(navigator?.clipboard?.writeText){
+      navigator.clipboard.writeText(txt).then(()=>{
+        setCopiedDomain(itemDom.domain);
+        setTimeout(()=>setCopiedDomain(null),2500);
+      }).catch(()=>{});
     }
   }
 
@@ -397,6 +416,148 @@ function V(){
                     hint:syncData&&syncData.rows.length>0?\`Terakhir: \${new Date(syncData.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
                   })
                 ]
+              })
+            ]
+          }),
+
+
+          // Readiness Audit Dashboard (Super Admin Only)
+          isAdmin && readinessData && (0,P.jsxs)(\`section\`,{
+            className:\`mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
+            children:[
+              (0,P.jsxs)(\`div\`,{
+                className:\`flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4\`,
+                children:[
+                  (0,P.jsxs)(\`div\`,{
+                    children:[
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`flex items-center gap-2\`,
+                        children:[
+                          (0,P.jsx)(M,{className:\`h-5 w-5 text-emerald-600\`}),
+                          (0,P.jsx)(\`h2\`,{className:\`text-sm font-bold text-slate-800\`,children:\`Audit Kesiapan Data Sektoral (Readiness Matrix)\`}),
+                          (0,P.jsxs)(S,{
+                            tone:readinessData.summary.readinessPercent>=70?\`emerald\`:\`amber\`,
+                            children:[readinessData.summary.readinessPercent,\`% Siap Publik\`]
+                          })
+                        ]
+                      }),
+                      (0,P.jsx)(\`p\`,{
+                        className:\`mt-1 text-xs text-slate-500\`,
+                        children:\`Pemetaan faktual ketersediaan baris basis data per sektor dan penyiapan format tagihan data ke dinas.\`
+                      })
+                    ]
+                  }),
+                  (0,P.jsx)(\`button\`,{
+                    type:\`button\`,
+                    onClick:()=>setShowReadinessDetails(!showReadinessDetails),
+                    className:\`rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition\`,
+                    children:showReadinessDetails?\`Sembunyikan Matriks\`:\`Tampilkan Matriks Sektor\`
+                  })
+                ]
+              }),
+              (0,P.jsxs)(\`div\`,{
+                className:\`mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4\`,
+                children:[
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`rounded-lg border border-emerald-100 bg-emerald-50/60 p-3.5\`,
+                    children:[
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-emerald-700\`,children:\`Kesiapan Publik\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-emerald-800\`,children:[readinessData.summary.readinessPercent,\`%\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-emerald-600\`,children:\`Agregat 24 domain\`})
+                    ]
+                  }),
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`rounded-lg border border-blue-100 bg-blue-50/60 p-3.5\`,
+                    children:[
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-blue-700\`,children:\`Sektor Mandiri\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-blue-800\`,children:[readinessData.summary.mandiri,\` Domain\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-blue-600\`,children:\`Terisi di MariaDB\`})
+                    ]
+                  }),
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`rounded-lg border border-amber-100 bg-amber-50/60 p-3.5\`,
+                    children:[
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-amber-700\`,children:\`Sektor Penyangga\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-amber-800\`,children:[readinessData.summary.penyangga,\` Domain\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-amber-600\`,children:\`Snapshot disk / cadangan\`})
+                    ]
+                  }),
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`rounded-lg border border-rose-100 bg-rose-50/60 p-3.5\`,
+                    children:[
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-rose-700\`,children:\`Belum Ada Data\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-rose-800\`,children:[readinessData.summary.kosong,\` Domain\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-rose-600\`,children:\`Menunggu data dinas\`})
+                    ]
+                  })
+                ]
+              }),
+              showReadinessDetails && (0,P.jsx)(\`div\`,{
+                className:\`mt-4 overflow-x-auto rounded-lg border border-slate-200\`,
+                children:(0,P.jsxs)(\`table\`,{
+                  className:\`min-w-full divide-y divide-slate-200 text-left text-xs\`,
+                  children:[
+                    (0,P.jsx)(\`thead\`,{
+                      className:\`bg-slate-50 font-semibold text-slate-600\`,
+                      children:(0,P.jsxs)(\`tr\`,{
+                        children:[
+                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5\`,children:\`Sektor / Domain Data\`}),
+                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5\`,children:\`Status Kesiapan\`}),
+                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5 text-right\`,children:\`Baris Basis Data\`}),
+                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5 text-center\`,children:\`Aksi Administrasi\`})
+                        ]
+                      })
+                    }),
+                    (0,P.jsx)(\`tbody\`,{
+                      className:\`divide-y divide-slate-100 bg-white\`,
+                      children:readinessData.domains.map(dom=>(0,P.jsxs)(\`tr\`,{
+                        className:\`hover:bg-slate-50/80 transition-colors\`,
+                        children:[
+                          (0,P.jsxs)(\`td\`,{
+                            className:\`px-3 py-2.5 font-medium text-slate-800\`,
+                            children:[
+                              (0,P.jsx)(\`div\`,{className:\`font-bold text-slate-900\`,children:dom.label}),
+                              (0,P.jsx)(\`div\`,{className:\`text-[11px] text-slate-500 line-clamp-1\`,children:dom.desc})
+                            ]
+                          }),
+                          (0,P.jsx)(\`td\`,{
+                            className:\`px-3 py-2.5\`,
+                            children:dom.status===\`mandiri\`?(0,P.jsx)(S,{tone:\`emerald\`,children:\`🟢 Mandiri (DB)\`}):dom.status===\`penyangga\`?(0,P.jsx)(S,{tone:\`amber\`,children:\`🟡 Penyangga (Disk)\`}):(0,P.jsx)(S,{tone:\`rose\`,children:\`🔴 Belum Ada Data\`})
+                          }),
+                          (0,P.jsxs)(\`td\`,{
+                            className:\`px-3 py-2.5 text-right font-mono tabular-nums text-slate-700\`,
+                            children:[dom.totalRows.toLocaleString(\`id-ID\`),dom.hasFallback?\` + Disk\`:\`\`]
+                          }),
+                          (0,P.jsx)(\`td\`,{
+                            className:\`px-3 py-2.5 text-center\`,
+                            children:(0,P.jsxs)(\`div\`,{
+                              className:\`flex items-center justify-center gap-1.5\`,
+                              children:[
+                                (0,P.jsx)(\`button\`,{
+                                  type:\`button\`,
+                                  title:\`Filter ke katalog domain ini\`,
+                                  onClick:()=>{setSearchQ(dom.domain);window.scrollTo({top:650,behavior:\`smooth\`})},
+                                  className:\`rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition\`,
+                                  children:\`Katalog\`
+                                }),
+                                (0,P.jsxs)(\`button\`,{
+                                  type:\`button\`,
+                                  title:\`Salin format tagihan data untuk staf/bidang\`,
+                                  onClick:()=>copyTagihan(dom),
+                                  className:\`flex items-center gap-1 rounded border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold transition \${copiedDomain===dom.domain?\`border-emerald-500 bg-emerald-50 text-emerald-800\`:\`text-slate-700 hover:bg-white\`}\`,
+                                  children:[
+                                    copiedDomain===dom.domain?(0,P.jsx)(Ch_icon,{className:\`h-3 w-3 text-emerald-600\`}):(0,P.jsx)(Cp_icon,{className:\`h-3 w-3 text-slate-500\`}),
+                                    copiedDomain===dom.domain?\`Tersalin!\`:\`Tagihan\`
+                                  ]
+                                })
+                              ]
+                            })
+                          })
+                        ]
+                      },dom.domain))
+                    })
+                  ]
+                })
               })
             ]
           }),

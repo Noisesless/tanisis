@@ -17,7 +17,7 @@
 import express from "express";
 import crypto from "node:crypto";
 import multer from "multer";
-import { listDomains } from "../lib/domains.js";
+import { listDomains, getReadinessAudit } from "../lib/domains.js";
 import { USERS, roleAllowsDomain, roleLabel } from "../lib/users.js";
 import { buildWorkbook, importWorkbook } from "../lib/excel.js";
 import { q } from "../db.js";
@@ -106,6 +106,19 @@ function requireDomainAccess(req, res, next) {
   }
   next();
 }
+
+/**
+ * GET /api/v1/admin/readiness
+ * Audit kesiapan data (Readiness Matrix) per sektor/domain [Super Admin].
+ */
+router.get("/readiness", requireAdmin, requireAdminRole, async (req, res) => {
+  try {
+    const audit = await getReadinessAudit();
+    res.json(audit);
+  } catch (err) {
+    res.status(500).json({ error: "Gagal mengambil audit kesiapan data: " + (err.message || String(err)) });
+  }
+});
 
 router.get("/domains", requireAdmin, async (req, res) => {
   try {
