@@ -42,9 +42,11 @@ async function executeMigration() {
   `);
   console.log("Tabel activity_logs siap.");
 
-  console.log("\n=== 1. DROP TABEL USANG fsva_indikator_kabupaten ===");
+  console.log("\n=== 1. DROP TABEL USANG fsva_indikator_kabupaten & kwt_kelompok_wanita_tani ===");
   await q("DROP TABLE IF EXISTS fsva_indikator_kabupaten");
-  console.log("Berhasil drop tabel fsva_indikator_kabupaten.");
+  await q("DROP TABLE IF EXISTS kwt_kelompok_wanita_tani");
+  await q("DROP TABLE IF EXISTS kwt");
+  console.log("Berhasil drop tabel usang fsva_indikator_kabupaten dan kwt_kelompok_wanita_tani.");
 
   console.log("\n=== 2. PASTIKAN TABEL & DATA FSVA DESA TERSEDIA ===");
   const [tblCheck] = await q("SELECT COUNT(*) AS c FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator'");
@@ -78,11 +80,11 @@ async function executeMigration() {
 
   const fCols = (await q("DESCRIBE fsva_desa_indikator")).map(c => c.Field);
   if (!fCols.includes("kecamatan_id")) {
-    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN kecamatan_id INT NULL AFTER tahun");
+    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN kecamatan_id TINYINT(3) UNSIGNED NULL AFTER tahun");
     console.log("Kolom 'kecamatan_id' ditambahkan ke tabel fsva_desa_indikator.");
   }
   if (!fCols.includes("desa_id")) {
-    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN desa_id INT NULL AFTER kecamatan_id");
+    await q("ALTER TABLE fsva_desa_indikator ADD COLUMN desa_id SMALLINT(5) UNSIGNED NULL AFTER kecamatan_id");
     console.log("Kolom 'desa_id' ditambahkan ke tabel fsva_desa_indikator.");
   }
 
@@ -133,12 +135,11 @@ async function executeMigration() {
 
   console.log("\n=== 5. TERAPKAN NOT NULL & INDEX FOREIGN KEY ===");
   try {
-    const cols = await q("SHOW COLUMNS FROM fsva_desa_indikator LIKE 'desa_id'");
-    if (cols[0]?.Null === "YES") {
-      await q("ALTER TABLE fsva_desa_indikator MODIFY COLUMN kecamatan_id INT NOT NULL, MODIFY COLUMN desa_id INT NOT NULL");
-      console.log("Kolom kecamatan_id dan desa_id diubah menjadi NOT NULL.");
-    }
-  } catch {}
+    await q("ALTER TABLE fsva_desa_indikator MODIFY COLUMN kecamatan_id TINYINT(3) UNSIGNED NOT NULL, MODIFY COLUMN desa_id SMALLINT(5) UNSIGNED NOT NULL");
+    console.log("Kolom kecamatan_id dan desa_id diubah menjadi NOT NULL dan tipe dicocokkan.");
+  } catch (err) {
+    console.warn("Peringatan modify columns:", err.message);
+  }
 
   // Tambahkan Index jika belum ada
   try {
@@ -153,15 +154,22 @@ async function executeMigration() {
   // Tambahkan Foreign Key jika belum ada
   try {
     const [fkKec] = await q("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator' AND CONSTRAINT_NAME = 'fk_fsva_kecamatan'");
-    if (!fkKec) await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_kecamatan FOREIGN KEY (kecamatan_id) REFERENCES kecamatan(id) ON DELETE CASCADE");
-  } catch {}
+    if (!fkKec) {
+      await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_kecamatan FOREIGN KEY (kecamatan_id) REFERENCES kecamatan(id) ON DELETE CASCADE");
+      console.log("Foreign Key constraint fk_fsva_kecamatan aktif!");
+    }
+  } catch (err) {
+    console.warn("Peringatan FK kecamatan:", err.message);
+  }
   try {
     const [fkDes] = await q("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'fsva_desa_indikator' AND CONSTRAINT_NAME = 'fk_fsva_desa'");
     if (!fkDes) {
       await q("ALTER TABLE fsva_desa_indikator ADD CONSTRAINT fk_fsva_desa FOREIGN KEY (desa_id) REFERENCES desa(id) ON DELETE CASCADE");
-      console.log("Foreign Key constraints fk_fsva_kecamatan & fk_fsva_desa aktif!");
+      console.log("Foreign Key constraint fk_fsva_desa aktif!");
     }
-  } catch {}
+  } catch (err) {
+    console.warn("Peringatan FK desa:", err.message);
+  }
 
   console.log("\n=== MIGRATION SELESAI SUKSES! ===");
 }

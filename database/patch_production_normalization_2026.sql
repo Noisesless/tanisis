@@ -1,12 +1,14 @@
 -- =========================================================================
 -- PRODUCTION PATCH: NORMALISASI RELASIONAL DESA & KECAMATAN
--- Generated: 2026-10-09T10:28:51.796Z
+-- Generated: 2026-10-09T10:46:40.285Z
 -- =========================================================================
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- 1. Drop tabel usang fsva_indikator_kabupaten
+-- 1. Drop tabel usang fsva_indikator_kabupaten & kwt_kelompok_wanita_tani
 DROP TABLE IF EXISTS `fsva_indikator_kabupaten`;
+DROP TABLE IF EXISTS `kwt_kelompok_wanita_tani`;
+DROP TABLE IF EXISTS `kwt`;
 
 -- 2. Buat tabel activity_logs jika belum ada
 CREATE TABLE IF NOT EXISTS `activity_logs` (

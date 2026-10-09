@@ -10,8 +10,10 @@ async function generateSql() {
   lines.push("SET FOREIGN_KEY_CHECKS = 0;\n");
 
   // 1. Drop tabel usang
-  lines.push("-- 1. Drop tabel usang fsva_indikator_kabupaten");
-  lines.push("DROP TABLE IF EXISTS `fsva_indikator_kabupaten`;\n");
+  lines.push("-- 1. Drop tabel usang fsva_indikator_kabupaten & kwt_kelompok_wanita_tani");
+  lines.push("DROP TABLE IF EXISTS `fsva_indikator_kabupaten`;");
+  lines.push("DROP TABLE IF EXISTS `kwt_kelompok_wanita_tani`;");
+  lines.push("DROP TABLE IF EXISTS `kwt`;\n");
 
   // 2. Buat tabel activity_logs jika belum ada
   lines.push("-- 2. Buat tabel activity_logs jika belum ada");
