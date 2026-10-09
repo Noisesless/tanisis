@@ -104,6 +104,17 @@ async function main() {
     }
   }
 
+  // Jalankan normalisasi relasional desa/kecamatan & drop tabel usang
+  const normalizeScript = path.resolve(process.cwd(), "scripts/normalize_fsva_and_drop_old.js");
+  if (fs.existsSync(normalizeScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Menjalankan normalisasi relasional desa/kecamatan & drop fsva_indikator_kabupaten...`);
+      execSync(`node "${normalizeScript}"`, { stdio: "inherit", env: process.env });
+    } catch (normErr) {
+      console.warn(`[Migrasi Patch Warning] Normalisasi gagal:`, normErr.message);
+    }
+  }
+
   // Verifikasi tabel-tabel baru hari ini
   const verifyConn = await mysql.createConnection({
     host: envHost,
@@ -116,7 +127,7 @@ async function main() {
   try {
     const checkTables = [
       "psat_pduk",
-      "fsva_indikator_kabupaten",
+      "activity_logs",
       "fsva_desa_indikator",
       "harga_pasar_banjarnegara",
       "neraca_pangan_komposit",

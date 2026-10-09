@@ -45,13 +45,18 @@ cd ~/htdocs/pertanian.sistemdata.id
 # 2. Tarik pembaruan kode dan bundel terbaru dari GitHub
 git pull origin main
 
-# 3. Pasang dependensi jika terdapat perubahan package.json (opsional)
+# 3. Jalankan patch normalisasi relasional database (drop fsva lama, tambah kode BPS, relasi 278 desa, activity_logs)
+npm run db:normalize
+# Atau jika menggunakan SQL native secara langsung:
+# mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/patch_production_normalization_2026.sql
+
+# 4. Pasang dependensi jika terdapat pembaruan package.json
 npm ci --omit=dev
 
-# 4. Restart proses aplikasi via PM2
+# 5. Restart proses aplikasi via PM2
 pm2 reload ecosystem.config.cjs || pm2 restart pertanian-api
 
-# 5. Cek status aplikasi dan log
+# 6. Verifikasi status aplikasi & kesiapan domain
 pm2 status
 curl -s http://127.0.0.1:5173/api/health
 ```
@@ -69,37 +74,45 @@ Gunakan metode ini jika melakukan instalasi bersih atau memindahkan hosting:
 4. Buat folder baru dengan nama `pertanian.sistemdata.id`.
 5. Unggah berkas arsip rilis bersih (`.zip`), lalu klik kanan > **Extract**.
 6. Salin berkas `.env` dari folder cadangan ke dalam folder baru.
-7. Pastikan parameter `GEMINI_API_KEY` dan kredensial database terisi dengan benar.
+7. Jalankan patch SQL `database/patch_production_normalization_2026.sql` via cPanel **phpMyAdmin** pada basis data `pertasis`.
 8. Masuk ke cPanel > **Setup Node.js App** > klik tombol **Restart** pada aplikasi SISPERTANI.
 9. Lakukan pembersihan cache peramban (*Hard Refresh* / `Ctrl + F5`) saat membuka situs.
 
 ---
 
-## 4. Sinkronisasi Basis Data Produksi (66 Tabel Lengkap)
+## 4. Sinkronisasi Basis Data Produksi (71 Tabel Lengkap)
 
-Terdapat dua metode sinkronisasi basis data yang didukung penuh:
+Terdapat tiga metode sinkronisasi basis data yang didukung penuh:
 
-### Opsi 1: Migrasi Patch Non-Destruktif (Rekomendasi Utama untuk Update Berjalan)
-Gunakan opsi ini jika server produksi sudah memiliki database berjalan. Skrip ini secara otomatis:
-1. Menerapkan tabel normalisasi baru (`psat_pduk`, `fsva_indikator_kabupaten`, `harga_pasar_banjarnegara`, `neraca_pangan_komposit`, `kelembagaan_perikanan`, `kelembagaan_juleha`, `kelembagaan_p4s`, `kelembagaan_upja`) tanpa kehilangan data yang sudah ada.
-2. Mengimpor dataset primer BPS Distankan KP (`scripts/import_unmerged_distankan.js`) untuk melengkapi data historis buah, sayur, palawija, dan biofarmaka 2017–2024.
-3. Menjalankan sinkronisasi komoditas unggulan faktual (`scripts/patch_komoditas_unggulan.js`) untuk menonaktifkan baris dummy 0 Ton seeder lama.
+### Opsi 1: Patch Normalisasi Relasional & Eliminasi Artefak Usang (Rekomendasi Utama Update Ini)
+Gunakan opsi ini untuk memperbarui database production yang sedang aktif:
+1. **Drop Tabel Usang:** Menghapus `fsva_indikator_kabupaten`.
+2. **Kolom Kode BPS & Tipe:** Menambahkan `kode` pada `kecamatan` dan `desa`, serta `tipe` pada `desa`.
+3. **Integritas Relasional:** Menghubungkan 278 desa di `fsva_desa_indikator` dengan `kecamatan_id` dan `desa_id` (FK `NOT NULL`).
+4. **Audit Logging:** Membentuk tabel `activity_logs` untuk audit aktivitas login, logout, impor, dan ekspor.
 
 ```bash
 # Masuk ke direktori webroot
 cd ~/htdocs/pertanian.sistemdata.id
 
-# Jalankan runner patch resmi terpadu
-npm run db:patch
-# Atau secara manual:
-# node --env-file=.env scripts/apply_production_patch.js
+# Jalankan runner normalisasi terdedikasi
+npm run db:normalize
+
+# ATAU eksekusi langsung via mysql CLI:
+# mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/patch_production_normalization_2026.sql
 ```
 
-### Opsi 2: Impor Dump Master Penuh (Setup Awal / Full Reset)
+### Opsi 2: Migrasi Patch Menyeluruh (Full Pipeline)
+Menjalankan seluruh siklus migrasi patch: DDL tabel pendukung, import BPS Distankan, patch komoditas unggulan, import FSVA desa, dan normalisasi relasional:
+
+```bash
+npm run db:patch
+```
+
+### Opsi 3: Impor Dump Master Penuh (Setup Awal / Full Reset)
 Jika melakukan setup awal atau migrasi menyeluruh dari awal:
 
 ```bash
-# Impor dump master basis data mutakhir (100% portabel, bebas DEFINER root & error strict mode):
 mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/dump_production_pertanian_updated.sql
 ```
 

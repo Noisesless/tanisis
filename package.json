@@ -9,6 +9,7 @@
     "start": "node --env-file=.env src/server.js",
     "dev": "node --watch --env-file=.env src/server.js",
     "db:patch": "node --env-file=.env scripts/apply_production_patch.js",
+    "db:normalize": "node --env-file=.env scripts/normalize_fsva_and_drop_old.js",
     "db:patch-unggulan": "node --env-file=.env scripts/patch_komoditas_unggulan.js",
     "db:import-distankan": "node --env-file=.env scripts/import_unmerged_distankan.js",
     "db:import-fsva": "node --env-file=.env scripts/import_fsva_desa.js",

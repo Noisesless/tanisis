@@ -35,6 +35,7 @@ scratch/
 *.sqlite
 !database/dump_production_pertanian_updated.sql
 !database/production_migration_patch.sql
+!database/patch_production_normalization_2026.sql
 
 # Operating System Files
 .DS_Store

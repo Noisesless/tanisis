@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Data Readiness & Audit Dashboard 100% Verified done=ALL last=Penyelesaian backend GET /api/v1/admin/readiness (batch query 24 domain, 38ms latency, guard admin), antarmuka dasbor audit kesiapan (4 kartu metrik, tabel status mandiri/penyangga/kosong, tombol salin tagihan data ke clipboard), kompilasi dist/assets/admin-C9Dakcgq.js
+phase=Database Normalization, Admin Audit Logging & Production Update Pipeline Ready done=ALL last=Normalisasi relasional desa-kecamatan-fsva, drop fsva_indikator_kabupaten, activity_logs audit terintegrasi, dual-tab log dengan server-side pagination, auto-resolve desa_id pada impor excel, patch DDL produksi database/patch_production_normalization_2026.sql terverifikasi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -30,7 +30,7 @@ icon_lib=lucide
 [Komoditas-Per-Kecamatan]=GET /api/v1/komoditas-unggulan/per-kecamatan?tahun=→top per kecamatan dinamis dari tabel produksi
 [Nilai-Ekonomi]=GET /api/v1/ekonomi/nilai-ekonomi?bidang=→valuasi riil per bidang dari MySQL nilai_ekonomi_tahunan
 [AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN)→Gemini stream proxy→Direct Factual SSE
-[Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 24 domain, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
+[Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 23 domain, latest data year, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
 [Frontend]=GET /→express.static(dist)→SPA fallback index.html
 
 ## [PAGES] BUILT
@@ -44,9 +44,13 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit)
+pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-041] Auto-Resolve Relasi Impor Excel & SQL Patch Produksi Mandiri:
+- Mengotomatisasi resolusi `desa_id` dari `kode_desa` / pasangan `(kecamatan_id + nama_desa)` dan `kode_kec` dari `kecamatan_id` pada `src/lib/excel.js`. Kolom `desa_id` dikecualikan dari template (`SKIP_COLS`) agar tidak membebani pengguna dengan input ID angka mentah.
+- Menyiapkan berkas SQL patch produksi mandiri `database/patch_production_normalization_2026.sql` yang idempotent untuk drop `fsva_indikator_kabupaten`, penambahan kolom `kode` & `tipe`, foreign keys 278 desa, serta pembuatan tabel `activity_logs`.
+- Menambahkan skrip NPM `npm run db:normalize` untuk mempermudah eksekusi deployment di lingkungan server produksi.
 [ADR-040] Dasbor Admin Dual-Tab Log & Server-Side Pagination:
 - Mengintegrasikan tabel `activity_logs` (log audit aktivitas pengguna) berdampingan dengan `sync_log` (riwayat pembaruan/impor) dalam antarmuka dual-tab bersih pada `/admin`.
 - Menerapkan paginasi server-side ringan (10 entri per halaman via LIMIT & OFFSET) pada endpoint `GET /api/v1/admin/sync-log` dan `GET /api/v1/admin/activity-log` untuk mencegah bottleneck DOM dan memastikan pemuatan dasbor cepat tanpa beban render massal.

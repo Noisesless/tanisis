@@ -202,18 +202,23 @@ Autentikasi pengguna berdasarkan peran bidang atau super-admin.
 - **Response 401 Unauthorized:** Kredensial tidak valid.
 - **Response 429 Too Many Requests:** Diblokir karena melebihi 5 percobaan gagal per 15 menit.
 
+### `POST /api/v1/admin/logout`
+Melakukan terminasi sesi admin, mencabut token dari memori, dan mencatat aksi log aktivitas.
+- **Headers:** `Authorization: Bearer <token>`
+- **Response 200 OK:** `{"ok": true, "message": "Berhasil keluar dari sesi dasbor admin."}`
+
 ### `GET /api/v1/admin/domains`
-Mengambil daftar domain (total 18 domain lengkap) yang dapat dikelola oleh akun yang sedang masuk berdasarkan peran RBAC (`bantuan-program`, `bantuan-alokasi`, `bantuan-korelasi`, `padi`, `palawija`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `st2023`, `renstra`, `kwt`, `komoditas-unggulan`, `ltt-katam`).
+Mengambil daftar domain (total 23 domain lengkap) yang dapat dikelola oleh akun yang sedang masuk berdasarkan peran RBAC (`bantuan-program`, `bantuan-alokasi`, `bantuan-korelasi`, `padi`, `palawija`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `st2023`, `renstra`, `ltt-katam`, `kelembagaan-pertanian`, `kelembagaan-perikanan`, `kelembagaan-pendukung`, `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`).
 - **Headers:** `Authorization: Bearer <token>`
 - **Response 200 OK:** Array konfigurasi domain beserta skema sheet, natural key, dan dropdown enum.
 
 ### `GET /api/v1/admin/template/:domain`
-Mengunduh formulir template berkas Microsoft Excel (`.xlsx`) kosong untuk domain tertentu. Berkas dilengkapi sheet petunjuk tata cara pengisian, sheet data berformat resmi, dan sheet data contoh.
+Mengunduh formulir template berkas Microsoft Excel (`.xlsx`) kosong untuk domain tertentu. Berkas dilengkapi sheet petunjuk tata cara pengisian, sheet data berformat resmi, dan sheet data contoh. Kolom teknis `desa_id` di-skip secara otomatis agar tidak membingungkan pengguna.
 - **Headers:** `Authorization: Bearer <token>`
 - **Response:** Berkas binary stream file `.xlsx`.
 
 ### `GET /api/v1/admin/export/:domain`
-Mengekspor seluruh data aktif yang tersimpan pada tabel basis data untuk domain terkait ke dalam format workbook Excel multi-sheet. Pada tabel yang memiliki flag `hasSumber`, otomatis disuntikkan kolom `Sumber Data` untuk audit traceability.
+Mengekspor seluruh data aktif yang tersimpan pada tabel basis data untuk domain terkait ke dalam format workbook Excel multi-sheet. Pada tabel yang memiliki flag `hasSumber`, otomatis disuntikkan kolom `Sumber Data` untuk audit traceability. Aksi tercatat otomatis di `activity_logs`.
 - **Headers:** `Authorization: Bearer <token>`
 - **Response:** Berkas binary stream file `.xlsx`.
 
@@ -223,37 +228,47 @@ Mengunggah berkas Excel (`.xlsx`) hasil input untuk diintegrasikan secara langsu
 - **Form Data Field:** `file` (berkas .xlsx, batas maksimum 15 MB)
 - **Logika Proses:**
   1. Validasi struktur sheet dan nama kolom.
-  2. Normalisasi nama kecamatan dan desa berdasarkan tabel referensi resmi.
-  3. Eksekusi `INSERT ... ON DUPLICATE KEY UPDATE` berbasis *natural key*.
-  4. Pencatatan audit ke tabel `sync_log`.
+  2. Resolusi otomatis `desa_id` dari `kode_desa` atau pasangan `(kecamatan_id + nama_desa)`.
+  3. Resolusi otomatis `kode_kec` dari tabel master `kecamatan`.
+  4. Eksekusi `INSERT ... ON DUPLICATE KEY UPDATE` berbasis *natural key*.
+  5. Pencatatan audit ke tabel `sync_log` dan `activity_logs`.
 - **Response 200 OK:**
   ```json
   {
-    "ok": true,
-    "domain": "padi",
-    "results": [
+    "domain": "fsva-desa",
+    "sheets": [
       {
-        "table": "padi_produksi",
-        "sheet": "Padi",
-        "rowsRead": 40,
-        "rowsInserted": 5,
-        "rowsUpdated": 35,
+        "name": "FSVA Desa",
+        "table": "fsva_desa_indikator",
+        "inserted": 0,
+        "updated": 278,
+        "skipped": 0,
         "errors": []
       }
-    ]
+    ],
+    "inserted": 0,
+    "updated": 278,
+    "skipped": 0,
+    "errors": []
   }
   ```
 
 ### `GET /api/v1/admin/sync-log`
-Menampilkan 50 entri riwayat audit sinkronisasi dan impor data terakhir.
+Menampilkan riwayat audit sinkronisasi dan impor data dengan paginasi server-side (`?page=N&limit=N`, default page=1, limit=10).
 - **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
+- **Response 200 OK:** `{"total": 119, "page": 1, "limit": 10, "totalPages": 12, "data": [...]}`
+
+### `GET /api/v1/admin/activity-log`
+Menampilkan riwayat audit aktivitas pengguna (login, logout, import, export) dengan paginasi server-side (`?page=N&limit=N`, default page=1, limit=10).
+- **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
+- **Response 200 OK:** `{"total": 76, "page": 1, "limit": 10, "totalPages": 8, "data": [...]}`
 
 ### `GET /api/v1/admin/paket`
 Menampilkan indeks paket arsip data template dan ekspor siap unduh (format Excel dan CSV) yang tersimpan di server.
 - **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
 
 ### `GET /api/v1/admin/readiness`
-Audit otomatis kesiapan data publik per bidang/menu frontend dan pelacakan status tabel basis data vs penyangga fallback disk/CKAN.
+Audit otomatis kesiapan data publik per bidang/menu frontend, tahun data terakhir (`latestYear`), dan pelacakan status tabel basis data vs penyangga fallback disk/CKAN.
 - **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
 - **Response 200 OK:**
   ```json

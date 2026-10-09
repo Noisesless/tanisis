@@ -385,6 +385,29 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   2. Memperbaiki logika backend di `src/routes/ai.js` agar memvalidasi payload dan mengekstrak konteks live RAG database sebelum memeriksa API key.
   3. Mengimplementasikan **Zero-Downtime Resilience Fallback**: Jika `GEMINI_API_KEY` tidak terpasang atau upstream gagal, server tidak lagi mengembalikan status HTTP 500, melainkan secara anggun mengalirkan jawaban faktual langsung dari MariaDB `pertasis` via SSE (HTTP 200) dengan catatan transparan, mencegah tampilan error di antarmuka pengguna.
 
+### [ISSUE-032] Normalisasi Relasional Kecamatan-Desa-FSVA & Eliminasi fsva_indikator_kabupaten
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-09
+- **Deskripsi:** Tabel `fsva_indikator_kabupaten` hanya artefak agregat 12 baris dengan nilai kosong yang membingungkan klien, sementara data 278 desa di `fsva_desa_indikator` belum memiliki foreign key `kecamatan_id` dan `desa_id`.
+- **Akar Masalah:** Skema awal belum menerapkan normalisasi relasional tingkat desa secara ketat.
+- **Solusi (ADR-039):**
+  1. Mengeksekusi drop tabel `fsva_indikator_kabupaten`.
+  2. Menambahkan kolom `kode` BPS pada tabel `kecamatan` (20 kecamatan) dan `desa` (278 desa), serta kolom `tipe` pada `desa`.
+  3. Menambahkan kolom `kecamatan_id` dan `desa_id` berstatus `NOT NULL` serta constraint foreign key cascade pada `fsva_desa_indikator`.
+  4. Menyelaraskan seluruh 278 desa via mapping fonetik dan kode BPS resmi.
+
+### [ISSUE-033] Paginasi Log Dasbor Admin, Pencatatan Log Aktivitas Pengguna & Auto-Resolve Relasi Impor Excel
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-09
+- **Deskripsi:** Halaman `/admin` mengalami potensi beban rendering berat jika data sync_log menumpuk, aktivitas login/logout belum tercatat di database, kolom "Aksi Administrasi" pada tabel readiness matrix perlu diganti menjadi tahun data terakhir, dan proses impor Excel sempat menolak baris jika `desa_id` diwajibkan sebagai input manual.
+- **Akar Masalah:** Ketiadaan endpoint terdedikasi `POST /api/v1/admin/logout`, handler login in-memory tanpa query INSERT `activity_logs`, ketiadaan paginasi server-side, dan template Excel membaca skema kolom `desa_id` secara mentah.
+- **Solusi (ADR-040 & ADR-041):**
+  1. Membangun endpoint `GET /api/v1/admin/activity-log` dan menambahkan paginasi `?page=N&limit=N` pada `sync-log` serta `activity-log`.
+  2. Mengimplementasikan dual-tab log riwayat pembaruan & log aktivitas pengguna dengan tombol navigasi paginasi.
+  3. Mencatat aksi `LOGIN`, `LOGOUT`, `IMPORT`, dan `EXPORT` secara persisten ke tabel `activity_logs`.
+  4. Menambahkan auto-resolver pada `src/lib/excel.js` untuk memetakan `kode_desa`/`nama_desa` ke `desa_id` secara otomatis dan mengecualikan `desa_id` dari kolom template input manual (`SKIP_COLS`).
+  5. Mengganti kolom "Aksi Administrasi" dengan "Tahun Data Terakhir" yang dihitung dinamis dari kolom tahun/tanggal tabel, serta menjadikan default readiness matrix berstatus collapse.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

@@ -8,20 +8,17 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 
 - **Database Engine:** MySQL / MariaDB (InnoDB)
 - **Collation:** `utf8mb4_unicode_ci`
-- **Total Tabel:** 66 Tabel (termasuk 14 tabel sistem RBAC, master komoditas & varietas, harga produsen, 10 jenis ikan, ekosistem peternakan, serta 9 tabel normalisasi ketahanan pangan, harga pasar, dan kelembagaan binaan)
-- **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan.
-- **Harmonisasi Baseline & Patch Runner:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura, data capaian padi 2025) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql` yang dapat dieksekusi otomatis via `npm run db:patch` (`scripts/apply_production_patch.js`), serta dump basis data dev mutakhir berformat UTF-8 tersimpan di `database/dump_production_pertanian_updated.sql` (1.89 MB, 2.421 baris DDL & data).
+- **Total Tabel:** 71 Tabel (mencakup master geografi, 23 domain statistik operasional yang memetakan 55 tabel sheet, sistem RBAC, komoditas, varietas, tabel audit sync_log dan activity_logs)
+- **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan. Kolom relasi teknis `desa_id` dan `kode_kec` di-resolve otomatis dari master geografi saat proses impor.
+- **Harmonisasi Baseline & Patch Runner:** Sinkronisasi dua arah telah dilakukan antara data riil production dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql` dan `database/patch_production_normalization_2026.sql` yang dapat dieksekusi via `npm run db:patch` atau `npm run db:normalize`.
 
-### 1.1 Portabilitas Eksekusi & Kompatibilitas Hosting (ADR-031)
+### 1.1 Portabilitas Eksekusi & Normalisasi Relasional (ADR-039, ADR-040, ADR-041)
 
-Skrip patch `database/production_migration_patch.sql` dan dump `database/dump_production_pertanian_updated.sql` telah dirancang dengan kepatuhan portabilitas tinggi untuk lingkungan hosting bersama / unprivileged database user:
-1. **Bebas Klausa DEFINER Root:** Seluruh pembuatan VIEW (`log_aktivitas`) tidak menggunakan penanda `DEFINER=\`root\`@\`localhost\`` sehingga akun database cPanel biasa (seperti `pertalit`) dapat mengimpor basis data tanpa memicu galat `ERROR 1227 (SET USER privilege)`.
-2. **Standar ISO/SQL Datetime:** Seluruh 653 representasi tanggal yang sebelumnya berformat JavaScript `Date().toString()` telah distandardisasi menjadi format baku `YYYY-MM-DD HH:MM:SS` untuk mencegah galat `ERROR 1292 (Incorrect datetime value)`.
-3. **Pengecualian Kolom Terhitung Otomatis (Generated Columns):** Kolom `nilai_rp` pada tabel `nilai_ekonomi_tahunan` yang memiliki ekspresi `GENERATED ALWAYS AS (volume * harga_produsen) STORED` dikecualikan dari klausa `INSERT`, sehingga kalkulasi nilai rupiah dilakukan secara otomatis oleh mesin database tanpa memicu galat `ERROR 1906`.
-4. **Relaksasi SQL_MODE Otomatis:** Skrip diawali dengan `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';` dan ditutup dengan pemulihan `SET SQL_MODE=@OLD_SQL_MODE;` serta `SET FOREIGN_KEY_CHECKS = 1;`.
-5. **Runner Otomatis Non-Destruktif:** Disediakan skrip `scripts/apply_production_patch.js` yang dijalankan dengan `npm run db:patch` untuk mengeksekusi DDL & seeder patch secara bertahap tanpa menjatuhkan tabel atau menghapus data yang sudah ada.
-6. **Impor Dataset Primer Distankan KP:** Skrip `scripts/import_unmerged_distankan.js` mengimpor dataset riil dari `dist/14. Distankan KP/` (produksi buah-buahan, sayuran, palawija, biofarmaka, dan ternak) yang belum terhubung sebelumnya, mengisikan ribuan baris data resmi 2017–2024 ke dalam `horti_produksi`, `palawija_produksi`, dan `perkebunan_produksi`.
-7. **Patch Komoditas Unggulan Faktual (ADR-035):** Skrip `scripts/patch_komoditas_unggulan.js` (dapat dijalankan via `npm run db:patch-unggulan` atau otomatis melalui `npm run db:patch`) menonaktifkan baris dummy bernilai 0 Ton seeder lama (Banjarmangu dsb.) dan memperbarui komoditas riil (Jagung 51.146 Ton, Ubi Kayu 78.886 Ton, Wortel 48.031 Ton, Kapulaga 930.421 tangkai) agar bebas kontaminasi data sintetis.
+1. **Eliminasi Tabel Usang:** Tabel `fsva_indikator_kabupaten` (artefak agregat lama tanpa data desa) resmi di-drop. Seluruh ketahanan pangan desa dikelola secara tunggal di `fsva_desa_indikator`.
+2. **Normalisasi Relasional Geografis:** Tabel master `kecamatan` dan `desa` dilengkapi kolom `kode` (kode BPS resmi, misal `3304160` dan `3304160005`) serta kolom `tipe` (`Desa` / `Kelurahan`).
+3. **Integritas Foreign Key:** Tabel `fsva_desa_indikator` (278 desa) telah dinormalisasi dengan menambahkan `kecamatan_id` (FK $\rightarrow$ `kecamatan.id`) dan `desa_id` (FK $\rightarrow$ `desa.id`) berstatus `NOT NULL` serta cascade indexing.
+4. **Auto-Resolving Saat Impor Excel:** Prosesor Excel (`src/lib/excel.js`) secara otomatis mencari `desa_id` dari `kode_desa` atau pasangan `(kecamatan_id, nama_desa)` dan mencari `kode_kec` dari `kecamatan_id`, sehingga admin pengguna tidak perlu menginput ID teknis di file Excel.
+5. **Audit Logging Terintegrasi:** Seluruh aksi login, logout, impor, dan ekspor tercatat di tabel `activity_logs` dengan dukungan paginasi server-side di dasbor admin.
 
 ---
 
@@ -131,5 +128,19 @@ Merekam seluruh aktivitas impor data via Excel oleh administrator bidang:
 - `pesan` (TEXT — rincian pesan atau catatan error)
 - `created_at` (TIMESTAMP)
 
-### `activity_logs` / `log_aktivitas`
-Pencatatan riwayat sesi dan interaksi administratif.
+### `activity_logs`
+Merekam seluruh jejak audit tindakan pengguna/admin (autentikasi dan transaksi data) secara persisten:
+- `id` (BIGINT UNSIGNED, Primary Key, Auto Increment)
+- `user_id` (INT UNSIGNED NULL — referensi ID user jika ada)
+- `username` (VARCHAR(50) — identitas pengguna atau `guest`)
+- `nama_lengkap` (VARCHAR(100) NULL)
+- `role` (VARCHAR(50) — mis. `admin`, `tanaman-pangan`, dll.)
+- `action` (VARCHAR(50) — `LOGIN`, `LOGOUT`, `IMPORT`, `EXPORT`, dll.)
+- `entity` (VARCHAR(100) — mis. `auth`, `domain:fsva-desa`)
+- `description` (TEXT — rincian tindakan dan volume baris yang diproses)
+- `ip_address` (VARCHAR(45) — alamat IP klien)
+- `user_agent` (TEXT — identifikasi klien/browser)
+- `status` (ENUM('success', 'failed', 'warning'))
+- `metadata` (LONGTEXT NULL — data pelengkap JSON)
+- `created_at` (DATETIME DEFAULT CURRENT_TIMESTAMP)
+- **Index:** `idx_created_at`, `idx_username`, `idx_action`, `idx_role`, `idx_status`

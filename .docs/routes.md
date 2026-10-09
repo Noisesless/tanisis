@@ -115,15 +115,17 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/ketahanan/harga-pasar` | `src/routes/ketahanan.js` | Publik | Data harian komoditas pasar tradisional Banjarnegara |
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah |
-| `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token (rate-limited) |
-| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 24 domain operasional terotorisasi (inc. Harga Pasar, FSVA, Neraca Pangan, PSAT PDUK, JULEHA, UPJA) |
-| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (24 domain) |
-| `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data |
+| `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin/bidang & generate token (rate-limited, catat activity_logs) |
+| `POST`| `/v1/admin/logout` | `src/routes/admin.js` | Bearer (Auth) | Logout sesi admin & pencatatan audit activity_logs |
+| `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 23 domain operasional terotorisasi (inc. Harga Pasar, FSVA Desa, Neraca Pangan, PSAT PDUK, JULEHA, UPJA) |
+| `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (23 domain, skip kolom teknis desa_id) |
+| `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data & catat activity_logs |
+| `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel multipart, auto-resolve desa_id/kode_kec, upsert DB, catat sync_log & activity_logs |
 | `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor data berpaginasi (?page=N&limit=N) |
 | `GET` | `/v1/admin/activity-log` | `src/routes/admin.js` | Bearer (Admin) | Log audit aktivitas pengguna/admin berpaginasi (?page=N&limit=N) |
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
-| `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, status tabel database, & pelacakan fallback |
+| `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, tahun data terakhir, status tabel database, & pelacakan fallback |
 | `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL pertasis + Gemini, filter multi-tahun, grounding faktual tanaman hias, ikan hias, KWT) |
 
 ---
