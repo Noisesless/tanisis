@@ -47,6 +47,9 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit)
 
 ## [ADR]
+[ADR-040] Dasbor Admin Dual-Tab Log & Server-Side Pagination:
+- Mengintegrasikan tabel `activity_logs` (log audit aktivitas pengguna) berdampingan dengan `sync_log` (riwayat pembaruan/impor) dalam antarmuka dual-tab bersih pada `/admin`.
+- Menerapkan paginasi server-side ringan (10 entri per halaman via LIMIT & OFFSET) pada endpoint `GET /api/v1/admin/sync-log` dan `GET /api/v1/admin/activity-log` untuk mencegah bottleneck DOM dan memastikan pemuatan dasbor cepat tanpa beban render massal.
 [ADR-039] Normalisasi Relasional Kecamatan-Desa-FSVA & Eliminasi fsva_indikator_kabupaten:
 - Drop tabel usang `fsva_indikator_kabupaten` (12 baris null, artefak lama) dan arahkan domain Admin ke `fsva-desa` (278 desa terdata, tabel aktif `fsva_desa_indikator`).
 - Normalisasi skema master: tambahkan kolom `kode` (Kode BPS resmi) ke tabel `kecamatan` (20 kecamatan) dan `desa` (278 desa/kelurahan), serta kolom `tipe` (Desa/Kelurahan).

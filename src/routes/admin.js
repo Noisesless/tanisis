@@ -131,21 +131,47 @@ router.get("/domains", requireAdmin, async (req, res) => {
   }
 });
 
-/** GET /api/v1/admin/sync-log -> riwayat import/ETL (terbaru dulu).
- *  ?limit=N (default 50, jangkau 1-200). Untuk tab "Riwayat Import" dasbor admin. */
+/** GET /api/v1/admin/sync-log -> riwayat import/ETL dengan paginasi.
+ *  ?page=N&limit=N (default page=1, limit=10). */
 router.get("/sync-log", requireAdmin, requireAdminRole, async (req, res) => {
   try {
-    const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const offset = (page - 1) * limit;
+
     const data = await q(
       `SELECT id, dataset, sumber, aksi, baris, status, pesan, created_at
-       FROM sync_log ORDER BY id DESC LIMIT ?`,
-      [limit]
+       FROM sync_log ORDER BY id DESC LIMIT ? OFFSET ?`,
+      [limit, offset]
     );
     const [{ total }] = await q("SELECT COUNT(*) AS total FROM sync_log");
-    res.json({ total, limit, data });
+    const totalPages = Math.ceil(total / limit) || 1;
+    res.json({ total, page, limit, totalPages, data });
   } catch (e) {
     console.error("[admin] sync-log fetch error:", e?.message);
     res.status(500).json({ error: "Gagal memuat riwayat log sinkronisasi." });
+  }
+});
+
+/** GET /api/v1/admin/activity-log -> log aktivitas sistem/admin dengan paginasi.
+ *  ?page=N&limit=N (default page=1, limit=10). */
+router.get("/activity-log", requireAdmin, requireAdminRole, async (req, res) => {
+  try {
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const offset = (page - 1) * limit;
+
+    const data = await q(
+      `SELECT id, username, role, action, entity, description, ip_address, status, created_at
+       FROM activity_logs ORDER BY id DESC LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+    const [{ total }] = await q("SELECT COUNT(*) AS total FROM activity_logs");
+    const totalPages = Math.ceil(total / limit) || 1;
+    res.json({ total, page, limit, totalPages, data });
+  } catch (e) {
+    console.error("[admin] activity-log fetch error:", e?.message);
+    res.status(500).json({ error: "Gagal memuat log aktivitas." });
   }
 });
 

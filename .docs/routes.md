@@ -119,8 +119,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 24 domain operasional terotorisasi (inc. Harga Pasar, FSVA, Neraca Pangan, PSAT PDUK, JULEHA, UPJA) |
 | `GET` | `/v1/admin/template/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Unduh template berkas Excel berpanduan (24 domain) |
 | `GET` | `/v1/admin/export/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Ekspor data MySQL aktif ke workbook Excel dengan kolom Sumber Data |
-| `POST`| `/v1/admin/import/:domain` | `src/routes/admin.js` | Bearer (RBAC) | Impor berkas Excel & eksekusi upsert ke MySQL |
-| `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor |
+| `GET` | `/v1/admin/sync-log` | `src/routes/admin.js` | Bearer (Admin) | Riwayat log sinkronisasi dan impor data berpaginasi (?page=N&limit=N) |
+| `GET` | `/v1/admin/activity-log` | `src/routes/admin.js` | Bearer (Admin) | Log audit aktivitas pengguna/admin berpaginasi (?page=N&limit=N) |
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
 | `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, status tabel database, & pelacakan fallback |

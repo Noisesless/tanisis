@@ -92,6 +92,11 @@ function V(){
   let[healthData,setHealthData]=(0,N.useState)(null);
   let[bantuanData,setBantuanData]=(0,N.useState)(null);
   let[syncData,setSyncData]=(0,N.useState)(null);
+  let[syncPage,setSyncPage]=(0,N.useState)(1);
+  let[activityData,setActivityData]=(0,N.useState)(null);
+  let[activityPage,setActivityPage]=(0,N.useState)(1);
+  let[activeLogTab,setActiveLogTab]=(0,N.useState)(\`sync\`);
+  let[loadingLogs,setLoadingLogs]=(0,N.useState)(!1);
   let[paketData,setPaketData]=(0,N.useState)(null);
   let[busyAction,setBusyAction]=(0,N.useState)(null);
   let[actionErr,setActionErr]=(0,N.useState)(null);
@@ -101,6 +106,34 @@ function V(){
   let[readinessData,setReadinessData]=(0,N.useState)(null);
   let[showReadinessDetails,setShowReadinessDetails]=(0,N.useState)(!0);
   let[copiedDomain,setCopiedDomain]=(0,N.useState)(null);
+
+  async function loadSyncPage(pg=1){
+    if(!token)return;
+    setLoadingLogs(!0);
+    try{
+      let r=await fetch(\`\${D}/v1/admin/sync-log?page=\${pg}&limit=10\`,{headers:L(token)});
+      let j=await r.json();
+      if(r.ok&&Array.isArray(j.data)){
+        setSyncData({total:j.total,page:j.page,totalPages:j.totalPages,rows:j.data});
+        setSyncPage(j.page);
+      }
+    }catch{}
+    finally{setLoadingLogs(!1)}
+  }
+
+  async function loadActivityPage(pg=1){
+    if(!token)return;
+    setLoadingLogs(!0);
+    try{
+      let r=await fetch(\`\${D}/v1/admin/activity-log?page=\${pg}&limit=10\`,{headers:L(token)});
+      let j=await r.json();
+      if(r.ok&&Array.isArray(j.data)){
+        setActivityData({total:j.total,page:j.page,totalPages:j.totalPages,rows:j.data});
+        setActivityPage(j.page);
+      }
+    }catch{}
+    finally{setLoadingLogs(!1)}
+  }
 
   (0,N.useEffect)(()=>{
     if(!token)return;
@@ -118,8 +151,7 @@ function V(){
         if(!n)return;
         setBantuanData(await O());
         try{
-          let n_log=await ae(token,50);
-          n_log&&Array.isArray(n_log.data)&&e&&setSyncData({total:n_log.total,rows:n_log.data});
+          await Promise.all([loadSyncPage(1),loadActivityPage(1)]);
         }catch{}
         try{
           let n_pak=await fetch(\`\${D}/v1/admin/paket\`,{headers:L(token)}).then(e=>e.json());
@@ -956,48 +988,219 @@ function V(){
             ]
           }),
 
-          // Sync Log Section (Admin Only)
-          isAdmin && syncData && syncData.rows.length>0 && (0,P.jsxs)(\`section\`,{
+          // Log Section: Riwayat Pembaruan & Log Aktivitas (Admin Only)
+          isAdmin && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
-              (0,P.jsx)(U,{icon:(0,P.jsx)(fe,{className:\`h-3.5 w-3.5\`}),title:\`Riwayat Pembaruan Data (\${syncData.total} entri)\`}),
-              (0,P.jsx)(\`div\`,{
-                className:\`mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
-                children:(0,P.jsx)(\`div\`,{
-                  className:\`max-h-[420px] overflow-y-auto\`,
-                  children:(0,P.jsxs)(\`table\`,{
-                    className:\`w-full text-left text-xs\`,
+              // Tab Header
+              (0,P.jsxs)(\`div\`,{
+                className:\`flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-2\`,
+                children:[
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`flex items-center gap-2\`,
                     children:[
-                      (0,P.jsx)(\`thead\`,{
-                        className:\`sticky top-0 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200\`,
-                        children:(0,P.jsxs)(\`tr\`,{
-                          children:[
-                            (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Waktu\`}),
-                            (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Dataset\`}),
-                            (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Aksi\`}),
-                            (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5 text-right\`,children:\`Baris\`}),
-                            (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5 text-center\`,children:\`Status\`}),
-                            (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Pesan / Sumber\`})
-                          ]
-                        })
+                      (0,P.jsxs)(\`button\`,{
+                        type:\`button\`,
+                        onClick:()=>setActiveLogTab(\`sync\`),
+                        className:\`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition \${activeLogTab===\`sync\`?\`bg-emerald-100 text-emerald-900 border border-emerald-300\`:\`text-slate-600 hover:bg-slate-100\`}\`,
+                        children:[
+                          (0,P.jsx)(fe,{className:\`h-3.5 w-3.5 text-emerald-700\`}),
+                          \`Riwayat Pembaruan Data\`,
+                          syncData?.total!=null&&(0,P.jsx)(\`span\`,{className:\`ml-1 rounded-full bg-emerald-200/80 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800\`,children:syncData.total})
+                        ]
                       }),
-                      (0,P.jsx)(\`tbody\`,{
-                        className:\`divide-y divide-slate-100\`,
-                        children:syncData.rows.map(row=>(0,P.jsxs)(\`tr\`,{
-                          className:\`align-top hover:bg-slate-50/70 transition\`,
-                          children:[
-                            (0,P.jsx)(\`td\`,{className:\`whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-slate-500\`,children:new Date(row.created_at).toLocaleString(\`id-ID\`)}),
-                            (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5\`,children:(0,P.jsx)(\`span\`,{className:\`rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-700\`,children:row.dataset})}),
-                            (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 font-semibold text-slate-700\`,children:row.aksi}),
-                            (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 text-right font-mono font-bold text-slate-700\`,children:row.baris}),
-                            (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 text-center\`,children:(0,P.jsx)(S,{tone:row.status===\`ok\`?\`emerald\`:row.status===\`error\`?\`red\`:\`amber\`,children:row.status})}),
-                            (0,P.jsx)(\`td\`,{className:\`px-4 py-2.5 text-slate-600\`,children:row.sumber??row.pesan??\`-\`})
-                          ]
-                        },row.id))
+                      (0,P.jsxs)(\`button\`,{
+                        type:\`button\`,
+                        onClick:()=>setActiveLogTab(\`activity\`),
+                        className:\`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition \${activeLogTab===\`activity\`?\`bg-sky-100 text-sky-900 border border-sky-300\`:\`text-slate-600 hover:bg-slate-100\`}\`,
+                        children:[
+                          (0,P.jsx)(ge,{className:\`h-3.5 w-3.5 text-sky-700\`}),
+                          \`Log Aktivitas Pengguna\`,
+                          activityData?.total!=null&&(0,P.jsx)(\`span\`,{className:\`ml-1 rounded-full bg-sky-200/80 px-1.5 py-0.5 text-[10px] font-bold text-sky-800\`,children:activityData.total})
+                        ]
                       })
                     ]
+                  }),
+                  loadingLogs&&(0,P.jsxs)(\`span\`,{
+                    className:\`flex items-center gap-1 text-[11px] text-slate-400 font-medium\`,
+                    children:[(0,P.jsx)(j,{className:\`h-3 w-3 animate-spin\`}),\`Memuat log...\`]
                   })
-                })
+                ]
+              }),
+
+              // Tabel Konten
+              (0,P.jsx)(\`div\`,{
+                className:\`mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
+                children:activeLogTab===\`sync\`?(
+                  syncData && syncData.rows.length>0 ? (
+                    (0,P.jsxs)(\`div\`,{
+                      children:[
+                        (0,P.jsx)(\`div\`,{
+                          className:\`overflow-x-auto\`,
+                          children:(0,P.jsxs)(\`table\`,{
+                            className:\`w-full text-left text-xs\`,
+                            children:[
+                              (0,P.jsx)(\`thead\`,{
+                                className:\`bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200\`,
+                                children:(0,P.jsxs)(\`tr\`,{
+                                  children:[
+                                    (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Waktu\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Dataset\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Aksi\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5 text-right\`,children:\`Baris\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5 text-center\`,children:\`Status\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Pesan / Sumber\`})
+                                  ]
+                                })
+                              }),
+                              (0,P.jsx)(\`tbody\`,{
+                                className:\`divide-y divide-slate-100\`,
+                                children:syncData.rows.map(row=>(0,P.jsxs)(\`tr\`,{
+                                  className:\`align-top hover:bg-slate-50/70 transition\`,
+                                  children:[
+                                    (0,P.jsx)(\`td\`,{className:\`whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-slate-500\`,children:new Date(row.created_at).toLocaleString(\`id-ID\`)}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5\`,children:(0,P.jsx)(\`span\`,{className:\`rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-700\`,children:row.dataset})}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 font-semibold text-slate-700\`,children:row.aksi}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 text-right font-mono font-bold text-slate-700\`,children:row.baris}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 text-center\`,children:(0,P.jsx)(S,{tone:row.status===\`ok\`?\`emerald\`:row.status===\`error\`?\`red\`:\`amber\`,children:row.status})}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-4 py-2.5 text-slate-600\`,children:row.sumber??row.pesan??\`-\`})
+                                  ]
+                                },row.id))
+                              })
+                            ]
+                          })
+                        }),
+                        (0,P.jsxs)(\`div\`,{
+                          className:\`flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-4 py-2 text-xs text-slate-600 bg-slate-50/60\`,
+                          children:[
+                            (0,P.jsxs)(\`span\`,{
+                              children:[
+                                \`Menampilkan \`,
+                                (0,P.jsx)(\`strong\`,{children:(syncPage-1)*10+1}),
+                                \`–\`,
+                                (0,P.jsx)(\`strong\`,{children:Math.min(syncPage*10,syncData.total)}),
+                                \` dari \`,
+                                (0,P.jsx)(\`strong\`,{children:syncData.total}),
+                                \` entri\`
+                              ]
+                            }),
+                            (0,P.jsxs)(\`div\`,{
+                              className:\`flex items-center gap-1.5\`,
+                              children:[
+                                (0,P.jsx)(\`button\`,{
+                                  type:\`button\`,
+                                  onClick:()=>loadSyncPage(syncPage-1),
+                                  disabled:syncPage<=1||loadingLogs,
+                                  className:\`rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed\`,
+                                  children:\`Sebelumnya\`
+                                }),
+                                (0,P.jsxs)(\`span\`,{
+                                  className:\`px-2 font-mono text-[11px] font-semibold text-slate-500\`,
+                                  children:[syncPage,\` / \`,syncData.totalPages||1]
+                                }),
+                                (0,P.jsx)(\`button\`,{
+                                  type:\`button\`,
+                                  onClick:()=>loadSyncPage(syncPage+1),
+                                  disabled:syncPage>=(syncData.totalPages||1)||loadingLogs,
+                                  className:\`rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed\`,
+                                  children:\`Selanjutnya\`
+                                })
+                              ]
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  ) : (
+                    (0,P.jsx)(\`div\`,{className:\`py-8 text-center text-xs text-slate-500\`,children:\`Belum ada riwayat pembaruan data.\`})
+                  )
+                ) : (
+                  activityData && activityData.rows.length>0 ? (
+                    (0,P.jsxs)(\`div\`,{
+                      children:[
+                        (0,P.jsx)(\`div\`,{
+                          className:\`overflow-x-auto\`,
+                          children:(0,P.jsxs)(\`table\`,{
+                            className:\`w-full text-left text-xs\`,
+                            children:[
+                              (0,P.jsx)(\`thead\`,{
+                                className:\`bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200\`,
+                                children:(0,P.jsxs)(\`tr\`,{
+                                  children:[
+                                    (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Waktu\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Pengguna\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Aksi\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5\`,children:\`Target / Entitas\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-2 py-2.5 text-center\`,children:\`Status\`}),
+                                    (0,P.jsx)(\`th\`,{className:\`px-4 py-2.5\`,children:\`Keterangan\`})
+                                  ]
+                                })
+                              }),
+                              (0,P.jsx)(\`tbody\`,{
+                                className:\`divide-y divide-slate-100\`,
+                                children:activityData.rows.map(row=>(0,P.jsxs)(\`tr\`,{
+                                  className:\`align-top hover:bg-slate-50/70 transition\`,
+                                  children:[
+                                    (0,P.jsx)(\`td\`,{className:\`whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-slate-500\`,children:new Date(row.created_at).toLocaleString(\`id-ID\`)}),
+                                    (0,P.jsxs)(\`td\`,{className:\`px-2 py-2.5 text-slate-800 font-medium\`,children:[
+                                      row.username,
+                                      row.role&&(0,P.jsx)(\`span\`,{className:\`ml-1.5 text-[10px] text-slate-400 font-normal\`,children:\`(\${row.role})\`})
+                                    ]}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 font-semibold text-slate-700\`,children:row.action}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5\`,children:(0,P.jsx)(\`span\`,{className:\`rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-700\`,children:row.entity||\`-\`})}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-2 py-2.5 text-center\`,children:(0,P.jsx)(S,{tone:row.status===\`success\`||row.status===\`ok\`?\`emerald\`:row.status===\`error\`?\`red\`:\`amber\`,children:row.status})}),
+                                    (0,P.jsx)(\`td\`,{className:\`px-4 py-2.5 text-slate-600\`,children:row.description||\`-\`})
+                                  ]
+                                },row.id))
+                              })
+                            ]
+                          })
+                        }),
+                        (0,P.jsxs)(\`div\`,{
+                          className:\`flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-4 py-2 text-xs text-slate-600 bg-slate-50/60\`,
+                          children:[
+                            (0,P.jsxs)(\`span\`,{
+                              children:[
+                                \`Menampilkan \`,
+                                (0,P.jsx)(\`strong\`,{children:(activityPage-1)*10+1}),
+                                \`–\`,
+                                (0,P.jsx)(\`strong\`,{children:Math.min(activityPage*10,activityData.total)}),
+                                \` dari \`,
+                                (0,P.jsx)(\`strong\`,{children:activityData.total}),
+                                \` entri\`
+                              ]
+                            }),
+                            (0,P.jsxs)(\`div\`,{
+                              className:\`flex items-center gap-1.5\`,
+                              children:[
+                                (0,P.jsx)(\`button\`,{
+                                  type:\`button\`,
+                                  onClick:()=>loadActivityPage(activityPage-1),
+                                  disabled:activityPage<=1||loadingLogs,
+                                  className:\`rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed\`,
+                                  children:\`Sebelumnya\`
+                                }),
+                                (0,P.jsxs)(\`span\`,{
+                                  className:\`px-2 font-mono text-[11px] font-semibold text-slate-500\`,
+                                  children:[activityPage,\` / \`,activityData.totalPages||1]
+                                }),
+                                (0,P.jsx)(\`button\`,{
+                                  type:\`button\`,
+                                  onClick:()=>loadActivityPage(activityPage+1),
+                                  disabled:activityPage>=(activityData.totalPages||1)||loadingLogs,
+                                  className:\`rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed\`,
+                                  children:\`Selanjutnya\`
+                                })
+                              ]
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  ) : (
+                    (0,P.jsx)(\`div\`,{className:\`py-8 text-center text-xs text-slate-500\`,children:\`Belum ada log aktivitas pengguna.\`})
+                  )
+                )
               })
             ]
           }),
