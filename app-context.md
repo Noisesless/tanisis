@@ -1,5 +1,5 @@
-<!-- app-context.md v2.1 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-08T20:10:00+07:00 | Phase: Chatbot AI Resilience & Database Alignment | Build: OK -->
+<!-- app-context.md v2.2 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-09T07:35:00+07:00 | Phase: Database Normalization Verified & AI RAG 2025 Aligned | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Chatbot AI Resilience & Database Alignment done=ALL last=Integrasi key resmi Google Gemini, penyelarasan skema RAG komoditas_unggulan/horti/ekonomi, dan local RAG streaming fallback (ADR-033)
+phase=Database Normalization Verified & AI RAG 2025 Aligned done=ALL last=Verifikasi 66 tabel aktif basis data pertasis via scripts/apply_production_patch.js, perbaikan RAG chatbot Si Pertani untuk agregasi padi 2025 (178.610 Ton, Mandiraja) dan integrasi tabel normalisasi baru (harga_pasar, fsva, neraca_pangan, kelembagaan, psat), dokumentasi utama .docs/ terbarui
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -227,9 +227,7 @@ mysql=root=
 [x] Audit Keamanan & Hardening Endpoint API (SP Compliance 100% Lolos Uji)
 [x] Perampingan Footer Non-Slop (Minimalis, Elegan, Versi 2.4.0)
 [x] Penyusunan Dokumentasi Keamanan Sistem (.docs/security-audit.md)
-
-
-
-
-
-
+[x] Verifikasi Normalisasi Basis Data Dev & Patch Runner MariaDB (Total 66 tabel aktif, 100% lolos via scripts/apply_production_patch.js / npm run db:patch)
+[x] Invalidation Cache Metrik Capaian Pertanian 2025 di /recommendations (dist/assets/api-BxFGoia1.js: 178.610 Ton, 25.871 Ha, Mandiraja tampil riil)
+[x] Rekayasa Live RAG & System Instruction Si Pertani (src/routes/ai.js: Agregasi Padi 2025, integrasi harga pasar, FSVA, neraca komposit, kelembagaan tani, pengawasan PSAT)
+[x] Pembaruan Dokumentasi Utama (.docs/database.md, .docs/deployment.md, .docs/routes.md, app-context.md) untuk Kesiapan Rilis Produksi

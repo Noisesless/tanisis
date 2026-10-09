@@ -75,17 +75,33 @@ Gunakan metode ini jika melakukan instalasi bersih atau memindahkan hosting:
 
 ---
 
-## 4. Sinkronisasi Basis Data Produksi (57 Tabel Master Lengkap)
+## 4. Sinkronisasi Basis Data Produksi (66 Tabel Lengkap)
 
-Jika terdapat pembaruan skema atau data statistik dari tim pengembang (misalnya penambahan Padi 2025, 2.409 Poktan, 137 KEP, 36 Posluhdes, 156 PPS, dsb.), jalankan perintah impor master dump:
+Terdapat dua metode sinkronisasi basis data yang didukung penuh:
+
+### Opsi 1: Migrasi Patch Non-Destruktif (Rekomendasi Utama untuk Update Berjalan)
+Gunakan opsi ini jika server produksi sudah memiliki database berjalan dan Anda hanya ingin menerapkan tabel normalisasi baru (`psat_pduk`, `fsva_indikator_kabupaten`, `harga_pasar_banjarnegara`, `neraca_pangan_komposit`, `kelembagaan_perikanan`, `kelembagaan_juleha`, `kelembagaan_p4s`, `kelembagaan_upja`) tanpa kehilangan data yang sudah ada:
+
+```bash
+# Masuk ke direktori webroot
+cd ~/htdocs/pertanian.sistemdata.id
+
+# Jalankan runner patch resmi
+npm run db:patch
+# Atau secara manual:
+# node --env-file=.env scripts/apply_production_patch.js
+```
+
+### Opsi 2: Impor Dump Master Penuh (Setup Awal / Full Reset)
+Jika melakukan setup awal atau migrasi menyeluruh dari awal:
 
 ```bash
 # Impor dump master basis data mutakhir (100% portabel, bebas DEFINER root & error strict mode):
 mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/dump_production_pertanian_updated.sql
 ```
 
-> **Catatan Keamanan (ADR-031):**  
-> Berkas `database/dump_production_pertanian_updated.sql` telah dioptimasi khusus untuk user unprivileged cPanel (`pertalit`):
+> **Catatan Keamanan & Kompatibilitas:**  
+> Berkas `database/dump_production_pertanian_updated.sql` dan `database/production_migration_patch.sql` telah dioptimasi khusus untuk user unprivileged cPanel (`pertalit`):
 > - Tidak mengandung klausa `DEFINER=root` (mencegah `ERROR 1227`).
 > - Menggunakan format datetime ISO standar `YYYY-MM-DD HH:MM:SS` (mencegah `ERROR 1292`).
 > - Kolom kalkulasi `nilai_rp` tidak menggunakan `GENERATED STORED` kaku saat dump (mencegah `ERROR 1906`).
@@ -101,15 +117,24 @@ Setelah kode dan basis data diperbarui, lakukan pemeriksaan berikut:
    curl -I https://pertanian.sistemdata.id/api/health
    # Respons wajib: HTTP/2 200 OK dengan {"ok":true,"db":"up"}
    ```
-2. **Uji Endpoint Statistik Utama:**
+2. **Uji Endpoint Statistik Utama & Patch Baru:**
    ```bash
    curl -s https://pertanian.sistemdata.id/api/v1/komoditas-unggulan | head -c 100
    curl -s https://pertanian.sistemdata.id/api/v1/kelembagaan/summary | head -c 100
-   # Keduanya wajib mengembalikan status "success" / array data JSON tanpa galat 500
+   curl -s https://pertanian.sistemdata.id/api/v1/ketahanan/harga-pasar | head -c 100
+   # Seluruhnya wajib mengembalikan status "success" / array data JSON tanpa galat 500
    ```
-3. **Uji Antarmuka Web (Frontend SPA):**
+3. **Uji Chatbot & Gateway AI Si Pertani (RAG Live 2025):**
+   ```bash
+   curl -s -X POST https://pertanian.sistemdata.id/sispertani-api/v1/ai/chat \
+     -H "Content-Type: application/json" \
+     -d '{"messages":[{"role":"user","content":"Berapa total produksi padi tahun 2025 di Banjarnegara?"}],"stream":false}'
+   # Jawaban wajib menyebutkan produksi 178.610 Ton dan sentra Kecamatan Mandiraja
+   ```
+4. **Uji Antarmuka Web (Frontend SPA):**
    - Buka `https://pertanian.sistemdata.id/` di browser.
    - Tekan `Ctrl + F5` untuk memastikan file JS/CSS lama terhapus dari cache browser.
+   - Buka rute `/recommendations`, pastikan metrik Capaian Pertanian 2025 menampilkan data riil (178.610 Ton, 25.871 Ha, Mandiraja).
    - Buka rute `/kecamatan`, pastikan profil 20 kecamatan dan peta MapLibre ter-render tanpa blank screen.
    - Buka rute `/admin`, pastikan form login asimetris dengan foto persawahan Banjarnegara tampil rapi dan login multi-role dapat diakses tanpa crash.
 

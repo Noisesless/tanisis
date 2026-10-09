@@ -4,12 +4,13 @@ import { q } from "../db.js";
 
 const aiRouter = express.Router();
 
-// Daftar model Gemini yang didukung dengan fallback otomatis jika terjadi high demand (503/429)
+// Daftar model Gemini resmi yang didukung dengan fallback otomatis
 const SUPPORTED_MODELS = [
   "gemini-flash-lite-latest",
-  "gemini-3.5-flash-lite",
-  "gemini-flash-latest",
-  "gemini-3.5-flash"
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-flash-latest"
 ];
 
 // In-memory sliding rate limiter per IP untuk mencegah exploit / kuota drain oleh pihak luar
@@ -43,19 +44,20 @@ function checkRateLimit(ip) {
 
 /**
  * Dynamic RAG Retrieval Engine (Dev & Production Parity)
- * Mengambil data statistik riil secara langsung dan dinamis dari database MySQL (pertasis)
+ * Mengambil data statistik riil secara langsung dan dinamis dari database MariaDB/MySQL (pertasis)
  * dan OpenData Banjarnegara (CKAN API) berdasarkan kata kunci pertanyaan pengguna.
  */
 async function retrieveDynamicContext(userQuery) {
   if (!userQuery || typeof userQuery !== "string") return "";
 
-  const rawWords = userQuery.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
+  const queryLower = userQuery.toLowerCase();
+  const rawWords = queryLower.replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
   const stopWords = new Set([
     "apa", "berapa", "bagaimana", "dimana", "kapan", "mengapa", "siapa", "yang", "dan", "di",
     "ke", "dari", "pada", "untuk", "dengan", "adalah", "ini", "itu", "saya", "anda", "kami",
     "kita", "banjarnegara", "kabupaten", "analisa", "analisis", "data", "rekomendasi", "potensi",
     "sektor", "informasi", "tolong", "bantu", "daerah", "wilayah", "tahun", "terbaru", "apakah",
-    "bisa", "jelaskan", "sebutkan", "beri", "tahu", "tentang", "hasil", "produksi"
+    "bisa", "jelaskan", "sebutkan", "beri", "tahu", "tentang"
   ]);
   const keywords = rawWords.filter((w) => !stopWords.has(w));
   if (keywords.length === 0) keywords.push("unggulan");
@@ -80,16 +82,49 @@ async function retrieveDynamicContext(userQuery) {
       }
     }
     if (unggulanList.length > 0) {
-      let text = "RINGKASAN DATA KOMODITAS SISTEM (Database SISPERTANI):\n";
+      let text = "RINGKASAN DATA KOMODITAS UNGGULAN SISTEM:\n";
       for (const u of unggulanList) {
-        text += `- ${u.nama_komoditas} [Sektor ${u.sektor}, Tahun ${u.tahun}]: Total Produksi ${Number(u.produksi).toLocaleString("id-ID")} ${u.satuan || "Ton"}, Sentra: Kec. ${u.kecamatan || u.sentra || "Banjarnegara"}${u.nilai_ekonomi > 0 ? `, Estimasi Nilai Ekonomi: Rp ${Number(u.nilai_ekonomi).toLocaleString("id-ID")}` : ""}\n`;
+        text += `- ${u.nama_komoditas} [Sektor ${u.sektor}, Tahun ${u.tahun}]: Total Produksi ${Number(u.produksi).toLocaleString("id-ID")} ${u.satuan || "Ton"}, Sentra: Kec. ${u.kecamatan || u.sentra || "Banjarnegara"}${u.nilai_ekonomi > 0 ? `, Estimasi Nilai: Rp ${Number(u.nilai_ekonomi).toLocaleString("id-ID")}` : ""}\n`;
       }
       contextParts.push(text);
     }
 
-    // 2. Cari detail produksi sektoral per kecamatan
+    // 2. DATA PADI & BERAS (Agregasi Akurat Sawah + Ladang)
+    if (queryLower.includes("padi") || queryLower.includes("beras") || queryLower.includes("panen")) {
+      const macroPadi = await q(
+        `SELECT tahun, SUM(luas_panen_ha) as total_luas, SUM(produksi_ton) as total_produksi
+         FROM padi_produksi GROUP BY tahun ORDER BY tahun DESC LIMIT 3`
+      );
+      if (macroPadi.length > 0) {
+        let text = "DATA RESMI PRODUKSI PADI KABUPATEN BANJARNEGARA (TOTAL KABUPATEN):\n";
+        for (const m of macroPadi) {
+          text += `- Tahun ${m.tahun}: Total Produksi ${Number(m.total_produksi).toLocaleString("id-ID")} Ton, Luas Panen ${Number(m.total_luas).toLocaleString("id-ID")} Ha\n`;
+        }
+        contextParts.push(text);
+      }
+
+      const sentraPadi = await q(
+        `SELECT k.nama as kecamatan, p.tahun, 
+                SUM(p.luas_panen_ha) as luas_ha, 
+                SUM(p.produksi_ton) as produksi_ton,
+                ROUND(SUM(p.produksi_ton) * 10 / NULLIF(SUM(p.luas_panen_ha), 0), 2) as produktivitas_ku_ha
+         FROM padi_produksi p JOIN kecamatan k ON k.id=p.kecamatan_id 
+         WHERE p.tahun = (SELECT MAX(tahun) FROM padi_produksi)
+         GROUP BY k.nama, p.tahun
+         ORDER BY produksi_ton DESC LIMIT 8`
+      );
+      if (sentraPadi.length > 0) {
+        let text = `DETAIL KECAMATAN SENTRA PADI TAHUN TERBARU (${sentraPadi[0].tahun}):\n`;
+        for (const s of sentraPadi) {
+          text += `- Kec. ${s.kecamatan}: Produksi ${Number(s.produksi_ton).toLocaleString("id-ID")} Ton, Luas ${Number(s.luas_ha).toLocaleString("id-ID")} Ha, Produktivitas ${s.produktivitas_ku_ha} Ku/Ha\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 3. Cari detail produksi sektoral per kecamatan
     for (const kw of keywords) {
-      // Perkebunan (Kopi Robusta, Kopi Arabika, Teh, Kelapa, Karet, Kakao, Tembakau, Tebu, dll)
+      // Perkebunan (Kopi, Teh, Kelapa, Karet, Kakao, Tembakau, Tebu, Cengkeh, dll)
       const perkRows = await q(
         `SELECT k.nama as kecamatan, p.tanaman, p.tahun, p.produksi_ton 
          FROM perkebunan_produksi p JOIN kecamatan k ON k.id=p.kecamatan_id 
@@ -103,23 +138,6 @@ async function retrieveDynamicContext(userQuery) {
           text += `- Kec. ${r.kecamatan}: ${Number(r.produksi_ton).toLocaleString("id-ID")} Ton\n`;
         }
         contextParts.push(text);
-      }
-
-      // Padi (Sawah, Ladang, Sentra)
-      if (kw.includes("padi") || kw.includes("beras")) {
-        const padiRows = await q(
-          `SELECT k.nama as kecamatan, p.tahun, p.jenis, p.luas_panen_ha, p.produksi_ton, p.rata_ku_ha 
-           FROM padi_produksi p JOIN kecamatan k ON k.id=p.kecamatan_id 
-           WHERE p.jenis='sawah+ladang' 
-           ORDER BY p.tahun DESC, p.produksi_ton DESC LIMIT 8`
-        );
-        if (padiRows.length > 0) {
-          let text = `DETAIL PRODUKSI PADI KECAMATAN SENTRA (Tahun ${padiRows[0].tahun}):\n`;
-          for (const r of padiRows) {
-            text += `- Kec. ${r.kecamatan}: ${Number(r.produksi_ton).toLocaleString("id-ID")} Ton (Luas ${Number(r.luas_panen_ha).toLocaleString("id-ID")} Ha, Produktivitas ${r.rata_ku_ha} Ku/Ha)\n`;
-          }
-          contextParts.push(text);
-        }
       }
 
       // Palawija (Jagung, Kedelai, Ubi Kayu, Ubi Jalar, Kacang Tanah, Kacang Hijau)
@@ -170,7 +188,7 @@ async function retrieveDynamicContext(userQuery) {
         contextParts.push(text);
       }
 
-      // Perikanan (Berdasarkan Metode Budidaya & Alat Tangkap Resmi)
+      // Perikanan (Berdasarkan Metode Budidaya)
       if (kw.includes("ikan") || kw.includes("perikanan") || kw.includes("budidaya") || kw.includes("kolam") || kw.includes("karamba") || kw.includes("minapadi")) {
         const ikanRows = await q(
           `SELECT k.nama as kecamatan, i.jenis_budidaya, i.tahun, i.produksi_kg, i.nilai_ribu_rp 
@@ -178,8 +196,7 @@ async function retrieveDynamicContext(userQuery) {
            ORDER BY i.tahun DESC, i.produksi_kg DESC LIMIT 8`
         );
         if (ikanRows.length > 0) {
-          let text = `DETAIL PERIKANAN BUDIDAYA RESMI (Tahun ${ikanRows[0].tahun}):\n`;
-          text += `(Catatan: Data perikanan Banjarnegara dicatat resmi berdasarkan metode pemeliharaan, dan saat ini belum memiliki pencatatan terpisah per jenis/spesies ikan)\n`;
+          let text = `DETAIL PERIKANAN BUDIDAYA (${ikanRows[0].tahun}):\n`;
           for (const r of ikanRows) {
             text += `- Kec. ${r.kecamatan} [${r.jenis_budidaya}]: ${Number(r.produksi_kg).toLocaleString("id-ID")} kg\n`;
           }
@@ -188,12 +205,92 @@ async function retrieveDynamicContext(userQuery) {
       }
     }
 
-    // 3. Pencarian Katalog Data Terbuka Resmi (CKAN) jika relevan atau diminta pengguna
-    const isDatasetQuery = userQuery.toLowerCase().includes("data") || 
-                           userQuery.toLowerCase().includes("dataset") || 
-                           userQuery.toLowerCase().includes("opendata") || 
-                           userQuery.toLowerCase().includes("tabel") ||
-                           userQuery.toLowerCase().includes("download");
+    // 4. DATA HARGA PASAR TERKINI
+    if (queryLower.includes("harga") || queryLower.includes("pasar") || queryLower.includes("sembako") || queryLower.includes("murah") || queryLower.includes("mahal") || queryLower.includes("inflasi")) {
+      const hargaRows = await q(
+        `SELECT komoditas, lokasi_pasar, kecamatan, harga, satuan, perubahan_rp, tanggal 
+         FROM harga_pasar_banjarnegara 
+         ORDER BY tanggal DESC, harga DESC LIMIT 8`
+      );
+      if (hargaRows.length > 0) {
+        let text = "INFORMASI HARGA KOMODITAS PANGAN PASAR BANJARNEGARA:\n";
+        for (const h of hargaRows) {
+          text += `- ${h.komoditas} di ${h.lokasi_pasar} (${h.kecamatan}): Rp ${Number(h.harga).toLocaleString("id-ID")}/${h.satuan} [Update: ${h.tanggal.toISOString ? h.tanggal.toISOString().slice(0, 10) : h.tanggal}]\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 5. NERACA PANGAN KOMPOSIT
+    if (queryLower.includes("neraca") || queryLower.includes("surplus") || queryLower.includes("defisit") || queryLower.includes("ketersediaan") || queryLower.includes("konsumsi")) {
+      const neracaRows = await q(
+        `SELECT komoditas, ketersediaan_bersih_ton, kebutuhan_konsumsi_ton, neraca_ton, status_neraca, tahun 
+         FROM neraca_pangan_komposit 
+         ORDER BY tahun DESC, neraca_ton DESC LIMIT 8`
+      );
+      if (neracaRows.length > 0) {
+        let text = `NERACA PANGAN KOMPOSIT KABUPATEN BANJARNEGARA (${neracaRows[0].tahun}):\n`;
+        for (const n of neracaRows) {
+          text += `- ${n.komoditas}: Ketersediaan ${Number(n.ketersediaan_bersih_ton).toLocaleString("id-ID")} Ton, Kebutuhan ${Number(n.kebutuhan_konsumsi_ton).toLocaleString("id-ID")} Ton -> Neraca ${Number(n.neraca_ton).toLocaleString("id-ID")} Ton (${n.status_neraca})\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 6. FSVA & KETAHANAN PANGAN
+    if (queryLower.includes("fsva") || queryLower.includes("ketahanan pangan") || queryLower.includes("kerentanan") || queryLower.includes("rawan pangan")) {
+      const fsvaRows = await q(
+        `SELECT nomor_indikator, nama_indikator, satuan, standar_norma, nilai_capaian, status_data, tahun 
+         FROM fsva_indikator_kabupaten 
+         ORDER BY tahun DESC, nomor_indikator ASC LIMIT 8`
+      );
+      if (fsvaRows.length > 0) {
+        let text = `INDIKATOR KETAHANAN & KERENTANAN PANGAN (FSVA ${fsvaRows[0].tahun}):\n`;
+        for (const f of fsvaRows) {
+          text += `- Indikator #${f.nomor_indikator} ${f.nama_indikator}: Capaian ${f.nilai_capaian} ${f.satuan} (Standar: ${f.standar_norma}) [${f.status_data}]\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 7. KELEMBAGAAN TANI & PENYULUH
+    if (queryLower.includes("kelompok") || queryLower.includes("poktan") || queryLower.includes("gapoktan") || queryLower.includes("kelembagaan") || queryLower.includes("lembaga") || queryLower.includes("penyuluh") || queryLower.includes("simluhtan")) {
+      const lembagaSummary = await q(
+        `SELECT jenis_lembaga, COUNT(*) as total_lembaga, SUM(jumlah_anggota) as total_petani, SUM(luas_lahan_ha) as total_lahan
+         FROM kelembagaan_pertanian
+         GROUP BY jenis_lembaga`
+      );
+      if (lembagaSummary.length > 0) {
+        let text = "REKAPITULASI KELEMBAGAAN PETANI KABUPATEN BANJARNEGARA (SIMLUHTAN):\n";
+        for (const l of lembagaSummary) {
+          text += `- ${l.jenis_lembaga}: ${Number(l.total_lembaga).toLocaleString("id-ID")} Lembaga (${Number(l.total_petani).toLocaleString("id-ID")} Petani terdaftar, Luas Lahan ${Number(l.total_lahan).toLocaleString("id-ID")} Ha)\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 8. PSAT PDUK & PENGAWASAN KEAMANAN PANGAN
+    if (queryLower.includes("psat") || queryLower.includes("pduk") || queryLower.includes("keamanan pangan") || queryLower.includes("uji") || queryLower.includes("pestisida") || queryLower.includes("izin edar")) {
+      const psatRows = await q(
+        `SELECT komoditas, nama_pedagang, lokasi_pasar, kecamatan, parameter_uji, hasil_uji, no_registrasi, status 
+         FROM psat_pduk 
+         ORDER BY id DESC LIMIT 5`
+      );
+      if (psatRows.length > 0) {
+        let text = "PENGAWASAN KEAMANAN PANGAN SEGAR (PSAT-PDUK) BANJARNEGARA:\n";
+        for (const p of psatRows) {
+          text += `- ${p.komoditas} di ${p.lokasi_pasar} (${p.kecamatan}): Parameter ${p.parameter_uji} -> ${p.hasil_uji} [Status: ${p.status}, No Reg: ${p.no_registrasi || '-'}]\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 9. Pencarian Katalog Data Terbuka Resmi (CKAN) jika relevan atau diminta pengguna
+    const isDatasetQuery = queryLower.includes("data") || 
+                           queryLower.includes("dataset") || 
+                           queryLower.includes("opendata") || 
+                           queryLower.includes("tabel") ||
+                           queryLower.includes("download");
     if (isDatasetQuery || keywords.some((k) => ["lahan", "bantuan", "pupuk", "st2023"].includes(k))) {
       try {
         const ckanOrigin = process.env.CKAN_ORIGIN || "https://opendata.banjarnegarakab.go.id";
@@ -264,7 +361,11 @@ aiRouter.post("/chat", async (req, res) => {
 
   const finalMessages = [...safeMessages];
   if (dynamicContext) {
-    const ragInstruction = `\n\n[DATA STATISTIK RIIL DINAMIS DARI DATABASE SISTEM & OPENDATA BANJARNEGARA]:\n${dynamicContext}\n\nATURAN RESPON PENTING:\n- Berikan jawaban yang LANGSUNG, SPESIFIK, dan FAKTUAL menggunakan data riil di atas (sebutkan angka produksi, satuan, kecamatan sentra, dan tahunnya).\n- DILARANG MENOLAK MENJAWAB atau mengeluarkan pesan penolakan seperti "dataset tersebut saat ini belum cukup dalam sistem" atau "Anda dapat merujuk ke Katalog Data Terbuka" jika data komoditas tersebut ada dalam ringkasan di atas.\n- Gunakan Bahasa Indonesia yang ringkas, lugas, profesional, dan objektif. DILARANG menggunakan kata-kata lebay, hiperbola, atau buzzwords.`;
+    const ragInstruction = `\n\n[DATA STATISTIK RIIL RESMI DARI DATABASE SISTEM SISPERTANI & OPENDATA BANJARNEGARA]:\n${dynamicContext}\n\nPANDUAN & ATURAN RESPON SI PERTANI:
+- KONTEKS WAKTU SISTEM: Tahun berjalan saat ini adalah 2025/2026. Data statistik tahun 2025 pada konteks di atas ADALAH DATA RESMI AKTUAL yang telah terekam lengkap di database SISPERTANI. JANGAN PERNAH menyatakan bahwa data 2025 belum ada, belum dirilis, atau masih dalam proyeksi.
+- Berikan jawaban yang LANGSUNG, SPESIFIK, dan FAKTUAL menggunakan data riil di atas (sebutkan angka produksi, satuan, kecamatan sentra, produktivitas, dan tahunnya).
+- DILARANG MENOLAK MENJAWAB atau mengeluarkan pesan penolakan jika data komoditas/indikator tersebut ada dalam ringkasan di atas.
+- Gunakan Bahasa Indonesia yang ramah, ringkas, lugas, profesional, dan objektif. DILARANG menggunakan kata-kata hiperbola atau buzzwords.`;
 
     if (finalMessages[0]?.role === "system") {
       finalMessages[0] = {
@@ -274,7 +375,7 @@ aiRouter.post("/chat", async (req, res) => {
     } else {
       finalMessages.unshift({
         role: "system",
-        content: `Kamu adalah "Si Pertani", asisten AI resmi SISPERTANI Kabupaten Banjarnegara.${ragInstruction}`
+        content: `Kamu adalah "Si Pertani", asisten AI resmi SISPERTANI Kabupaten Banjarnegara (Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara).${ragInstruction}`
       });
     }
   }

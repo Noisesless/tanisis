@@ -8,9 +8,9 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 
 - **Database Engine:** MySQL / MariaDB (InnoDB)
 - **Collation:** `utf8mb4_unicode_ci`
-- **Total Tabel:** 57 Tabel (termasuk 14 tabel sistem RBAC, master komoditas & varietas, harga produsen, 10 jenis ikan, dan modul ekosistem peternakan)
+- **Total Tabel:** 66 Tabel (termasuk 14 tabel sistem RBAC, master komoditas & varietas, harga produsen, 10 jenis ikan, ekosistem peternakan, serta 9 tabel normalisasi ketahanan pangan, harga pasar, dan kelembagaan binaan)
 - **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan.
-- **Harmonisasi Baseline & Dump:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql`, serta dump basis data dev mutakhir berformat UTF-8 tersimpan di `database/dump_production_pertanian_updated.sql` (1.89 MB, 2.421 baris DDL & data per 2026-10-08).
+- **Harmonisasi Baseline & Patch Runner:** Sinkronisasi dua arah telah dilakukan antara data riil production (lahan 2025, ternak telur Itik, presisi desimal hortikultura, data capaian padi 2025) dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql` yang dapat dieksekusi otomatis via `npm run db:patch` (`scripts/apply_production_patch.js`), serta dump basis data dev mutakhir berformat UTF-8 tersimpan di `database/dump_production_pertanian_updated.sql` (1.89 MB, 2.421 baris DDL & data).
 
 ### 1.1 Portabilitas Eksekusi & Kompatibilitas Hosting (ADR-031)
 
@@ -19,6 +19,7 @@ Skrip patch `database/production_migration_patch.sql` dan dump `database/dump_pr
 2. **Standar ISO/SQL Datetime:** Seluruh 653 representasi tanggal yang sebelumnya berformat JavaScript `Date().toString()` telah distandardisasi menjadi format baku `YYYY-MM-DD HH:MM:SS` untuk mencegah galat `ERROR 1292 (Incorrect datetime value)`.
 3. **Pengecualian Kolom Terhitung Otomatis (Generated Columns):** Kolom `nilai_rp` pada tabel `nilai_ekonomi_tahunan` yang memiliki ekspresi `GENERATED ALWAYS AS (volume * harga_produsen) STORED` dikecualikan dari klausa `INSERT`, sehingga kalkulasi nilai rupiah dilakukan secara otomatis oleh mesin database tanpa memicu galat `ERROR 1906`.
 4. **Relaksasi SQL_MODE Otomatis:** Skrip diawali dengan `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';` dan ditutup dengan pemulihan `SET SQL_MODE=@OLD_SQL_MODE;` serta `SET FOREIGN_KEY_CHECKS = 1;`.
+5. **Runner Otomatis Non-Destruktif:** Disediakan skrip `scripts/apply_production_patch.js` yang dijalankan dengan `npm run db:patch` untuk mengeksekusi DDL & seeder patch secara bertahap tanpa menjatuhkan tabel atau menghapus data yang sudah ada.
 
 ---
 
@@ -95,10 +96,13 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Kelembagaan Halal**| `kelembagaan_juleha` | `(kecamatan, nama_lengkap)` | Register Juru Sembelih Halal (JULEHA) tersertifikasi RPH/RPU |
 | **Kelembagaan Pendukung**| `kelembagaan_p4s` | `(kecamatan, nama_p4s)` | Pusat Pelatihan Pertanian dan Perdesaan Swadaya (P4S) |
 | **Kelembagaan Alsintan**| `kelembagaan_upja` | `(kecamatan, nama_upja)` | Usaha Pelayanan Jasa Alsintan (UPJA) & armada kelolaan |
+| **Keamanan Pangan**| `psat_pduk` | `(id)` | Register izin edar & hasil uji petik residu pestisida pangan segar pasar (5 entitas aktif) |
 | **Keamanan Pangan**| `psat_sampel_uji` | `(kecamatan_id, pasar, tanggal_uji, jenis_pangan)` | Uji petik acak residu pestisida & cemaran bahan pangan |
 | **Keamanan Pangan**| `psat_izin_edar` | `(nomor_izin_pduk)` | Register sertifikasi izin edar PSAT-PDUK pelaku usaha |
-| **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas |
-| **Ketahanan Pangan**| `neraca_pangan_komposit` | `(komoditas, tahun, minggu_ke)` | Neraca ketersediaan vs kebutuhan komoditas pokok mingguan |
+| **Ketahanan Pangan**| `fsva_indikator_kabupaten` | `(tahun, nomor_indikator)` | Capaian 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas tingkat kabupaten |
+| **Ketahanan Pangan**| `fsva_12_indikator` | `(kecamatan_id, tahun)` | 12 Indikator Peta Ketahanan & Kerentanan Pangan Bapanas per kecamatan |
+| **Ketahanan Pangan**| `harga_pasar_banjarnegara` | `(id)` | Pemantauan harga harian komoditas pangan di pasar tradisional Banjarnegara (16 komoditas terpantau) |
+| **Ketahanan Pangan**| `neraca_pangan_komposit` | `(tahun, komoditas)` | Neraca ketersediaan vs kebutuhan komoditas pokok strategis (8 komoditas utama) |
 | **Ketahanan Pangan**| `survei_logistik_beras` | `(kecamatan_id, nama_rmu, tahun)` | Kapasitas penggilingan beras (RMU) & arus distribusi pangan |
 | **Tanaman Pangan**| `ltt_katam` | `(kecamatan, komoditas, jenis, tahun)` | Luas Tambah Tanam (LTT) & Kalender Tanam (Katam) |
 | **Bantuan** | `bantuan_program` | `(nama, sumber_dana, tahun_anggaran)`| Nama kegiatan, alokasi nilai, dan penerima |
