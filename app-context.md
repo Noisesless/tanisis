@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Admin UI Refactored (Anti-AI-Slop & Anti-Bloat) done=ALL last=Pembersihan total elemen AI-slop, buzzword lebay, eyebrow badge, dan technical leak (MySQL, MariaDB, upsert, Hak Akses Penuh, Role RBAC) pada Dasbor Admin (/admin) di scripts/build_admin_view.js dan dist bundle, teks UI kembali natural dan profesional untuk dinas
+phase=Data Readiness Radar Architecture Planned done=ALL last=Perancangan arsitektur non-over-engineered Data Readiness Radar untuk Super Admin (todo.md), pembaruan spesifikasi API (.docs/api-spec.md, .docs/routes.md, .docs/architecture.md, app-context.md ADR-034), pelacakan tabel DB vs fallback disk/CKAN
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -30,6 +30,7 @@ icon_lib=lucide
 [Komoditas-Per-Kecamatan]=GET /api/v1/komoditas-unggulan/per-kecamatan?tahun=→top per kecamatan dinamis dari tabel produksi
 [Nilai-Ekonomi]=GET /api/v1/ekonomi/nilai-ekonomi?bidang=→valuasi riil per bidang dari MySQL nilai_ekonomi_tahunan
 [AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN)→Gemini stream proxy→Direct Factual SSE
+[Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 24 domain, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
 [Frontend]=GET /→express.static(dist)→SPA fallback index.html
 
 ## [PAGES] BUILT
@@ -188,6 +189,14 @@ pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,
 - Penyelarasan Skema Kolom RAG: Menyelaraskan query RAG ke tabel `komoditas_unggulan` (`kecamatan`, `produksi`, `nilai_ekonomi`), `horti_produksi` (`COALESCE(produksi_ton, nilai)`), dan `nilai_ekonomi_tahunan` (`nilai_rp`), mengeliminasi galat 1054 kolom tidak ditemukan.
 - Smart Local/Offline RAG Streaming Fallback: Mengimplementasikan mekanisme fallback SSE cerdas di mana jika upstream AI mengalami kelebihan beban atau gangguan jaringan, backend tetap merangkum data statistik resmi dari MySQL `pertasis` dan mengalirkannya secara langsung ke UI chatbot, mencegah galat 'kesalahan koneksi'.
 
+[ADR-034] Pragmatic Data Readiness Matrix & Audit Radar for Super Admin (/admin):
+- Non-Over-Engineered Architecture: Menolak penambahan tabel database audit baru atau daemon terpisah. Seluruh status kelengkapan data dihitung on-demand dari tabel operasional yang sudah terdaftar di `DOMAINS` melalui kueri agregat `COUNT(*)` per tabel (< 50ms).
+- Tri-State Data Health Classification:
+  * 🟢 Mandiri (Lokal DB): Seluruh tabel penopang menu frontend telah memiliki data riil di MariaDB pertasis (> 0 baris).
+  * 🟡 Penyangga (Fallback Snapshot): Tampilan publik berjalan menggunakan berkas disk cadangan (mis. padi-2025.csv, inflasi, pasar) atau proksi CKAN, memerlukan impor berkas definitif dinas.
+  * 🔴 Belum Tersedia (0 Baris): Tabel kosong dan belum ada data aktif di DB (membutuhkan setoran Excel segera dari bidang).
+- Actionable Data Request Memo Generator: Menyediakan generator disposisi/tagihan 1-klik yang menyalin rincian kebutuhan data spesifik per bidang ke clipboard untuk komunikasi kedinasan (WhatsApp / nota dinas) serta tombol pintas langsung ke filter domain template Excel terkait.
+
 
 ## [CREDS] DEV
 admin=admin=C9145qbSjR
@@ -233,3 +242,5 @@ mysql=root=
 [x] Pembaruan Dokumentasi Utama (.docs/database.md, .docs/deployment.md, .docs/routes.md, app-context.md) untuk Kesiapan Rilis Produksi
 [x] Implementasi Faktual 3-Tier Rate Limiting (Tier 1: General API 120/min, Tier 2: AI Chat 30/min, Tier 3: Admin Auth 5 fails/15 min lockout + 400ms delay) & Debug Mode Off (SP-019 Safe Error Masking + Express Global Error Handler)
 [x] Integrasi Dasbor Admin 24 Domain & Role Ketahanan Pangan (Pendaftaran domain harga-pasar, fsva-kabupaten, neraca-pangan, psat-pduk, akun RBAC ketahanan-pangan, quick role selector, dan kategori filter UI)
+[x] Eliminasi AI Slop Badges, Tech-Leaks & Buzzwords pada Antarmuka Dasbor Admin (/admin)
+[/] Rencana Implementasi Data Readiness Radar Super Admin (todo.md: Fase 1 Backend Audit, Fase 2 UI Matrix, Fase 3 Verifikasi & Sync)

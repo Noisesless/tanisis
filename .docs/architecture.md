@@ -199,4 +199,28 @@ graph TD
 2. **Paginasi Dinamis Client-Side Universal:** Setiap tab data disajikan dengan paginasi instan (25, 50, atau 100 baris per halaman) untuk memastikan kecepatan render DOM di perangkat laptop standar (1366×768) dan seluler.
 3. **Pipeline Impor/Ekspor Mandiri Admin:** Terhubung ke sistem template Excel admin melalui domain `kelembagaan-pertanian` dan `kelembagaan-pendukung` di `src/lib/domains.js`, memungkinkan pembaruan data secara berkala oleh operator dinas tanpa intervensi kode.
 
+---
+
+## 8. Arsitektur Pemantauan Kesiapan Data Super Admin (Data Readiness Radar — ADR-026)
+
+Untuk mendukung koordinasi pengumpulan data sektoral (Walidata Sektoral), antarmuka Super Admin dilengkapi modul audit kesiapan data yang memetakan status data database per bidang terhadap kebutuhan tampilan frontend:
+
+```mermaid
+graph LR
+    SuperAdmin[Super Admin: /admin] -->|GET /api/v1/admin/readiness| API[Readiness Audit Endpoint]
+    API -->|Aggregated COUNT| DB[(MariaDB: 42 Tabel Domain)]
+    API -->|Disk Check| Snap[Fallback Snapshots / CKAN]
+    API --> Matrix[Matriks Status Sektor & Kesiapan Publik]
+    Matrix -->|Status 🟢/🟡/🔴| Dashboard[Dasbor Kesiapan Data]
+    Dashboard --> Memo[Generator Disposisi/Tagihan Data WhatsApp]
+    Dashboard --> Filter[Katalog Domain Filtered]
+```
+
+1. **Non-Over-Engineered (Zero New Tables):** Tidak membuat skema database baru; audit dihitung langsung via kueri agregat `COUNT(*)` tabel-tabel operasional yang terdaftar di `DOMAINS` secara efisien (< 50ms).
+2. **Tri-State Status Classification:**
+   - 🟢 **Mandiri (Lokal DB):** Data definitif terisi di database, view publik aman.
+   - 🟡 **Penyangga (Fallback Disk/CKAN):** View publik aktif tapi membaca snapshot cadangan, memerlukan pembaruan resmi.
+   - 🔴 **Belum Tersedia (0 Baris):** Tabel kosong, prioritas tagihan data ke admin bidang teknis.
+3. **Actionable Governance:** Menyediakan tombol 1-klik untuk menyalin rincian format tagihan data ke clipboard untuk komunikasi antar-bidang dinas (WhatsApp/disposisi) serta tautan langsung ke filter unduh template Excel.
+
 

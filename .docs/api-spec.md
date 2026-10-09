@@ -252,6 +252,36 @@ Menampilkan 50 entri riwayat audit sinkronisasi dan impor data terakhir.
 Menampilkan indeks paket arsip data template dan ekspor siap unduh (format Excel dan CSV) yang tersimpan di server.
 - **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
 
+### `GET /api/v1/admin/readiness`
+Audit otomatis kesiapan data publik per bidang/menu frontend dan pelacakan status tabel basis data vs penyangga fallback disk/CKAN.
+- **Headers:** `Authorization: Bearer <token>` (Khusus Peran Administrator)
+- **Response 200 OK:**
+  ```json
+  {
+    "score": 62,
+    "summary": {
+      "totalDomains": 24,
+      "totalTables": 42,
+      "readyTables": 26,
+      "fallbackTables": 3,
+      "emptyTables": 13,
+      "readySectors": 3,
+      "fallbackSectors": 3,
+      "emptySectors": 1
+    },
+    "sectors": [
+      {
+        "id": "perkebunan",
+        "label": "Bidang Perkebunan",
+        "route": "/plantation",
+        "status": "empty",
+        "tables": [{ "table": "perkebunan_areal", "rows": 0, "status": "empty" }],
+        "requestMemo": "Permintaan Data Bidang Perkebunan: Membutuhkan data Areal & Produksi Perkebunan per Kecamatan."
+      }
+    ]
+  }
+  ```
+
 ---
 
 ## 4. Endpoint Asisten Analis AI (Si Pertani)
