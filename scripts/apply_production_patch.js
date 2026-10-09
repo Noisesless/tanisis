@@ -71,6 +71,28 @@ async function main() {
     }
   }
 
+  // Jalankan import dataset BPS Distankan KP jika tersedia
+  const importScript = path.resolve(process.cwd(), "scripts/import_unmerged_distankan.js");
+  if (fs.existsSync(importScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Menjalankan import 7 dataset BPS Distankan KP...`);
+      execSync(`node "${importScript}"`, { stdio: "inherit", env: process.env });
+    } catch (importErr) {
+      console.warn(`[Migrasi Patch Warning] Import Distankan gagal:`, importErr.message);
+    }
+  }
+
+  // Sinkronkan komoditas unggulan agar faktual dan bersih dari dummy data 0
+  const patchUnggulanScript = path.resolve(process.cwd(), "scripts/patch_komoditas_unggulan.js");
+  if (fs.existsSync(patchUnggulanScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Menyinkronkan komoditas unggulan faktual...`);
+      execSync(`node "${patchUnggulanScript}"`, { stdio: "inherit", env: process.env });
+    } catch (patchErr) {
+      console.warn(`[Migrasi Patch Warning] Patch unggulan gagal:`, patchErr.message);
+    }
+  }
+
   // Verifikasi tabel-tabel baru hari ini
   const verifyConn = await mysql.createConnection({
     host: envHost,
@@ -90,7 +112,12 @@ async function main() {
       "kelembagaan_perikanan",
       "kelembagaan_juleha",
       "kelembagaan_p4s",
-      "kelembagaan_upja"
+      "kelembagaan_upja",
+      "ternak_flow",
+      "ternak_pemotongan",
+      "ternak_daging",
+      "horti_luas_kabupaten",
+      "horti_produksi_kabupaten"
     ];
 
     console.log(`\n=== STATUS VERIFIKASI SEEDER PRODUKSI ===`);

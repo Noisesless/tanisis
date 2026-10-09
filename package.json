@@ -8,7 +8,10 @@
   "scripts": {
     "start": "node --env-file=.env src/server.js",
     "dev": "node --watch --env-file=.env src/server.js",
-    "db:patch": "node --env-file=.env scripts/apply_production_patch.js"
+    "db:patch": "node --env-file=.env scripts/apply_production_patch.js",
+    "db:patch-unggulan": "node --env-file=.env scripts/patch_komoditas_unggulan.js",
+    "db:import-distankan": "node --env-file=.env scripts/import_unmerged_distankan.js",
+    "rag:offline": "python scripts/offline_rag.py"
   },
   "dependencies": {
     "exceljs": "^4.4.0",

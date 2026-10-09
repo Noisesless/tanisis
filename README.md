@@ -161,6 +161,20 @@ pm2 status
 pm2 logs sispertani-api
 ```
 
+### 5. Skrip Pemeliharaan & Asisten Offline
+```bash
+# Terapkan patch migrasi database produksi & sinkronisasi data primer Distankan
+npm run db:patch
+
+# Sinkronisasi khusus komoditas unggulan faktual & pembersihan dummy
+npm run db:patch-unggulan
+
+# Menjalankan Asisten RAG Offline Python (CLI / Terminal)
+npm run rag:offline "kalau 2023 salak paling banyak dari mana?"
+# Atau jalankan mode interaktif console:
+python scripts/offline_rag.py
+```
+
 ---
 
 ## Manajemen Pengguna & Hak Akses (RBAC)
@@ -243,7 +257,7 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/v1/kelembagaan/kelompok-tani`, `/kelembagaan/kth` — Data kelembagaan tani.
 - `GET /api/v1/st2023/desa` — Data Sensus Pertanian 2023 desa.
 - `GET /api/v1/bantuan` — Data alokasi, program, dan sebaran bantuan.
-- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL `pertasis` + Google Gemini).
+- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL `pertasis` + Google Gemini). Mendukung penarikan data lintas tahun (2023–2025), eliminasi data dummy, filter kelompok tanaman hias & ikan hias, serta pencarian spasial kelembagaan KWT per kecamatan/desa.
 - `GET /api/3/*` — Gateway proksi katalog CKAN Open Data Banjarnegara.
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)

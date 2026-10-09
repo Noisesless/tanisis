@@ -481,4 +481,29 @@ Mengembalikan indikator performa utama ringkas kelembagaan kabupaten untuk kartu
   }
   ```
 
+---
+
+## 4. Endpoint Asisten AI & Live RAG Engine (Si Pertani)
+
+### `POST /api/v1/ai/chat` (juga tersedia di `/sispertani-api/v1/ai/chat`)
+Menyediakan asisten analitik cerdas Si Pertani dengan grounding faktual live database MySQL `pertasis` dan fallback multi-model Google Gemini.
+- **Rate Limit:** 30 request / menit per IP (HTTP 429 jika terlampaui).
+- **Request Body (JSON):**
+  ```json
+  {
+    "messages": [
+      { "role": "user", "content": "kalau 2023 salak paling banyak dari mana?" }
+    ],
+    "stream": true
+  }
+  ```
+- **Fitur Live RAG Engine:**
+  - **Dynamic Year Extraction:** Mengurai tahun spesifik (2023, 2024, 2025) secara dinamis via regex `\b(201\d|202\d)\b`.
+  - **Filter Faktual Bebas Dummy:** Menyaring `total_produksi > 0 AND is_unggulan = 1` pada `komoditas_unggulan`.
+  - **Spesialisasi Sektoral:** Menarik data faktual kelompok tanaman hias, ikan hias, perkebunan (kopi robusta vs arabika), sayuran dataran tinggi (wortel Dieng), dan direktori kelembagaan KWT per kecamatan/desa.
+- **Response Modes:**
+  - `stream: true`: `text/event-stream` (Server-Sent Events) OpenAI-compatible format `data: {"choices":[{"delta":{"content":"..."}}]}`.
+  - `stream: false`: `application/json` format `{"choices":[{"message":{"content":"..."}}]}`.
+
+
 

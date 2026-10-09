@@ -20,6 +20,8 @@ Skrip patch `database/production_migration_patch.sql` dan dump `database/dump_pr
 3. **Pengecualian Kolom Terhitung Otomatis (Generated Columns):** Kolom `nilai_rp` pada tabel `nilai_ekonomi_tahunan` yang memiliki ekspresi `GENERATED ALWAYS AS (volume * harga_produsen) STORED` dikecualikan dari klausa `INSERT`, sehingga kalkulasi nilai rupiah dilakukan secara otomatis oleh mesin database tanpa memicu galat `ERROR 1906`.
 4. **Relaksasi SQL_MODE Otomatis:** Skrip diawali dengan `SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';` dan ditutup dengan pemulihan `SET SQL_MODE=@OLD_SQL_MODE;` serta `SET FOREIGN_KEY_CHECKS = 1;`.
 5. **Runner Otomatis Non-Destruktif:** Disediakan skrip `scripts/apply_production_patch.js` yang dijalankan dengan `npm run db:patch` untuk mengeksekusi DDL & seeder patch secara bertahap tanpa menjatuhkan tabel atau menghapus data yang sudah ada.
+6. **Impor Dataset Primer Distankan KP:** Skrip `scripts/import_unmerged_distankan.js` mengimpor dataset riil dari `dist/14. Distankan KP/` (produksi buah-buahan, sayuran, palawija, biofarmaka, dan ternak) yang belum terhubung sebelumnya, mengisikan ribuan baris data resmi 2017–2024 ke dalam `horti_produksi`, `palawija_produksi`, dan `perkebunan_produksi`.
+7. **Patch Komoditas Unggulan Faktual (ADR-035):** Skrip `scripts/patch_komoditas_unggulan.js` (dapat dijalankan via `npm run db:patch-unggulan` atau otomatis melalui `npm run db:patch`) menonaktifkan baris dummy bernilai 0 Ton seeder lama (Banjarmangu dsb.) dan memperbarui komoditas riil (Jagung 51.146 Ton, Ubi Kayu 78.886 Ton, Wortel 48.031 Ton, Kapulaga 930.421 tangkai) agar bebas kontaminasi data sintetis.
 
 ---
 

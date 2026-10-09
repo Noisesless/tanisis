@@ -80,13 +80,16 @@ Gunakan metode ini jika melakukan instalasi bersih atau memindahkan hosting:
 Terdapat dua metode sinkronisasi basis data yang didukung penuh:
 
 ### Opsi 1: Migrasi Patch Non-Destruktif (Rekomendasi Utama untuk Update Berjalan)
-Gunakan opsi ini jika server produksi sudah memiliki database berjalan dan Anda hanya ingin menerapkan tabel normalisasi baru (`psat_pduk`, `fsva_indikator_kabupaten`, `harga_pasar_banjarnegara`, `neraca_pangan_komposit`, `kelembagaan_perikanan`, `kelembagaan_juleha`, `kelembagaan_p4s`, `kelembagaan_upja`) tanpa kehilangan data yang sudah ada:
+Gunakan opsi ini jika server produksi sudah memiliki database berjalan. Skrip ini secara otomatis:
+1. Menerapkan tabel normalisasi baru (`psat_pduk`, `fsva_indikator_kabupaten`, `harga_pasar_banjarnegara`, `neraca_pangan_komposit`, `kelembagaan_perikanan`, `kelembagaan_juleha`, `kelembagaan_p4s`, `kelembagaan_upja`) tanpa kehilangan data yang sudah ada.
+2. Mengimpor dataset primer BPS Distankan KP (`scripts/import_unmerged_distankan.js`) untuk melengkapi data historis buah, sayur, palawija, dan biofarmaka 2017–2024.
+3. Menjalankan sinkronisasi komoditas unggulan faktual (`scripts/patch_komoditas_unggulan.js`) untuk menonaktifkan baris dummy 0 Ton seeder lama.
 
 ```bash
 # Masuk ke direktori webroot
 cd ~/htdocs/pertanian.sistemdata.id
 
-# Jalankan runner patch resmi
+# Jalankan runner patch resmi terpadu
 npm run db:patch
 # Atau secara manual:
 # node --env-file=.env scripts/apply_production_patch.js
@@ -124,12 +127,17 @@ Setelah kode dan basis data diperbarui, lakukan pemeriksaan berikut:
    curl -s https://pertanian.sistemdata.id/api/v1/ketahanan/harga-pasar | head -c 100
    # Seluruhnya wajib mengembalikan status "success" / array data JSON tanpa galat 500
    ```
-3. **Uji Chatbot & Gateway AI Si Pertani (RAG Live 2025):**
+3. **Uji Chatbot & Gateway AI Si Pertani (Dynamic Live RAG):**
    ```bash
+   # Uji endpoint API online
    curl -s -X POST https://pertanian.sistemdata.id/sispertani-api/v1/ai/chat \
      -H "Content-Type: application/json" \
      -d '{"messages":[{"role":"user","content":"Berapa total produksi padi tahun 2025 di Banjarnegara?"}],"stream":false}'
    # Jawaban wajib menyebutkan produksi 178.610 Ton dan sentra Kecamatan Mandiraja
+
+   # Uji Asisten RAG Mandiri via Python CLI:
+   python scripts/offline_rag.py "kalau 2023 salak paling banyak dari mana?"
+   # Jawaban wajib menyebutkan Kalibening (83.181 Ton) dari total 203.208 Ton
    ```
 4. **Uji Antarmuka Web (Frontend SPA):**
    - Buka `https://pertanian.sistemdata.id/` di browser.

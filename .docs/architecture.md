@@ -156,8 +156,17 @@ sequenceDiagram
 
 1. **Isolasi Kredensial Mutlak:** API Key Google Gemini (`GEMINI_API_KEY`) hanya dibaca melalui `process.env` di backend, tidak pernah terekspos di paket statis frontend bundle (`dist/assets`).
 2. **Proteksi Anti-Eksploitasi:** In-memory sliding rate limiter membatasi 30 panggilan per menit per alamat IP guna mencegah pengurasan kuota token oleh pihak ketiga.
-3. **Dynamic Live Grounding (Paritas Dev & Production):** Server mengekstrak kata kunci pencarian dari pengguna lalu melakukan kueri SQL langsung ke basis data `pertasis` dan katalog CKAN. Data angka riil disuntikkan ke prompt sistem sebagai fakta mutlak agar AI dilarang keras berhalusinasi atau memberikan template penolakan generik.
-4. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) menjamin layanan asisten tetap berjalan lancar tanpa terganggu lonjakan beban (*high demand*) pada model tertentu.
+3. **Dynamic Year-Aware Grounding & Cross-Year Retrievability (ADR-035):**
+   - Server mengekstrak tahun pertanyaan pengguna secara regex `\b(201\d|202\d)\b`. Kueri SQL secara adaptif menyaring data tahun yang tepat (misalnya Salak 2023 di Kalibening: 83.181 Ton vs 2024: 80.880 Ton; Kopi Robusta 2024: 2.167 Ton di Karangkobar & Kalibening).
+   - Menghapus pembatasan `ORDER BY tahun DESC LIMIT 8` yang sebelumnya menenggelamkan data tahun-tahun sebelumnya.
+4. **Eliminasi Data Dummy & Filter Sektoral Khusus:**
+   - Menyaring data dummy 0 Ton dari tabel `komoditas_unggulan` dengan klausa `total_produksi > 0 AND is_unggulan = 1`.
+   - Mengintegrasikan kelompok Tanaman Hias (`kelompok = 'tanaman_hias'` di `horti_produksi`), Ikan Hias (`ikan_hias`), Tanaman Pangan (Wortel Dieng/Batur ~48.000 Ton), serta penegasan bahwa Banjarnegara bukan sentra Kelapa Sawit (0 Ton) dan bukan produsen dominan Bawang Merah (0,33 Ton).
+   - Menyediakan query kelembagaan KWT per kecamatan dan desa sesuai arah pengurutan (*paling sedikit / paling banyak*).
+5. **Standalone Offline Python Assistant (`scripts/offline_rag.py`):**
+   - Mesin RAG mandiri berbasis Python (`pymysql`) tanpa ketergantungan framework Node.js maupun koneksi internet/API Key eksternal.
+   - Dapat dioperasikan sebagai CLI satu baris (`npm run rag:offline "<query>"`), mode interaktif REPL, atau diimpor sebagai modul Python backend.
+6. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) menjamin layanan asisten tetap berjalan lancar tanpa terganggu lonjakan beban (*high demand*) pada model tertentu.
 
 ---
 
