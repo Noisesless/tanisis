@@ -712,16 +712,7 @@ aiRouter.post("/chat", async (req, res) => {
     });
   }
 
-  // 2. Secret Key Guard
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({
-      error: "config_error",
-      message: "GEMINI_API_KEY belum dikonfigurasi di server."
-    });
-  }
-
-  // 3. Payload Validation & Sanitization (Anti-Exploit)
+  // 2. Payload Validation & Sanitization (Anti-Exploit)
   const { messages, stream = true, temperature = 0.6 } = req.body || {};
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({
@@ -736,10 +727,45 @@ aiRouter.post("/chat", async (req, res) => {
     content: typeof msg.content === "string" ? msg.content.slice(0, 15000) : ""
   }));
 
-  // 4. Dynamic Live RAG Search (Dev & Production)
+  // 3. Dynamic Live RAG Search (Dev & Production)
   // Ekstrak pesan terakhir pengguna untuk pencarian live ke MySQL & OpenData
   const lastUserMsg = safeMessages.filter((m) => m.role === "user").pop()?.content || "";
   const dynamicContext = await retrieveDynamicContext(lastUserMsg);
+
+  // 4. Secret Key Guard & Graceful Local Fallback
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("[AI-RAG] GEMINI_API_KEY tidak ditemukan di environment. Menggunakan respons faktual basis data langsung.");
+    if (stream) {
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no"
+      });
+      const localReply = dynamicContext
+        ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung secara faktual dari basis data resmi SISPERTANI Banjarnegara)*`
+        : `Halo! Saya Si Pertani, asisten cerdas SISPERTANI Kabupaten Banjarnegara. Saat ini kunci akses \`GEMINI_API_KEY\` belum dikonfigurasi pada file \`.env\` di server produksi.\n\nUntuk pertanyaan data komoditas statistik, silakan sebutkan kata kunci komoditas spesifik (seperti padi, salak, kopi, jagung, ikan, ternak, dsb) agar sistem dapat menarik data langsung dari database.`;
+      const lines = localReply.split("\n");
+      for (const l of lines) {
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: l + "\n" } }] })}\n\n`);
+      }
+      res.write("data: [DONE]\n\n");
+      res.end();
+      return;
+    } else {
+      return res.json({
+        choices: [{
+          message: {
+            role: "assistant",
+            content: dynamicContext
+              ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}`
+              : `Halo! Saya Si Pertani. Konfigurasi GEMINI_API_KEY belum diset pada file .env di server produksi.`
+          }
+        }]
+      });
+    }
+  }
 
   const finalMessages = [...safeMessages];
   if (dynamicContext) {
