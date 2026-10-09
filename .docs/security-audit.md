@@ -29,11 +29,11 @@ Seluruh temuan kerentanan berhasil dimitigasi secara langsung di codebase dengan
 | **SP-008** | CORS Configuration | ✅ PASSED | Header CORS dikonfigurasi melalui `CORS_ORIGIN` dengan mekanisme allowlist dan preflight `OPTIONS` handling. |
 | **SP-009** | Hardcoded Credentials Prevention | ✅ PASSED | Kredensial dan kata sandi RBAC disimpan di `.env` lokal (`ADMIN_PASS`, `PASS_*`), tidak di-hardcode dalam sumber kode. |
 | **SP-010** | CSRF Token Implementation | ✅ PASSED | Sistem otentikasi menggunakan header `Authorization: Bearer <token>` in-memory (stateless token header, kebal terhadap browser cross-origin cookie CSRF). |
-| **SP-011 / SP-023** | Security Headers Hygiene | ✅ PASSED | Dipasang global middleware security headers: `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, dan `Permissions-Policy`. |
-| **SP-014** | Tiered Rate Limiting | ✅ PASSED | Endpoint `POST /admin/login` dibatasi maksimal 5 kegagalan per 15 menit per IP (status `429`). Endpoint `POST /ai/chat` dibatasi 30 permintaan per menit per IP. |
+| **SP-011 / SP-023** | Security Headers Hygiene | ✅ PASSED | Dipasang global middleware security headers: `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, dan `Permissions-Policy`. Header `X-Powered-By` dinonaktifkan (`app.disable('x-powered-by')`). |
+| **SP-014** | 3-Tier Tiered Rate Limiting | ✅ PASSED | **Tier 1 (General API)**: 120 req/menit per IP di `src/server.js`.<br>**Tier 2 (AI Chat Gateway)**: 30 req/menit per IP di `src/routes/ai.js`.<br>**Tier 3 (Admin Auth Shield)**: 5 percobaan gagal per 15 menit per IP di `src/routes/admin.js` (HTTP 429) + 400ms delay. |
 | **SP-016** | Supply Chain Security | 🟡 MONITORED | `npm audit` melaporkan 2 dependensi moderat (`uuid < 11.1.1` via `exceljs`). Tidak ada dependensi dengan level High/Critical RCE. |
 | **SP-018** | Security & Audit Logging | ✅ PASSED | Seluruh aksi impor data admin dicatat ke tabel audit `sync_log` (dataset, sumber, aksi, baris, status, pesan, waktu). |
-| **SP-019** | Error & Exception Handling | ✅ PASSED | Route wrapper mengisolasi error server 500 dengan pesan generik (`"Terjadi kesalahan internal pada server."`), tanpa membocorkan pesan galat MySQL ke client. |
+| **SP-019** | Error & Exception Handling (Debug Mode Off) | ✅ PASSED | Debug mode off: Route wrapper mengisolasi error server 500 dengan pesan generik (`"Terjadi kesalahan internal pada server."`), endpoint `/health` membuang error stack trace jika DB down, dan dipasang Express 4-argument global error handler di `src/server.js` untuk mencegah kebocoran stack trace HTML ke browser. |
 | **SP-020** | SSRF Prevention | ✅ PASSED | Proksi CKAN `/3/*` menormalisasi path upstream dan mengunci host tujuan secara ketat ke `opendata.banjarnegarakab.go.id`. Host di luar allowlist ditolak dengan `400 invalid_upstream_host`. |
 | **SP-021** | IDOR Prevention | ✅ PASSED | Hak akses domain dibatasi berdasarkan role user (`roleAllowsDomain()`). |
 | **SP-022** | Open Redirect Prevention | ✅ PASSED | Pengalihan rute (redirect 302) hanya menggunakan URL internal statis (`/sebaran/pangan` dan `/kecamatan`). |
@@ -118,6 +118,25 @@ curl -sI http://127.0.0.1:5173/pertasis_backup.sql
 # 4. Verifikasi Sanitasi Input Parameter
 curl -s "http://127.0.0.1:5173/api/v1/ekonomi/harga-kabupaten?tahun=invalid"
 # HTTP/1.1 200 OK — Data dikembalikan normal tanpa error MySQL NaN
+
+# 5. Verifikasi Tier 3 Rate Limiting (Admin Login Brute-Force Shield)
+for i in {1..6}; do
+  code=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://127.0.0.1:5173/api/v1/admin/login \
+    -H "Content-Type: application/json" -d '{"user":"invalid","pass":"wrong"}')
+  echo "Attempt $i: HTTP $code"
+done
+# Attempt 1: HTTP 401
+# Attempt 2: HTTP 401
+# Attempt 3: HTTP 401
+# Attempt 4: HTTP 401
+# Attempt 5: HTTP 401
+# Attempt 6: HTTP 429 -> {"error":"Terlalu banyak percobaan gagal. Coba lagi 15 menit lagi."}
+
+# 6. Verifikasi Debug Mode Off & Safe Error Masking
+curl -s http://127.0.0.1:5173/api/v1/non_existent_route
+# {"error":"not_found"}
+curl -s http://127.0.0.1:5173/api/health
+# {"ok":true,"db":"up","time":"2026-10-09T00:42:10.000Z"} (tanpa stack trace)
 ```
 
 ---

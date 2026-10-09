@@ -58,6 +58,44 @@ app.use((req, res, next) => {
 // dipilih karena rewrite req.url di middleware tidak andal antar versi Express.
 const api = express.Router();
 
+// Rate Limiter Bertingkat: Tier 1 - Proteksi Umum API (Anti-Abuse / Anti-Scraping)
+// Membatasi maksimal 120 request per menit per IP untuk seluruh endpoint /api/* dan /sispertani-api/*
+const globalRateLimitMap = new Map();
+const GLOBAL_RATE_LIMIT_WINDOW = 60 * 1000;
+const GLOBAL_MAX_REQUESTS = 120;
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of globalRateLimitMap.entries()) {
+    if (now - record.startTime > GLOBAL_RATE_LIMIT_WINDOW) {
+      globalRateLimitMap.delete(ip);
+    }
+  }
+}, 5 * 60 * 1000).unref();
+
+function generalApiLimiter(req, res, next) {
+  const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "127.0.0.1";
+  const now = Date.now();
+  const record = globalRateLimitMap.get(clientIp);
+
+  if (!record || now - record.startTime > GLOBAL_RATE_LIMIT_WINDOW) {
+    globalRateLimitMap.set(clientIp, { startTime: now, count: 1 });
+    return next();
+  }
+
+  if (record.count >= GLOBAL_MAX_REQUESTS) {
+    return res.status(429).json({
+      error: "rate_limit_exceeded",
+      message: "Terlalu banyak permintaan API. Silakan coba kembali dalam 1 menit.",
+    });
+  }
+
+  record.count++;
+  next();
+}
+
+api.use(generalApiLimiter);
+
 // Proxy CKAN (GET /api/3/* & /sispertani-api/3/* → opendata.banjarnegarakab.go.id)
 // supaya katalog online ikut hidup dari origin aplikasi sendiri. Matikan CKAN_PROXY=0.
 const CKAN_ORIGIN = process.env.CKAN_ORIGIN || "https://opendata.banjarnegarakab.go.id";
@@ -87,14 +125,15 @@ api.use("/3", async (req, res) => {
   }
 });
 
-// Health check — dipakai frontend untuk mendeteksi ketersediaan API.
+// Health check — dipakai frontend untuk mendeteksi ketersediaan API (Debug Mode Off / Sanitized error).
 api.get("/health", async (_req, res) => {
   try {
     const rows = await getPool().query("SELECT 1 AS ok");
     const ok = Array.isArray(rows) ? rows[0]?.[0]?.ok : rows?.ok;
     res.json({ ok: true, db: ok === 1 ? "up" : "down", time: new Date().toISOString() });
   } catch (e) {
-    res.status(503).json({ ok: false, db: "down", message: String(e?.message || e) });
+    console.error("[health] DB check failed:", e?.message);
+    res.status(503).json({ ok: false, db: "down" });
   }
 });
 
@@ -158,8 +197,8 @@ api.get("/v1/komoditas-unggulan", async (req, res) => {
     const data = await getDynamicKomoditasUnggulan();
     return res.json(data);
   } catch (err) {
-    console.error("Gagal mengambil komoditas unggulan dinamis:", err);
-    return res.status(500).json({ error: "internal_error", message: err.message });
+    console.error("[komoditas-unggulan] Query error:", err?.message);
+    return res.status(500).json({ error: "internal_error", message: "Gagal memproses data komoditas unggulan." });
   }
 });
 
@@ -224,6 +263,17 @@ app.use((req, res, next) => {
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
   res.sendFile(path.join(distRoot, "index.html"));
+});
+
+// SP-019 & Debug Mode Off: Global Safe Error Handler (mencegah kebocoran stack trace ke browser)
+app.use((err, _req, res, _next) => {
+  console.error("[global-error]", err?.message || err);
+  if (!res.headersSent) {
+    res.status(err?.status || 500).json({
+      error: "internal_error",
+      message: "Terjadi kesalahan internal pada server.",
+    });
+  }
 });
 
 app.use((_req, res) => res.status(404).json({ error: "not_found" }));

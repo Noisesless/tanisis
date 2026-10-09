@@ -113,7 +113,8 @@ router.get("/domains", requireAdmin, async (req, res) => {
     if (req.adminRole === "admin") return res.json(all);
     res.json(all.filter((d) => roleAllowsDomain(req.adminRole, d.domain)));
   } catch (e) {
-    res.status(500).json({ error: String(e?.message ?? e) });
+    console.error("[admin] domains fetch error:", e?.message);
+    res.status(500).json({ error: "Gagal memuat daftar domain." });
   }
 });
 
@@ -130,7 +131,8 @@ router.get("/sync-log", requireAdmin, requireAdminRole, async (req, res) => {
     const [{ total }] = await q("SELECT COUNT(*) AS total FROM sync_log");
     res.json({ total, limit, data });
   } catch (e) {
-    res.status(500).json({ error: String(e?.message ?? e) });
+    console.error("[admin] sync-log fetch error:", e?.message);
+    res.status(500).json({ error: "Gagal memuat riwayat log sinkronisasi." });
   }
 });
 

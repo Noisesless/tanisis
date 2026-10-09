@@ -231,3 +231,4 @@ mysql=root=
 [x] Invalidation Cache Metrik Capaian Pertanian 2025 di /recommendations (dist/assets/api-BxFGoia1.js: 178.610 Ton, 25.871 Ha, Mandiraja tampil riil)
 [x] Rekayasa Live RAG & System Instruction Si Pertani (src/routes/ai.js: Agregasi Padi 2025, integrasi harga pasar, FSVA, neraca komposit, kelembagaan tani, pengawasan PSAT)
 [x] Pembaruan Dokumentasi Utama (.docs/database.md, .docs/deployment.md, .docs/routes.md, app-context.md) untuk Kesiapan Rilis Produksi
+[x] Implementasi Faktual 3-Tier Rate Limiting (Tier 1: General API 120/min, Tier 2: AI Chat 30/min, Tier 3: Admin Auth 5 fails/15 min lockout + 400ms delay) & Debug Mode Off (SP-019 Safe Error Masking + Express Global Error Handler)
