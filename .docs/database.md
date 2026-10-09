@@ -88,8 +88,7 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Ekonomi** | `lumbung_pangan` | `(kecamatan_id, tahun)` | Jumlah unit & kapasitas lumbung/gudang |
 | **Kelembagaan**| `kelompok_tani` | `(desa_id, tahun)` | Jumlah Poktan, Gapoktan, dan anggota per desa |
 | **Kelembagaan**| `kelompok_tani_hutan` | `(desa_id, tahun)` | KTH tingkat Pemula, Madya, Utama |
-| **Kelembagaan (KWT)**| `kwt_kelompok_wanita_tani` | `(kecamatan, nama_kelompok)` | Profil KWT, Pokdakan, Poklahsar, Pokmamas per kecamatan |
-| **Kelembagaan Pertanian**| `kelembagaan_pertanian` | `(kecamatan, nama_kelompok)` | Register resmi Poktan, Gapoktan, KWT dengan ID Simluhtan, Gapoktan Induk, Luas Lahan (Ha), PPL Pendamping (2.177 Poktan, 232 KWT, 278 Gapoktan — Total 2.687 kelompok) |
+| **Kelembagaan Pertanian**| `kelembagaan_pertanian` | `(kecamatan, desa, jenis_lembaga, nama_kelompok)` | Register resmi Poktan, Gapoktan, dan KWT (ID Simluhtan, Gapoktan Induk, Luas Lahan Ha, PPL Pendamping — 2.177 Poktan, 232 KWT, 278 Gapoktan — Total 2.687 kelompok) |
 | **Kelembagaan Ekonomi**| `kelembagaan_kep` | `(kecamatan, nama_kep)` | Kelembagaan Ekonomi Petani (137 KEP: LKM, LKMA, Koperasi Tani, modal usaha/aset Rp 2,21 Miliar) |
 | **Penyuluhan Desa**| `kelembagaan_posluhdes` | `(desa, nama_posluhdes)` | Pos Penyuluhan Desa/Kelurahan (36 unit, SK pengukuhan, penyuluh swadaya) |
 | **Penyuluh Swadaya**| `kelembagaan_pps` | `(nama_penyuluh, unit_kerja)` | Penyuluh Pertanian Swadaya (156 PPS: keahlian TP, Horti, Ternak, Kebun, kontak) |

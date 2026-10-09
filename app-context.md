@@ -44,9 +44,13 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,kwt_kelompok_wanita_tani,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,fsva_desa_indikator,neraca_pangan_komposit)
+pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_indikator_kabupaten,fsva_desa_indikator,neraca_pangan_komposit)
 
 ## [ADR]
+[ADR-038] Unifikasi Kelembagaan KWT ke Master `kelembagaan_pertanian`:
+- Menghapus tabel kosong dan domain redundan `kwt_kelompok_wanita_tani` (0 baris data, artefak seeder usang).
+- Menyatukan seluruh Kelompok Wanita Tani (232 KWT binaan) ke dalam satu Single Source of Truth: tabel `kelembagaan_pertanian` bersama 2.177 Poktan dan 278 Gapoktan (total 2.687 register resmi dari SK Kadistan & Simluhtan).
+- Katalog portal Admin hanya menyediakan 1 domain terpadu: `kelembagaan-pertanian` dengan enum `jenis_lembaga`: Poktan, Gapoktan, KWT. Menghilangkan redundansi template Excel dan menaikkan persentase kesiapan data publik ke 78%.
 [ADR-037] FSVA Desa Single Source of Truth & 16-Variable Dynamic Integration:
 - Tabel `fsva_desa_indikator` di MariaDB menyimpan 16 variabel lengkap (10 fisik & demografi riil: Luas Sawah Ha, Sarpras Pangan Unit, Penduduk Miskin DTKS Jiwa, Status Akses, RT Tanpa Air Bersih, Jumlah Tenaga Kesehatan, Luas Wilayah Ha, Penduduk Jiwa, RT, Kepadatan; 5 rasio FSVA Tiga Pilar; IKP 0–100, komposit prioritas 1–6, ranking) dari 5 berkas validasi Bapanas & Distankan KP untuk 278 desa.
 - Menghapus tab kedua 12 indikator dummy/placeholder AI yang membingungkan klien, menyatukan halaman `/fsva` menjadi dashboard peta spasial interaktif terpadu.

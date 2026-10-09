@@ -340,11 +340,6 @@ export const DOMAINS = {
     desc: "Target indikator Renstra Distankan (mis. Tabel 4.1 renstra.pdf).",
     sheets: [{ table: "renstra_target", name: "Target Renstra", kecamatan: false, key: ["indikator", "tahun_target"] }],
   },
-  "kwt": {
-    label: "KWT — Kelompok Wanita Tani",
-    desc: "Kelompok Wanita Tani (KWT), Pokdakan, Poklahsar, Pokmamas per kecamatan.",
-    sheets: [{ table: "kwt_kelompok_wanita_tani", name: "KWT", kecamatan: true, key: ["kecamatan", "nama_kelompok"], enums: { jenis: ["KWT", "Pokdakan", "Poklahsar", "Pokmamas"] } }],
-  },
 
   "ltt-katam": {
     label: "LTT — Luas Tambah Tanam & Kalender Tanam",

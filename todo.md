@@ -9,6 +9,7 @@
 - [x] Integrasikan konteks data desa ke RAG Chatbot Si Pertani di `src/routes/ai.js`
 - [x] Hapus tab 2 dummy/karangan AI di antarmuka web `/fsva` dan satukan menjadi dashboard 16-indikator lengkap
 - [x] Pulihkan integritas native chunk bundler tanpa error `removeChild` / React error #321 di seluruh halaman
+- [x] Unifikasi Kelembagaan KWT: eliminasi tabel kosong `kwt_kelompok_wanita_tani` dan domain redundan `kwt`, satukan 232 KWT ke master `kelembagaan_pertanian` (total 2.687 kelompok binaan)
 - [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `app-context.md`, `README.md`)
 
 ### Fase 1: Backend Audit Kesiapan Data (/api/v1/admin/readiness)
