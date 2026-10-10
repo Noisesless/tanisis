@@ -20,6 +20,7 @@ import multer from "multer";
 import { listDomains, getReadinessAudit } from "../lib/domains.js";
 import { USERS, roleAllowsDomain, roleLabel } from "../lib/users.js";
 import { buildWorkbook, importWorkbook } from "../lib/excel.js";
+import { rekapKomoditasUnggulan } from "../lib/komoditas-rekap.js";
 import { q } from "../db.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -347,9 +348,38 @@ router.post("/import/:domain", requireAdmin, requireDomainAccess, upload.single(
       user_agent: req.headers["user-agent"] || null,
       status: report.errors.length ? "warning" : "success",
     });
+
+    // Auto-rekapitulasi otomatis ke tabel komoditas_unggulan jika domain sektor terkait diimpor
+    const SEKTOR_REKAP = new Set(["padi", "palawija", "hortikultura", "perkebunan", "peternakan", "perikanan", "harga-produsen"]);
+    if (SEKTOR_REKAP.has(domain)) {
+      rekapKomoditasUnggulan().catch((err) => console.error("[komoditas-rekap] Auto-rekap gagal:", err.message));
+    }
+
     res.json(report);
   } catch (e) {
     res.status(e?.status ?? 500).json({ error: String(e?.message ?? e) });
+  }
+});
+
+/**
+ * POST /api/v1/admin/sync-komoditas-unggulan
+ * Memicu rekapitulasi dan sinkronisasi otomatis komoditas unggulan seluruh tahun/kecamatan [Super Admin].
+ */
+router.post("/sync-komoditas-unggulan", requireAdmin, requireAdminRole, async (req, res) => {
+  try {
+    const result = await rekapKomoditasUnggulan();
+    await logActivity({
+      username: req.adminUser ?? "admin",
+      role: req.adminRole ?? "admin",
+      action: "SYNC_REKAP",
+      entity: "komoditas_unggulan",
+      description: `Rekapitulasi otomatis komoditas unggulan selesai (${result.totalInserted} baris direkap untuk tahun: ${result.tahunList.join(", ")})`,
+      ip_address: req.ip || null,
+      status: "success",
+    });
+    res.json({ success: true, message: "Rekapitulasi komoditas unggulan berhasil diperbarui.", ...result });
+  } catch (err) {
+    res.status(500).json({ error: "Gagal sinkronisasi komoditas unggulan: " + err.message });
   }
 });
 

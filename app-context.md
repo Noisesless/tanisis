@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Self-Healing Activity Log & 25 Admin Domains Operational done=ALL last=Self-healing auto-migration tabel activity_logs di produksi, penambahan 2 domain baru komoditas-unggulan dan harga-produsen (total 25 domain admin), template Excel bebas duplikasi, RBAC role mapping mutakhir
+phase=Automated Materialized Rekap Komoditas Unggulan & Zero Manual Overhead done=ALL last=Otomatisasi rekapitulasi tabel komoditas_unggulan dari 5 subsektor fisik (366 baris 2018-2024), auto-sync pasca-import & server startup, endpoint /sync-komoditas-unggulan, self-healing activity logs
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,11 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-045] Otomatisasi Rekapitulasi Sentra Komoditas Unggulan (Materialized View Table Pattern):
+- Menjawab kritik arsitektur data redundan: mengimplementasikan modul otomatisasi `src/lib/komoditas-rekap.js` yang secara otomatis mengagregasi data produksi riil per kecamatan (padi, palawija, horti, perkebunan, peternakan, perikanan) dan mengaitkannya dengan `harga_produsen` untuk mengisi tabel `komoditas_unggulan`.
+- Mengisi 366 baris rekapitulasi historis (2018-2024) secara instan dan mengeliminasi beban ganda admin menginput manual.
+- Menambahkan auto-trigger rekapitulasi saat admin mengimpor data sektor di `src/routes/admin.js`, saat startup server di `src/server.js`, serta menyediakan endpoint manual `POST /api/v1/admin/sync-komoditas-unggulan`.
+- Mempertahankan domain `komoditas-unggulan` di portal admin agar admin dapat mengunduh berkas rekapitulasi Excel resminya dan tetap berstatus Mandiri (80% kesiapan).
 [ADR-044] Self-Healing Tabel Activity Logs & Penambahan 2 Domain Admin Baru (Total 25 Domain):
 - Mengimplementasikan `ensureActivityLogsTable()` di `src/routes/admin.js` yang secara otomatis menjalankan `CREATE TABLE IF NOT EXISTS activity_logs` saat aplikasi atau endpoint dipanggil, menuntaskan isu log login/logout yang belum muncul di server produksi tanpa perlu migrasi manual.
 - Menormalisasi status log `failed` dan `warning` agar 100% patuh terhadap konstrain tipe kolom ENUM MariaDB.
