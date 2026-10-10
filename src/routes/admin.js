@@ -32,6 +32,37 @@ async function logSync(dataset, sumber, baris, status, pesan) {
   } catch { /* audit log tidak boleh menggagalkan import */ }
 }
 
+let tableEnsured = false;
+export async function ensureActivityLogsTable() {
+  if (tableEnsured) return;
+  try {
+    await q(`CREATE TABLE IF NOT EXISTS activity_logs (
+      id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      user_id int(10) unsigned DEFAULT NULL,
+      username varchar(50) NOT NULL DEFAULT 'guest',
+      nama_lengkap varchar(100) DEFAULT NULL,
+      role varchar(50) NOT NULL DEFAULT 'guest',
+      action varchar(50) NOT NULL,
+      entity varchar(100) DEFAULT NULL,
+      description text NOT NULL,
+      ip_address varchar(45) DEFAULT NULL,
+      user_agent text DEFAULT NULL,
+      status enum('success','failed','warning') DEFAULT 'success',
+      metadata longtext DEFAULT NULL,
+      created_at datetime NOT NULL DEFAULT current_timestamp(),
+      PRIMARY KEY (id),
+      KEY idx_created_at (created_at),
+      KEY idx_username (username),
+      KEY idx_action (action),
+      KEY idx_role (role),
+      KEY idx_status (status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+    tableEnsured = true;
+  } catch (err) {
+    console.error("[audit-log] Gagal memastikan tabel activity_logs:", err.message);
+  }
+}
+
 export async function logActivity({
   user_id = null,
   username = "system",
@@ -46,6 +77,14 @@ export async function logActivity({
   metadata = null,
 }) {
   try {
+    await ensureActivityLogsTable();
+    let normStatus = "success";
+    if (status === "failed" || status === "error") {
+      normStatus = "failed";
+    } else if (status === "warning") {
+      normStatus = "warning";
+    }
+
     const metaStr = metadata ? (typeof metadata === "string" ? metadata : JSON.stringify(metadata)) : null;
     await q(
       `INSERT INTO activity_logs (
@@ -62,7 +101,7 @@ export async function logActivity({
         description,
         ip_address,
         user_agent ? String(user_agent).slice(0, 255) : null,
-        status,
+        normStatus,
         metaStr,
       ]
     );
@@ -239,6 +278,7 @@ router.get("/sync-log", requireAdmin, requireAdminRole, async (req, res) => {
  *  ?page=N&limit=N (default page=1, limit=10). */
 router.get("/activity-log", requireAdmin, requireAdminRole, async (req, res) => {
   try {
+    await ensureActivityLogsTable();
     const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
     const page = Math.max(Number(req.query.page) || 1, 1);
     const offset = (page - 1) * limit;

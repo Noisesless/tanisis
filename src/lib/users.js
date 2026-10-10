@@ -18,11 +18,11 @@
 
 export const ROLES = {
   admin: { label: "Administrator", domains: null }, // null = SEMUA domain
-  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija", "ltt-katam", "kwt", "kelembagaan-pertanian"] },
-  "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan"] },
-  peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan-pendukung"] },
-  perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan-perikanan"] },
-  "ketahanan-pangan": { label: "Bidang Ketahanan Pangan", domains: ["harga-pasar", "fsva-kabupaten", "neraca-pangan", "psat-pduk", "lumbung"] },
+  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["padi", "palawija", "ltt-katam", "kelembagaan-pertanian", "komoditas-unggulan", "harga-produsen"] },
+  "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan", "komoditas-unggulan", "harga-produsen"] },
+  peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan-pendukung", "komoditas-unggulan", "harga-produsen"] },
+  perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan-perikanan", "komoditas-unggulan", "harga-produsen"] },
+  "ketahanan-pangan": { label: "Bidang Ketahanan Pangan", domains: ["harga-pasar", "fsva-desa", "neraca-pangan", "psat-pduk", "lumbung", "harga-produsen"] },
 };
 
 // Daftar akun terdaftar. `passEnv` menunjuk nama variabel lingkungan tempat

@@ -13,6 +13,7 @@
 - [x] Normalisasi Relasional Kecamatan-Desa-FSVA: drop tabel usang `fsva_indikator_kabupaten`, arahkan domain Admin ke `fsva-desa` (278 desa), tambahkan kolom kode BPS pada kecamatan & desa serta Foreign Key `kecamatan_id` & `desa_id` pada `fsva_desa_indikator` (100% matched)
 - [x] Paginasi & Dual-Tab Log Dasbor Admin: integrasikan tabel `activity_logs` (log aktivitas pengguna) dan `sync_log` (riwayat pembaruan), terapkan paginasi server-side 10 entri/halaman agar load halaman ringan
 - [x] Pelacakan ISSUE-034 & ISSUE-035: dokumentasikan investigasi caching browser/Nginx pada dasbor admin produksi, terapkan normalisasi URL aset JS anti-duplikasi React singleton (Error #321), serta proteksi notranslate DOM
+- [x] Self-Healing Activity Logs & 25 Domain Admin: implementasi auto-creation tabel activity_logs di produksi, penambahan domain komoditas-unggulan & harga-produsen di /admin
 - [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `.docs/issues.md`, `app-context.md`, `README.md`)
 
 ### Fase 1: Backend Audit Kesiapan Data (/api/v1/admin/readiness)

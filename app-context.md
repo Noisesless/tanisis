@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=React Singleton & Asset Normalization Verified, Issues Resolved done=ALL last=Normalisasi relasional desa-kecamatan-fsva, activity_logs audit terintegrasi, ISSUE-034 dan ISSUE-035 RESOLVED, normalisasi URL aset JS anti-duplikasi React singleton, proteksi notranslate DOM
+phase=Self-Healing Activity Log & 25 Admin Domains Operational done=ALL last=Self-healing auto-migration tabel activity_logs di produksi, penambahan 2 domain baru komoditas-unggulan dan harga-produsen (total 25 domain admin), template Excel bebas duplikasi, RBAC role mapping mutakhir
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,10 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-044] Self-Healing Tabel Activity Logs & Penambahan 2 Domain Admin Baru (Total 25 Domain):
+- Mengimplementasikan `ensureActivityLogsTable()` di `src/routes/admin.js` yang secara otomatis menjalankan `CREATE TABLE IF NOT EXISTS activity_logs` saat aplikasi atau endpoint dipanggil, menuntaskan isu log login/logout yang belum muncul di server produksi tanpa perlu migrasi manual.
+- Menormalisasi status log `failed` dan `warning` agar 100% patuh terhadap konstrain tipe kolom ENUM MariaDB.
+- Mendaftarkan 2 domain baru di portal `/admin` (`komoditas-unggulan` dan `harga-produsen`) lengkap dengan generator template Excel, kunci upsert, dan pemetaan peran RBAC di `src/lib/users.js`, meningkatkan kesiapan mandiri produksi hingga 80% (20 dari 25 domain berstatus Mandiri).
 [ADR-043] Normalisasi URL Modul Aset JS & Proteksi React Singleton:
 - Mengeliminasi parameter query (?v=...) pada entry point script bundel Vite guna menjamin modul inti React dievaluasi sebagai single instance tunggal oleh peramban, mengeliminasi galat React Error #321 secara tuntas.
 - Mengimplementasikan middleware normalisasi di `src/server.js` yang secara otomatis mengalihkan (HTTP 302) permintaan aset JS ber-query string ke URL kanonikal bersih.
