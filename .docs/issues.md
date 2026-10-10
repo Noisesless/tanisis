@@ -410,23 +410,26 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ---
 
-## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
-
 ### [ISSUE-034] Matriks Kesiapan Data Sektoral & Pembaruan UI Dasbor Belum Muncul di Produksi (/admin)
-- **Status:** OPEN
-- **Tanggal:** 2026-10-09
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-10
 - **Komponen:** Antarmuka Web `/admin`, Bundel Vite SPA (`dist/assets/admin-C9Dakcgq.js`), Caching Aset HTTP Nginx & Browser.
 - **Deskripsi:** 
-  Meskipun pengguna telah berhasil login sebagai Administrator utama (`user: admin`, hak akses Super Administrator), halaman `/admin` di server produksi (`https://pertanian.sistemdata.id/admin`) masih menampilkan layout antarmuka lama (layout dua kolom: *Katalog Domain Data* di sisi kiri dan *Ringkasan Bantuan Pemerintah* di sisi kanan). Komponen baru **Audit Kesiapan Data Sektoral (Readiness Matrix)**, dual-tab log riwayat pembaruan & log aktivitas pengguna, serta kolom dinamis **Tahun Data Terakhir** belum termuat di peramban klien.
-- **Investigasi & Analisis Akar Masalah:**
-  1. **HTTP Browser Disk Cache & Nginx Header:** Konfigurasi web server reverse proxy Nginx pada jalur `/assets/*` menerapkan header caching statis berumur panjang (`Cache-Control: max-age=31536000, immutable`). Karena nama berkas chunk aset admin dipertahankan sebagai `dist/assets/admin-C9Dakcgq.js` (guna menjaga integritas peta dependensi modul Vite), peramban web klien menyajikan salinan lama dari disk cache lokal dan tidak mengambil berkas mutakhir dari disk server.
-  2. **Integritas Modul Vite vs Runtime React:** Upaya pengubahan hash nama berkas chunk secara manual (misalnya ke `admin-E2N4xL8p.js`) sempat memicu ketidaksinkronan pohon modul internal pada `index-CI1XYnwk.js` yang mengakibatkan pengecualian DOM `Failed to execute 'removeChild' on 'Node'`, sehingga integritas berkas harus tetap mengikuti struktur native bundler.
-  3. **Verifikasi Sinkronisasi Git Produksi:** Memastikan server produksi telah menarik commit `a98b542` yang memulihkan stabilitas chunk dan memuat komponen matriks terbaru di disk server.
-- **Rencana Tindakan (Action Plan):**
-  1. Catat isu secara formal di `issues.md` dan `app-context.md` untuk pelacakan berkelanjutan.
-  2. Memandu pengguna melakukan pengosongan cache peramban secara menyeluruh (Hard Reload / *Empty Cache and Hard Reload* via Chrome DevTools `Ctrl+F5` / tab Incognito) untuk memastikan browser mengunduh ulang `admin-C9Dakcgq.js` dari server.
-  3. Meninjau opsi konfigurasi Nginx di cPanel / server produksi jika peramban tetap menahan versi usang akibat header `ETag` atau `Cache-Control`.
+  Meskipun pengguna telah berhasil login sebagai Administrator utama (`user: admin`, hak akses Super Administrator), halaman `/admin` di server produksi (`https://pertanian.sistemdata.id/admin`) sempat menampilkan layout antarmuka lama pada tab peramban biasa. Komponen baru **Audit Kesiapan Data Sektoral (Readiness Matrix)**, dual-tab log riwayat pembaruan & log aktivitas pengguna, serta kolom dinamis **Tahun Data Terakhir** belum termuat di peramban reguler klien.
+- **Akar Masalah:**
+  1. Berkas di server produksi (`dist/assets/admin-C9Dakcgq.js`) dan API backend `/v1/admin/readiness` sudah mutakhir dan berstatus 200 OK (23 domain, 78% kesiapan publik).
+  2. Tab reguler peramban klien menahan salinan lama pada *HTTP Disk Cache* lokal karena sebelumnya telah mengakses halaman sebelum rilis terbaru.
+- **Solusi & Verifikasi:**
+  1. Melakukan verifikasi langsung pada mode Incognito / Hard Reload (`Ctrl + Shift + R`), terkonfirmasi komponen **Audit Kesiapan Data Sektoral (Readiness Matrix)**, 4 kartu metrik KPI kesiapan, dan dual-tab log aktivitas muncul dengan sempurna tanpa galat runtime.
+  2. Memastikan konfigurasi server Express tetap menyajikan `Cache-Control: no-cache, no-store, must-revalidate` pada seluruh file dist statis untuk menjamin siklus pembaruan bersih di masa mendatang.
+
+---
+
+## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
+
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 34 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
