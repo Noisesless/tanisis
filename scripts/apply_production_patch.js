@@ -115,7 +115,27 @@ async function main() {
     }
   }
 
-  // Verifikasi tabel-tabel baru hari ini
+  // Jalankan patch bantuan barang & tabel audit
+  const patchBantuanFile = path.resolve(process.cwd(), "database/patch_bantuan_dan_domain_2026.sql");
+  if (fs.existsSync(patchBantuanFile)) {
+    try {
+      console.log(`\n[Migrasi Patch] Menerapkan patch bantuan barang & tabel audit...`);
+      const connPatch = await mysql.createConnection({
+        host: envHost,
+        port: envPort,
+        user: envUser,
+        password: envPass,
+        database: envName,
+        multipleStatements: true
+      });
+      const sqlBantuan = fs.readFileSync(patchBantuanFile, "utf8");
+      await connPatch.query(sqlBantuan);
+      await connPatch.end();
+      console.log(`[Migrasi Patch] Patch bantuan barang berhasil diterapkan.`);
+    } catch (bantuanErr) {
+      console.warn(`[Migrasi Patch Warning] Patch bantuan:`, bantuanErr.message);
+    }
+  }
   const verifyConn = await mysql.createConnection({
     host: envHost,
     port: envPort,

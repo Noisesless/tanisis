@@ -1,5 +1,5 @@
-<!-- app-context.md v2.3 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-09T10:25:00+07:00 | Phase: Dynamic Year-Aware RAG Engine & Offline Python RAG Verified | Build: OK -->
+<!-- app-context.md v2.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-10T16:22:00+07:00 | Phase: Bantuan Barang/Uang, 17 Domain Admin Unifikasi, & Map Performance Optimization | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python

@@ -18,7 +18,15 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 2. **Normalisasi Relasional Geografis:** Tabel master `kecamatan` dan `desa` dilengkapi kolom `kode` (kode BPS resmi, misal `3304160` dan `3304160005`) serta kolom `tipe` (`Desa` / `Kelurahan`).
 3. **Integritas Foreign Key:** Tabel `fsva_desa_indikator` (278 desa) telah dinormalisasi dengan menambahkan `kecamatan_id` (FK $\rightarrow$ `kecamatan.id`) dan `desa_id` (FK $\rightarrow$ `desa.id`) berstatus `NOT NULL` serta cascade indexing.
 4. **Auto-Resolving Saat Impor Excel:** Prosesor Excel (`src/lib/excel.js`) secara otomatis mencari `desa_id` dari `kode_desa` atau pasangan `(kecamatan_id, nama_desa)` dan mencari `kode_kec` dari `kecamatan_id`, sehingga admin pengguna tidak perlu menginput ID teknis di file Excel.
-5. **Audit Logging Terintegrasi:** Seluruh aksi login, logout, impor, dan ekspor tercatat di tabel `activity_logs` dengan dukungan paginasi server-side di dasbor admin.
+### 1.2 Dukungan Bantuan Barang/Paket & Unifikasi 17 Domain Admin (ADR-046 s/d ADR-049)
+
+1. **Bantuan Fisik Barang (Paket) Tanpa Nilai Uang:** Tabel `bantuan_program` dilengkapi kolom `jenis_bantuan` (`ENUM('Uang', 'Barang')`), `jumlah_barang` (`DECIMAL(12,2)`), dan `satuan_barang` (`VARCHAR(50)`). Kolom `nilai_rupiah` diubah menjadi nullable/default 0 agar dinas dapat mencatat bantuan hibah fisik barang tanpa membeberkan nominal rupiah.
+2. **Unifikasi 17 Domain Admin Bebas Redundansi:**
+   - Domain `kelembagaan` (11 sheet) menyerap data Sensus Pertanian desa (`st2023_desa`), `kelompok_tani`, dan `kelompok_tani_hutan`, mengeliminasi duplikasi kartu terpisah `st2023`.
+   - Domain `bantuan` (3 sheet) menyatukan program, alokasi tahunan, dan korelasi sektor.
+   - Domain `tanaman-pangan` (3 sheet) menyatukan padi sawah/ladang, palawija, dan LTT/Katam.
+   - Total domain admin bersih: 17 domain sektoral terpadu dengan kesiapan mandiri 94%.
+3. **Optimasi Buffer & GeoJSON Resilient:** Pemuatan berkas spasial GeoJSON dilengkapi kompresi gzip (hemat 81.2% bandwidth) dan browser Cache-Control 1 hari di server.
 
 ---
 

@@ -45,10 +45,10 @@ cd ~/htdocs/pertanian.sistemdata.id
 # 2. Tarik pembaruan kode dan bundel terbaru dari GitHub
 git pull origin main
 
-# 3. Jalankan patch normalisasi relasional database (drop fsva lama, tambah kode BPS, relasi 278 desa, activity_logs)
-npm run db:normalize
+# 3. Jalankan patch normalisasi relasional database & bantuan barang (ADR-046 s/d ADR-049)
+npm run db:patch
 # Atau jika menggunakan SQL native secara langsung:
-# mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/patch_production_normalization_2026.sql
+# mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/patch_bantuan_dan_domain_2026.sql
 
 # 4. Pasang dependensi jika terdapat pembaruan package.json
 npm ci --omit=dev

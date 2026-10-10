@@ -10,9 +10,8 @@ async function patchKomoditasUnggulan() {
     SET total_produksi = 51146, 
         kecamatan_sentra = 'Purwanegara', 
         nilai_ekonomi_estimasi = 255730000000, 
-        is_unggulan = 1, 
-        tahun = 2024
-    WHERE LOWER(nama_komoditas) = 'jagung'
+        is_unggulan = 1
+    WHERE LOWER(nama_komoditas) = 'jagung' AND tahun = 2024
   `);
   console.log("[OK] Jagung disinkronkan ke 51.146 Ton (Sentra Purwanegara)");
 
@@ -23,9 +22,8 @@ async function patchKomoditasUnggulan() {
     SET total_produksi = 78886, 
         kecamatan_sentra = 'Purwanegara', 
         nilai_ekonomi_estimasi = 157772000000, 
-        is_unggulan = 1, 
-        tahun = 2024
-    WHERE LOWER(nama_komoditas) = 'ubi kayu'
+        is_unggulan = 1
+    WHERE LOWER(nama_komoditas) = 'ubi kayu' AND tahun = 2024
   `);
   console.log("[OK] Ubi Kayu disinkronkan ke 78.886 Ton (Sentra Purwanegara)");
 
@@ -36,9 +34,8 @@ async function patchKomoditasUnggulan() {
     SET total_produksi = 48031, 
         kecamatan_sentra = 'Batur', 
         nilai_ekonomi_estimasi = 192124000000, 
-        is_unggulan = 1, 
-        tahun = 2024
-    WHERE LOWER(nama_komoditas) = 'wortel'
+        is_unggulan = 1
+    WHERE LOWER(nama_komoditas) = 'wortel' AND tahun = 2024
   `);
   console.log("[OK] Wortel disinkronkan ke 48.031 Ton (Sentra Batur)");
 
@@ -50,9 +47,8 @@ async function patchKomoditasUnggulan() {
         satuan = 'tangkai', 
         kecamatan_sentra = 'Pagentan', 
         nilai_ekonomi_estimasi = 4652105000, 
-        is_unggulan = 1, 
-        tahun = 2024
-    WHERE LOWER(nama_komoditas) = 'kapulaga'
+        is_unggulan = 1
+    WHERE LOWER(nama_komoditas) = 'kapulaga' AND tahun = 2024
   `);
   console.log("[OK] Kapulaga disinkronkan ke 930.421 tangkai");
 

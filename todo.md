@@ -1,6 +1,11 @@
 # TODO: SISPERTANI — Data Readiness & Audit Dashboard
 
-## Status: 100% Selesai (FSVA Desa 16 Indikator Bapanas & Integritas Native Web Selesai)
+## Status: 100% Selesai (Bantuan Uang/Barang, 17 Domain Unifikasi, Uji Upload 1-Sheet, & Optimasi Peta Selesai)
+- [x] Pemisahan Bantuan Uang vs Barang (Paket): Penambahan kolom `jenis_bantuan` (Uang/Barang), `jumlah_barang`, `satuan_barang` di tabel `bantuan_program`, dukungan nilai_rupiah 0/NULL, serta sinkronisasi template impor/ekspor Excel
+- [x] Normalisasi & Unifikasi 17 Domain Admin: Eliminasi redundansi domain (ST2023 desa diserap ke Kelembagaan, 3 kartu Bantuan disatukan, 3 kartu Tanaman Pangan disatukan) dengan backward compatibility alias
+- [x] Uji Faktual Upload 17 Domain & Toleransi 1-Sheet: 17 dari 17 domain lulus uji impor 100%, konfirmasi faktual bahwa upload 1 sheet pada domain multi-sheet tetap tersimpan ke database tanpa error
+- [x] Optimasi Performa Peta Eksekutif & Resolusi HTTP/2 Protocol Error: Gzip compression di server Express (pangkas 81.2% GeoJSON), browser caching 1 hari, salin dashboard.png, fetch timeout 30s, dan rendering layer resilient
+- [x] Skrip Patch Produksi Otomatis: Integrasi `database/patch_bantuan_dan_domain_2026.sql` ke `scripts/apply_production_patch.js` (`npm run db:patch`) dengan proteksi idempotensi dan filter komoditas unggulan
 - [x] Analisis 5 berkas Excel validasi FSVA Bapanas 2024 (278 desa se-Banjarnegara)
 - [x] Buat tabel MariaDB `fsva_desa_indikator` (16 variabel data fisik, demografi, rasio, IKP, komposit, ranking)
 - [x] Buat skrip ETL parser `scripts/import_fsva_desa.js` (`npm run db:import-fsva`) yang dinamis untuk tahun berikutnya
@@ -14,7 +19,7 @@
 - [x] Paginasi & Dual-Tab Log Dasbor Admin: integrasikan tabel `activity_logs` (log aktivitas pengguna) dan `sync_log` (riwayat pembaruan), terapkan paginasi server-side 10 entri/halaman agar load halaman ringan
 - [x] Pelacakan ISSUE-034 & ISSUE-035: dokumentasikan investigasi caching browser/Nginx pada dasbor admin produksi, terapkan normalisasi URL aset JS anti-duplikasi React singleton (Error #321), serta proteksi notranslate DOM
 - [x] Self-Healing Activity Logs & 25 Domain Admin: implementasi auto-creation tabel activity_logs di produksi, penambahan domain komoditas-unggulan & harga-produsen di /admin
-- [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `.docs/issues.md`, `app-context.md`, `README.md`)
+- [x] Sinkronisasi seluruh dokumentasi utama (`.docs/database.md`, `.docs/routes.md`, `.docs/deployment.md`, `.docs/issues.md`, `app-context.md`, `README.md`)
 
 ### Fase 1: Backend Audit Kesiapan Data (/api/v1/admin/readiness)
 - [x] Buat fungsi audit `getReadinessAudit()` di `src/lib/domains.js` yang menghitung baris tabel-tabel di `DOMAINS` secara batch via `COUNT(*)` dan mendeteksi ketersediaan fallback disk
