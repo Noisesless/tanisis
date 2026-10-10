@@ -405,7 +405,7 @@ export const DOMAINS = {
         }
       },
       { table: "st2023_desa", name: "Sensus Tani & Ternak (ST2023)", kecamatan: true, key: ["kecamatan", "desa"] },
-      { table: "kelompok_tani", name: "Statistik Kelompok Tani (ST2023)", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
+      { table: "kelompok_tani", name: "Statistik Poktan (ST2023)", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
       { table: "kelompok_tani_hutan", name: "Kelompok Tani Hutan", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
     ],
   },

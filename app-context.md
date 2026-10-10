@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Bantuan Uang & Barang Paket Operational & Clean 17 Domains done=ALL last=Dukungan bantuan paket barang tanpa nominal rupiah (kolom jenis_bantuan, jumlah_barang, satuan_barang), eliminasi redundansi kartu ST2023 (diserap ke kelembagaan 11 sheets), unifikasi bantuan & tanaman pangan (total 17 domain mandiri 94%)
+phase=Factual Upload Verification Passed 17 of 17 Domains & Single-Sheet Tested done=ALL last=Uji faktual upload 17 domain lulus 100%, konfirmasi toleransi upload 1 sheet tetap tersimpan, perbaikan duplikasi kolom khusus (kode_kec, desa_id) & nama sheet Excel <=31 karakter
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,10 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-048] Verifikasi Faktual Upload Seluruh 17 Domain & Toleransi Parsial 1 Sheet:
+- Memvalidasi secara faktual bahwa arsitektur impor Excel mendukung toleransi *partial sheet upload*: jika pengguna hanya mengunggah 1 sheet pada domain multi-sheet (misal: hanya sheet Padi pada `tanaman-pangan`, atau hanya sheet Poktan pada `kelembagaan`), baris pada sheet tersebut tetap 100% diproses dan tersimpan ke database, sedangkan sheet lain yang tidak ada dalam berkas diabaikan secara aman (`missing: true`, 0 error).
+- Menguji secara nyata simulasi upload ke seluruh 17 domain aktif (`bantuan`, `tanaman-pangan`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `renstra`, `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`, `komoditas-unggulan`, `harga-produsen`): hasil 17 dari 17 domain LULUS UJI (100%).
+- Memperbaiki potensi duplikasi kolom khusus (`kode_kec`, `desa_id`, `nama_kecamatan`) di `src/lib/excel.js` dan memendekkan nama sheet `Statistik Poktan (ST2023)` agar tidak melebihi batas 31 karakter Excel.
 [ADR-047] Pemisahan Bantuan Uang vs Barang (Paket) & Eliminasi Seluruh Redundansi Domain Admin:
 - Menambahkan kolom `jenis_bantuan` (ENUM 'Uang','Barang'), `jumlah_barang` (DECIMAL), dan `satuan_barang` (VARCHAR) pada tabel `bantuan_program`, serta mengizinkan `nilai_rupiah` bernilai 0 / NULL saat bantuan berupa paket fisik barang.
 - Mengintegrasikan kolom baru tersebut ke dalam template Excel, skema ekspor, dan parser impor domain `bantuan` di `src/lib/domains.js` serta respon API di `src/routes/bantuan.js`.

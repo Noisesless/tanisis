@@ -319,6 +319,9 @@ async function upsertRow(spec, values) {
     const vals = [];
     for (const c of spec.cols) {
       if (c.type === "kecamatan" || spec.key.includes(c.field)) continue;
+      if (c.field === "nama_kecamatan" && spec.hasNamaKecamatan) continue;
+      if (c.field === "desa_id" && resolvedDesaId) continue;
+      if (c.field === "kode_kec" && resolvedKodeKec) continue;
       if (values[c.field] === null || values[c.field] === undefined) continue; // kosong → tidak diubah
       sets.push(`\`${c.field}\` = ?`);
       vals.push(values[c.field]);
@@ -344,6 +347,9 @@ async function upsertRow(spec, values) {
   if (resolvedKodeKec) push("kode_kec", resolvedKodeKec);
   for (const c of spec.cols) {
     if (c.type === "kecamatan") continue;
+    if (c.field === "nama_kecamatan" && spec.hasNamaKecamatan) continue;
+    if (c.field === "desa_id" && resolvedDesaId) continue;
+    if (c.field === "kode_kec" && resolvedKodeKec) continue;
     if (values[c.field] === null || values[c.field] === undefined) continue;
     push(c.field, values[c.field]);
   }
