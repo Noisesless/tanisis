@@ -29,7 +29,8 @@ const LABELS = {
   komoditas: "Komoditas", kelompok: "Kelompok", tanaman: "Tanaman", kategori: "Kategori",
   wilayah: "Wilayah", arah: "Arah (Masuk/Keluar)", lokasi: "Lokasi (RPH)",
   obyek: "Obyek", tempat: "Tempat", jenis_alat: "Jenis Alat", jenis_budidaya: "Jenis Budidaya",
-  nama: "Nama Program", sumber_dana: "Sumber Dana (APBD/APBN)", nilai_rupiah: "Nilai (Rupiah)",
+  nama: "Nama Program", jenis_bantuan: "Jenis Bantuan (Uang/Barang)", sumber_dana: "Sumber Dana (APBD/APBN)", nilai_rupiah: "Nilai Uang (Rupiah; kosong jika barang)",
+  jumlah_barang: "Jumlah Barang/Paket", satuan_barang: "Satuan (Paket/Unit/Ekor/Kg)",
   sektor: "Sektor", penerima_jumlah: "Jumlah Penerima", penerima_jenis: "Jenis Penerima",
   dampak_level: "Tingkat Dampak", dampak_catatan: "Catatan Dampak",
   apbd_miliar: "APBD (Miliar Rp)", apbn_miliar: "APBN (Miliar Rp)",
@@ -134,30 +135,33 @@ const LABELS = {
 const SUFFIX_LABELS = { _pct: " (%)", _ton: " (Ton)", _kg: " (Kg)", _ha: " (Ha)", _m2: " (M²)", _ribu_rp: " (Ribu Rp)", _ekor: " (Ekor)" };
 
 export const DOMAINS = {
-  "bantuan-program": {
-    label: "Bantuan — Program",
-    desc: "Program bantuan pemerintah: nama, sumber dana, nominal, penerima, dan dampak.",
-    sheets: [{ table: "bantuan_program", name: "Program", kecamatan: false, key: ["nama", "sumber_dana", "tahun_anggaran"], enums: { sumber_dana: ["APBD", "APBN"], dampak_level: ["Tinggi", "Sedang", "Rendah"] } }],
+  bantuan: {
+    label: "Bantuan Pemerintah",
+    desc: "Program bantuan pemerintah APBD & APBN: alokasi anggaran, rincian program, penerima manfaat, dan korelasi kenaikan produksi.",
+    sheets: [
+      {
+        table: "bantuan_program",
+        name: "Program Bantuan",
+        kecamatan: false,
+        key: ["nama", "sumber_dana", "tahun_anggaran"],
+        enums: {
+          jenis_bantuan: ["Uang", "Barang"],
+          sumber_dana: ["APBD", "APBN"],
+          dampak_level: ["Tinggi", "Sedang", "Rendah"],
+        },
+      },
+      { table: "bantuan_alokasi", name: "Alokasi Tahunan", kecamatan: false, key: ["tahun"] },
+      { table: "bantuan_korelasi", name: "Korelasi Sektor", kecamatan: false, key: ["sektor"] },
+    ],
   },
-  "bantuan-alokasi": {
-    label: "Bantuan — Alokasi Tahunan",
-    desc: "Alokasi anggaran bantuan APBD & APBN per tahun (miliar rupiah).",
-    sheets: [{ table: "bantuan_alokasi", name: "Alokasi", kecamatan: false, key: ["tahun"] }],
-  },
-  "bantuan-korelasi": {
-    label: "Bantuan — Korelasi Sektor",
-    desc: "Korelasi nilai bantuan vs kenaikan produksi per sektor.",
-    sheets: [{ table: "bantuan_korelasi", name: "Korelasi", kecamatan: false, key: ["sektor"] }],
-  },
-  padi: {
-    label: "Padi",
-    desc: "Produksi padi (sawah & ladang) per kecamatan per tahun.",
-    sheets: [{ table: "padi_produksi", name: "Padi", kecamatan: true, key: ["kecamatan", "tahun", "jenis"] }],
-  },
-  palawija: {
-    label: "Palawija",
-    desc: "Produksi palawija per kecamatan, komoditas, dan tahun.",
-    sheets: [{ table: "palawija_produksi", name: "Palawija", kecamatan: true, key: ["kecamatan", "tahun", "komoditas"] }],
+  "tanaman-pangan": {
+    label: "Tanaman Pangan",
+    desc: "Produksi padi sawah/ladang, palawija (jagung, ubi, kacang), serta monitoring LTT dan kalender tanam (Katam) per kecamatan.",
+    sheets: [
+      { table: "padi_produksi", name: "Padi", kecamatan: true, key: ["kecamatan", "tahun", "jenis"] },
+      { table: "palawija_produksi", name: "Palawija", kecamatan: true, key: ["kecamatan", "tahun", "komoditas"] },
+      { table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } },
+    ],
   },
   hortikultura: {
     label: "Hortikultura",
@@ -400,25 +404,15 @@ export const DOMAINS = {
           status_operasional: ["Aktif Beroperasi", "Perlu Perbaikan", "Tidak Aktif"]
         }
       },
-      { table: "kelompok_tani", name: "Statistik Desa ST2023", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
+      { table: "st2023_desa", name: "Sensus Tani & Ternak (ST2023)", kecamatan: true, key: ["kecamatan", "desa"] },
+      { table: "kelompok_tani", name: "Statistik Kelompok Tani (ST2023)", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
       { table: "kelompok_tani_hutan", name: "Kelompok Tani Hutan", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
     ],
-  },
-  st2023: {
-    label: "ST2023 — Desa",
-    desc: "Rumah tangga petani/ikan per desa (Sensus Pertanian 2023). Kolom ternak (JSON) tidak diedit via Excel.",
-    sheets: [{ table: "st2023_desa", name: "ST2023 Desa", kecamatan: true, key: ["kecamatan", "desa"] }],
   },
   renstra: {
     label: "Renstra — Target",
     desc: "Target indikator Renstra Distankan (mis. Tabel 4.1 renstra.pdf).",
     sheets: [{ table: "renstra_target", name: "Target Renstra", kecamatan: false, key: ["indikator", "tahun_target"] }],
-  },
-
-  "ltt-katam": {
-    label: "LTT — Luas Tambah Tanam & Kalender Tanam",
-    desc: "Monitoring luas tambah tanam (LTT) dan kalender tanam (Katam) per kecamatan.",
-    sheets: [{ table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } }],
   },
   "harga-pasar": {
     label: "Harga Pasar — Komoditas Pangan",
@@ -638,9 +632,23 @@ function parseEnum(columnType) {
   return vals.length ? vals : null;
 }
 
+export const DOMAIN_ALIASES = {
+  padi: "tanaman-pangan",
+  palawija: "tanaman-pangan",
+  "ltt-katam": "tanaman-pangan",
+  st2023: "kelembagaan",
+  "bantuan-program": "bantuan",
+  "bantuan-alokasi": "bantuan",
+  "bantuan-korelasi": "bantuan",
+  "kelembagaan-pertanian": "kelembagaan",
+  "kelembagaan-perikanan": "kelembagaan",
+  "kelembagaan-pendukung": "kelembagaan",
+};
+
 /** Muat spesifikasi lengkap satu domain (kolom Excel + tipe + kunci upsert). */
 export async function loadDomain(domainKey) {
-  const domain = DOMAINS[domainKey];
+  const resolvedKey = DOMAIN_ALIASES[domainKey] || domainKey;
+  const domain = DOMAINS[resolvedKey];
   if (!domain) return null;
   const sheets = await Promise.all(
     domain.sheets.map(async (s) => {
@@ -744,9 +752,9 @@ export async function getReadinessAudit() {
       "dist/kelembagaan/data_kelembagaan_cleaned.json",
       "dist/data/kelompok-tani-fallback.json",
       "dist/data/kelompok-tani-hutan.json",
+      "dist/data/st2023-desa-fallback.json",
     ],
     peternakan: ["dist/data/susu-kulit-fallback.json"],
-    st2023: ["dist/data/st2023-desa-fallback.json"],
     "harga-pasar": ["dist/data/snapshots/anomali-harga-pangan.json"],
   };
 

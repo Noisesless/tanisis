@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Unified Kelembagaan 1 Domain Multi-Sheet Operational done=ALL last=Unifikasi 4 domain kelembagaan menjadi 1 domain kelembagaan tunggal (10 sheets), dukungan tabel teks kecamatan & kecamatan_id di excel.js, total domain admin ringkas menjadi 22 domain, auto-rekap komoditas unggulan
+phase=Bantuan Uang & Barang Paket Operational & Clean 17 Domains done=ALL last=Dukungan bantuan paket barang tanpa nominal rupiah (kolom jenis_bantuan, jumlah_barang, satuan_barang), eliminasi redundansi kartu ST2023 (diserap ke kelembagaan 11 sheets), unifikasi bantuan & tanaman pangan (total 17 domain mandiri 94%)
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,10 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-047] Pemisahan Bantuan Uang vs Barang (Paket) & Eliminasi Seluruh Redundansi Domain Admin:
+- Menambahkan kolom `jenis_bantuan` (ENUM 'Uang','Barang'), `jumlah_barang` (DECIMAL), dan `satuan_barang` (VARCHAR) pada tabel `bantuan_program`, serta mengizinkan `nilai_rupiah` bernilai 0 / NULL saat bantuan berupa paket fisik barang.
+- Mengintegrasikan kolom baru tersebut ke dalam template Excel, skema ekspor, dan parser impor domain `bantuan` di `src/lib/domains.js` serta respon API di `src/routes/bantuan.js`.
+- Mengeliminasi seluruh domain ganda/redundansi di dasbor admin: menyatukan `st2023_desa` ke dalam `kelembagaan` (menghapus duplikasi kartu ST2023), menyatukan `bantuan-program`/`alokasi`/`korelasi` ke dalam `bantuan`, dan menyatukan `padi`/`palawija`/`ltt-katam` ke dalam `tanaman-pangan`, menghasilkan 17 domain sektoral bersih (kesiapan mandiri 94%).
 [ADR-046] Unifikasi 4 Domain Kelembagaan Menjadi Domain Tunggal kelembagaan Multi-Sheet:
 - Mengeliminasi pecahan 4 domain (`kelembagaan-pertanian`, `kelembagaan-perikanan`, `kelembagaan-pendukung`, dan `kelembagaan`) menjadi 1 domain tunggal `kelembagaan` (Kelembagaan & Penyuluhan) berisi 10 sheet terpadu.
 - Menyesuaikan pembacaan dan upsert tabel pada `src/lib/excel.js` agar mendukung tabel dengan kolom teks `kecamatan` maupun `kecamatan_id` relasional secara otomatis tanpa galat SQL.
