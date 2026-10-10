@@ -24,7 +24,23 @@ import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
 let compressionMiddleware = (_req, _res, next) => next();
 try {
   const { default: compression } = await import("compression");
-  compressionMiddleware = compression();
+  compressionMiddleware = compression({
+    filter: (req, res) => {
+      const p = (req.path || "").toLowerCase();
+      // Bypass kompresi untuk file statis (.geojson, .csv, .json, gambar) agar disajikan
+      // dengan header Content-Length utuh & standard stream, mencegah benturan framing
+      // chunked HTTP/2 pada reverse proxy Nginx (resolusi net::ERR_HTTP2_PROTOCOL_ERROR).
+      if (
+        p.endsWith(".geojson") ||
+        p.endsWith(".csv") ||
+        p.endsWith(".json") ||
+        /\.(png|jpe?g|svg|webp|ico|woff2?)$/.test(p)
+      ) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  });
 } catch (err) {
   console.warn("[Server] Peringatan: Modul 'compression' belum terpasang, berjalan tanpa kompresi gzip:", err?.message);
 }
