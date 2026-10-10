@@ -16,6 +16,7 @@
     "rag:offline": "python scripts/offline_rag.py"
   },
   "dependencies": {
+    "compression": "^1.7.5",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "multer": "^2.4.0",

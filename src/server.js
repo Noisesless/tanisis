@@ -21,11 +21,17 @@ import aiRouter from "./routes/ai.js";
 import { psatRouter } from "./routes/psat.js";
 import { ketahananRouter } from "./routes/ketahanan.js";
 import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
-import compression from "compression";
+let compressionMiddleware = (_req, _res, next) => next();
+try {
+  const { default: compression } = await import("compression");
+  compressionMiddleware = compression();
+} catch (err) {
+  console.warn("[Server] Peringatan: Modul 'compression' belum terpasang, berjalan tanpa kompresi gzip:", err?.message);
+}
 
 const app = express();
 app.disable("x-powered-by");
-app.use(compression());
+app.use(compressionMiddleware);
 
 // Security Headers Hygiene (SP-011, SP-023)
 app.use((_req, res, next) => {
