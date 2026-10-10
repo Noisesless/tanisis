@@ -652,7 +652,7 @@ export async function loadDomain(domainKey) {
         hasKodeKec,
         hasNamaKecamatan: !!(s.kecamatan && hasNamaKecamatan),
         cols: s.kecamatan
-          ? [{ field: "kecamatan", header: "Kecamatan", type: "kecamatan", required: true, enumValues: null }, ...cols]
+          ? [{ field: "kecamatan", header: "Kecamatan", type: "kecamatan", required: true, enumValues: null }, ...cols.filter((c) => c.field !== "kecamatan")]
           : cols,
       };
       return out;
