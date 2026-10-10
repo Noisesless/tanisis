@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Automated Materialized Rekap Komoditas Unggulan & Zero Manual Overhead done=ALL last=Otomatisasi rekapitulasi tabel komoditas_unggulan dari 5 subsektor fisik (366 baris 2018-2024), auto-sync pasca-import & server startup, endpoint /sync-komoditas-unggulan, self-healing activity logs
+phase=Unified Kelembagaan 1 Domain Multi-Sheet Operational done=ALL last=Unifikasi 4 domain kelembagaan menjadi 1 domain kelembagaan tunggal (10 sheets), dukungan tabel teks kecamatan & kecamatan_id di excel.js, total domain admin ringkas menjadi 22 domain, auto-rekap komoditas unggulan
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,10 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-046] Unifikasi 4 Domain Kelembagaan Menjadi Domain Tunggal kelembagaan Multi-Sheet:
+- Mengeliminasi pecahan 4 domain (`kelembagaan-pertanian`, `kelembagaan-perikanan`, `kelembagaan-pendukung`, dan `kelembagaan`) menjadi 1 domain tunggal `kelembagaan` (Kelembagaan & Penyuluhan) berisi 10 sheet terpadu.
+- Menyesuaikan pembacaan dan upsert tabel pada `src/lib/excel.js` agar mendukung tabel dengan kolom teks `kecamatan` maupun `kecamatan_id` relasional secara otomatis tanpa galat SQL.
+- Menyederhanakan total domain di portal `/admin` dari 25 menjadi 22 domain yang ringkas tanpa merusak skema tabel database maupun rute frontend publik.
 [ADR-045] Otomatisasi Rekapitulasi Sentra Komoditas Unggulan (Materialized View Table Pattern):
 - Menjawab kritik arsitektur data redundan: mengimplementasikan modul otomatisasi `src/lib/komoditas-rekap.js` yang secara otomatis mengagregasi data produksi riil per kecamatan (padi, palawija, horti, perkebunan, peternakan, perikanan) dan mengaitkannya dengan `harga_produsen` untuk mengisi tabel `komoditas_unggulan`.
 - Mengisi 366 baris rekapitulasi historis (2018-2024) secara instan dan mengeliminasi beban ganda admin menginput manual.

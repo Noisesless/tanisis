@@ -323,64 +323,32 @@ export const DOMAINS = {
     ],
   },
   kelembagaan: {
-    label: "Kelembagaan",
-    desc: "Kelompok tani & kelompok tani hutan per desa per tahun (ST2023 basis).",
+    label: "Kelembagaan & Penyuluhan",
+    desc: "Direktori kelembagaan binaan (Poktan, Gapoktan, KWT, Pokdakan), ekonomi petani (KEP), penyuluhan (Posluhdes, PPS), JULEHA, P4S, UPJA, dan statistik desa ST2023.",
     sheets: [
-      { table: "kelompok_tani", name: "Kelompok Tani", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
-      { table: "kelompok_tani_hutan", name: "Kelompok Tani Hutan", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
-    ],
-  },
-  st2023: {
-    label: "ST2023 — Desa",
-    desc: "Rumah tangga petani/ikan per desa (Sensus Pertanian 2023). Kolom ternak (JSON) tidak diedit via Excel.",
-    sheets: [{ table: "st2023_desa", name: "ST2023 Desa", kecamatan: true, key: ["kecamatan", "desa"] }],
-  },
-  renstra: {
-    label: "Renstra — Target",
-    desc: "Target indikator Renstra Distankan (mis. Tabel 4.1 renstra.pdf).",
-    sheets: [{ table: "renstra_target", name: "Target Renstra", kecamatan: false, key: ["indikator", "tahun_target"] }],
-  },
-
-  "ltt-katam": {
-    label: "LTT — Luas Tambah Tanam & Kalender Tanam",
-    desc: "Monitoring luas tambah tanam (LTT) dan kalender tanam (Katam) per kecamatan.",
-    sheets: [{ table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } }],
-  },
-  "kelembagaan-pertanian": {
-    label: "Kelembagaan — Pertanian (Poktan, Gapoktan, KWT)",
-    desc: "Register kelembagaan pertanian: Poktan, Gapoktan, dan KWT (ID Simluhtan, SK Pengukuhan, kelas, komoditas, luas lahan).",
-    sheets: [{
-      table: "kelembagaan_pertanian",
-      name: "Kelembagaan Pertanian",
-      kecamatan: true,
-      key: ["kecamatan", "nama_kelompok"],
-      enums: {
-        jenis_lembaga: ["Poktan", "Gapoktan", "KWT"],
-        kelas_kemampuan: ["Pemula", "Lanjut", "Madya", "Utama", "Belum Dinilai"],
-        subsektor_utama: ["Tanaman Pangan", "Hortikultura", "Perkebunan", "Peternakan", "Campuran"],
-        status_aktif: ["Aktif", "Tidak Aktif", "Menunggu Verifikasi"]
-      }
-    }],
-  },
-  "kelembagaan-perikanan": {
-    label: "Kelembagaan — Perikanan (Pokdakan, Poklahsar, Pokmaswas)",
-    desc: "Register kelembagaan perikanan: Pokdakan, Poklahsar, dan Pokmaswas (ID KUSUKA KKP, SK Pengukuhan, kelas, jenis budidaya/olahan).",
-    sheets: [{
-      table: "kelembagaan_perikanan",
-      name: "Kelembagaan Perikanan",
-      kecamatan: true,
-      key: ["kecamatan", "nama_kelompok"],
-      enums: {
-        jenis_lembaga: ["Pokdakan", "Poklahsar", "Pokmaswas"],
-        kelas_kemampuan: ["Pemula", "Madya", "Utama", "Belum Dinilai"],
-        status_aktif: ["Aktif", "Tidak Aktif"]
-      }
-    }],
-  },
-  "kelembagaan-pendukung": {
-    label: "Kelembagaan — Pendukung (KEP, Posluhdes, PPS, JULEHA, P4S, UPJA)",
-    desc: "Kelembagaan Ekonomi Petani (KEP), Pos Penyuluhan Desa (Posluhdes), Penyuluh Swadaya (PPS), JULEHA, P4S, dan UPJA.",
-    sheets: [
+      {
+        table: "kelembagaan_pertanian",
+        name: "Poktan, Gapoktan & KWT",
+        kecamatan: true,
+        key: ["kecamatan", "nama_kelompok"],
+        enums: {
+          jenis_lembaga: ["Poktan", "Gapoktan", "KWT"],
+          kelas_kemampuan: ["Pemula", "Lanjut", "Madya", "Utama", "Belum Dinilai"],
+          subsektor_utama: ["Tanaman Pangan", "Hortikultura", "Perkebunan", "Peternakan", "Campuran"],
+          status_aktif: ["Aktif", "Tidak Aktif", "Menunggu Verifikasi"]
+        }
+      },
+      {
+        table: "kelembagaan_perikanan",
+        name: "Kelompok Perikanan",
+        kecamatan: true,
+        key: ["kecamatan", "nama_kelompok"],
+        enums: {
+          jenis_lembaga: ["Pokdakan", "Poklahsar", "Pokmaswas"],
+          kelas_kemampuan: ["Pemula", "Madya", "Utama", "Belum Dinilai"],
+          status_aktif: ["Aktif", "Tidak Aktif"]
+        }
+      },
       {
         table: "kelembagaan_kep",
         name: "KEP Ekonomi Petani",
@@ -431,8 +399,26 @@ export const DOMAINS = {
         enums: {
           status_operasional: ["Aktif Beroperasi", "Perlu Perbaikan", "Tidak Aktif"]
         }
-      }
+      },
+      { table: "kelompok_tani", name: "Statistik Desa ST2023", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
+      { table: "kelompok_tani_hutan", name: "Kelompok Tani Hutan", kecamatan: true, key: ["kecamatan", "desa", "tahun"] },
     ],
+  },
+  st2023: {
+    label: "ST2023 — Desa",
+    desc: "Rumah tangga petani/ikan per desa (Sensus Pertanian 2023). Kolom ternak (JSON) tidak diedit via Excel.",
+    sheets: [{ table: "st2023_desa", name: "ST2023 Desa", kecamatan: true, key: ["kecamatan", "desa"] }],
+  },
+  renstra: {
+    label: "Renstra — Target",
+    desc: "Target indikator Renstra Distankan (mis. Tabel 4.1 renstra.pdf).",
+    sheets: [{ table: "renstra_target", name: "Target Renstra", kecamatan: false, key: ["indikator", "tahun_target"] }],
+  },
+
+  "ltt-katam": {
+    label: "LTT — Luas Tambah Tanam & Kalender Tanam",
+    desc: "Monitoring luas tambah tanam (LTT) dan kalender tanam (Katam) per kecamatan.",
+    sheets: [{ table: "ltt_katam", name: "LTT & Katam", kecamatan: true, key: ["kecamatan", "komoditas", "jenis", "tahun"], enums: { jenis: ["LTT", "Katam"] } }],
   },
   "harga-pasar": {
     label: "Harga Pasar — Komoditas Pangan",
@@ -670,6 +656,8 @@ export async function loadDomain(domainKey) {
       const hasDesaNorm = (await loadColumns(s.table)).some((c) => c.column_name === "desa_norm");
       const hasDesaId = (await loadColumns(s.table)).some((c) => c.column_name === "desa_id");
       const hasKodeKec = (await loadColumns(s.table)).some((c) => c.column_name === "kode_kec");
+      const hasKecamatanId = (await loadColumns(s.table)).some((c) => c.column_name === "kecamatan_id");
+      const hasDirectKecamatan = (await loadColumns(s.table)).some((c) => c.column_name === "kecamatan");
       const cols = colsRaw.map((c) => {
         const enumDb = parseEnum(c.column_type);
         const enumCfg = s.enums?.[c.column_name] ?? null;
@@ -693,6 +681,8 @@ export async function loadDomain(domainKey) {
         hasDesaNorm,
         hasDesaId,
         hasKodeKec,
+        hasKecamatanId,
+        hasDirectKecamatan,
         hasNamaKecamatan: !!(s.kecamatan && hasNamaKecamatan),
         cols: s.kecamatan
           ? [{ field: "kecamatan", header: "Kecamatan", type: "kecamatan", required: true, enumValues: null }, ...cols.filter((c) => c.field !== "kecamatan")]
@@ -750,8 +740,11 @@ export async function getReadinessAudit() {
 
   const fallbackMap = {
     lahan: ["dist/data/lahan-fallback.json"],
-    kelembagaan: ["dist/data/kelompok-tani-fallback.json", "dist/data/kelompok-tani-hutan.json"],
-    "kelembagaan-pertanian": ["dist/kelembagaan/data_kelembagaan_cleaned.json"],
+    kelembagaan: [
+      "dist/kelembagaan/data_kelembagaan_cleaned.json",
+      "dist/data/kelompok-tani-fallback.json",
+      "dist/data/kelompok-tani-hutan.json",
+    ],
     peternakan: ["dist/data/susu-kulit-fallback.json"],
     st2023: ["dist/data/st2023-desa-fallback.json"],
     "harga-pasar": ["dist/data/snapshots/anomali-harga-pangan.json"],

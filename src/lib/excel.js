@@ -24,15 +24,16 @@ const MAX_ROWS = 10000;
 
 /** Kolom yang punya nilai untuk SELECT export (termasuk kecamatan virtual). */
 function selectSql(spec) {
-  if (!spec.kecamatan) return `SELECT * FROM \`${spec.table}\``;
+  if (!spec.kecamatan || !spec.hasKecamatanId) return `SELECT * FROM \`${spec.table}\``;
   return `SELECT k.nama AS kecamatan, t.* FROM \`${spec.table}\` t JOIN kecamatan k ON k.id = t.kecamatan_id`;
 }
 
 function orderSql(spec) {
   const tahunField = spec.cols.find((c) => c.field === "tahun" || c.field === "tahun_anggaran")?.field;
-  const pre = spec.kecamatan ? "t." : ""; // alias t hanya ada saat JOIN kecamatan
+  const useJoin = spec.kecamatan && spec.hasKecamatanId;
+  const pre = useJoin ? "t." : "";
   const parts = [];
-  if (spec.kecamatan) parts.push("k.nama");
+  if (spec.kecamatan) parts.push(useJoin ? "k.nama" : "`kecamatan`");
   if (tahunField) parts.push(`${pre}\`${tahunField}\``);
   parts.push(`${pre}id`);
   return ` ORDER BY ${parts.join(", ")}`;
@@ -262,9 +263,23 @@ function keyWhere(spec, values) {
   const clauses = [];
   const params = [];
   for (const f of spec.key) {
-    if (f === "kecamatan") { clauses.push("kecamatan_id = ?"); params.push(values.kecamatan_id); }
-    else if (f === "desa") { clauses.push("desa_norm = ?"); params.push(normDesa(values.desa)); }
-    else {
+    if (f === "kecamatan") {
+      if (spec.hasKecamatanId) {
+        clauses.push("kecamatan_id = ?");
+        params.push(values.kecamatan_id);
+      } else {
+        clauses.push("`kecamatan` = ?");
+        params.push(values.kecamatan);
+      }
+    } else if (f === "desa") {
+      if (spec.hasDesaNorm) {
+        clauses.push("desa_norm = ?");
+        params.push(normDesa(values.desa));
+      } else {
+        clauses.push("`desa` = ?");
+        params.push(values.desa);
+      }
+    } else {
       // NULL-safe match untuk kolom kunci yang boleh kosong (mis. triwulan NULL =
       // baris tahunan): `= NULL` tidak pernah cocok sehingga upsert akan menduplikasi.
       const isNull = values[f] === null || values[f] === undefined;
@@ -320,7 +335,10 @@ async function upsertRow(spec, values) {
   const cols = [];
   const vals = [];
   const push = (c, v) => { cols.push(`\`${c}\``); vals.push(v); };
-  if (spec.kecamatan) push("kecamatan_id", values.kecamatan_id);
+  if (spec.kecamatan) {
+    if (spec.hasKecamatanId) push("kecamatan_id", values.kecamatan_id);
+    if (spec.hasDirectKecamatan) push("kecamatan", values.kecamatan);
+  }
   if (spec.hasNamaKecamatan && values.kecamatan) push("nama_kecamatan", values.kecamatan);
   if (resolvedDesaId) push("desa_id", resolvedDesaId);
   if (resolvedKodeKec) push("kode_kec", resolvedKodeKec);
