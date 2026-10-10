@@ -21,9 +21,11 @@ import aiRouter from "./routes/ai.js";
 import { psatRouter } from "./routes/psat.js";
 import { ketahananRouter } from "./routes/ketahanan.js";
 import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
+import compression from "compression";
 
 const app = express();
 app.disable("x-powered-by");
+app.use(compression());
 
 // Security Headers Hygiene (SP-011, SP-023)
 app.use((_req, res, next) => {
@@ -235,10 +237,16 @@ app.use((req, res, next) => {
 app.use(
   express.static(distRoot, {
     setHeaders: (res, filePath) => {
-      // Cegah total browser caching pada aset statis (JS/CSS/HTML) agar view lama tidak pernah tertahan di memori browser
-      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-      res.setHeader("Pragma", "no-cache");
-      res.setHeader("Expires", "0");
+      // Asset statis besar (GeoJSON, gambar, fonts, fallback dataset) di-cache browser (1 hari)
+      // agar tidak mendownload puluhan megabyte berulang kali dan memicu net::ERR_HTTP2_PROTOCOL_ERROR.
+      if (/\.(geojson|png|jpg|jpeg|svg|webp|woff2?|ico)$/i.test(filePath) || filePath.includes("fallback.json")) {
+        res.setHeader("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
+      } else {
+        // Berkas aplikasi (HTML, JS, CSS) tetap no-cache agar pembaruan kode langsung aktif
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      }
     },
   })
 );

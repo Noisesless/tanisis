@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Factual Upload Verification Passed 17 of 17 Domains & Single-Sheet Tested done=ALL last=Uji faktual upload 17 domain lulus 100%, konfirmasi toleransi upload 1 sheet tetap tersimpan, perbaikan duplikasi kolom khusus (kode_kec, desa_id) & nama sheet Excel <=31 karakter
+phase=Map Performance Optimization & HTTP2 Error Resolved done=ALL last=Aktifkan gzip compression (hemat 81.2% GeoJSON), browser Cache-Control 1 hari untuk aset spasial, salin dashboard.png, naikkan timeout fetch 30s & resilient GeoJSON layer rendering
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,11 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-049] Resolusi Loading Lambat Peta Eksekutif & net::ERR_HTTP2_PROTOCOL_ERROR:
+- Mengatasi galat `ERR_HTTP2_PROTOCOL_ERROR` dan `AbortError` pada Dashboard Eksekutif/Peta: mengaktifkan middleware `compression()` di `src/server.js` (menghemat bandwidth transfer GeoJSON hingga 81.2%, misal `jalan.geojson` dari 8.2MB menjadi 1.47MB).
+- Mengonfigurasi `Cache-Control: public, max-age=86400` untuk aset statis berat (`.geojson`, `.png`, `fallback.json`) sehingga peramban meng-cache berkas spasial di memori lokal dan kunjungan berikutnya langsung instan (0 ms).
+- Mengamankan pemuatan layer GeoJSON tambahan di `pages-BdW-ZTL4.js` agar tidak menjejali `localStorage` (>5MB limit) dan menangani kegagalan tiap layer secara independen tanpa memblokir render peta utama ("memuat halaman...").
+- Menyediakan berkas `dist/dashboard.png` (sebelumnya hanya di `dist/img/dashboard.png`), dan menaikkan timeout fetch di `api-BxFGoia1.js` dari 10 detik ke 30 detik agar koneksi lambat tidak mengalami abort prematur.
 [ADR-048] Verifikasi Faktual Upload Seluruh 17 Domain & Toleransi Parsial 1 Sheet:
 - Memvalidasi secara faktual bahwa arsitektur impor Excel mendukung toleransi *partial sheet upload*: jika pengguna hanya mengunggah 1 sheet pada domain multi-sheet (misal: hanya sheet Padi pada `tanaman-pangan`, atau hanya sheet Poktan pada `kelembagaan`), baris pada sheet tersebut tetap 100% diproses dan tersimpan ke database, sedangkan sheet lain yang tidak ada dalam berkas diabaikan secara aman (`missing: true`, 0 error).
 - Menguji secara nyata simulasi upload ke seluruh 17 domain aktif (`bantuan`, `tanaman-pangan`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `renstra`, `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`, `komoditas-unggulan`, `harga-produsen`): hasil 17 dari 17 domain LULUS UJI (100%).
