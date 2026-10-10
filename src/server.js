@@ -224,6 +224,14 @@ app.use((req, res, next) => {
 // Di dev (tanpa dist/) bagian ini tidak mengganggu — frontend tetap via Vite.
 const DIST_DIR = process.env.DIST_DIR || "./dist";
 const distRoot = path.isAbsolute(DIST_DIR) ? DIST_DIR : path.join(process.cwd(), DIST_DIR);
+// Normalisasi modul JS: Bersihkan query string (?v=...) agar browser hanya memuat 1 instance modul React tunggal
+app.use((req, res, next) => {
+  if (req.path.startsWith("/assets/") && req.path.endsWith(".js") && Object.keys(req.query).length > 0) {
+    return res.redirect(302, req.path);
+  }
+  next();
+});
+
 app.use(
   express.static(distRoot, {
     setHeaders: (res, filePath) => {

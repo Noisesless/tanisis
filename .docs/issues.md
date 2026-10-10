@@ -425,11 +425,30 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ---
 
+### [ISSUE-035] Minified React Error #321 & Galat DOM removeChild Akibat Duplikasi Modul React dari Query Parameter
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-10
+- **Komponen:** `dist/index.html`, `dist/assets/index-CI1XYnwk.js`, `src/server.js`, React Runtime Reconciler.
+- **Deskripsi:** 
+  Halaman web (termasuk `/sebaran/:bidang` dan seluruh halaman SPA) mengalami *crash* global yang ditangkap oleh ErrorBoundary dengan pesan: `Minified React error #321` dan `Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node`.
+- **Akar Masalah:**
+  1. Percobaan cache-busting menggunakan query parameter pada entry point script (`<script src="/assets/index-CI1XYnwk.js?v=...">`) menyebabkan browser memuat berkas inti tersebut sebagai instance terpisah dari modul turunan yang mengimpor `./index-CI1XYnwk.js` secara relatif tanpa query parameter.
+  2. Adanya dua salinan React di memori browser melanggar aturan Hooks dan memicu *React Error #321 (Multiple copies of React)* saat komponen memanggil `useContext`/`useState`.
+  3. Intervensi fitur Chrome Auto-Translate yang memodifikasi node teks DOM menjadi elemen `<font>` memperparah proses unmounting React dan memicu pengecualian `removeChild`.
+- **Solusi & Verifikasi:**
+  1. Mengembalikan entry point `dist/index.html` ke nama modul kanonikal tanpa query string.
+  2. Menambahkan middleware normalisasi di `src/server.js` yang secara otomatis mengalihkan (HTTP 302) permintaan aset JS ber-query string ke path kanonikal bersih.
+  3. Menambahkan atribut `class="notranslate" translate="no"` dan `<meta name="google" content="notranslate" />` pada `dist/index.html` untuk memproteksi pohon DOM dari mutasi eksternal penerjemah browser.
+  4. Pengujian verifikasi lokal mengonfirmasi pengalihan 302 berhasil dan seluruh halaman SPA berjalan stabil tanpa galat.
+
+---
+
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 34 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 35 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
 

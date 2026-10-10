@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Production Verified, Readiness Matrix & Admin Features Operational done=ALL last=Normalisasi relasional desa-kecamatan-fsva, drop fsva_indikator_kabupaten, activity_logs audit terintegrasi, dual-tab log dengan server-side pagination, auto-resolve desa_id pada impor excel, patch DDL produksi database/patch_production_normalization_2026.sql terverifikasi, verifikasi ISSUE-034 RESOLVED pada mode produksi
+phase=React Singleton & Asset Normalization Verified, Issues Resolved done=ALL last=Normalisasi relasional desa-kecamatan-fsva, activity_logs audit terintegrasi, ISSUE-034 dan ISSUE-035 RESOLVED, normalisasi URL aset JS anti-duplikasi React singleton, proteksi notranslate DOM
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,10 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-043] Normalisasi URL Modul Aset JS & Proteksi React Singleton:
+- Mengeliminasi parameter query (?v=...) pada entry point script bundel Vite guna menjamin modul inti React dievaluasi sebagai single instance tunggal oleh peramban, mengeliminasi galat React Error #321 secara tuntas.
+- Mengimplementasikan middleware normalisasi di `src/server.js` yang secara otomatis mengalihkan (HTTP 302) permintaan aset JS ber-query string ke URL kanonikal bersih.
+- Menambahkan proteksi `notranslate` pada root HTML untuk mencegah intervensi Google Translate yang memanipulasi node DOM React dan memicu `removeChild`.
 [ADR-042] Pemulihan Integritas Native Chunk Vite & Investigasi Caching Dasbor Admin (/admin):
 - Mengembalikan integritas bundler native Vite pada berkas `dist/assets/admin-C9Dakcgq.js` dan membatalkan percobaan penulisan ulang hash chunk manual (`admin-E2N4xL8p.js`), guna mencegah kesalahan DOM runtime React (`removeChild`).
 - Mencatat `ISSUE-034` terkait penundaan render komponen Matriks Kesiapan Data Sektoral di peramban klien akibat caching HTTP Nginx (`max-age=31536000`) dan memandu pengosongan cache peramban klien.
