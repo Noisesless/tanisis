@@ -52,3 +52,11 @@
 - [x] Susun skrip build deterministik `scripts/build_manual_view.js` dan verifikasi seluruh modul import via `scripts/verify_imports.js` (100% valid)
 - [x] Validasi sintaks AST dan pengujian serving HTTP 200 OK pada dev server lokal (port 5173)
 - [x] Git commit dan push ke repositori GitHub
+
+---
+
+## 📌 Rencana Kerja Berikutnya (Besok): Optimasi Berkas GeoJSON Peta Dashboard Eksekutif di Produksi
+- [ ] **Audit Ukuran Berkas GeoJSON Aktif:** Analisis ukuran berkas GeoJSON di `dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `jalan.geojson`, `sungai.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`) yang dimuat oleh dashboard utama dan peta sebaran.
+- [ ] **Penyederhanaan Geometri & Presisi Koordinat:** Pangkas presisi angka koordinat floating-point berlebih (misal dari 7–8 desimal menjadi 5–6 desimal, toleransi ~1 meter) dan jalankan penyederhanaan topologi/titik poligon tanpa merusak batas administratif desa.
+- [ ] **Optimasi Strategi Pemuatan (Lazy / Progressive Layer Loading):** Pastikan layer berat (seperti jaringan jalan dan tutupan sawah/kebun) hanya diunduh saat pengguna mengaktifkan toggle layer bersangkutan, bukan diunduh sekaligus saat halaman pertama kali dibuka.
+- [ ] **Uji Performa Pemuatan di Produksi:** Ukur kecepatan *Time to Interactive (TTI)* dan transfer size di lingkungan produksi guna memastikan peta langsung terbuka ringan tanpa membebani memori peramban.

@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Pembaruan Manual Penggunaan (/manual) & Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Pembaruan halaman /manual sesuai fitur aplikasi terkini dengan bahasa lugas dan bebas buzzword (24 menu, panduan per halaman, peta, dan alur penggunaan) serta sinkronisasi modul build deterministik
+phase=Pembaruan Manual Penggunaan (/manual) & Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Pembaruan halaman /manual sesuai fitur aplikasi terkini dengan bahasa lugas dan bebas buzzword (24 menu, panduan per halaman, peta, dan alur penggunaan) serta sinkronisasi modul build deterministik next=Optimasi berkas GeoJSON peta dashboard eksekutif di produksi agar load lebih ringan (audit ukuran, simplifikasi koordinat/poligon, progressive loading)
 build=OK issues=0
 
 ## [VISUAL_GATE]
