@@ -33,7 +33,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/farmers?klaster=sektoral` | Kelembagaan & Data | Kelembagaan Sektoral & Pendukung (Perikanan, UPJA, P4S, Juleha) | Publik | STABLE |
 | `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
 | `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
-| `/suitability` | Kelembagaan & Data | Analisis Kesesuaian Lahan Komoditas | Publik | STABLE |
+| `/suitability` | Kelembagaan & Data | Kesesuaian Lahan & Komoditas Unggulan (Pangan, Hortikultura & Perkebunan) | Publik | STABLE |
 | `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara (Peta Spasial & Rekapitulasi) | Publik | STABLE |
 | `/kecamatan/:slug` | Kelembagaan & Data | Profil Statistik Komoditas & Wilayah Kecamatan Spesifik | Publik | STABLE |
 | `/admin` | Portal Admin | Portal Dasbor Admin (Form Login Asimetris Sawah Banjarnegara & Kelola Excel RBAC 20 Domain) | Admin/Bidang | STABLE |
@@ -53,6 +53,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/3/*` | `src/server.js` | Publik | CKAN proxy ke Open Data Pemkab Banjarnegara |
 | `GET` | `/v1/lahan/desa` | `src/routes/lahan.js` | Publik | Data penggunaan lahan tingkat desa |
 | `GET` | `/v1/lahan/kabupaten` | `src/routes/lahan.js` | Publik | Data penggunaan lahan agregat kabupaten |
+| `GET` | `/v1/lahan/kesesuaian` | `src/routes/lahan.js` | Publik | Evaluasi kesesuaian lahan multi-sektor (Pangan, Horti, Kebun) & tutupan lahan |
 | `GET` | `/v1/padi/production` | `src/routes/padi.js` | Publik | Produksi dan luas panen padi per kecamatan |
 | `GET` | `/v1/padi/history` | `src/routes/padi.js` | Publik | Historis tren produksi padi 2018–2024 |
 | `GET` | `/v1/padi/sawah-ladang` | `src/routes/padi.js` | Publik | Komparasi produksi padi sawah vs ladang |

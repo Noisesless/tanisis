@@ -443,9 +443,27 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ---
 
+### [ISSUE-036] SyntaxError: The requested module './BarChart-CCPNsfhB.js' does not provide an export named 'Ne' pada /suitability
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-12
+- **Komponen:** `dist/assets/suitability-BoKTpxZD.js`, `dist/assets/BarChart-CCPNsfhB.js`, Recharts ESM Bundling.
+- **Deskripsi:** 
+  Pemuatan halaman `/suitability` terhenti dan menampilkan pesan error boundary:
+  `SyntaxError: The requested module './BarChart-CCPNsfhB.js' does not provide an export named 'Ne' (at suitability-BoKTpxZD.js:6:3)`.
+- **Akar Masalah:**
+  1. Berkas minified chunk `BarChart-CCPNsfhB.js` tidak mengekspor nama `Ne`. Komponen `Bar` diekspor sebagai alias minified `f` (`f as Ne` pada chunk referensi).
+  2. Komponen radar Recharts (`RadarChart`, `PolarGrid`, `PolarAngleAxis`, `PolarRadiusAxis`, `Radar`) awalnya dikompilasi langsung di preamble chunk `suitability-BoKTpxZD.js` dan tidak diekspor oleh `BarChart-CCPNsfhB.js`.
+  3. Saat penulisan ulang antarmuka, terjadi asumsi bahwa komponen radar dan nama-nama alias diimpor langsung dari `BarChart-CCPNsfhB.js`.
+- **Solusi & Verifikasi:**
+  1. Membuat skrip build deterministik [`scripts/build_suitability_view.js`](file:///e:/Project/pertanian_main/scripts/build_suitability_view.js) yang memadukan preamble radar charts dan memetakan bridge alias ke ekspor sah (`f as Ne` untuk Bar, `t as it` untuk BarChart, `in as Re` untuk ResponsiveContainer, dll).
+  2. Membuat skrip [`scripts/verify_imports.js`](file:///e:/Project/pertanian_main/scripts/verify_imports.js) untuk memvalidasi 100% impor terhadap tabel ekspor ESM seluruh 7 berkas chunk target.
+  3. Menguji via HTTP curl dan peramban: berkas mengembalikan HTTP 200 OK dan antarmuka `/suitability` berjalan normal menampilkan 4 tab sektor, 4 KPI cards, radar chart, bar chart, dan matriks kesesuaian.
+
+---
+
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 35 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 36 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

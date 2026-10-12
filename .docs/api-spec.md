@@ -55,6 +55,52 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
   - Parameter Query: `kecamatan` (opsional), `desa` (opsional), `tahun` (opsional).
 - **`GET /api/v1/lahan/kabupaten`**  
   Data luas penggunaan lahan agregat tingkat kabupaten.
+- **`GET /api/v1/lahan/kesesuaian`**  
+  Evaluasi kesesuaian lahan multi-sektor (Tanaman Pangan, Hortikultura, Perkebunan) terintegrasi dengan korelasi tutupan lahan fisik kecamatan (`lahan_desa`).
+  - Parameter Query:
+    - `sektor`: `semua` | `pangan` | `hortikultura` | `perkebunan` (opsional, default: `semua`)
+    - `kecamatan`: nama kecamatan atau `Semua Kecamatan` (opsional, default: `Semua Kecamatan`)
+    - `tahun`: tahun evaluasi integer (opsional, default: tahun terbaru tersedia, misal `2024`)
+  - Format Response JSON:
+    ```json
+    {
+      "tahun": 2024,
+      "tahunList": [2024, 2023, 2022],
+      "kecamatan": "Semua Kecamatan",
+      "kecamatanList": ["Semua Kecamatan", "Banjarmangu", "Batur", "..."],
+      "sektor": "semua",
+      "tutupanLahan": {
+        "sawahHa": 13912.00,
+        "bukanSawahHa": 74309.00,
+        "sawahPct": 15.8,
+        "bukanSawahPct": 84.2,
+        "tipologi": "Dominasi Tegalan / Lahan Kering"
+      },
+      "kpi": {
+        "totalProduksi": 1060193.44,
+        "topKomoditas": { "nama": "Salak", "produksi": 199677.28, "share": 27.5 },
+        "komoditasAktif": 33,
+        "totalKomoditas": 40,
+        "komoditasPrioritas": 26
+      },
+      "items": [
+        {
+          "komoditas": "Padi Sawah",
+          "sektor": "Tanaman Pangan",
+          "subsektor": "Padi",
+          "produksi": 182340.50,
+          "satuan": "Ton",
+          "luasHa": 31200.00,
+          "produktivitas": 5.84,
+          "kelas": "S1",
+          "labelKelas": "Sangat Sesuai",
+          "deskripsiKelas": "Sangat direkomendasikan...",
+          "sharePct": 25.1,
+          "prioritas": 1
+        }
+      ]
+    }
+    ```
 - **`GET /api/v1/padi/production`**  
   Statistik produksi padi tahunan per kecamatan.
 - **`GET /api/v1/padi/history`**  

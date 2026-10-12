@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Map Performance Optimization & HTTP2 Error Resolved done=ALL last=Aktifkan gzip compression (hemat 81.2% GeoJSON), browser Cache-Control 1 hari untuk aset spasial, salin dashboard.png, naikkan timeout fetch 30s & resilient GeoJSON layer rendering
+phase=Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Rekonstruksi halaman /suitability multi-sektor (Pangan, Hortikultura, Perkebunan), modul backend src/lib/kesesuaian.js, korelasi tutupan lahan kecamatan, klasifikasi standar S1-S3-N, tab sektoral, dan verifikasi antarmuka bebas AI-slop
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,12 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-050] Rekonstruksi Halaman Kesesuaian Lahan (/suitability) Multi-Sektor (Pangan, Hortikultura, Perkebunan):
+- Mengeliminasi pembatasan monokultur 8 sayuran dan mengintegrasikan 3 sektor penuh secara terpadu: Tanaman Pangan (padi sawah/ladang & palawija), Hortikultura (sayuran, buah tahunan, biofarmaka), dan Perkebunan Rakyat (kopi robusta, teh, kelapa, cengkeh, dll.).
+- Mengimplementasikan modul evaluasi `src/lib/kesesuaian.js` dan endpoint `GET /api/v1/lahan/kesesuaian` terhubung langsung ke MariaDB `pertasis` (Zero Dummy Data, performa < 40ms).
+- Menghubungkan korelasi tutupan lahan fisik kecamatan (`lahan_desa`: Luas Sawah vs Bukan Sawah/Tegalan) serta klasifikasi kesesuaian agraria standar (S1 Sangat Sesuai, S2 Cukup Sesuai, S3 Marjinal, N Tidak Diusahakan) tanpa bias volume ton mentah.
+- Memperbarui bundle antarmuka `dist/assets/suitability-BoKTpxZD.js`: 4 Tab Navigasi Sektor, selektor kecamatan & tahun simetris, 4 KPI cards border-l-4, radar karakteristik adaptif, diagram batang komparasi volume, dan tabel matriks interaktif dengan pencarian dan paginasi bersih bebas AI-slop.
+- Mengatasi galat module export Recharts (`The requested module './BarChart-CCPNsfhB.js' does not provide an export named 'Ne'`) dengan menyatukan kembali preamble radar charts asli chunk dan mengadaptasikan alias ekspor minified (`f as Ne` untuk Bar, `t as it` untuk BarChart, `in as Re` untuk ResponsiveContainer) melalui script build otomatis `scripts/build_suitability_view.js` dan verifikasi 100% via `scripts/verify_imports.js`.
 [ADR-049] Resolusi Loading Lambat Peta Eksekutif & net::ERR_HTTP2_PROTOCOL_ERROR:
 - Mengatasi galat `ERR_HTTP2_PROTOCOL_ERROR` dan `AbortError` pada Dashboard Eksekutif/Peta: mengaktifkan middleware `compression()` di `src/server.js` (menghemat bandwidth transfer GeoJSON hingga 81.2%, misal `jalan.geojson` dari 8.2MB menjadi 1.47MB).
 - Mengonfigurasi `Cache-Control: public, max-age=86400` untuk aset statis berat (`.geojson`, `.png`, `fallback.json`) sehingga peramban meng-cache berkas spasial di memori lokal dan kunjungan berikutnya langsung instan (0 ms).

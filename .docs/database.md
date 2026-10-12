@@ -28,6 +28,17 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
    - Total domain admin bersih: 17 domain sektoral terpadu dengan kesiapan mandiri 94%.
 3. **Optimasi Buffer & GeoJSON Resilient:** Pemuatan berkas spasial GeoJSON dilengkapi kompresi gzip (hemat 81.2% bandwidth) dan browser Cache-Control 1 hari di server.
 
+### 1.3 Evaluasi Kesesuaian Lahan Multi-Sektor (ADR-050)
+
+Evaluasi kesesuaian lahan pada antarmuka `/suitability` dan endpoint `/api/v1/lahan/kesesuaian` menghubungkan agregasi data dari 5 tabel operasional tanpa mengubah skema tabel (read-only analytical aggregation):
+1. `lahan_desa`: Luas tanah sawah (`luas_tanah_sawah_ha`) vs tanah bukan sawah/tegalan (`luas_tanah_kering_ha`, dll) untuk menetapkan rasio tutupan fisik kecamatan.
+2. `padi_produksi`: Produksi dan luas panen Padi Sawah dan Padi Ladang per kecamatan.
+3. `palawija_produksi`: Produksi dan luas panen komoditas palawija (Jagung, Kedelai, Kacang Tanah, Ubi Kayu, Ubi Jalar, Kacang Hijau).
+4. `horti_produksi`: Produksi sayuran (Kentang, Kubis, Cabai, dll), buah tahunan (Salak Pondoh, Durian, dll), dan biofarmaka (Kapulaga, Jahe, dll).
+5. `perkebunan_produksi`: Produksi dan areal tanaman perkebunan rakyat (Kopi Robusta, Kopi Arabika, Teh, Cengkeh, Kelapa Deres, dll).
+
+Kombinasi data ini diolah oleh `src/lib/kesesuaian.js` menggunakan klasifikasi FAO/Puslitnak (S1 Sangat Sesuai, S2 Cukup Sesuai, S3 Marjinal, N Tidak Diusahakan) berbasis rasio produktivitas, luas panen, dan tipologi tutupan lahan fisik.
+
 ---
 
 ## 2. Tabel Master Geografi & Referensi

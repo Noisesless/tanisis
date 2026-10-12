@@ -3,6 +3,7 @@
 import { Router } from "express";
 import { q } from "../db.js";
 import { route } from "../lib/helpers.js";
+import { getKesesuaianLahan } from "../lib/kesesuaian.js";
 
 export const lahanRouter = Router();
 
@@ -73,5 +74,21 @@ lahanRouter.get(
       sawah: sawah ? Number(sawah.luas_ha) : 0,
       bukanSawah: bukan ? Number(bukan.luas_ha) : 0,
     };
+  }),
+);
+
+/**
+ * GET /api/v1/lahan/kesesuaian
+ * Parameter query: ?sektor=&kecamatan=&tahun=
+ * Melayani evaluasi kesesuaian lahan multi-sektor (Pangan, Hortikultura, Perkebunan)
+ * dan korelasi tutupan lahan kecamatan.
+ */
+lahanRouter.get(
+  "/kesesuaian",
+  route(async (req) => {
+    const sektor = (req.query.sektor || "semua").toString().trim().toLowerCase();
+    const kecamatan = (req.query.kecamatan || "Semua Kecamatan").toString().trim();
+    const tahun = req.query.tahun ? Number(req.query.tahun) : 2024;
+    return await getKesesuaianLahan({ sektor, kecamatan, tahun });
   }),
 );

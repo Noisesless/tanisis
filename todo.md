@@ -37,3 +37,11 @@
 - [x] Verifikasi kepatuhan anti-slop (bahasa lugas, tanpa jargon berlebihan, responsif 1366x768 & mobile)
 - [x] Perbarui dokumentasi `.docs/routes.md`, `.docs/api-spec.md`, `.docs/architecture.md`, dan `app-context.md`
 - [x] Git commit dan push ke repositori GitHub
+
+### Fase 4: Rekonstruksi Kesesuaian Lahan Multi-Sektor (/suitability & ADR-050)
+- [x] Rancang dan bangun modul evaluasi `src/lib/kesesuaian.js` mengagregasi 5 tabel MariaDB (padi, palawija, horti, perkebunan, lahan_desa)
+- [x] Daftarkan endpoint `GET /api/v1/lahan/kesesuaian` di `src/routes/lahan.js`
+- [x] Rekonstruksi antarmuka `/suitability` (4 Tab Sektor, selektor kecamatan/tahun simetris, 4 KPI cards border-l-4, radar karakteristik, bar chart komparasi, dan matriks interaktif)
+- [x] Resolusi issue Recharts bundle export `Ne` (ISSUE-036) via `scripts/build_suitability_view.js` dan verifikasi import 100% via `scripts/verify_imports.js`
+- [x] Sinkronisasi dokumentasi utama (`.docs/api-spec.md`, `.docs/routes.md`, `.docs/database.md`, `.docs/dependency-graph.md`, `.docs/issues.md`, `app-context.md`, `todo.md`)
+- [x] Git commit dan push ke repositori GitHub
