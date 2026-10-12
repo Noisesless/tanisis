@@ -45,3 +45,10 @@
 - [x] Resolusi issue Recharts bundle export `Ne` (ISSUE-036) via `scripts/build_suitability_view.js` dan verifikasi import 100% via `scripts/verify_imports.js`
 - [x] Sinkronisasi dokumentasi utama (`.docs/api-spec.md`, `.docs/routes.md`, `.docs/database.md`, `.docs/dependency-graph.md`, `.docs/issues.md`, `app-context.md`, `todo.md`)
 - [x] Git commit dan push ke repositori GitHub
+
+### Fase 5: Pembaruan Halaman Panduan Penggunaan (/manual)
+- [x] Perbarui tabel daftar menu lengkap (24 menu aktif aplikasi) dengan fungsi faktual tanpa buzzwords
+- [x] Perbarui panduan fitur per halaman utama (Dashboard, Kesesuaian Lahan multi-sektor, FSVA 16-indikator desa, Komoditas Unggulan, Tanaman Pangan, Hortikultura, Peternakan, Perikanan, Kelembagaan, Profil Kecamatan, dan Portal Admin)
+- [x] Susun skrip build deterministik `scripts/build_manual_view.js` dan verifikasi seluruh modul import via `scripts/verify_imports.js` (100% valid)
+- [x] Validasi sintaks AST dan pengujian serving HTTP 200 OK pada dev server lokal (port 5173)
+- [x] Git commit dan push ke repositori GitHub

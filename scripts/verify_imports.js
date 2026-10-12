@@ -1,6 +1,7 @@
 import fs from "fs";
 
-const file = fs.readFileSync("./dist/assets/suitability-BoKTpxZD.js", "utf8");
+const target = process.argv[2] || "./dist/assets/suitability-BoKTpxZD.js";
+const file = fs.readFileSync(target, "utf8");
 
 // Cari semua import statement
 const importRegex = /import\s*\{([^}]+)\}\s*from\s*["']\.\/([^"']+)["'];/g;

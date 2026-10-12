@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Rekonstruksi halaman /suitability multi-sektor (Pangan, Hortikultura, Perkebunan), modul backend src/lib/kesesuaian.js, korelasi tutupan lahan kecamatan, klasifikasi standar S1-S3-N, tab sektoral, dan verifikasi antarmuka bebas AI-slop
+phase=Pembaruan Manual Penggunaan (/manual) & Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Pembaruan halaman /manual sesuai fitur aplikasi terkini dengan bahasa lugas dan bebas buzzword (24 menu, panduan per halaman, peta, dan alur penggunaan) serta sinkronisasi modul build deterministik
 build=OK issues=0
 
 ## [VISUAL_GATE]
