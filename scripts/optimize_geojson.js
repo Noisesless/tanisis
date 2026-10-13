@@ -62,10 +62,20 @@ function optimizeFeatureCollection(data, filename) {
 
     // 1. Optimasi geometri
     if (feature.geometry) {
-      feat.geometry = {
-        type: feature.geometry.type,
-        coordinates: roundCoordinates(feature.geometry.coordinates)
-      };
+      if (feature.geometry.type === "GeometryCollection") {
+        feat.geometry = {
+          type: "GeometryCollection",
+          geometries: (feature.geometry.geometries || []).map((geom) => ({
+            type: geom.type,
+            coordinates: roundCoordinates(geom.coordinates)
+          }))
+        };
+      } else {
+        feat.geometry = {
+          type: feature.geometry.type,
+          coordinates: roundCoordinates(feature.geometry.coordinates)
+        };
+      }
     }
 
     // 2. Filter atribut properti

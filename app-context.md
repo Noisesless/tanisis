@@ -1,5 +1,5 @@
 <!-- app-context.md v2.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-13T14:45:00+07:00 | Phase: Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration) (ADR-052) | Build: OK -->
+<!-- Last: 2026-10-13T19:15:00+07:00 | Phase: Resolusi GeometryCollection Leaflet & Restorasi Peta Dashboard (ADR-053) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration) (ADR-052) done=ALL last=Penyatuan 13 ilustrasi sektor domain ke dist/img/domain/, penyeragaman unboxed natural illustration (h-14 sm:h-16 w-auto, maxHeight 60px), kompresi dashboard.png (-88.2%), dan eliminasi total pembungkus card/border/shadow AI-slop next=Monitoring performa pemuatan visual dan kesiapan rilis produksi
+phase=Resolusi GeometryCollection Leaflet & Restorasi Peta Dashboard (ADR-053) done=ALL last=Restorasi 3 GeometryCollection desa (Gemuruh, Gumelemkulon, Petambakan) pada peta_desa_v3.geojson, perbaikan scripts/optimize_geojson.js, dan defensive guard Leaflet pages-BdW-ZTL4.js next=Monitoring kestabilan peta dan aplikasi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,12 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-053] Resolusi GeometryCollection Leaflet & Restorasi Peta Dashboard Eksekutif:
+- Root Cause: Skrip pemangkas presisi koordinat `scripts/optimize_geojson.js` hanya memetakan properti `coordinates` dan mengabaikan `geometries`. Akibatnya, 3 desa bertipe `GeometryCollection` (Desa Gemuruh ID 68, Desa Gumelemkulon ID 201, Desa Petambakan ID 239) di `dist/peta_desa_v3.geojson` kehilangan array poligonnya sehingga Leaflet melempar `TypeError: can't access property "length", n.geometries is undefined`.
+- Solusi Komprehensif:
+  * Memperbaiki `scripts/optimize_geojson.js` untuk secara rekursif memetakan dan membulatkan koordinat pada seluruh elemen array `geometries`.
+  * Memulihkan geometri asli 3 desa terdampak pada `dist/peta_desa_v3.geojson` dengan presisi 6 desimal (sub-meter) yang hemat bandwidth (2,51 MB).
+  * Menambahkan defensive guard pada Leaflet di `dist/assets/pages-BdW-ZTL4.js`: `(n.geometries ? n.geometries.length : 0)` untuk perlindungan fail-safe permanen dari kemungkinan anomali data spasial.
 [ADR-052] Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration):
 - Mengonsolidasikan seluruh 13 aset ilustrasi sektor domain secara eksklusif ke direktori kanonikal `dist/img/domain/` (`dashboard.png`, `prediction.png`, `horticulture.png`, `plantation.png`, `livestock.png`, `fisheries.png`, `food-security.png`, `supply-chain.png`, `price-volatility.png`, `farmers.png`, `economic-value.png`, `Irrigation512px.png`, `suitability.png`) tanpa menduplikasi file keluar.
 - Mengompresi berkas `dashboard.png` dari 1,06 MB (22 megapixel) menjadi 125 KB (-88,2%) dengan resolusi Retina 512px yang tetap tajam dan cepat dimuat.

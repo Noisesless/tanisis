@@ -479,14 +479,32 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Memetakan seluruh rute gambar secara eksklusif ke `/img/domain/<file>.png`.
   4. Menjalankan verifikasi parser Node.js terhadap seluruh 84 berkas bundle JS di `dist/assets/` (`Checked 84 JS bundles. Custom errors: 0`) dan memvalidasi seluruh 13 URL gambar domain mengembalikan HTTP 200 OK.
 
+### [ISSUE-038] TypeError: can't access property "length", n.geometries is undefined pada Leaflet Map Dashboard
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-13
+- **Komponen:** `scripts/optimize_geojson.js`, `dist/peta_desa_v3.geojson`, `dist/assets/pages-BdW-ZTL4.js`.
+- **Deskripsi:** 
+  Pemuatan halaman utama dashboard (`/`) terhenti dan menampilkan modal merah Error Boundary:
+  `TypeError: can't access property "length", n.geometries is undefined dr http://127.0.0.1:5173/assets/pages-BdW-ZTL4.js:1`.
+- **Akar Masalah:**
+  1. Skrip pemangkas presisi koordinat [`scripts/optimize_geojson.js`](file:///home/gbc/Projects/pertanian-main/scripts/optimize_geojson.js) awalnya hanya memetakan properti `coordinates` dan tidak menyalin array `geometries`.
+  2. Tiga entitas desa di [`dist/peta_desa_v3.geojson`](file:///home/gbc/Projects/pertanian-main/dist/peta_desa_v3.geojson) (Desa Gemuruh OBJECTID 68, Desa Gumelemkulon OBJECTID 201, Desa Petambakan OBJECTID 239) memiliki tipe geometri `GeometryCollection` yang menyimpan poligon di `geometries` (bukan `coordinates`).
+  3. Skrip optimasi menghapus atribut `geometries`, meninggalkan `"geometry": {"type": "GeometryCollection"}` tanpa array elemen sehingga Leaflet crash saat mengevaluasi `n.geometries.length`.
+- **Solusi & Verifikasi:**
+  1. Memperbaiki [`scripts/optimize_geojson.js`](file:///home/gbc/Projects/pertanian-main/scripts/optimize_geojson.js) agar mengenali `GeometryCollection` dan memetakan setiap elemen `geometries` dengan pembulatan 6 desimal.
+  2. Memulihkan struktur geometri 3 desa terdampak pada [`dist/peta_desa_v3.geojson`](file:///home/gbc/Projects/pertanian-main/dist/peta_desa_v3.geojson) dari data historis dengan koordinat 6 desimal.
+  3. Menambahkan defensive guard pada handler `GeometryCollection` Leaflet di [`dist/assets/pages-BdW-ZTL4.js`](file:///home/gbc/Projects/pertanian-main/dist/assets/pages-BdW-ZTL4.js): `for(l=0,u=(n.geometries?n.geometries.length:0);l<u;l++)` untuk proteksi fail-safe ganda.
+  4. Pengujian verifikasi: Memvalidasi 278 fitur desa (3 `GeometryCollection` non-kosong, 275 `Polygon`) lulus verifikasi integritas 100% dan berkas GeoJSON terlayani HTTP 200 OK.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 37 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 38 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
 
 
