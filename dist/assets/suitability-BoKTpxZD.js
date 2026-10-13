@@ -228,17 +228,12 @@ function KesesuaianLahanPage() {
                 })
               ]
             }),
-            (0, jsx.jsx)("div", {
-              className: "hidden sm:flex shrink-0 items-center justify-center p-2 bg-white border border-slate-200 rounded-xl shadow-sm w-28 h-20 overflow-hidden",
-              children: (0, jsx.jsx)("img", {
-                src: "/img/domain/suitability.png",
-                alt: "Kesesuaian Lahan",
-                className: "w-full h-full object-contain shrink-0",
-                style: { maxHeight: "64px", maxWidth: "100%", objectFit: "contain" }
-              })
+            (0, jsx.jsx)("img", {
+              src: "/img/domain/suitability.png",
+              alt: "Kesesuaian Lahan",
+              className: "h-14 sm:h-16 w-auto object-contain shrink-0 select-none",
+              style: { maxHeight: "60px" }
             })
-          ]
-        })
           ]
         }),
 
