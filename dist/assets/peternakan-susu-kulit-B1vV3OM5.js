@@ -132,39 +132,30 @@ function View() {
         // Page Header
         (0,O.jsx)(c, {
           icon: (0,O.jsx)(e, { className: "h-6 w-6 text-emerald-700" }),
-          title: "Produksi Ternak dan Hasil Ikutan",
+          title: "Produksi & Hasil Ikutan Ternak",
           subtitle: "Data produksi daging, telur, susu, dan hasil ikutan pemotongan RPH (kulit, tulang, tanduk) per jenis hewan di Kabupaten Banjarnegara."
         }),
 
         // Tab Navigation Utama
         (0,O.jsxs)("div", {
-          className: "flex flex-wrap gap-2 border-b border-slate-200 pb-2",
+          className: "flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit mb-4",
           children: [
             (0,O.jsx)("button", {
               type: "button",
               onClick: () => setTab("utama"),
-              style: tab === "utama"
-                ? { backgroundColor: "#047857", color: "#ffffff", borderColor: "#047857" }
-                : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#cbd5e1" },
-              className: "px-4 py-2 rounded-lg text-xs font-semibold border shadow-sm transition-colors",
+              className: tab === "utama" ? "rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm transition-all" : "rounded-md px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all",
               children: "Produksi Utama (Daging, Telur & Susu)"
             }),
             (0,O.jsx)("button", {
               type: "button",
               onClick: () => setTab("ikutan"),
-              style: tab === "ikutan"
-                ? { backgroundColor: "#047857", color: "#ffffff", borderColor: "#047857" }
-                : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#cbd5e1" },
-              className: "px-4 py-2 rounded-lg text-xs font-semibold border shadow-sm transition-colors",
+              className: tab === "ikutan" ? "rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm transition-all" : "rounded-md px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all",
               children: "Hasil Ikutan (Kulit, Tulang & Tanduk)"
             }),
             (0,O.jsx)("button", {
               type: "button",
               onClick: () => setTab("hpt"),
-              style: tab === "hpt"
-                ? { backgroundColor: "#047857", color: "#ffffff", borderColor: "#047857" }
-                : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#cbd5e1" },
-              className: "px-4 py-2 rounded-lg text-xs font-semibold border shadow-sm transition-colors",
+              className: tab === "hpt" ? "rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm transition-all" : "rounded-md px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all",
               children: "Simulasi Lahan Hijauan Pakan Ternak (HPT)"
             })
           ]
@@ -202,10 +193,7 @@ function View() {
                           type: "button",
                           key: g.key,
                           onClick: () => setUtamaGroupFilter(g.key),
-                          style: utamaGroupFilter === g.key
-                            ? { backgroundColor: "#047857", color: "#ffffff" }
-                            : { backgroundColor: "transparent", color: "#475569" },
-                          className: "px-3 py-1 rounded-md text-xs font-semibold transition-all",
+                          className: utamaGroupFilter === g.key ? "rounded-md px-3 py-1 text-xs font-bold bg-white text-slate-900 shadow-sm transition-all" : "rounded-md px-3 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all",
                           children: g.label
                         })
                       ))

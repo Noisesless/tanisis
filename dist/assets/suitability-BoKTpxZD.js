@@ -220,7 +220,7 @@ function KesesuaianLahanPage() {
               children: [
                 (0, jsx.jsx)("h1", {
                   className: "text-2xl font-bold tracking-tight text-slate-900",
-                  children: "Kesesuaian Lahan & Komoditas Unggulan"
+                  children: "Kesesuaian Lahan Pertanian"
                 }),
                 (0, jsx.jsx)("p", {
                   className: "text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed",

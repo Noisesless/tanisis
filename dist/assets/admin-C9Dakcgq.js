@@ -392,7 +392,7 @@ Unduh template Excel resmi melalui Portal Admin SISPERTANI (http://127.0.0.1:517
               className:`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm`,
               children:(0,P.jsxs)(`div`,{
                 children:[
-                  (0,P.jsx)(`h1`,{className:`text-xl font-bold tracking-tight text-slate-900`,children:`Pengelolaan Data Sektoral`}),
+                  (0,P.jsx)(`h1`,{className:`text-xl font-bold tracking-tight text-slate-900`,children:`Portal Administrasi Sektoral`}),
                   (0,P.jsx)(`p`,{className:`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed`,children:`Unduh format template, perbarui berkas Excel, atau ekspor data komoditas dan kelembagaan daerah.`})
                 ]
               })

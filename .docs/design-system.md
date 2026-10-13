@@ -691,5 +691,19 @@ Sesuai pembaruan **ADR-052**, seluruh halaman domain sektoral dilengkapi dengan 
 
 ---
 
-## 9. Ringkasan Single Source of Truth
+## 10. Pembaruan ADR-054: Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku (13 Oktober 2026)
+
+Pembaruan **ADR-054** menyelesaikan audit view aplikasi secara faktual di 36 rute dan menuntaskan fragmentasi UI:
+1. **Penyelarasan 36 Judul Navbar vs Halaman (100% Sinkron):** Seluruh rute memiliki nama kanonikal yang identik antara menu navigasi sidebar (`site-B5h-x_N5.js`) dan judul `<h1>` halaman.
+2. **Pembersihan Kartu Pembungkus Ilustrasi Global `Ft`:** Komponen global `Ft` (`index-CI1XYnwk.js`) dibersihkan dari wadah kartu artifisial (`rounded-xl shadow-sm border w-28 h-20 overflow-hidden`) dan dikonversi menjadi *unboxed organic illustration* murni (`h-14 sm:h-16 w-auto object-contain select-none max-h-[60px]`).
+3. **Standar Spacing Header Universal:** Seluruh header halaman diseragamkan ke `border-b border-slate-200 pb-5 mb-6`.
+4. **Unifikasi Bentuk Tab ke Executive Segmented Pill:** 
+   - Menghilangkan 5 variasi bentuk tab menjadi 1 standar tunggal: kontainer `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif `rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm` dan item inaktif `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`.
+   - Menghapus seluruh pelanggaran inline hardcoded hex style pada `/farmers` dan `/peternakan/susu-kulit`.
+5. **Favicon Resmi Terpadu:** Seluruh browser favicon di-generate langsung dari aset master resmi `dist/logo.png` (2480×2480 RGBA) dengan resolusi multi-ukuran 16×16 hingga 256×256.
+
+---
+
+## 11. Ringkasan Single Source of Truth
 Seluruh kode CSS baru, komponen React/Vite, pembaruan rute, maupun tampilan analitik pada SISPERTANI Banjarnegara wajib mematuhi standar dokumen `.docs/design-system.md` ini tanpa deviasi.
+

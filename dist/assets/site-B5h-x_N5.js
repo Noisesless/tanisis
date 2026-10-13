@@ -8,8 +8,8 @@ var e = {
       category: `EKSEKUTIF & SPASIAL`,
       title: ``,
       items: [
-        { label: `Dashboard Eksekutif`, href: `/` },
-        { label: `Peta Geospasial GIS`, href: `/sebaran/pangan` }
+        { label: `Dashboard Eksekutif SISPERTANI`, href: `/` },
+        { label: `Peta Geospasial Sektoral`, href: `/sebaran/pangan` }
       ]
     },
     {
@@ -50,11 +50,11 @@ var e = {
       subtitle: `Domba Batur, Populasi & RPH`,
       icon: `ternak`,
       items: [
-        { label: `Populasi Ternak`, href: `/livestock` },
-        { label: `Produksi & Hasil Ikutan`, href: `/peternakan/susu-kulit` },
+        { label: `Populasi & Produksi Ternak`, href: `/livestock` },
+        { label: `Produksi & Hasil Ikutan Ternak`, href: `/peternakan/susu-kulit` },
         { label: `Komoditas Unggulan Peternakan`, href: `/komoditas-unggulan/peternakan` },
         { label: `Nilai Ekonomi & Ekosistem Usaha`, href: `/nilai-ekonomi/peternakan` },
-        { label: `Lalu Lintas, Pasar & RPH`, href: `/livestock-flow` }
+        { label: `Lalu Lintas & Pemotongan Ternak`, href: `/livestock-flow` }
       ]
     },
     {
@@ -96,7 +96,7 @@ var e = {
       subtitle: `Poktan, KEP & Penyuluhan`,
       icon: `lembaga`,
       items: [
-        { label: `Tani, Gapoktan & KWT`, href: `/farmers?klaster=tani` },
+        { label: `Kelembagaan Tani, Gapoktan & KWT`, href: `/farmers?klaster=tani` },
         { label: `Ekonomi & Penyuluhan`, href: `/farmers?klaster=ekonomi` },
         { label: `Sektoral & Pendukung`, href: `/farmers?klaster=sektoral` }
       ]
@@ -115,7 +115,7 @@ var e = {
       icon: `lahan`,
       items: [
         { label: `Luas & Penggunaan Lahan`, href: `/lahan` },
-        { label: `Kesesuaian Lahan`, href: `/suitability` },
+        { label: `Kesesuaian Lahan Pertanian`, href: `/suitability` },
         { label: `Profil 20 Kecamatan`, href: `/kecamatan` }
       ]
     }

@@ -518,15 +518,14 @@ function FarmersPage() {
         // Sub-Tab Pills khusus klaster yang dipilih
         // Level 2: Sub-Tab Pills
             (0, T.jsxs)("div", {
-              className: "flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none",
+              className: "flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit",
               children: [
                 activeKlaster === "tani" && (0, T.jsxs)(T.Fragment, {
                   children: [
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("pertanian"); setFilterJenis("Semua"); setCurrentPage(1); },
-                      style: activeTab === "pertanian" ? { backgroundColor: "#047857", color: "#ffffff", borderColor: "#065f46" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "pertanian" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "pertanian" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(wheatIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Poktan, KWT & Gapoktan",
@@ -536,8 +535,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("rekap_validasi"); setCurrentPage(1); },
-                      style: activeTab === "rekap_validasi" ? { backgroundColor: "#047857", color: "#ffffff", borderColor: "#065f46" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "rekap_validasi" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "rekap_validasi" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(fileCheckIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Rekapitulasi Validasi SK Kadistan",
@@ -547,8 +545,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("rekap"); },
-                      style: activeTab === "rekap" ? { backgroundColor: "#1e293b", color: "#ffffff", borderColor: "#0f172a" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "rekap" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "rekap" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(leafIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Statistik Historis Desa"
@@ -562,8 +559,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("kep"); setFilterJenis("Semua"); setCurrentPage(1); },
-                      style: activeTab === "kep" ? { backgroundColor: "#1d4ed8", color: "#ffffff", borderColor: "#1e40af" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "kep" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "kep" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(awardIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Ekonomi Petani (KEP)",
@@ -573,8 +569,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("posluhdes"); setCurrentPage(1); },
-                      style: activeTab === "posluhdes" ? { backgroundColor: "#1d4ed8", color: "#ffffff", borderColor: "#1e40af" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "posluhdes" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "posluhdes" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(mapPinIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Pos Penyuluhan Desa (Posluhdes)",
@@ -584,8 +579,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("pps"); setCurrentPage(1); },
-                      style: activeTab === "pps" ? { backgroundColor: "#1d4ed8", color: "#ffffff", borderColor: "#1e40af" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "pps" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "pps" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(usersIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Penyuluh Pertanian Swadaya (PPS)",
@@ -600,8 +594,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("perikanan"); setFilterJenis("Semua"); setCurrentPage(1); },
-                      style: activeTab === "perikanan" ? { backgroundColor: "#0f766e", color: "#ffffff", borderColor: "#115e59" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "perikanan" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "perikanan" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(fishIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Kelembagaan Perikanan",
@@ -611,8 +604,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("pendukung"); setFilterJenis("Semua"); setCurrentPage(1); },
-                      style: activeTab === "pendukung" ? { backgroundColor: "#0f766e", color: "#ffffff", borderColor: "#115e59" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "pendukung" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "pendukung" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(tractorIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Lembaga Pendukung (UPJA & P4S)",
@@ -622,8 +614,7 @@ function FarmersPage() {
                     (0, T.jsxs)("button", {
                       type: "button",
                       onClick: () => { setActiveTab("juleha"); setFilterJenis("Semua"); setCurrentPage(1); },
-                      style: activeTab === "juleha" ? { backgroundColor: "#0f766e", color: "#ffffff", borderColor: "#115e59" } : { backgroundColor: "#ffffff", color: "#334155", borderColor: "#e2e8f0" },
-                      className: `px-3.5 py-2 text-xs rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer border ${activeTab === "juleha" ? "shadow-xs font-bold" : "hover:bg-slate-50 font-semibold shadow-2xs"}`,
+                      className: `rounded-md px-3.5 py-1.5 text-xs transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === "juleha" ? "bg-white text-slate-900 shadow-sm font-bold" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 font-semibold"}`,
                       children: [
                         (0, T.jsx)(shieldCheckIcon, { className: "h-3.5 w-3.5 shrink-0" }),
                         "Petugas JULEHA",
