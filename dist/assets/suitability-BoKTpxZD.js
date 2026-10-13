@@ -213,16 +213,32 @@ function KesesuaianLahanPage() {
       children: [
         // 1. Header Halaman
         (0, jsx.jsxs)("header", {
-          className: "border-b border-slate-200 pb-5",
+          className: "flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-2",
           children: [
-            (0, jsx.jsx)("h1", {
-              className: "text-2xl font-bold tracking-tight text-slate-900",
-              children: "Kesesuaian Lahan & Komoditas Unggulan"
+            (0, jsx.jsxs)("div", {
+              className: "flex-1 min-w-0",
+              children: [
+                (0, jsx.jsx)("h1", {
+                  className: "text-2xl font-bold tracking-tight text-slate-900",
+                  children: "Kesesuaian Lahan & Komoditas Unggulan"
+                }),
+                (0, jsx.jsx)("p", {
+                  className: "text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed",
+                  children: "Evaluasi kecocokan lahan komprehensif berdasarkan volume produksi riil, luas panen, dan agroklimat per kecamatan di Kabupaten Banjarnegara (mencakup Tanaman Pangan, Hortikultura, dan Perkebunan Rakyat)."
+                })
+              ]
             }),
-            (0, jsx.jsx)("p", {
-              className: "text-sm text-slate-600 mt-1 max-w-4xl leading-relaxed",
-              children: "Evaluasi kecocokan lahan komprehensif berdasarkan volume produksi riil, luas panen, dan agroklimat per kecamatan di Kabupaten Banjarnegara (mencakup Tanaman Pangan, Hortikultura, dan Perkebunan Rakyat)."
+            (0, jsx.jsx)("div", {
+              className: "hidden sm:flex shrink-0 items-center justify-center p-2 bg-white border border-slate-200 rounded-xl shadow-sm w-28 h-20 overflow-hidden",
+              children: (0, jsx.jsx)("img", {
+                src: "/img/domain/suitability.png",
+                alt: "Kesesuaian Lahan",
+                className: "w-full h-full object-contain shrink-0",
+                style: { maxHeight: "64px", maxWidth: "100%", objectFit: "contain" }
+              })
             })
+          ]
+        })
           ]
         }),
 

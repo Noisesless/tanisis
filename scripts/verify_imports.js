@@ -32,6 +32,14 @@ while ((match = importRegex.exec(file)) !== null) {
       }
     }
   }
+
+  const funcMatches = [...targetCode.matchAll(/export\s+(?:async\s+)?function\s+([a-zA-Z0-9_$]+)/g)];
+  for (const fm of funcMatches) exportedNames.add(fm[1]);
+
+  const varMatches = [...targetCode.matchAll(/export\s+(?:const|let|var)\s+([a-zA-Z0-9_$]+)/g)];
+  for (const vm of varMatches) exportedNames.add(vm[1]);
+
+  if (/export\s+default\b/.test(targetCode)) exportedNames.add("default");
   
   console.log(`Checking ${targetFile} (exports: ${exportedNames.size})...`);
   for (const imp of importedList) {

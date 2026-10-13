@@ -505,9 +505,12 @@ function FarmersPage() {
                 })
               ]
             }),
-            (0, T.jsx)("div", {
-              className: "flex flex-wrap items-center gap-2 shrink-0",
-              children: headerMeta.badges.map((b, idx) => (0, T.jsx)("span", { className: `px-2.5 py-1 text-[11px] font-semibold border rounded-md ${b.cls}`, children: b.label }, idx))
+            (0, T.jsxs)("div", {
+              className: "flex items-center gap-3 shrink-0",
+              children: [
+                (0, T.jsx)("div", { className: "flex flex-wrap items-center gap-2", children: headerMeta.badges.map((b, idx) => (0, T.jsx)("span", { className: `px-2.5 py-1 text-[11px] font-semibold border rounded-md ${b.cls}`, children: b.label }, idx)) }),
+                (0, T.jsx)("div", { className: "hidden sm:flex shrink-0 items-center justify-center p-2 bg-white border border-slate-200 rounded-xl shadow-sm w-28 h-20 overflow-hidden", children: (0, T.jsx)("img", { src: "/img/domain/farmers.png", alt: "Direktori Petani", className: "w-full h-full object-contain shrink-0", style: { maxHeight: "64px", maxWidth: "100%", objectFit: "contain" } }) })
+              ]
             })
           ]
         }),
