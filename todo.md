@@ -61,3 +61,22 @@
 - [x] **Optimasi Strategi Pemuatan (True-Lazy Layer Loading):** Refaktorisasi `dist/assets/pages-BdW-ZTL4.js` via `scripts/patch_pages_lazy_layers.js` dengan mengeliminasi bulk download latar belakang `setTimeout 2,2s` (18 MB). Layer berat (`jalan`, `sawah`, `kebun`, `ladang`) kini hanya diunduh secara on-demand saat pengguna mencentang toggle layer bersangkutan di Leaflet LayersControl.
 - [x] **Uji Performa Pemuatan & Integritas:** Beban awal transfer peta terpangkas drastis dari 23,3 MB menjadi ~3,3 MB (-85,8%), `peta_desa_v3.geojson` (2,48 MB) muat aman dalam kuota 5 MB `localStorage`, integritas 278 desa & 20 kecamatan 100% valid, dan respons HTTP serving 200 OK dengan browser caching 1 hari.
 
+---
+
+### Fase 7: Resolusi GeometryCollection Leaflet & Restorasi Peta Dashboard Eksekutif (ADR-053)
+- [x] **Investigasi Akar Galat Leaflet:** Mendeteksi `TypeError: can't access property "length", n.geometries is undefined` pada `pages-BdW-ZTL4.js` akibat pemangkas koordinat `scripts/optimize_geojson.js` hanya memproses `coordinates` dan mengabaikan `geometries` pada desa bertipe `GeometryCollection` (Gemuruh, Gumelemkulon, Petambakan).
+- [x] **Perbaikan Skrip Optimasi & Restorasi Peta Desa:** Memperbarui `scripts/optimize_geojson.js` untuk merekursi seluruh poligon dalam `geometries` dengan presisi 6 desimal, serta memulihkan data 3 desa pada `dist/peta_desa_v3.geojson`.
+- [x] **Defensive Guard Leaflet:** Menambahkan proteksi fail-safe `(n.geometries ? n.geometries.length : 0)` di `dist/assets/pages-BdW-ZTL4.js`.
+- [x] **Validasi & Verifikasi:** 278 fitur desa lulus uji struktur GeoJSON 100%, peta dashboard eksekutif ter-render normal tanpa modal galat.
+
+---
+
+### Fase 8: Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku (ADR-054)
+- [x] **Audit Faktual 36 Rute Navigasi:** Mengidentifikasi 12 ketidaksinkronan nama menu sidebar vs judul `<h1>` halaman, 5 variasi bentuk tab terfragmentasi, dan sisa pembungkus kartu ilustrasi domain.
+- [x] **Generasi Favicon Resmi Terpadu:** Membangun multi-resolusi `.ico` (16x16 s/d 256x256) dan `.png` langsung dari master resmi `dist/logo.png`, menggantikan ikon default Vite SVG di `dist/index.html`.
+- [x] **Unboxing Ilustrasi Global `Ft`:** Menghilangkan kotak kartu artifisial (`rounded-xl shadow-sm border w-28 h-20`) pada komponen `Ft` (`index-CI1XYnwk.js`) menjadi unboxed illustration murni (`h-14 sm:h-16 w-auto object-contain max-h-[60px]`).
+- [x] **Penyelarasan 36 Judul Kanonikal:** Menyinkronkan seluruh menu di `dist/assets/site-B5h-x_N5.js` dengan judul `<h1>` pada masing-masing chunk halaman terkait.
+- [x] **Standardisasi Heading Semantic `<h1>`:** Mengubah elemen `<h2>` non-standar menjadi `<h1>` pada rute analitik (`/supply-chain`, `/price-volatility`, `/fisheries`, `/food-security`, `/government-assistance`).
+- [x] **Unifikasi Tab ke Executive Segmented Pill:** Mengubah seluruh tab di `/food-crops`, `/ltt-katam`, `/sebaran/bidang`, `/farmers`, `/peternakan/susu-kulit`, `/livestock-flow`, dan `/sensus` ke standar baku `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif putih bersinar dan inaktif lembut.
+- [x] **Harmonisasi `/livestock-flow` & `/sensus`:** Menghubungkan PageHeader berilustrasi domain dan menata ulang tab data dari form input berbingkai menjadi tab navigasi utama.
+

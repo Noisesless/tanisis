@@ -59,6 +59,17 @@ graph TD
    - Seluruh gambar domain disajikan secara alami (*unboxed illustration*) tanpa kotak pembungkus/border/shadow artifisial, dengan proporsi `h-14 sm:h-16 w-auto object-contain` (`maxHeight: 60px`) sehingga tinggi seluruh header halaman seragam (~72–80px) tanpa pergeseran layout.
    - Tata letak antarmuka utama mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
 
+4. **Ketahanan Geometri Spasial Leaflet (ADR-053):**
+   - Penanganan khusus untuk fitur spasial bertipe `GeometryCollection` pada peta desa (`dist/peta_desa_v3.geojson`).
+   - Skrip optimasi GeoJSON (`scripts/optimize_geojson.js`) secara rekursif memproses seluruh sub-poligon dalam array `geometries` dengan presisi 6 desimal.
+   - Bundel peta Leaflet (`pages-BdW-ZTL4.js`) dilengkapi *defensive guard* `(n.geometries ? n.geometries.length : 0)` untuk perlindungan fail-safe permanen dari kegagalan render peta.
+
+5. **Penyelarasan Kanonikal & Unifikasi Tab Baku (ADR-054):**
+   - **Sinkronisasi 36 Rute 100%:** Seluruh menu navigasi sidebar (`site-B5h-x_N5.js`) dan tag `<h1>` halaman diselaraskan ke nama kanonikal yang identik tanpa deviasi.
+   - **Executive Segmented Pill Tabs:** Standar tunggal tab navigasi di seluruh halaman aplikasi (`flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit`). Menghilangkan 5 variasi bentuk tab terfragmentasi dan seluruh inline hex hardcoded styling.
+   - **Pembersihan Kartu Pembungkus Global `Ft`:** Komponen global `Ft` di `index-CI1XYnwk.js` dikonversi menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain max-h-[60px]`).
+   - **Favicon Multi-Resolusi Terpadu:** Seluruh browser favicon (.ico dan .png 16×16 s/d 256×256) di-generate langsung dari aset master resmi `dist/logo.png`.
+
 ---
 
 ## 3. Lapisan Logika & Kontrol (Logic Layer)

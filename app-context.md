@@ -47,6 +47,12 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-054] Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku:
+- 100% Sinkronisasi 36 Judul Rute: Menyeragamkan seluruh menu navigasi sidebar (`site-B5h-x_N5.js`) dan tag `<h1>` halaman ke nama kanonikal baku.
+- Unifikasi Tab ke Executive Segmented Pill: Menstandarkan seluruh tab ke kontainer `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif `rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm` dan inaktif `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`, serta menghapus seluruh inline hex styling.
+- Pembersihan Kartu Pembungkus Global `Ft`: Mengubah komponen `Ft` di `index-CI1XYnwk.js` menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain select-none max-h-[60px]`) dan spacing `border-b border-slate-200 pb-5 mb-6`.
+- Harmonisasi `/livestock-flow` & `/sensus`: Menghubungkan PageHeader `Ft` dengan ilustrasi unboxed `livestock.png` dan `farmers.png`, serta mengelevasi tab Jenis Data dan Aspek Data ke posisi navigasi utama.
+- Favicon Resmi Terpadu: Meng-generate multi-resolusi `.ico` dan `.png` langsung dari master `dist/logo.png` (2480×2480 RGBA) dan menghubungkannya di `dist/index.html`.
 [ADR-053] Resolusi GeometryCollection Leaflet & Restorasi Peta Dashboard Eksekutif:
 - Root Cause: Skrip pemangkas presisi koordinat `scripts/optimize_geojson.js` hanya memetakan properti `coordinates` dan mengabaikan `geometries`. Akibatnya, 3 desa bertipe `GeometryCollection` (Desa Gemuruh ID 68, Desa Gumelemkulon ID 201, Desa Petambakan ID 239) di `dist/peta_desa_v3.geojson` kehilangan array poligonnya sehingga Leaflet melempar `TypeError: can't access property "length", n.geometries is undefined`.
 - Solusi Komprehensif:

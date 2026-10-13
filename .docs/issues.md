@@ -496,11 +496,33 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Menambahkan defensive guard pada handler `GeometryCollection` Leaflet di [`dist/assets/pages-BdW-ZTL4.js`](file:///home/gbc/Projects/pertanian-main/dist/assets/pages-BdW-ZTL4.js): `for(l=0,u=(n.geometries?n.geometries.length:0);l<u;l++)` untuk proteksi fail-safe ganda.
   4. Pengujian verifikasi: Memvalidasi 278 fitur desa (3 `GeometryCollection` non-kosong, 275 `Polygon`) lulus verifikasi integritas 100% dan berkas GeoJSON terlayani HTTP 200 OK.
 
+### [ISSUE-039] Fragmentasi Bentuk Tab, Inkonsistensi Judul Navbar vs Halaman, & Favicon Browser Non-Standar (ADR-054)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-13
+- **Komponen:** `dist/index.html`, `dist/favicon.ico`, `dist/assets/site-B5h-x_N5.js`, `dist/assets/index-CI1XYnwk.js`, `dist/assets/food-crops-BebUD7KU.js`, `dist/assets/livestock-flow-BDdzRa_Y.js`, `dist/assets/sensus-BWFI5HVu.js`, `dist/assets/farmers-RBAkXoyn.js`, `dist/assets/peternakan-susu-kulit-B1vV3OM5.js`.
+- **Deskripsi:** 
+  1. Ditemukan 12 rute navigasi dengan judul di sidebar/navbar tidak sinkron dengan judul `<h1>` halaman aplikasi (misal: "Tanaman Pangan" vs "Produksi Padi & Palawija", "Sebaran Pangan" vs "Peta Geospasial Sektoral").
+  2. Fragmentasi bentuk tab di seluruh halaman menjadi 5 variasi berbeda (underline tab, plain button, square boxed input ber-border kaku dengan `bg-blue-800`, inline hex hardcoded `#047857`, dan pill).
+  3. Komponen PageHeader global `Ft` di `index-CI1XYnwk.js` masih menyisakan pembungkus kartu (`rounded-xl shadow-sm border w-28 h-20 overflow-hidden`) yang menyebabkan layout shift dan melanggar aturan unboxed illustration.
+  4. Halaman `/livestock-flow` dan `/sensus` belum terhubung ke `PageHeader` resmi berilustrasi unboxed, dan tab datanya terjebak di dalam formulir filter grid.
+  5. Favicon browser pada peramban masih menggunakan default Vite SVG oranye/ungu dan belum mencerminkan logo master resmi aplikasi.
+- **Akar Masalah:**
+  1. Inkonsistensi penamaan antara katalog rute sidebar dan komponen halaman frontend akibat pengerjaan fase yang berbeda-beda.
+  2. Belum adanya unifikasi baku komponen tab di level token design system sebelum ADR-054.
+  3. Komponen `Ft` belum dibersihkan saat migrasi aset gambar unboxed ke `dist/img/domain/`.
+- **Solusi & Verifikasi:**
+  1. **Penyelarasan 36 Judul Rute (100% Sinkron):** Menyeragamkan seluruh judul sidebar (`site-B5h-x_N5.js`) dan tag `<h1>` halaman ke nama kanonikal baku.
+  2. **Unifikasi Tab Baku (Executive Segmented Pill):** Menstandarkan seluruh tab ke kontainer `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif `rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm` dan inaktif `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`, serta menghapus seluruh inline hex styling.
+  3. **Pembersihan Kartu `Ft`:** Mengubah komponen `Ft` di `index-CI1XYnwk.js` menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain select-none max-h-[60px]`) dan spacing `border-b border-slate-200 pb-5 mb-6`.
+  4. **Harmonisasi `/livestock-flow` & `/sensus`:** Menghubungkan PageHeader `Ft` dengan ilustrasi unboxed `livestock.png` dan `farmers.png`, serta mengelevasi tab Jenis Data dan Aspek Data ke posisi navigasi utama.
+  5. **Favicon Resmi Terpadu:** Meng-generate multi-resolusi `.ico` dan `.png` langsung dari master `dist/logo.png` (2480×2480 RGBA) dan menghubungkannya di `dist/index.html`.
+  6. Pengujian verifikasi: Seluruh endpoint terlayani HTTP 200 OK, validasi AST 0 galat, dan keselarasan visual 100% tervalidasi.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 38 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 39 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

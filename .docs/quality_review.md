@@ -24,6 +24,8 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Redesign Portal Login Asimetris & Anti-AI-Slop (ADR-028)** | Sangat Baik | ✅ PASSED | Rekonstruksi layout split 2-kolom asimetris (55:45), citra latar sawah lokal Banjarnegara, eliminasi buzzword/hiperbola, quick role selector, dan input password interaktif berstandar WCAG AA. |
 | **Stabilitas Routing SPA & Anti-Redirect-Loop (ADR-029)** | Sangat Baik | ✅ PASSED | Eliminasi *infinite client-side redirect loop* pada rute `/kecamatan` akibat anomali scoring trailing-slash React Router v6; normalisasi rute didelegasikan secara terpusat ke layer Express HTTP redirect. |
 | **Imunitas Variable Shadowing & Responsivitas Cross-Resolution Login (ADR-030)** | Sangat Baik | ✅ PASSED | Refactor variabel state form login deskriptif mengeliminasi galat `createElement('')` pada akun bidang teknis; pemindahan CSS layout split login ke rules eksplisit (`≥768px`, max-width 380px) menstabilkan rendering pada seluruh ukuran viewport (mobile s/d desktop 1366px+). |
+| **Ketahanan Spasial & Geometri GeoJSON (ADR-053)** | Sangat Baik | ✅ PASSED | Rekursi poligon `GeometryCollection` pada skrip optimasi GeoJSON dan defensive guard `(n.geometries ? n.geometries.length : 0)` pada Leaflet `pages-BdW-ZTL4.js` mengeliminasi fatal crash saat merender peta desa. |
+| **Penyelarasan Kanonikal & Unifikasi Tab Baku (ADR-054)** | Sangat Baik | ✅ PASSED | 100% sinkronisasi 36 judul rute navbar vs H1, unifikasi 5 variasi bentuk tab ke Executive Segmented Pill baku, eliminasi pembungkus kartu pada `Ft`, dan generasi favicon browser multi-ukuran dari master logo resmi. |
 
 ---
 
