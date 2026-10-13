@@ -700,6 +700,8 @@ Pembaruan **ADR-054** menyelesaikan audit view aplikasi secara faktual di 36 rut
 4. **Unifikasi Bentuk Tab ke Executive Segmented Pill:** 
    - Menghilangkan 5 variasi bentuk tab menjadi 1 standar tunggal: kontainer `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif `rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm` dan item inaktif `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`.
    - Menghapus seluruh pelanggaran inline hardcoded hex style pada `/farmers` dan `/peternakan/susu-kulit`.
+   - Menyempurnakan `/livestock-flow` (Lalu Lintas Ternak): mengintegrasikan PageHeader `Ft` dengan ilustrasi unboxed `livestock.png` dan memigrasikan 6 tab Jenis Data dari form input berbingkai kaku menjadi Executive Segmented Pill utama di bawah header.
+   - Menyempurnakan `/sensus` (Sensus Pertanian 2023) dan `/food-crops` (Padi & Palawija): mengadopsi ilustrasi unboxed dan menata ulang tab Aspek Data, Kelompok Komoditas, serta Indikator ke Executive Segmented Pill.
 5. **Favicon Resmi Terpadu:** Seluruh browser favicon di-generate langsung dari aset master resmi `dist/logo.png` (2480×2480 RGBA) dengan resolusi multi-ukuran 16×16 hingga 256×256.
 
 ---
