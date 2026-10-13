@@ -461,9 +461,29 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ---
 
+### [ISSUE-037] SyntaxError Unexpected Token & Eliminasi Total Pembungkus Card AI-Slop pada Gambar Domain Header
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-13
+- **Komponen:** `dist/assets/index-CI1XYnwk.js`, `dist/assets/suitability-BoKTpxZD.js`, `dist/assets/farmers-RBAkXoyn.js`, `dist/img/domain/*`.
+- **Deskripsi:** 
+  1. Terjadi galat runtime `SyntaxError: Unexpected identifier 'bg'` pada `index-CI1XYnwk.js` dan `SyntaxError: Unexpected token ')'` pada `farmers-RBAkXoyn.js` pasca penyesuaian chunk.
+  2. Gambar ilustrasi header sempat dibungkus dengan kartu kotak putih bersudut melengkung (`bg-white border border-slate-200 rounded-xl shadow-sm`) yang menciptakan visual AI-slop dan memakan ruang vertikal.
+  3. Aset gambar domain dipindahkan ke folder khusus `dist/img/domain/` dan sempat tidak terlayani akibat ketidaksesuaian path URL.
+- **Akar Masalah:**
+  1. Penulisan template literal dengan backtick melalui perintah shell PowerShell meng-escape karakter backtick sehingga string CSS dievaluasi sebagai identifier JavaScript mentah.
+  2. Penataan regex penggantian string menyisakan penutup tanda kurung duplikat.
+  3. Penggunaan pembungkus kartu kaku melanggar prinsip desain anti-slop Rule 14 & Rule 18 (unboxed illustration).
+- **Solusi & Verifikasi:**
+  1. Mengimplementasikan skrip terstandar [`scripts/fix_index_ft.js`](file:///e:/Project/pertanian_main/scripts/fix_index_ft.js) dan [`scripts/remove_card_wrappers.js`](file:///e:/Project/pertanian_main/scripts/remove_card_wrappers.js) dengan string aman tanpa ketergantungan escape shell.
+  2. Menghapus 100% pembungkus kartu/border/shadow di seluruh 13 halaman sektor domain, menggantinya dengan ilustrasi murni (*unboxed illustration*) berukuran `h-14 sm:h-16 w-auto object-contain` (`maxHeight: 60px`).
+  3. Memetakan seluruh rute gambar secara eksklusif ke `/img/domain/<file>.png`.
+  4. Menjalankan verifikasi parser Node.js terhadap seluruh 84 berkas bundle JS di `dist/assets/` (`Checked 84 JS bundles. Custom errors: 0`) dan memvalidasi seluruh 13 URL gambar domain mengembalikan HTTP 200 OK.
+
+---
+
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 36 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 37 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

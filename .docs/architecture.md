@@ -52,9 +52,12 @@ graph TD
    - **True-Lazy Layer Loading:** Bundel frontend (`pages-BdW-ZTL4.js`) mengimplementasikan pemuatan on-demand via event Leaflet `overlayadd`. Layer berat (Jaringan Jalan 5,5 MB, Sawah 1,1 MB, Kebun 1,8 MB, Ladang 1,1 MB) hanya diunduh saat pengguna mencentang toggle layer bersangkutan, memangkas transfer awal halaman sebesar 85,8% (~3,3 MB initial payload).
    - **Ketahanan Cache Browser:** Berkas `peta_desa_v3.geojson` yang terpangkas menjadi 2,48 MB kini muat aman dalam kuota 5 MB `localStorage` browser tanpa `QuotaExceededError`. Dilengkapi header HTTP `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
 
-3. **Arsitektur Aset Bersih & Layout Normalisasi Header:**
-   - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (106 berkas terhubung ke entry point `index-C7-MA-gB.js` dan CSS `index-CSp9XjIe.css`), mengeliminasi 2.714 berkas artefak build usang dan 22 file CSS mati.
-   - Tata letak antarmuka utama (`default-PIMY9oy9.js` / `pages-COv__DbI.js`) mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
+3. **Arsitektur Aset Bersih & Ilustrasi Header Sektoral (ADR-052):**
+   - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (84 bundel JS aktif terhubung ke entry point `index-CI1XYnwk.js` dan CSS `index-DmHYJUQI.css`).
+   - Seluruh 13 aset ilustrasi sektor domain disimpan secara eksklusif dan kanonikal di direktori `./dist/img/domain/` (`dashboard.png`, `prediction.png`, `horticulture.png`, `plantation.png`, `livestock.png`, `fisheries.png`, `food-security.png`, `supply-chain.png`, `price-volatility.png`, `farmers.png`, `economic-value.png`, `Irrigation512px.png`, `suitability.png`).
+   - Berkas `dashboard.png` dioptimasi melalui kompresi Lanczos retina 512px, memangkas ukuran dari 1,06 MB menjadi 125 KB (-88,2%).
+   - Seluruh gambar domain disajikan secara alami (*unboxed illustration*) tanpa kotak pembungkus/border/shadow artifisial, dengan proporsi `h-14 sm:h-16 w-auto object-contain` (`maxHeight: 60px`) sehingga tinggi seluruh header halaman seragam (~72–80px) tanpa pergeseran layout.
+   - Tata letak antarmuka utama mengimplementasikan **Avatar Dropdown Interaktif** setinggi `72px`, merapikan tautan utilitas (Info, Panduan, Akses Portal Admin, dan Profil Akses) ke dalam wadah floating menu terpadu.
 
 ---
 

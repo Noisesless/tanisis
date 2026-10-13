@@ -1,5 +1,5 @@
 <!-- app-context.md v2.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-13T13:00:00+07:00 | Phase: Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif (ADR-051) | Build: OK -->
+<!-- Last: 2026-10-13T14:45:00+07:00 | Phase: Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration) (ADR-052) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif (ADR-051) done=ALL last=Optimasi berkas GeoJSON spasial (6 desimal, 2D flatten, strip metadata, -41.1% size) dan implementasi true-lazy loading on-demand pada bundel frontend dashboard pages-BdW-ZTL4.js next=Monitoring performa pemuatan peta dan kesiapan deployment produksi
+phase=Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration) (ADR-052) done=ALL last=Penyatuan 13 ilustrasi sektor domain ke dist/img/domain/, penyeragaman unboxed natural illustration (h-14 sm:h-16 w-auto, maxHeight 60px), kompresi dashboard.png (-88.2%), dan eliminasi total pembungkus card/border/shadow AI-slop next=Monitoring performa pemuatan visual dan kesiapan rilis produksi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,13 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-052] Integrasi & Penyeragaman 13 Ilustrasi Domain Header (Anti-Slop Clean Illustration):
+- Mengonsolidasikan seluruh 13 aset ilustrasi sektor domain secara eksklusif ke direktori kanonikal `dist/img/domain/` (`dashboard.png`, `prediction.png`, `horticulture.png`, `plantation.png`, `livestock.png`, `fisheries.png`, `food-security.png`, `supply-chain.png`, `price-volatility.png`, `farmers.png`, `economic-value.png`, `Irrigation512px.png`, `suitability.png`) tanpa menduplikasi file keluar.
+- Mengompresi berkas `dashboard.png` dari 1,06 MB (22 megapixel) menjadi 125 KB (-88,2%) dengan resolusi Retina 512px yang tetap tajam dan cepat dimuat.
+- Menghapus 100% pembungkus kartu buatan (`bg-white border border-slate-200 rounded-xl shadow-sm`) yang dinilai melanggar estetika profesional dan mengadopsi prinsip *Unboxed Natural Illustration*: gambar disajikan murni, menyatu dengan latar belakang header, dengan ukuran `h-14 sm:h-16 w-auto object-contain select-none` (ketinggian dibatasi maksimal `60px`).
+- Menyeragamkan tinggi seluruh header halaman di SISPERTANI (~72–80px) dan mengeliminasi pergeseran tata letak vertikal (*zero layout shift*) saat navigasi antar-menu.
+- Mengintegrasikan gambar secara otomatis pada komponen PageHeader `Ft` di `dist/assets/index-CI1XYnwk.js` (Hortikultura, Perkebunan, Peternakan, Lahan) serta template individual (`/farmers`, `/prediction`, `/suitability`, dll).
+- Memvalidasi seluruh 84 berkas bundle JS di `dist/assets/` dengan parser Node.js (`Checked 84 JS bundles. Custom errors: 0`) dan memverifikasi seluruh 13 endpoint gambar domain mengembalikan HTTP 200 OK.
 [ADR-051] Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif:
 - Mengidentifikasi akar penyebab pemuatan lambat peta di produksi: total payload GeoJSON mentah mencapai 23,30 MB tanpa kompresi gzip (akibat bypass kompresi di src/server.js untuk mencegah ERR_HTTP2_PROTOCOL_ERROR pada Nginx) dan pemuatan preload serentak (setTimeout 2,2s) untuk seluruh layer yang tidak dicentang di frontend.
 - Membangun skrip optimasi deterministik `scripts/optimize_geojson.js` (`npm run geojson:optimize`): memangkas koordinat floating-point ke 6 desimal (~11 cm akurasi), mengeliminasi ketinggian Z elevasi 0 (2D flattening), serta membersihkan atribut metadata shapefile mentah yang tidak digunakan (METADATA, SRS_ID, PUDATE, AQDATE, KODLCO, SHAPE_Leng, SHAPE_Area).

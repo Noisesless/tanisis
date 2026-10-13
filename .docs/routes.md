@@ -6,39 +6,39 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 
 ## 1. Frontend Routes (Pages & Views)
 
-| Route Path | Kategori Navigasi | Page Title | Auth | Status |
-|---|---|---|---|---|
-| `/` | Eksekutif & Spasial | Dashboard Eksekutif SISPERTANI | Publik | STABLE |
-| `/sebaran/pangan` | Eksekutif & Spasial | Peta Geospasial WebGIS Tutupan Lahan | Publik | STABLE |
-| `/prediction` | Sektor Komoditas | Prediksi Panen Padi & Palawija | Publik | STABLE |
-| `/food-crops` | Sektor Komoditas | Produksi Tanaman Pangan (Padi & Palawija) | Publik | STABLE |
-| `/komoditas-unggulan/:bidang` | Sektor Komoditas | Komoditas & Varietas Unggulan Dinamis per Bidang | Publik | STABLE |
-| `/nilai-ekonomi/:bidang`| Sektor Komoditas | Valuasi Nilai Ekonomi Dinamis (Tab Terisolasi: /hortikultura hanya tab Hortikultura, /perkebunan hanya tab Perkebunan) | Publik | STABLE |
-| `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah, Biofarmaka & Tanaman Hias (Responsive 1366x768 2x2 Matrix) | Publik | STABLE |
-| `/plantation` | Sektor Komoditas | Analitik Perkebunan & Komoditas Khas | Publik | STABLE |
-| `/ltt-katam` | Sektor Komoditas | Luas Tambah Tanam (LTT) & Kalender Tanam | Publik | STABLE |
-| `/livestock` | Sektor Komoditas | Populasi Ternak Murni & Estimasi Ternak Dijual Hidup (inc. Domba Batur) | Publik | STABLE |
-| `/peternakan/susu-kulit`| Sektor Komoditas | Produksi Utama & Hasil Ikutan per Spesies + Simulasi Lahan HPT | Publik | STABLE |
-| `/livestock-flow` | Sektor Komoditas | Lalu Lintas Ternak, Pasar Hewan & Pemotongan RPH | Publik | STABLE |
-| `/nilai-ekonomi/peternakan`| Sektor Komoditas | Nilai Ekonomi & Ekosistem Usaha Peternakan (4 Tab: Valuasi, UMKM Pakan, Poultry Shop Maps, Usaha Ber-NKV) | Publik | STABLE |
-| `/fisheries` | Sektor Komoditas | Produksi Perikanan & Budidaya Air Tawar | Publik | STABLE |
-| `/food-security` | Kebijakan & Ketapang | Ketersediaan Beras & Stok Lumbung Pangan | Publik | STABLE |
-| `/fsva` | Kebijakan & Ketapang | Peta Kerentanan & Ketahanan Pangan Desa (FSVA 16 Indikator Validasi Bapanas Terintegrasi MariaDB) | Publik | STABLE |
-| `/supply-chain` | Kebijakan & Ketapang | Rantai Pasok & Distribusi Beras (RMU) | Publik | STABLE |
-| `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar & Inflasi Bahan Pangan | Publik | STABLE |
-| `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | Publik | STABLE |
-| `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Pertanian Daerah | Publik | STABLE |
-| `/farmers` / `/farmers?klaster=tani` | Kelembagaan & Data | Direktori Poktan, Gapoktan & KWT (2.687 lembaga binaan) | Publik | STABLE |
-| `/farmers?klaster=ekonomi` | Kelembagaan & Data | Kelembagaan Ekonomi Petani (137 KEP) & Penyuluhan (36 Posluhdes, 156 PPS) | Publik | STABLE |
-| `/farmers?klaster=sektoral` | Kelembagaan & Data | Kelembagaan Sektoral & Pendukung (Perikanan, UPJA, P4S, Juleha) | Publik | STABLE |
-| `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | Publik | STABLE |
-| `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | Publik | STABLE |
-| `/suitability` | Kelembagaan & Data | Kesesuaian Lahan & Komoditas Unggulan (Pangan, Hortikultura & Perkebunan) | Publik | STABLE |
-| `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara (Peta Spasial & Rekapitulasi) | Publik | STABLE |
-| `/kecamatan/:slug` | Kelembagaan & Data | Profil Statistik Komoditas & Wilayah Kecamatan Spesifik | Publik | STABLE |
-| `/admin` | Portal Admin | Portal Dasbor Admin (Form Login Asimetris Sawah Banjarnegara & Kelola Excel RBAC 20 Domain) | Admin/Bidang | STABLE |
-| `/info` | Bantuan & Info | Informasi Umum SISPERTANI | Publik | STABLE |
-| `/manual` | Bantuan & Info | Panduan Penggunaan / Manual Book | Publik | STABLE |
+| Route Path | Kategori Navigasi | Page Title | Ilustrasi Header (/img/domain/) | Auth | Status |
+|---|---|---|---|---|---|
+| `/` | Eksekutif & Spasial | Dashboard Eksekutif SISPERTANI | `dashboard.png` | Publik | STABLE |
+| `/sebaran/pangan` | Eksekutif & Spasial | Peta Geospasial WebGIS Tutupan Lahan | - | Publik | STABLE |
+| `/prediction` | Sektor Komoditas | Prediksi Panen Padi & Palawija | `prediction.png` | Publik | STABLE |
+| `/food-crops` | Sektor Komoditas | Produksi Tanaman Pangan (Padi & Palawija) | - | Publik | STABLE |
+| `/komoditas-unggulan/:bidang` | Sektor Komoditas | Komoditas & Varietas Unggulan Dinamis per Bidang | - | Publik | STABLE |
+| `/nilai-ekonomi/:bidang`| Sektor Komoditas | Valuasi Nilai Ekonomi Dinamis (Tab Terisolasi) | - | Publik | STABLE |
+| `/horticulture` | Sektor Komoditas | Produksi Sayuran, Buah, Biofarmaka & Tanaman Hias | `horticulture.png` | Publik | STABLE |
+| `/plantation` | Sektor Komoditas | Analitik Perkebunan & Komoditas Khas | `plantation.png` | Publik | STABLE |
+| `/ltt-katam` | Sektor Komoditas | Luas Tambah Tanam (LTT) & Kalender Tanam | - | Publik | STABLE |
+| `/livestock` | Sektor Komoditas | Populasi Ternak Murni & Estimasi Ternak Dijual Hidup | `livestock.png` | Publik | STABLE |
+| `/peternakan/susu-kulit`| Sektor Komoditas | Produksi Utama & Hasil Ikutan per Spesies | - | Publik | STABLE |
+| `/livestock-flow` | Sektor Komoditas | Lalu Lintas Ternak, Pasar Hewan & RPH | - | Publik | STABLE |
+| `/nilai-ekonomi/peternakan`| Sektor Komoditas | Nilai Ekonomi & Ekosistem Usaha Peternakan | - | Publik | STABLE |
+| `/fisheries` | Sektor Komoditas | Produksi Perikanan & Budidaya Air Tawar | `fisheries.png` | Publik | STABLE |
+| `/food-security` | Kebijakan & Ketapang | Ketersediaan Beras & Stok Lumbung Pangan | `food-security.png` | Publik | STABLE |
+| `/fsva` | Kebijakan & Ketapang | Peta Kerentanan & Ketahanan Pangan Desa | - | Publik | STABLE |
+| `/supply-chain` | Kebijakan & Ketapang | Rantai Pasok & Distribusi Beras (RMU) | `supply-chain.png` | Publik | STABLE |
+| `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar & Inflasi Bahan Pangan | `price-volatility.png` | Publik | STABLE |
+| `/renstra` | Kebijakan & Ketapang | Analisis Indikator Renstra Distankan & RKPD | - | Publik | STABLE |
+| `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Pertanian Daerah | - | Publik | STABLE |
+| `/farmers` / `/farmers?klaster=tani` | Kelembagaan & Data | Direktori Poktan, Gapoktan & KWT (2.687 lembaga) | `farmers.png` | Publik | STABLE |
+| `/farmers?klaster=ekonomi` | Kelembagaan & Data | Kelembagaan Ekonomi Petani (137 KEP) & Penyuluhan | `farmers.png` | Publik | STABLE |
+| `/farmers?klaster=sektoral` | Kelembagaan & Data | Kelembagaan Sektoral & Pendukung (Perikanan, UPJA) | `farmers.png` | Publik | STABLE |
+| `/government-assistance`| Kelembagaan & Data | Penyaluran Bantuan Pemerintah & Alsintan | `economic-value.png` | Publik | STABLE |
+| `/lahan` | Kelembagaan & Data | Statistik Luas & Penggunaan Lahan | `Irrigation512px.png` | Publik | STABLE |
+| `/suitability` | Kelembagaan & Data | Kesesuaian Lahan & Komoditas Unggulan | `suitability.png` | Publik | STABLE |
+| `/kecamatan` | Kelembagaan & Data | Profil Statistik 20 Kecamatan Banjarnegara | - | Publik | STABLE |
+| `/kecamatan/:slug` | Kelembagaan & Data | Profil Statistik Komoditas Wilayah Spesifik | - | Publik | STABLE |
+| `/admin` | Portal Admin | Portal Dasbor Admin | - | Admin/Bidang | STABLE |
+| `/info` | Bantuan & Info | Informasi Umum SISPERTANI | - | Publik | STABLE |
+| `/manual` | Bantuan & Info | Panduan Penggunaan / Manual Book | - | Publik | STABLE |
 
 ---
 

@@ -673,5 +673,23 @@ Sesuai pembaruan **ADR-028**, antarmuka otentikasi portal administrasi `/admin` 
 
 ---
 
-## 8. Ringkasan Single Source of Truth
+## 8. Spesifikasi Ilustrasi Header Sektoral (Anti-AI-Slop Clean Illustration)
+
+Sesuai pembaruan **ADR-052**, seluruh halaman domain sektoral dilengkapi dengan ilustrasi visual kanonikal dari `dist/img/domain/` dengan aturan ketat:
+
+### A. Prinsip Anti-AI-Slop (No Card / No Border Law)
+1. **Dilarang Membungkus dengan Card Box:**
+   Dilarang keras membungkus gambar ilustrasi dengan kontainer kotak artifisial seperti `bg-white border border-slate-200 rounded-xl shadow-sm`. Praktik ini merupakan ciri khas *AI-slop* yang membuat halaman tampak kaku dan mempersempit ruang vertikal.
+2. **Unboxed Organic Illustration:**
+   Gambar ilustrasi wajib disajikan secara alami (*unboxed*), transparan menyatu dengan latar belakang kanvas header, dan rata kanan (*right-aligned*) mendampingi judul serta tombol aksi.
+3. **Penskalaan Proporsional:**
+   - Kelas Tailwind: `h-14 sm:h-16 w-auto object-contain shrink-0 select-none`
+   - Batas Tinggi Maksimal: `maxHeight: 60px`
+   - Dampak: Tinggi seluruh header halaman di SISPERTANI seragam (~72–80px), mencegah pergeseran tata letak vertikal (*zero layout shift*) saat berpindah antar menu.
+4. **Penyimpanan Eksklusif:**
+   Seluruh 13 aset gambar sektoral disimpan secara eksklusif di direktori `dist/img/domain/<file>.png` tanpa ada file yang diduplikasi keluar.
+
+---
+
+## 9. Ringkasan Single Source of Truth
 Seluruh kode CSS baru, komponen React/Vite, pembaruan rute, maupun tampilan analitik pada SISPERTANI Banjarnegara wajib mematuhi standar dokumen `.docs/design-system.md` ini tanpa deviasi.
