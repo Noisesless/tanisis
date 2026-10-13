@@ -28,6 +28,7 @@ pnpm-debug.log*
 *.map
 *.bak
 dist_backup_local/
+dist/.geojson_original_backup/
 scratch/
 
 # Database Dumps & Local DBs

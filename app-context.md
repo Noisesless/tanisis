@@ -1,5 +1,5 @@
 <!-- app-context.md v2.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-10T16:22:00+07:00 | Phase: Bantuan Barang/Uang, 17 Domain Admin Unifikasi, & Map Performance Optimization | Build: OK -->
+<!-- Last: 2026-10-13T13:00:00+07:00 | Phase: Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif (ADR-051) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Pembaruan Manual Penggunaan (/manual) & Kesesuaian Lahan Multi-Sektor (ADR-050) done=ALL last=Pembaruan halaman /manual sesuai fitur aplikasi terkini dengan bahasa lugas dan bebas buzzword (24 menu, panduan per halaman, peta, dan alur penggunaan) serta sinkronisasi modul build deterministik next=Optimasi berkas GeoJSON peta dashboard eksekutif di produksi agar load lebih ringan (audit ukuran, simplifikasi koordinat/poligon, progressive loading)
+phase=Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif (ADR-051) done=ALL last=Optimasi berkas GeoJSON spasial (6 desimal, 2D flatten, strip metadata, -41.1% size) dan implementasi true-lazy loading on-demand pada bundel frontend dashboard pages-BdW-ZTL4.js next=Monitoring performa pemuatan peta dan kesiapan deployment produksi
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,12 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-051] Optimasi Berkas GeoJSON & True-Lazy Loading Layer Peta Dashboard Eksekutif:
+- Mengidentifikasi akar penyebab pemuatan lambat peta di produksi: total payload GeoJSON mentah mencapai 23,30 MB tanpa kompresi gzip (akibat bypass kompresi di src/server.js untuk mencegah ERR_HTTP2_PROTOCOL_ERROR pada Nginx) dan pemuatan preload serentak (setTimeout 2,2s) untuk seluruh layer yang tidak dicentang di frontend.
+- Membangun skrip optimasi deterministik `scripts/optimize_geojson.js` (`npm run geojson:optimize`): memangkas koordinat floating-point ke 6 desimal (~11 cm akurasi), mengeliminasi ketinggian Z elevasi 0 (2D flattening), serta membersihkan atribut metadata shapefile mentah yang tidak digunakan (METADATA, SRS_ID, PUDATE, AQDATE, KODLCO, SHAPE_Leng, SHAPE_Area).
+- Hasil optimasi memangkas ukuran total dari 23,30 MB menjadi 13,72 MB (-41,1% / hemat 9,57 MB); peta_desa_v3.geojson terpangkas dari 4,25 MB ke 2,48 MB (-41,5%) sehingga muat aman dalam kuota localStorage 5 MB browser tanpa QuotaExceededError.
+- Menerapkan strategi True-Lazy Loading pada `dist/assets/pages-BdW-ZTL4.js` via `scripts/patch_pages_lazy_layers.js`: menghapus preload massal latar belakang 18 MB dan menginisialisasi layer unchecked dengan FeatureCollection kosong. Layer tematik berat (Jaringan Jalan, Sawah, Kebun, Ladang) kini diunduh secara on-demand via event 'overlayadd' Leaflet hanya saat pengguna mencentang toggle layer bersangkutan.
+- Beban transfer awal peta turun drastis dari 23,3 MB menjadi ~3,3 MB (-85,8%), menjamin peta dashboard terbuka instan pada koneksi seluler 4G/3G dan jaringan kantor tanpa memicu saturasi bandwidth maupun pembatalan stream HTTP/2.
 [ADR-050] Rekonstruksi Halaman Kesesuaian Lahan (/suitability) Multi-Sektor (Pangan, Hortikultura, Perkebunan):
 - Mengeliminasi pembatasan monokultur 8 sayuran dan mengintegrasikan 3 sektor penuh secara terpadu: Tanaman Pangan (padi sawah/ladang & palawija), Hortikultura (sayuran, buah tahunan, biofarmaka), dan Perkebunan Rakyat (kopi robusta, teh, kelapa, cengkeh, dll.).
 - Mengimplementasikan modul evaluasi `src/lib/kesesuaian.js` dan endpoint `GET /api/v1/lahan/kesesuaian` terhubung langsung ke MariaDB `pertasis` (Zero Dummy Data, performa < 40ms).

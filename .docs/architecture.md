@@ -45,9 +45,12 @@ graph TD
    - Dikompilasi ke direktori `./dist` dan disajikan langsung oleh Express melalui middleware `express.static(distRoot)`.
    - **SPA Fallback Routing:** Seluruh permintaan `GET` tanpa ekstensi berkas yang bukan merupakan rute `/api` atau `/sispertani-api` dialihkan secara otomatis ke `./dist/index.html`. Hal ini memastikan fitur reload/refresh halaman pada rute dalam (seperti `/desa/:kecamatan/:desa` atau `/bidang/:nama`) tetap berjalan tanpa galat 404. Normalisasi rute bertrailing slash (seperti `/kecamatan/` -> `/kecamatan` dan `/sebaran/` -> `/sebaran/pangan`) ditangani secara definitif pada layer HTTP server Express sebelum SPA fallback, mencegah potensi konflik scoring regex rute React Router v6 di sisi klien.
 
-2. **Lapisan Spasial GIS (Geographic Information System):**
-   - Menggunakan pustaka MapLibre GL untuk merender peta interaktif.
+2. **Lapisan Spasial GIS (Geographic Information System & True-Lazy Loading):**
+   - Menggunakan pustaka Leaflet dan MapLibre GL untuk merender peta interaktif dashboard eksekutif dan sebaran komoditas.
    - Peta dan data vektor disajikan dalam format GeoJSON statis dari direktori `./dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`, `danau.geojson`, `sungai.geojson`, `jalan.geojson`, dll).
+   - **Optimasi Geometri & Koordinat (ADR-051):** Seluruh berkas GeoJSON dioptimasi via `scripts/optimize_geojson.js` (`npm run geojson:optimize`) dengan pembulatan koordinat 6 desimal (~11 cm akurasi), 2D flattening (eliminasi elevasi Z `0`), serta pembersihan metadata shapefile mentah (`METADATA`, `SRS_ID`, dll), memangkas ukuran total dari 23,30 MB menjadi 13,72 MB (-41,1%).
+   - **True-Lazy Layer Loading:** Bundel frontend (`pages-BdW-ZTL4.js`) mengimplementasikan pemuatan on-demand via event Leaflet `overlayadd`. Layer berat (Jaringan Jalan 5,5 MB, Sawah 1,1 MB, Kebun 1,8 MB, Ladang 1,1 MB) hanya diunduh saat pengguna mencentang toggle layer bersangkutan, memangkas transfer awal halaman sebesar 85,8% (~3,3 MB initial payload).
+   - **Ketahanan Cache Browser:** Berkas `peta_desa_v3.geojson` yang terpangkas menjadi 2,48 MB kini muat aman dalam kuota 5 MB `localStorage` browser tanpa `QuotaExceededError`. Dilengkapi header HTTP `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
 
 3. **Arsitektur Aset Bersih & Layout Normalisasi Header:**
    - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (106 berkas terhubung ke entry point `index-C7-MA-gB.js` dan CSS `index-CSp9XjIe.css`), mengeliminasi 2.714 berkas artefak build usang dan 22 file CSS mati.

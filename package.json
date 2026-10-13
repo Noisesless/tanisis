@@ -13,6 +13,7 @@
     "db:patch-unggulan": "node --env-file=.env scripts/patch_komoditas_unggulan.js",
     "db:import-distankan": "node --env-file=.env scripts/import_unmerged_distankan.js",
     "db:import-fsva": "node --env-file=.env scripts/import_fsva_desa.js",
+    "geojson:optimize": "node scripts/optimize_geojson.js",
     "rag:offline": "python scripts/offline_rag.py"
   },
   "dependencies": {
