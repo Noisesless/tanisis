@@ -702,7 +702,12 @@ Pembaruan **ADR-054** menyelesaikan audit view aplikasi secara faktual di 36 rut
    - Menghapus seluruh pelanggaran inline hardcoded hex style pada `/farmers` dan `/peternakan/susu-kulit`.
    - Menyempurnakan `/livestock-flow` (Lalu Lintas Ternak): mengintegrasikan PageHeader `Ft` dengan ilustrasi unboxed `livestock.png` dan memigrasikan 6 tab Jenis Data dari form input berbingkai kaku menjadi Executive Segmented Pill utama di bawah header.
    - Menyempurnakan `/sensus` (Sensus Pertanian 2023) dan `/food-crops` (Padi & Palawija): mengadopsi ilustrasi unboxed dan menata ulang tab Aspek Data, Kelompok Komoditas, serta Indikator ke Executive Segmented Pill.
-5. **Favicon Resmi Terpadu:** Seluruh browser favicon di-generate langsung dari aset master resmi `dist/logo.png` (2480×2480 RGBA) dengan resolusi multi-ukuran 16×16 hingga 256×256.
+5. **Favicon Resmi Terpadu & Multi-Resolusi (ADR-055):**
+   - Seluruh favicon browser di-generate langsung dari aset master resmi `dist/logo.png` (2480×2480 RGBA).
+   - Format `.ico` multi-frame: `dist/favicon.ico` dan `dist/assets/favicon-C3aH8cG9.ico` mencakup 7 frame terintegrasi (16×16, 24×24, 32×32, 48×48, 64×64, 128×128, 256×256).
+   - Format PNG resolusi tinggi: `dist/favicon-16x16.png`, `32x32.png`, `48x48.png`, `64x64.png`, `192x192.png`, dan `512x512.png`.
+   - Penerapan cache-busting: `dist/index.html` menggunakan parameter query `?v=logo` pada seluruh deklarasi `<link rel="icon">`, `<link rel="shortcut icon">`, dan `<link rel="apple-touch-icon">` untuk memastikan peramban selalu memuat logo terbaru tanpa terhambat cache lama.
+
 
 ---
 

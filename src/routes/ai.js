@@ -6,9 +6,10 @@ const aiRouter = express.Router();
 
 // Daftar model Gemini resmi yang didukung dengan fallback otomatis
 const SUPPORTED_MODELS = [
+  "gemini-3.5-flash-lite",
   "gemini-flash-lite-latest",
   "gemini-flash-latest",
-  "gemini-2.0-flash-lite",
+  "gemini-3.5-flash",
   "gemini-3.8-flash"
 ];
 
@@ -511,9 +512,9 @@ async function retrieveDynamicContext(userQuery) {
       // Cek apakah user menanyakan desa/kecamatan tertentu
       let filterSql = "WHERE 1=1";
       const filterParams = [];
-      if (kecamatanParam) {
+      if (matchedKec) {
         filterSql += " AND LOWER(nama_kecamatan) = LOWER(?)";
-        filterParams.push(kecamatanParam);
+        filterParams.push(matchedKec.toLowerCase());
       }
 
       const fsvaDesaRows = await q(
@@ -848,12 +849,9 @@ aiRouter.post("/chat", async (req, res) => {
 
       if (!upstream.ok) {
         const errorText = await upstream.text().catch(() => `HTTP ${upstream.status}`);
-        console.error(`[AI-PROXY] Upstream error from ${model} (${upstream.status}):`, errorText);
-        return res.status(upstream.status).json({
-          error: "upstream_error",
-          status: upstream.status,
-          message: "Layanan AI mengembalikan status error."
-        });
+        console.warn(`[AI-PROXY] Upstream error from ${model} (${upstream.status}):`, errorText);
+        lastError = errorText;
+        continue;
       }
 
       // Stream sukses
@@ -886,29 +884,35 @@ aiRouter.post("/chat", async (req, res) => {
   }
 
   if (!success && !res.headersSent) {
-    if (dynamicContext) {
-      console.log("[AI-PROXY] Upstream unavilable, streaming local RAG fallback response...");
+    console.log("[AI-PROXY] Upstream unavilable, streaming local fallback response...");
+    const fallbackText = dynamicContext
+      ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung secara faktual dari basis data resmi SISPERTANI Banjarnegara)*`
+      : `Halo! Saya **Si Pertani**, asisten AI cerdas SISPERTANI Kabupaten Banjarnegara.\n\nSaat ini koneksi upstream AI sedang mengalami lonjakan beban sementara. Anda tetap dapat menanyakan data statistik riil seputar pertanian, perkebunan, hortikultura, peternakan, perikanan, atau kelembagaan di Kabupaten Banjarnegara (misalnya: *produksi padi*, *komoditas unggulan*, *kelompok tani*, atau *populasi ternak*), dan saya akan menyajikannya langsung dari database SISPERTANI.`;
+
+    if (stream) {
       res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache, no-transform",
         "Connection": "keep-alive",
         "X-Accel-Buffering": "no"
       });
-      const localReply = `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung dari basis data resmi SISPERTANI Banjarnegara)*`;
-      const lines = localReply.split("\n");
+      const lines = fallbackText.split("\n");
       for (const l of lines) {
         res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: l + "\n" } }] })}\n\n`);
       }
       res.write("data: [DONE]\n\n");
       res.end();
       return;
+    } else {
+      return res.json({
+        choices: [{
+          message: {
+            role: "assistant",
+            content: fallbackText
+          }
+        }]
+      });
     }
-
-    res.status(503).json({
-      error: "service_unavailable",
-      message: "Seluruh model AI sedang mengalami beban tinggi. Silakan coba kembali sesaat lagi.",
-      details: lastError
-    });
   }
 });
 

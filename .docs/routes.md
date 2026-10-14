@@ -128,7 +128,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
 | `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, tahun data terakhir, status tabel database, & pelacakan fallback |
-| `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL pertasis + Gemini, filter multi-tahun, grounding faktual tanaman hias, ikan hias, KWT) |
+| `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL pertasis + Gemini 3.5 Flash Lite, auto-fallback SSE lokal 200 OK, grounding faktual 20 kecamatan) |
 
 ---
 

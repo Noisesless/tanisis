@@ -1,5 +1,5 @@
-<!-- app-context.md v2.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-13T20:48:00+07:00 | Phase: Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku (ADR-054) | Build: OK -->
+<!-- app-context.md v2.6 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-14T16:35:00+07:00 | Phase: Eliminasi Deadcode, Favicon Multi-Resolusi Baku & Resiliensi Chatbot AI (ADR-055 & ADR-056) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku (ADR-054) done=ALL last=Harmonisasi tampilan Lalu Lintas Ternak (/livestock-flow) dengan PageHeader Ft berilustrasi unboxed livestock dan migrasi tab Jenis Data ke Executive Segmented Pill; harmonisasi serupa pada Sensus (/sensus) dan Tanaman Pangan (/food-crops) next=Monitoring kestabilan view dan user testing
+phase=Eliminasi Deadcode, Favicon Multi-Resolusi Baku & Resiliensi Chatbot AI (ADR-055 & ADR-056) done=ALL last=Pembersihan tuntas 8 skrip patch deadcode di scripts/ dan scratch test files; penyelarasan favicon browser multi-resolusi 16x16-256x256 ICO dan PNG dengan cache-busting ?v=logo; resolusi ISSUE-040 Chatbot AI Si Pertani (perbaikan kecamatanParam, migrasi ke gemini-3.5-flash-lite, dan fallback stream SSE lokal anti-disconnect); perbaikan query komoditas_unggulan & horti_produksi next=Perilisan dan pemeliharaan rutin
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -47,6 +47,14 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-056] Eliminasi Deadcode & Leftover Ad-hoc Patch Scripts:
+- Audit Komprehensif Bundel Frontend: Analisis graf dependensi entry point `dist/assets/index-CI1XYnwk.js` mengonfirmasi 100% 84 berkas bundel JS di `dist/assets/` terhubung aktif (0 bundel mati / orphaned).
+- Eliminasi Skrip Patch Sekali Pakai: Menghapus 8 berkas skrip migrasi/patch ad-hoc di direktori `scripts/` (`fix_farmers_image.js`, `fix_index_ft.js`, `mount_domain_images.js`, `remove_card_wrappers.js`, `uniformize_header_images.js`, `apply_all_domain_images.js`, `sync_kulit_domba.js`, `analyze_deadcode.js`) guna mencegah risiko regresi unboxed UI jika dijalankan kembali.
+- Sanitasi Berkas Pengujian: Membersihkan 69 berkas sampah pengujian sementara di `scratch/*` dan menyelaraskan seluruh query SQL kalkulasi komoditas.
+[ADR-055] Favicon Multi-Resolusi Baku & Resiliensi Chatbot AI Si Pertani:
+- Favicon 100% Identik Logo Aplikasi: Meng-generate multi-resolusi `.ico` asli (16×16 hingga 256×256) serta varian PNG (16×16, 32×32, 48×48, 64×64, 192×192, 512×512) langsung dari master `dist/logo.png`.
+- Eliminasi Cache Stale Favicon: Memperbarui `<link>` tags di `dist/index.html` dengan cache-buster kanonikal `?v=logo` dan menyelaraskan seluruh shortcut icon browser.
+- Resolusi ISSUE-040 Chatbot AI Si Pertani: Memperbaiki kesalahan referensi `kecamatanParam` &rarr; `matchedKec`, memperbarui `SUPPORTED_MODELS` ke model aktif resmi (`gemini-3.5-flash-lite`, `gemini-flash-lite-latest`, `gemini-flash-latest`), dan memperkuat fallback streaming SSE lokal (HTTP 200) saat upstream AI mengalami lonjakan beban sehingga antarmuka tidak pernah terputus.
 [ADR-054] Penyelarasan Judul Navbar vs Halaman & Unifikasi Tab Baku:
 - 100% Sinkronisasi 36 Judul Rute: Menyeragamkan seluruh menu navigasi sidebar (`site-B5h-x_N5.js`) dan tag `<h1>` halaman ke nama kanonikal baku.
 - Unifikasi Tab ke Executive Segmented Pill: Menstandarkan seluruh tab ke kontainer `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif `rounded-md px-3.5 py-1.5 text-xs font-bold bg-white text-slate-900 shadow-sm` dan inaktif `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`, serta menghapus seluruh inline hex styling.

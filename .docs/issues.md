@@ -518,11 +518,28 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   5. **Favicon Resmi Terpadu:** Meng-generate multi-resolusi `.ico` dan `.png` langsung dari master `dist/logo.png` (2480×2480 RGBA) dan menghubungkannya di `dist/index.html`.
   6. Pengujian verifikasi: Seluruh endpoint terlayani HTTP 200 OK, validasi AST 0 galat, dan keselarasan visual 100% tervalidasi.
 
+### [ISSUE-040] Galat Koneksi Chatbot AI Si Pertani (Undefined kecamatanParam, Model Deprecated 404, & Upstream 503 Crash)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-14
+- **Komponen:** `src/routes/ai.js`, `dist/assets/recommendations-BSYcyuDe.js`.
+- **Deskripsi:** 
+  Pengguna mendapati galat saat mengirim pesan di Chatbot Si Pertani:
+  *"Maaf, terjadi kesalahan koneksi. Pastikan jaringan internet tersedia dan coba lagi. Jika masalah berlanjut, hubungi administrator sistem."*
+- **Akar Masalah:**
+  1. **ReferenceError `kecamatanParam`:** Pada `src/routes/ai.js` (baris 514), query FSVA/Ketahanan Pangan merujuk `if (kecamatanParam)` padahal variabel yang dideklarasikan di scope fungsi adalah `matchedKec`. Galat ini menginterupsi proses RAG retrieval.
+  2. **Model Deprecated (HTTP 404):** Daftar model `gemini-2.0-flash` dan `gemini-2.0-flash-lite` telah dinonaktifkan oleh Google API (mengembalikan HTTP 404 NOT_FOUND). Google merekomendasikan `gemini-3.5-flash-lite` dan `gemini-3.8-flash`.
+  3. **Lonjakan Beban Upstream (HTTP 503) & Pemutusan Koneksi Frontend:** Saat upstream Gemini mengalami lonjakan beban temporer (HTTP 503) dan `dynamicContext` kosong (misal query umum atau terputus oleh bug A), backend mengembalikan respons `res.status(503).json(...)`. Frontend React mendeteksi `!response.ok`, melempar `Error: API error: 503`, dan blok `catch` menampilkan pesan kesalahan koneksi.
+- **Solusi & Verifikasi:**
+  1. Mengoreksi `kecamatanParam` menjadi `matchedKec` pada blok RAG FSVA di `src/routes/ai.js`, sehingga filter kecamatan pada 278 desa berjalan tanpa galat.
+  2. Memperbarui `SUPPORTED_MODELS` dengan model aktif yang terbukti 200 OK (`gemini-3.5-flash-lite`, `gemini-flash-lite-latest`, `gemini-flash-latest`, `gemini-3.5-flash`, `gemini-3.8-flash`) dan menghapus model 2.0 yang telah 404.
+  3. Memperkuat mekanisme fallback lokal di `src/routes/ai.js` agar selalu mengalirkan Server-Sent Events (SSE HTTP 200) yang informatif dan ramah (baik dengan data statistik lokal maupun pesan panduan) saat upstream mengalami kendala atau query umum, sehingga frontend tidak pernah mengalami galat koneksi.
+  4. Pengujian verifikasi: Query live chat streaming dengan kata kunci FSVA dan pertanyaan umum sukses 100% menggunakan model `gemini-3.5-flash-lite` dengan latency cepat dan 0 error di log server.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 39 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 40 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

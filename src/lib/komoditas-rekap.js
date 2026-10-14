@@ -136,11 +136,11 @@ export async function rekapKomoditasUnggulan(targetTahun = null) {
        FROM horti_produksi p
        JOIN kecamatan k ON p.kecamatan_id = k.id
        JOIN (
-         SELECT tahun, komoditas, MAX(COALESCE(produksi_ton, nilai)) AS max_prod, SUM(COALESCE(produksi_ton, nilai)) AS total_produksi
+         SELECT tahun, komoditas, MAX(nilai) AS max_prod, SUM(nilai) AS total_produksi
          FROM horti_produksi
-         WHERE COALESCE(produksi_ton, nilai) > 0 AND tahun = ? AND kelompok IN ('sayuran', 'buah_tahunan')
+         WHERE nilai > 0 AND tahun = ? AND kelompok IN ('sayuran', 'buah_tahunan')
          GROUP BY tahun, komoditas
-       ) sub ON p.tahun = sub.tahun AND p.komoditas = sub.komoditas AND COALESCE(p.produksi_ton, p.nilai) = sub.max_prod
+       ) sub ON p.tahun = sub.tahun AND p.komoditas = sub.komoditas AND p.nilai = sub.max_prod
        WHERE p.tahun = ? AND p.kelompok IN ('sayuran', 'buah_tahunan')
        GROUP BY p.tahun, p.komoditas`,
       [thn, thn]

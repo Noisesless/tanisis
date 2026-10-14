@@ -304,16 +304,16 @@ export async function getDynamicKomoditasUnggulan() {
           ELSE sektor
         END AS bidang,
         nama_komoditas AS komoditas,
-        COALESCE(varietas, 'Spesifik Dinas') AS varietas,
-        COALESCE(kecamatan, sentra, 'Kabupaten Banjarnegara') AS kecamatan,
-        COALESCE(luas_lahan, 0) AS luas_lahan,
-        COALESCE(produktivitas, 0) AS produktivitas,
-        ROUND(COALESCE(produksi, volume, 0), 2) AS produksi,
+        'Spesifik Dinas' AS varietas,
+        COALESCE(kecamatan_sentra, 'Kabupaten Banjarnegara') AS kecamatan,
+        0 AS luas_lahan,
+        0 AS produktivitas,
+        ROUND(COALESCE(total_produksi, 0), 2) AS produksi,
         COALESCE(satuan, 'Ton') AS satuan,
-        COALESCE(ketersediaan_benih, 'Tersedia') AS ketersediaan_benih,
+        'Tersedia' AS ketersediaan_benih,
         tahun
       FROM komoditas_unggulan
-      WHERE (produksi > 0 OR volume > 0)
+      WHERE total_produksi > 0
     `);
 
     // Tambahkan entri kustom jika belum ada di results untuk bidang, komoditas, dan tahun yang sama
