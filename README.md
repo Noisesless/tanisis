@@ -260,7 +260,7 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/v1/kelembagaan/kelompok-tani`, `/kelembagaan/kth` — Data kelembagaan tani.
 - `GET /api/v1/st2023/desa` — Data Sensus Pertanian 2023 desa.
 - `GET /api/v1/bantuan` — Data alokasi, program, dan sebaran bantuan.
-- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL `pertasis` + Google Gemini). Mendukung penarikan data lintas tahun (2023–2025), eliminasi data dummy, filter kelompok tanaman hias & ikan hias, serta pencarian spasial kelembagaan KWT per kecamatan/desa.
+- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL `pertasis` + Google Gemini) & Resilient Offline NLG. Mendukung penarikan data lintas tahun (2023–2025), eliminasi data dummy, filter kelompok tanaman hias & ikan hias, pencarian spasial kelembagaan KWT, serta Graceful Local Fallback berbasis Rule-Based NLG dan Offline Agricultural Knowledge Base (SOP hama, profil komoditas Banjarnegara, dan panduan SIMLUHTAN) dengan streaming micro-chunk pacing.
 - `GET /api/3/*` — Gateway proksi katalog CKAN Open Data Banjarnegara.
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)

@@ -1,6 +1,8 @@
 import express from "express";
 import { Readable } from "node:stream";
 import { q } from "../db.js";
+import { lookupOfflineKB } from "../lib/ai-offline-kb.js";
+import { synthesizeNaturalResponse } from "../lib/ai-nlg.js";
 
 const aiRouter = express.Router();
 
@@ -713,6 +715,51 @@ async function retrieveDynamicContext(userQuery) {
   return contextParts.join("\n");
 }
 
+/**
+ * Mengalirkan respons lokal dengan micro-chunk pacing yang halus (smooth typing effect)
+ */
+async function sendSimulatedStream(req, res, fullText) {
+  if (res.headersSent || res.writableEnded) return;
+
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    "Connection": "keep-alive",
+    "X-Accel-Buffering": "no"
+  });
+
+  let isAborted = false;
+  req.on("close", () => {
+    isAborted = true;
+  });
+
+  const words = fullText.split(/(\s+)/);
+  let buffer = "";
+
+  for (let i = 0; i < words.length; i++) {
+    if (isAborted || res.writableEnded) break;
+    buffer += words[i];
+
+    // Kirim setiap ~4 elemen kata/spasi atau saat bertemu newline atau di akhir teks
+    if (i % 6 === 0 || words[i].includes("\n") || i === words.length - 1) {
+      res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: buffer } }] })}\n\n`);
+      buffer = "";
+      if (i < words.length - 1 && !isAborted) {
+        await new Promise((r) => setTimeout(r, 12));
+      }
+    }
+  }
+
+  if (buffer.length > 0 && !res.writableEnded && !isAborted) {
+    res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: buffer } }] })}\n\n`);
+  }
+
+  if (!res.writableEnded) {
+    res.write("data: [DONE]\n\n");
+    res.end();
+  }
+}
+
 aiRouter.post("/chat", async (req, res) => {
   const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "127.0.0.1";
 
@@ -743,36 +790,22 @@ aiRouter.post("/chat", async (req, res) => {
   // Ekstrak pesan terakhir pengguna untuk pencarian live ke MySQL & OpenData
   const lastUserMsg = safeMessages.filter((m) => m.role === "user").pop()?.content || "";
   const dynamicContext = await retrieveDynamicContext(lastUserMsg);
+  const kbItems = lookupOfflineKB(lastUserMsg);
 
   // 4. Secret Key Guard & Graceful Local Fallback
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.warn("[AI-RAG] GEMINI_API_KEY tidak ditemukan di environment. Menggunakan respons faktual basis data langsung.");
+    console.warn("[AI-RAG] GEMINI_API_KEY tidak ditemukan di environment. Menggunakan respons natural basis data langsung.");
+    const naturalFallback = synthesizeNaturalResponse(dynamicContext, kbItems, lastUserMsg);
     if (stream) {
-      res.writeHead(200, {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no"
-      });
-      const localReply = dynamicContext
-        ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung secara faktual dari basis data resmi SISPERTANI Banjarnegara)*`
-        : `Halo! Saya Si Pertani, asisten cerdas SISPERTANI Kabupaten Banjarnegara. Saat ini kunci akses \`GEMINI_API_KEY\` belum dikonfigurasi pada file \`.env\` di server produksi.\n\nUntuk pertanyaan data komoditas statistik, silakan sebutkan kata kunci komoditas spesifik (seperti padi, salak, kopi, jagung, ikan, ternak, dsb) agar sistem dapat menarik data langsung dari database.`;
-      const lines = localReply.split("\n");
-      for (const l of lines) {
-        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: l + "\n" } }] })}\n\n`);
-      }
-      res.write("data: [DONE]\n\n");
-      res.end();
+      await sendSimulatedStream(req, res, naturalFallback);
       return;
     } else {
       return res.json({
         choices: [{
           message: {
             role: "assistant",
-            content: dynamicContext
-              ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}`
-              : `Halo! Saya Si Pertani. Konfigurasi GEMINI_API_KEY belum diset pada file .env di server produksi.`
+            content: naturalFallback
           }
         }]
       });
@@ -780,8 +813,18 @@ aiRouter.post("/chat", async (req, res) => {
   }
 
   const finalMessages = [...safeMessages];
-  if (dynamicContext) {
-    const ragInstruction = `\n\n[DATA STATISTIK RIIL RESMI DARI DATABASE SISTEM SISPERTANI & OPENDATA BANJARNEGARA]:\n${dynamicContext}\n\nPANDUAN & ATURAN RESPON SI PERTANI:
+  let fullRagContext = dynamicContext || "";
+  if (kbItems && kbItems.length > 0) {
+    let kbText = "\n\n[PANDUAN & PENGETAHUAN PERTANIAN LOKAL BANJARNEGARA]:\n";
+    for (const kb of kbItems) {
+      kbText += `Topik: ${kb.title}\nRingkasan: ${kb.summary}\nPanduan:\n`;
+      for (const g of kb.guidance) kbText += `- ${g}\n`;
+    }
+    fullRagContext += kbText;
+  }
+
+  if (fullRagContext) {
+    const ragInstruction = `\n\n[DATA STATISTIK RIIL RESMI DARI DATABASE SISTEM SISPERTANI & OPENDATA BANJARNEGARA]:\n${fullRagContext}\n\nPANDUAN & ATURAN RESPON SI PERTANI:
 - KONTEKS DATA SISTEM: Gunakan data statistik riil di atas sebagai rujukan utama. Sebutkan angka produksi, luasan, jumlah kelompok/anggota, kecamatan sentra, dan tahun data faktual yang tercatat di database sistem.
 - TAHUN SPESIFIK: Jika pengguna menanyakan tahun spesifik (misal 2023), rujuk data pada tahun 2023 yang tertera di atas. Jika data tahun tersebut tersedia, JANGAN PERNAH menyatakan hanya ada data tahun lain.
 - KOMODITAS TERCATAT: Tanaman hias (Agloenema, Krisan, Mawar, Soka) dan Ikan Hias (Koi, Mas Koki, Cupang, Komet) TERCATAT RESMI di SISPERTANI. Jelaskan data dan angka riilnya sesuai ringkasan di atas. JANGAN menyatakan tidak tercatat.
@@ -884,31 +927,18 @@ aiRouter.post("/chat", async (req, res) => {
   }
 
   if (!success && !res.headersSent) {
-    console.log("[AI-PROXY] Upstream unavilable, streaming local fallback response...");
-    const fallbackText = dynamicContext
-      ? `Halo! Berdasarkan data riil basis data SISPERTANI Kabupaten Banjarnegara:\n\n${dynamicContext}\n\n*(Catatan: Jawaban disajikan langsung secara faktual dari basis data resmi SISPERTANI Banjarnegara)*`
-      : `Halo! Saya **Si Pertani**, asisten AI cerdas SISPERTANI Kabupaten Banjarnegara.\n\nSaat ini koneksi upstream AI sedang mengalami lonjakan beban sementara. Anda tetap dapat menanyakan data statistik riil seputar pertanian, perkebunan, hortikultura, peternakan, perikanan, atau kelembagaan di Kabupaten Banjarnegara (misalnya: *produksi padi*, *komoditas unggulan*, *kelompok tani*, atau *populasi ternak*), dan saya akan menyajikannya langsung dari database SISPERTANI.`;
+    console.log("[AI-PROXY] Upstream unavilable, streaming natural local fallback response...");
+    const naturalFallback = synthesizeNaturalResponse(dynamicContext, kbItems, lastUserMsg);
 
     if (stream) {
-      res.writeHead(200, {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no"
-      });
-      const lines = fallbackText.split("\n");
-      for (const l of lines) {
-        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: l + "\n" } }] })}\n\n`);
-      }
-      res.write("data: [DONE]\n\n");
-      res.end();
+      await sendSimulatedStream(req, res, naturalFallback);
       return;
     } else {
       return res.json({
         choices: [{
           message: {
             role: "assistant",
-            content: fallbackText
+            content: naturalFallback
           }
         }]
       });

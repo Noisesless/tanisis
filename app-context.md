@@ -47,6 +47,11 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-060] Refinement RAG Graceful Local Fallback dengan Rule-Based NLG & Offline Agricultural KB:
+- Mengeliminasi keluaran fallback raw data dump SQL kaku, digantikan dengan engine sintesis bahasa alami berbasis aturan (`src/lib/ai-nlg.js`) yang mengubah baris data produksi, luas panen, kelembagaan, dan FSVA menjadi narasi percakapan yang santun, luwes, dan terstruktur.
+- Membangun modul Offline Agricultural Knowledge Base (`src/lib/ai-offline-kb.js`) berisi profil komoditas khas Banjarnegara (Salak Pondoh, Kopi Robusta Karangkobar, Domba Batur, Sayuran Dieng, Gula Kelapa Deres), SOP teknis pengendalian hama (WBC padi, patek cabai, tikus sawah), serta panduan pendaftaran kelembagaan (SIMLUHTAN & proposal alsintan).
+- Mengintegrasikan micro-chunk pacing generator pada streaming Server-Sent Events (SSE) saat fallback lokal aktif, memberikan efek animasi pengetikan halus (*smooth typing pacing*) tanpa lag atau beban memori berlebih.
+- Menguji ketahanan dengan rangkaian unit test komprehensif (`tests/ai-fallback.test.js` dan `tests/endpoint.test.js`) dengan hasil 100% lolos (zero crash, validasi status 200 OK non-stream & stream).
 [ADR-059] Standarisasi Berkas Normalisasi BPS ke Murni CSV & Pembersihan Dev Info UI Admin:
 - Standarisasi Penyimpanan Data 39 Folder Distankan: Seluruh 83 berkas normalisasi statistik di `dist/14. Distankan KP/` dibakukan dalam format murni CSV (wide format `<folder> CSV.csv` dan tidy/long format `tidy/<folder> tidy.csv`) tanpa ketergantungan berkas `.xlsx`/`.xls`.
 - Pembaruan Peta Database: Memperbarui dokumentasi `dist/14. Distankan KP/PETA_DATABASE.md` untuk mencerminkan arsitektur murni CSV.

@@ -86,9 +86,10 @@ graph TD
    - Kolom untuk template Excel dibaca secara dinamis dari `information_schema.columns` MySQL saat runtime, menjamin template Excel selalu sinkron 100% dengan skema database tanpa perlu migrasi kode ganda.
    - Menggunakan *natural key* unik per sheet (misal: kombinasi `kecamatan`, `tahun`, `komoditas`) untuk melakukan operasi `INSERT ... ON DUPLICATE KEY UPDATE` saat proses impor Excel berlangsung. Ekspor data menyertakan kolom `Sumber Data` untuk keterlacakan audit (*traceability*).
 
-3. **Gateway Asisten AI & Live RAG Engine:**
-   - Modul [`src/routes/ai.js`](file:///e:/Project/pertanian_main/src/routes/ai.js) melayani Chatbot Si Pertani secara aman dari server-side, mengisolasi token `GEMINI_API_KEY` dari klien.
-   - Dilengkapi **In-Memory Sliding Rate Limiter** (30 request/menit), **Multi-Model Fallback** (`gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-3.6-flash`, `gemini-3.8-flash`), dan **Dynamic RAG** yang menarik data riil basis data `pertasis` dan portal CKAN secara instan.
+3. **Gateway Asisten AI & Hybrid Resilient RAG Engine (ADR-060):**
+   - Modul [`src/routes/ai.js`](file:///d:/Project/pertanian_main/src/routes/ai.js) melayani Chatbot Si Pertani secara aman dari server-side, mengisolasi token `GEMINI_API_KEY` dari klien.
+   - Dilengkapi **In-Memory Sliding Rate Limiter** (30 request/menit), **Multi-Model Failover Chain** (`gemini-3.5-flash-lite`, `gemini-flash-lite-latest`, `gemini-flash-latest`, `gemini-3.5-flash`, `gemini-3.8-flash`), dan **Dynamic RAG** yang menarik data riil basis data `pertasis` dan portal CKAN secara instan.
+   - **Graceful Local Fallback & Rule-Based NLG:** Jika upstream AI offline, kuota limit, atau tanpa API key, sistem mengeksekusi sintesis bahasa alami via [`src/lib/ai-nlg.js`](file:///d:/Project/pertanian_main/src/lib/ai-nlg.js) dan modul pengetahuan pertanian daerah via [`src/lib/ai-offline-kb.js`](file:///d:/Project/pertanian_main/src/lib/ai-offline-kb.js). Dilengkapi streaming Server-Sent Events (SSE) dengan micro-chunk pacing generator untuk efek pengetikan halus (*smooth typing pacing*).
 
 4. **Autentikasi & RBAC (Role-Based Access Control):**
    - Modul [`src/lib/users.js`](file:///e:/Project/pertanian_main/src/lib/users.js) membatasi akses berdasarkan bidang teknis (Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan, dan Administrator Pusat).
