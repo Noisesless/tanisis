@@ -28,7 +28,12 @@ Dokumen ini memuat prosedur resmi dan tunggal (*Single Source of Truth*) untuk d
 | `DIST_DIR` | `./dist` | `./dist` | Direktori berkas statis frontend SPA |
 | `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data Banjarnegara |
 | `ADMIN_PASS` | `C9145qbSjR` | `[secure_password]` | Kata sandi super-admin |
-| `GEMINI_API_KEY`| `[api_key]` | `[api_key]` | API Key Google Gemini (Wajib untuk mode generatif; otomatis fallback ke DB jika kosong) |
+| `PASS_TANAMAN_PANGAN` | `TanamanPangan.2026` | `[secure_password]` | Kata sandi akun Bidang Tanaman Pangan |
+| `PASS_HORTI_PERKEBUNAN` | `HortiPerkebunan.2026` | `[secure_password]` | Kata sandi akun Bidang Hortikultura & Perkebunan |
+| `PASS_PETERNAKAN` | `Peternakan.2026` | `[secure_password]` | Kata sandi akun Bidang Peternakan |
+| `PASS_PERIKANAN` | `Perikanan.2026` | `[secure_password]` | Kata sandi akun Bidang Perikanan |
+| `PASS_KETAHANAN_PANGAN` | `KetahananPangan.2026` | `[secure_password]` | Kata sandi akun Bidang Ketahanan Pangan (ADR-061) |
+| `GEMINI_API_KEY`| `[api_key]` | `[api_key]` | API Key Google Gemini (Otomatis fallback ke Rule-Based NLG & Offline KB jika kosong, ADR-060) |
 
 ---
 

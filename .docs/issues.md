@@ -535,11 +535,46 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   3. Memperkuat mekanisme fallback lokal di `src/routes/ai.js` agar selalu mengalirkan Server-Sent Events (SSE HTTP 200) yang informatif dan ramah (baik dengan data statistik lokal maupun pesan panduan) saat upstream mengalami kendala atau query umum, sehingga frontend tidak pernah mengalami galat koneksi.
   4. Pengujian verifikasi: Query live chat streaming dengan kata kunci FSVA dan pertanyaan umum sukses 100% menggunakan model `gemini-3.5-flash-lite` dengan latency cepat dan 0 error di log server.
 
+### [ISSUE-041] Redesign Header Dasbor Admin & Penegakan 16 Domain Murni (ADR-057, ADR-058, ADR-059)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-15
+- **Komponen:** `src/lib/domains.js`, `src/lib/users.js`, `scripts/build_admin_view.js`, `dist/assets/admin-C9Dakcgq.js`.
+- **Deskripsi:** Dasbor admin memuat elemen visual AI-slop (kartu status internal dev ber-pulse dot, teks klise "100% Siap Publik", tombol ganda redundan, dan kartu rekapitulasi otomatis ADR-009). Domain `komoditas-unggulan` juga masih terdaftar di katalog upload admin padahal dihitung secara otomatis dari produksi lapangan.
+- **Akar Masalah:** Sisa kartu purwarupa arsitektur internal dan belum selarasnya registry domain dengan prinsip Single Source of Truth ADR-009.
+- **Solusi & Verifikasi:** 
+  1. Menghapus domain `komoditas-unggulan` dari `DOMAINS` dan peran bidang teknis (16 domain operasional murni).
+  2. Merestrukturisasi header dasbor admin menjadi Flat Open Header institusional berlatar bersih dengan logo Pemkab Banjarnegara.
+  3. Membangun ulang bundel `dist/assets/admin-C9Dakcgq.js` via `node scripts/build_admin_view.js` dan memvalidasi sintaks AST 0 error.
+
+### [ISSUE-042] Refinement RAG Graceful Local Fallback dengan Rule-Based NLG & Offline Agricultural KB (ADR-060)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-15
+- **Komponen:** `src/lib/ai-nlg.js`, `src/lib/ai-offline-kb.js`, `src/routes/ai.js`, `tests/ai-fallback.test.js`, `tests/endpoint.test.js`.
+- **Deskripsi:** Respons fallback lokal saat upstream AI offline atau tanpa API key sebelumnya masih berupa cetak teks mentah (*raw database dump*) yang kaku seperti log database serta tidak dapat menjawab pertanyaan kualitatif/SOP lapangan.
+- **Akar Masalah:** Belum tersedianya lapisan sintesis kalimat bahasa alami (*natural language generation*) dan modul pustaka agrikultur lokal offline.
+- **Solusi & Verifikasi:**
+  1. Membangun modul `src/lib/ai-offline-kb.js` berisi profil komoditas khas Banjarnegara (Salak Pondoh, Kopi Robusta Karangkobar, Domba Batur, Sayuran Dieng) dan SOP teknis penanganan hama (WBC padi, patek cabai, tikus).
+  2. Membangun modul `src/lib/ai-nlg.js` untuk merangkai angka statistik riil menjadi paragraf narasi percakapan yang ramah, sopan, dan terstruktur.
+  3. Mengimplementasikan generator *micro-chunk pacing* SSE untuk simulasi pengetikan alami (*smooth typing*) saat fallback lokal aktif.
+  4. Pengujian verifikasi: 100% lolos uji pada 5 suite unit test dan integrasi endpoint streaming live.
+
+### [ISSUE-043] Registrasi Akun Bidang Ketahanan Pangan ke Basis Data & Konfigurasi RBAC (ADR-061)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-15
+- **Komponen:** `src/lib/users.js`, `database/production_migration_patch.sql`, `scripts/seed_ketahanan_pangan.js`, `.env`, `.env.example`.
+- **Deskripsi:** Pengguna mendapati bahwa akun `ketahanan-pangan` belum terdaftar di tabel `users` MySQL dan variabel kata sandinya belum ada di konfigurasi `.env`.
+- **Akar Masalah:** Skrip migrasi awal hanya memuat `admin_ketahanan`, sementara sistem RBAC admin merujuk nama pengguna `ketahanan-pangan` dengan variabel `PASS_KETAHANAN_PANGAN`.
+- **Solusi & Verifikasi:**
+  1. Menjalankan seeder idempoten `scripts/seed_ketahanan_pangan.js` untuk meregistrasi `ketahanan-pangan` (id: 8, role: `admin_ketahanan_pangan`) dengan password hash SHA-256 ke tabel `users`.
+  2. Menambahkan `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` ke `.env` dan `.env.example`.
+  3. Mendaftarkan alias `admin_ketahanan` di `src/lib/users.js` untuk kompatibilitas login ganda.
+  4. Memverifikasi login via `POST /api/v1/admin/login` mengembalikan status HTTP 200 OK dan hak akses 6 domain pangan (`fsva-desa`, `neraca-pangan`, `lumbung`, `psat-pduk`, `harga-pasar`, `harga-produsen`).
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 40 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 43 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

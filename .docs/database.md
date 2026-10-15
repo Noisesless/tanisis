@@ -164,3 +164,17 @@ Merekam seluruh jejak audit tindakan pengguna/admin (autentikasi dan transaksi d
 - `metadata` (LONGTEXT NULL — data pelengkap JSON)
 - `created_at` (DATETIME DEFAULT CURRENT_TIMESTAMP)
 - **Index:** `idx_created_at`, `idx_username`, `idx_action`, `idx_role`, `idx_status`
+
+### `users` & `roles` (Autentikasi & RBAC Multi-Bidang — ADR-061)
+Menyimpan identitas akun dinas, kredensial password ter-hash (SHA-256), dan relasi hak akses domain operasional:
+- **Tabel `roles`:**
+  - `id` (VARCHAR(50), Primary Key) — `super_admin`, `admin_tanaman_pangan`, `admin_hortikultura`, `admin_perkebunan`, `admin_peternakan`, `admin_perikanan`, `admin_ketahanan_pangan`, `guest`.
+  - `nama_role`, `deskripsi`, `scope_bidang`, `can_upload`, `can_manage_users`, `color`.
+- **Tabel `users`:**
+  - `id` (INT, Auto Increment, Primary Key)
+  - `username` (VARCHAR(50), Unique) — mencakup `admin` (super_admin), `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, serta `ketahanan-pangan` (id: 8, `admin_ketahanan_pangan`, ADR-061).
+  - `password_hash` (VARCHAR(255)) — enkripsi hash SHA-256 standar institusional.
+  - `nama_lengkap`, `nip`, `email`, `role_id` (FK → `roles.id`), `status` (`aktif`/`nonaktif`), `last_login`, `created_at`, `updated_at`.
+- **Tabel `user_sessions`:**
+  - `id` (INT, Auto Increment, Primary Key), `token` (VARCHAR(100), Unique), `user_id` (INT), `role_id` (VARCHAR(50)), `expires_at` (DATETIME).
+

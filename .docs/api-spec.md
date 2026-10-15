@@ -254,7 +254,7 @@ Melakukan terminasi sesi admin, mencabut token dari memori, dan mencatat aksi lo
 - **Response 200 OK:** `{"ok": true, "message": "Berhasil keluar dari sesi dasbor admin."}`
 
 ### `GET /api/v1/admin/domains`
-Mengambil daftar domain (total 23 domain lengkap) yang dapat dikelola oleh akun yang sedang masuk berdasarkan peran RBAC (`bantuan-program`, `bantuan-alokasi`, `bantuan-korelasi`, `padi`, `palawija`, `hortikultura`, `perkebunan`, `peternakan`, `perikanan`, `lahan`, `lumbung`, `ekonomi`, `kelembagaan`, `st2023`, `renstra`, `ltt-katam`, `kelembagaan-pertanian`, `kelembagaan-perikanan`, `kelembagaan-pendukung`, `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`).
+Mengambil daftar domain dari 16 domain operasional aktif (ADR-058) yang difilter secara dinamis berdasarkan peran aktif (`admin`, `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, `ketahanan-pangan`). Akun `ketahanan-pangan` memiliki akses ke 6 domain: `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`, `lumbung`, dan `harga-produsen` (ADR-061).
 - **Headers:** `Authorization: Bearer <token>`
 - **Response 200 OK:** Array konfigurasi domain beserta skema sheet, natural key, dan dropdown enum.
 
@@ -547,23 +547,29 @@ Mengembalikan indikator performa utama ringkas kelembagaan kabupaten untuk kartu
 ## 4. Endpoint Asisten AI & Live RAG Engine (Si Pertani)
 
 ### `POST /api/v1/ai/chat` (juga tersedia di `/sispertani-api/v1/ai/chat`)
-Menyediakan asisten analitik cerdas Si Pertani dengan grounding faktual live database MySQL `pertasis` dan fallback multi-model Google Gemini.
+Menyediakan asisten analitik cerdas Si Pertani dengan arsitektur **Hybrid Resilient RAG**: memadukan kueri live database MySQL `pertasis`, model upstream Google Gemini (`gemini-3.5-flash-lite`), dan fallback lokal berbasis **Rule-Based Natural Language Generator (NLG)** serta **Offline Agricultural Knowledge Base** (ADR-060).
 - **Rate Limit:** 30 request / menit per IP (HTTP 429 jika terlampaui).
 - **Request Body (JSON):**
   ```json
   {
     "messages": [
-      { "role": "user", "content": "kalau 2023 salak paling banyak dari mana?" }
+      { "role": "user", "content": "bagaimana penanganan hama wereng dan berapa produksi padi banjarnegara?" }
     ],
-    "stream": true
+    "stream": true,
+    "temperature": 0.6,
+    "max_tokens": 8192
   }
   ```
 - **Fitur Live RAG Engine:**
   - **Dynamic Year Extraction:** Mengurai tahun spesifik (2023, 2024, 2025) secara dinamis via regex `\b(201\d|202\d)\b`.
   - **Filter Faktual Bebas Dummy:** Menyaring `total_produksi > 0 AND is_unggulan = 1` pada `komoditas_unggulan`.
   - **Spesialisasi Sektoral:** Menarik data faktual kelompok tanaman hias, ikan hias, perkebunan (kopi robusta vs arabika), sayuran dataran tinggi (wortel Dieng), dan direktori kelembagaan KWT per kecamatan/desa.
+  - **Injeksi Pengetahuan Pertanian Lokal:** Saat upstream online, panduan teknis SOP dan profil komoditas dari `src/lib/ai-offline-kb.js` disuntikkan ke dalam instruksi sistem untuk memperkaya jawaban.
+- **Graceful Local Fallback (Anti-Down / Keyless Resilient):**
+  - Jika upstream Gemini overload (503), kuota terlampaui (429), atau server berjalan tanpa `GEMINI_API_KEY`, sistem otomatis menyintesis respons lokal via `src/lib/ai-nlg.js` dan `src/lib/ai-offline-kb.js`.
+  - Mengalirkan respons dengan generator *micro-chunk pacing* (12–15 ms per kata) sehingga efek pengetikan alami (*smooth typing*) di peramban pengguna tetap aktif dengan status HTTP 200 OK.
 - **Response Modes:**
-  - `stream: true`: `text/event-stream` (Server-Sent Events) OpenAI-compatible format `data: {"choices":[{"delta":{"content":"..."}}]}`.
+  - `stream: true`: `text/event-stream` (Server-Sent Events) OpenAI-compatible format `data: {"choices":[{"delta":{"content":"..."}}]}` diakhiri `data: [DONE]`.
   - `stream: false`: `application/json` format `{"choices":[{"message":{"content":"..."}}]}`.
 
 

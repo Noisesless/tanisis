@@ -1,5 +1,5 @@
-<!-- app-context.md v2.6 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-14T16:35:00+07:00 | Phase: Eliminasi Deadcode, Favicon Multi-Resolusi Baku & Resiliensi Chatbot AI (ADR-055 & ADR-056) | Build: OK -->
+<!-- app-context.md v2.7 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-15T14:30:00+07:00 | Phase: Refinement RAG Offline NLG (ADR-060) & Registrasi Akun Ketahanan Pangan (ADR-061) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Pembersihan Dev Metadata & Build Info dari Antarmuka Admin (/admin) done=ALL last=Menghapus seluruh referensi ADR, build status (API v1, MySQL, JWT, TLS/SSL), label teknis DB (Mandiri DB, MariaDB, Penyangga Disk), dan info kunci skema dari UI /admin. Antarmuka kini 100% bebas dari kebocoran istilah teknis dan ramah pengguna dinas. next=Perilisan dan pemeliharaan rutin
+phase=Registrasi Akun Ketahanan Pangan (ADR-061) & Sinkronisasi Dokumentasi Utama done=ALL last=Mendaftarkan akun ketahanan-pangan ke tabel users MySQL, konfigurasi RBAC 6 domain pangan di users.js, penambahan PASS_KETAHANAN_PANGAN di .env, serta sinkronisasi komprehensif seluruh 9 dokumen teknis di .docs/ dan README.md. next=Perilisan dan pemeliharaan rutin
 build=OK issues=0
 
 ## [VISUAL_GATE]

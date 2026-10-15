@@ -91,8 +91,8 @@ graph TD
    - Dilengkapi **In-Memory Sliding Rate Limiter** (30 request/menit), **Multi-Model Failover Chain** (`gemini-3.5-flash-lite`, `gemini-flash-lite-latest`, `gemini-flash-latest`, `gemini-3.5-flash`, `gemini-3.8-flash`), dan **Dynamic RAG** yang menarik data riil basis data `pertasis` dan portal CKAN secara instan.
    - **Graceful Local Fallback & Rule-Based NLG:** Jika upstream AI offline, kuota limit, atau tanpa API key, sistem mengeksekusi sintesis bahasa alami via [`src/lib/ai-nlg.js`](file:///d:/Project/pertanian_main/src/lib/ai-nlg.js) dan modul pengetahuan pertanian daerah via [`src/lib/ai-offline-kb.js`](file:///d:/Project/pertanian_main/src/lib/ai-offline-kb.js). Dilengkapi streaming Server-Sent Events (SSE) dengan micro-chunk pacing generator untuk efek pengetikan halus (*smooth typing pacing*).
 
-4. **Autentikasi & RBAC (Role-Based Access Control):**
-   - Modul [`src/lib/users.js`](file:///e:/Project/pertanian_main/src/lib/users.js) membatasi akses berdasarkan bidang teknis (Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan, dan Administrator Pusat).
+4. **Autentikasi & RBAC (Role-Based Access Control) Multi-Bidang (ADR-061):**
+   - Modul [`src/lib/users.js`](file:///d:/Project/pertanian_main/src/lib/users.js) membatasi akses berdasarkan 5 bidang teknis dinas (Tanaman Pangan, Hortikultura & Perkebunan, Peternakan, Perikanan, Ketahanan Pangan) serta Administrator Pusat (ADR-061).
    - Menggunakan in-memory Bearer token dengan masa kedaluwarsa 12 jam.
    - Keamanan login diperkuat dengan `crypto.timingSafeEqual` untuk mencegah serangan *timing attack* dan pembatasan laju (rate limiting) maksimal 5 kali kegagalan per 15 menit per alamat IP.
 

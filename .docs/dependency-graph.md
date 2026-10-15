@@ -41,8 +41,13 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 | [`src/routes/bantuan.js`](file:///e:/Project/pertanian_main/src/routes/bantuan.js) | Endpoint kueri program dan sebaran bantuan pemerintah | Terisolasi pada domain Bantuan |
 | [`src/routes/lahan.js`](file:///e:/Project/pertanian_main/src/routes/lahan.js) | Endpoint kueri penggunaan lahan, tutupan lahan & evaluasi kesesuaian | Mengimpor `src/lib/kesesuaian.js` |
 | [`src/lib/kesesuaian.js`](file:///e:/Project/pertanian_main/src/lib/kesesuaian.js) | Modul evaluasi kesesuaian lahan multi-sektor & korelasi tutupan lahan fisik | Digunakan oleh `src/routes/lahan.js` |
-| [`src/routes/ai.js`](file:///e:/Project/pertanian_main/src/routes/ai.js) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL & CKAN) | Terisolasi pada modul AI & RAG Gateway |
-| [`src/lib/helpers.js`](file:///e:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
+| [`src/routes/ai.js`](file:///d:/Project/pertanian_main/src/routes/ai.js) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL, Offline NLG, dan KB) | Mengimpor `src/lib/ai-nlg.js` & `src/lib/ai-offline-kb.js` |
+| [`src/lib/ai-nlg.js`](file:///d:/Project/pertanian_main/src/lib/ai-nlg.js) | Rule-Based Natural Language Generator untuk sintesis narasi ramah & terstruktur | Digunakan oleh `src/routes/ai.js` (ADR-060) |
+| [`src/lib/ai-offline-kb.js`](file:///d:/Project/pertanian_main/src/lib/ai-offline-kb.js) | Pustaka pengetahuan offline komoditas Banjarnegara, SOP hama, & panduan SIMLUHTAN | Digunakan oleh `src/routes/ai.js` (ADR-060) |
+| [`scripts/seed_ketahanan_pangan.js`](file:///d:/Project/pertanian_main/scripts/seed_ketahanan_pangan.js) | Skrip seed idempoten akun ketahanan-pangan ke database users | Skrip CLI pemeliharaan DB (ADR-061) |
+| [`tests/ai-fallback.test.js`](file:///d:/Project/pertanian_main/tests/ai-fallback.test.js) | Unit test otomatis modul AI Offline KB dan Natural Language Generator | Test runner |
+| [`tests/endpoint.test.js`](file:///d:/Project/pertanian_main/tests/endpoint.test.js) | Integration test endpoint streaming SSE `/api/v1/ai/chat` | Test runner |
+| [`src/lib/helpers.js`](file:///d:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
 
 ---
 
@@ -70,7 +75,7 @@ src/server.js
   ├── src/routes/st2023.js ──────────────> src/db.js
   ├── src/routes/bantuan.js ─────────────> src/db.js
   ├── src/routes/lahan.js ───────────────> src/db.js & src/lib/kesesuaian.js
-  ├── src/routes/ai.js ──────────────────> src/db.js & Google Gemini API
+  ├── src/routes/ai.js ──────────────────> src/db.js, src/lib/ai-nlg.js, src/lib/ai-offline-kb.js & Google Gemini API
   └── /api/v1/komoditas-unggulan ─> src/db.js (Tabel komoditas_unggulan & ikan_produksi_jenis)
 ```
 

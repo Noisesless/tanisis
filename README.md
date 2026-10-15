@@ -264,7 +264,7 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/3/*` — Gateway proksi katalog CKAN Open Data Banjarnegara.
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)
-- `POST /api/v1/admin/login` — Autentikasi akun admin/bidang.
+- `POST /api/v1/admin/login` — Autentikasi akun admin & 5 bidang teknis (`admin`, `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, `ketahanan-pangan`).
 - `GET /api/v1/admin/domains` — Mendapatkan daftar 16 domain operasional yang diizinkan untuk peran aktif.
 - `GET /api/v1/admin/template/:domain` — Unduh workbook Excel template input kosong berpanduan (16 domain operasional).
 - `GET /api/v1/admin/export/:domain` — Unduh data aktif MySQL dalam format workbook Excel (kolom Sumber Data).
