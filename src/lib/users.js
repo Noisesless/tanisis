@@ -18,10 +18,10 @@
 
 export const ROLES = {
   admin: { label: "Administrator", domains: null }, // null = SEMUA domain
-  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["tanaman-pangan", "padi", "palawija", "ltt-katam", "kelembagaan", "komoditas-unggulan", "harga-produsen"] },
-  "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan", "kelembagaan", "komoditas-unggulan", "harga-produsen"] },
-  peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan", "komoditas-unggulan", "harga-produsen"] },
-  perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan", "komoditas-unggulan", "harga-produsen"] },
+  "tanaman-pangan": { label: "Bidang Tanaman Pangan", domains: ["tanaman-pangan", "padi", "palawija", "ltt-katam", "kelembagaan", "harga-produsen"] },
+  "horti-perkebunan": { label: "Bidang Hortikultura & Perkebunan", domains: ["hortikultura", "perkebunan", "kelembagaan", "harga-produsen"] },
+  peternakan: { label: "Bidang Peternakan", domains: ["peternakan", "kelembagaan", "harga-produsen"] },
+  perikanan: { label: "Bidang Perikanan", domains: ["perikanan", "kelembagaan", "harga-produsen"] },
   "ketahanan-pangan": { label: "Bidang Ketahanan Pangan", domains: ["harga-pasar", "fsva-desa", "neraca-pangan", "psat-pduk", "lumbung", "harga-produsen"] },
 };
 

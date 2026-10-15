@@ -124,7 +124,7 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   1. Over-engineering pada arsitektur domain admin yang menduplikasi tabel turunan/agregasi sebagai form upload terpisah.
   2. Ketiadaan skema definitif untuk mencatat 10 spesies ikan budidaya air tawar Banjarnegara (Lele, Nila, Gurami, Bawal, Nilem, Mujair, Mas, Tawes, Patin, Tambakan).
 - **Solusi & Aturan Baku (Anti-Over-Engineering Law & ADR-009/010):**
-  1. Menghapus sheet upload `komoditas-unggulan` dari `src/lib/domains.js`. Domain admin distandardisasi menjadi **17 domain operasional murni**.
+  1. Menghapus sheet upload `komoditas-unggulan` dari `src/lib/domains.js`. Domain admin distandardisasi menjadi **16 domain operasional murni**.
   2. Mengotomatisasi kalkulasi komoditas unggulan perikanan di server-side (`GET /v1/komoditas-unggulan` dan `GET /v1/ekonomi/sektor-ringkasan`) dengan merangking Top-1 (2025: Nila 20.250 Ton; 2024: Lele 17.842 Ton) langsung dari tabel transaksi `ikan_produksi_jenis`.
   3. Membatasi ruang lingkup data perikanan secara pragmatis: hanya wilayah perkecamatan dan rekapitulasi kabupaten (menolak over-engineering ke level kolam/desa mikro yang tidak dimiliki dinas).
   4. Menerapkan toleransi data compang-camping: data yang kosong atau belum diunggah dinas disajikan secara elegan dengan *empty state* jujur ("Menunggu pembaruan data dinas") tanpa memunculkan angka buatan/fiktif.

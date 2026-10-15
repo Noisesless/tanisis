@@ -11,11 +11,10 @@ Dokumen ini menjelaskan struktur database CSV hasil normalisasi dari 39 folder B
 
 ## Struktur File Output
 
-Setiap folder berisi 2 file:
+Setiap folder berisi berkas data berbasis CSV (tanpa dependensi xlsx/xls):
 
 ```
 <folder>/
-├── <folder>.xlsx              # Sumber asli BPS
 ├── <folder> CSV.csv           # Wide format (1 baris per kecamatan × tahun)
 └── tidy/
     └── <folder> tidy.csv      # Long/tidy format (1 baris per nilai)

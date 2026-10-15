@@ -76,13 +76,14 @@ pertanian_main/
 ├── package.json               # Dependensi & script eksekusi
 ├── dist/                      # Bundle antarmuka frontend SPA statis & aset GIS
 │   ├── assets/                # JS, CSS, dan aset terkompilasi
+│   ├── 14. Distankan KP/      # Arsip normalisasi 39 dataset BPS Distankan murni format CSV (wide & tidy)
 │   ├── index.html             # Entry point SPA publik
 │   └── *.geojson              # Peta batas desa, kecamatan, sawah, jalan, sungai
 ├── src/                       # Sumber kode backend Node.js
 │   ├── server.js              # Entrypoint server, routing ganda, static & SPA fallback
 │   ├── db.js                  # Pool koneksi MySQL2 & helper query q()
 │   ├── lib/
-│   │   ├── domains.js         # Registri 17 domain operasional, pemetaan sheet, natural keys
+│   │   ├── domains.js         # Registri 16 domain operasional, pemetaan sheet, natural keys
 │   │   ├── excel.js           # Engine pembaca & pembuat workbook template/export/import
 │   │   ├── users.js           # Registri akun pengguna RBAC & perizinan bidang
 │   │   └── helpers.js         # Wrapper error handling, validasi & format response
@@ -264,8 +265,8 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)
 - `POST /api/v1/admin/login` — Autentikasi akun admin/bidang.
-- `GET /api/v1/admin/domains` — Mendapatkan daftar 17 domain operasional yang diizinkan untuk peran aktif.
-- `GET /api/v1/admin/template/:domain` — Unduh workbook Excel template input kosong berpanduan (17 domain operasional).
+- `GET /api/v1/admin/domains` — Mendapatkan daftar 16 domain operasional yang diizinkan untuk peran aktif.
+- `GET /api/v1/admin/template/:domain` — Unduh workbook Excel template input kosong berpanduan (16 domain operasional).
 - `GET /api/v1/admin/export/:domain` — Unduh data aktif MySQL dalam format workbook Excel (kolom Sumber Data).
 - `POST /api/v1/admin/import/:domain` — Unggah file Excel untuk pembaruan data secara otomatis (upsert).
 - `GET /api/v1/admin/sync-log` — Riwayat audit log aktivitas impor data.

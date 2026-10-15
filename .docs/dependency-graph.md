@@ -10,7 +10,7 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 |---|---|---|---|
 | [`src/db.js`](file:///e:/Project/pertanian_main/src/db.js) | 12 berkas (semua routes & lib) | Database Core | Mengelola pool koneksi MySQL, konfigurasi decimalNumbers, dan helper kueri `q()`. Kerusakan di sini melumpuhkan seluruh API. |
 | [`src/server.js`](file:///e:/Project/pertanian_main/src/server.js) | Entrypoint (Root) | Server Core | Inisialisasi Express, CORS, dual-mount API router, static handler, dan SPA fallback. |
-| [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js) | 3 berkas (`admin.js`, `excel.js`, tests) | Schema & Registry | Mengatur 17 domain operasional (ADR-009), kunci upsert, pemetaan tabel-sheet, normalisasi nama kecamatan & desa, serta alias geografi. |
+| [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js) | 3 berkas (`admin.js`, `excel.js`, tests) | Schema & Registry | Mengatur 16 domain operasional (ADR-009), kunci upsert, pemetaan tabel-sheet, normalisasi nama kecamatan & desa, serta alias geografi. |
 
 ---
 

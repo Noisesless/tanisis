@@ -504,29 +504,6 @@ export const DOMAINS = {
       }
     }],
   },
-  "komoditas-unggulan": {
-    label: "Komoditas Unggulan — Sentra & Valuasi Sektoral",
-    desc: "Daftar komoditas unggulan daerah per sektor (pangan, hortikultura, perkebunan, peternakan, perikanan), sentra kecamatan, dan estimasi nilai ekonomi.",
-    sheets: [{
-      table: "komoditas_unggulan",
-      name: "Komoditas Unggulan",
-      kecamatan: false,
-      key: ["sektor", "nama_komoditas", "tahun"],
-      labels: {
-        sektor: "Sektor (pangan/hortikultura/perkebunan/peternakan/perikanan)",
-        nama_komoditas: "Nama Komoditas",
-        satuan: "Satuan (Ton/Kg/Ekor)",
-        kecamatan_sentra: "Kecamatan Sentra",
-        total_produksi: "Total Produksi",
-        nilai_ekonomi_estimasi: "Estimasi Nilai Ekonomi (Rp)",
-        tahun: "Tahun",
-        is_unggulan: "Status Unggulan (1=Ya, 0=Tidak)",
-      },
-      enums: {
-        sektor: ["pangan", "hortikultura", "perkebunan", "peternakan", "perikanan"],
-      },
-    }],
-  },
   "harga-produsen": {
     label: "Harga Produsen — Valuasi Komoditas",
     desc: "Harga dasar komoditas di tingkat produsen/petani per satuan untuk acuan valuasi ekonomi sektoral.",

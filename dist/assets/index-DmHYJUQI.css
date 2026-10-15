@@ -97,13 +97,13 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  opacity: 0.65;
+  opacity: 0.92;
 }
 
 .sispertani-visual-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(2, 6, 23, 0.96) 0%, rgba(2, 6, 23, 0.6) 50%, rgba(2, 6, 23, 0.35) 100%);
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.75) 0%, rgba(2, 6, 23, 0.32) 45%, rgba(2, 6, 23, 0.10) 100%);
   pointer-events: none;
 }
 
@@ -199,4 +199,215 @@
   .sispertani-mobile-header {
     display: none !important;
   }
+}
+
+/* SISPERTANI Form Dedicated Styling — Anti-Bertumpuk & Precision Layout */
+.sispertani-role-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.sispertani-role-btn {
+  border-radius: 0.375rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.sispertani-role-btn-active {
+  background-color: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.sispertani-role-btn-inactive {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+.sispertani-role-btn-inactive:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.sispertani-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  width: 100%;
+}
+
+.sispertani-field {
+  display: block;
+  width: 100%;
+}
+
+.sispertani-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.375rem;
+  line-height: 1.25;
+}
+
+.sispertani-input-wrapper {
+  position: relative !important;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sispertani-input-icon-left {
+  position: absolute !important;
+  left: 0.75rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 1rem;
+  height: 1rem;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.sispertani-input {
+  width: 100% !important;
+  height: 2.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  padding-left: 2.35rem !important;
+  padding-right: 2.5rem !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 0.875rem;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box !important;
+}
+
+.sispertani-input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15);
+}
+
+.sispertani-input-toggle-btn {
+  position: absolute !important;
+  right: 0.5rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  z-index: 3;
+  outline: none;
+}
+
+.sispertani-input-toggle-btn:hover {
+  color: #334155;
+  background-color: #f1f5f9;
+}
+
+.sispertani-input-toggle-btn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.sispertani-error-alert {
+  border-radius: 0.5rem;
+  border: 1px solid #fecaca;
+  background-color: #fef2f2;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.75rem;
+  color: #b91c1c;
+  line-height: 1.4;
+}
+
+.sispertani-submit-btn {
+  width: 100%;
+  height: 2.75rem;
+  margin-top: 0.25rem;
+  border-radius: 0.5rem;
+  background-color: #047857;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease-in-out, transform 0.08s ease-in-out;
+  outline: none;
+}
+
+.sispertani-submit-btn:hover {
+  background-color: #065f46;
+}
+
+.sispertani-submit-btn:active {
+  transform: scale(0.99);
+}
+
+.sispertani-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.sispertani-back-link {
+  margin-top: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}
+
+.sispertani-back-link:hover {
+  color: #1e293b;
+}
+
+/* 4-Pilar Border-Left-4 Standar SISPERTANI (design-system.md §3.C Pola 1) */
+.border-l-4 {
+  border-left-width: 4px !important;
+}
+.border-l-emerald-600 {
+  border-left-color: #059669 !important;
+}
+.border-l-blue-700 {
+  border-left-color: #1d4ed8 !important;
+}
+.border-l-amber-600 {
+  border-left-color: #d97706 !important;
+}
+.border-l-purple-700 {
+  border-left-color: #7c3aed !important;
+}
+.border-l-rose-600 {
+  border-left-color: #dc2626 !important;
 }

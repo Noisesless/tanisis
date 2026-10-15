@@ -295,7 +295,12 @@ function V(){
     }
   }
 
-  // Filtered domains by Category & Search
+  // Filtered domains by Category & Search + Staleness Evaluation
+  let curYr = new Date().getFullYear();
+  let staleThresh = curYr - 1; // data <= 2024 butuh pembaruan
+  let staleDoms = readinessData?.domains ? readinessData.domains.filter(d => !d.latestYear || d.latestYear < staleThresh) : [];
+  let freshDoms = readinessData?.domains ? readinessData.domains.filter(d => d.latestYear && d.latestYear >= staleThresh) : [];
+
   let filteredDoms = (domsData || []).filter(item => {
     let q = searchQ.trim().toLowerCase();
     let matchSearch = !q || (
@@ -305,6 +310,10 @@ function V(){
     );
     if (!matchSearch) return false;
     if (catActive === "all") return true;
+    if (catActive === "stale") {
+      let rD = readinessData?.domains?.find(d => d.domain === item.domain);
+      return !rD?.latestYear || rD.latestYear < staleThresh;
+    }
     let targetCat = CATEGORIES.find(c => c.id === catActive);
     return targetCat?.match ? targetCat.match.includes(item.domain) : true;
   });
@@ -316,61 +325,61 @@ function V(){
   return token ? (0,P.jsxs)(\`div\`,{
     className:\`flex min-h-screen flex-col bg-slate-100 text-slate-800 antialiased\`,
     children:[
-      // Header Bar
+      // Header Bar (Clean Minimalist Institutional Topbar)
       (0,P.jsx)(\`header\`,{
-        className:\`sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur shadow-sm\`,
+        className:\`sticky top-0 z-30 border-b border-slate-200 bg-white\`,
         children:(0,P.jsxs)(\`div\`,{
-          className:\`mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6\`,
+          className:\`mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6\`,
           children:[
+            // Left: Logo + App Name + Subtitle
             (0,P.jsxs)(\`div\`,{
-              className:\`flex items-center gap-3\`,
+              className:\`flex items-center gap-3 min-w-0\`,
               children:[
-                (0,P.jsx)(\`img\`,{src:\`/logo.png\`,alt:\`Logo SISPERTANI\`,className:\`h-8 w-auto drop-shadow-sm\`}),
+                (0,P.jsx)(\`img\`,{
+                  src:\`/logo.png\`,
+                  alt:\`Logo Banjarnegara\`,
+                  className:\`h-8 w-auto object-contain shrink-0\`
+                }),
                 (0,P.jsxs)(\`div\`,{
                   className:\`min-w-0\`,
                   children:[
-                    (0,P.jsxs)(\`div\`,{
-                      className:\`flex items-center gap-2\`,
-                      children:[
-                        (0,P.jsx)(\`span\`,{className:\`text-sm font-bold tracking-tight text-slate-900\`,children:\`SISPERTANI\`}),
-                        (0,P.jsx)(\`span\`,{className:\`rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600\`,children:\`Dasbor Data\`})
-                      ]
+                    (0,P.jsx)(\`span\`,{
+                      className:\`text-sm font-bold text-slate-900 leading-none block\`,
+                      children:\`SISPERTANI\`
                     }),
-                    (0,P.jsx)(\`p\`,{className:\`truncate text-[11px] text-slate-400\`,children:\`Dinas Pertanian, Perikanan dan Ketahanan Pangan Kab. Banjarnegara\`})
+                    (0,P.jsx)(\`p\`,{
+                      className:\`truncate text-xs text-slate-500 mt-0.5\`,
+                      children:\`Dinas Pertanian, Perikanan dan Ketahanan Pangan Kab. Banjarnegara\`
+                    })
                   ]
                 })
               ]
             }),
+            // Right: User Info, Portal Publik, Keluar
             (0,P.jsxs)(\`div\`,{
-              className:\`flex flex-wrap items-center gap-2.5\`,
+              className:\`flex items-center gap-2 shrink-0\`,
               children:[
                 (0,P.jsxs)(\`div\`,{
-                  className:\`flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700\`,
+                  className:\`flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-700\`,
                   children:[
                     (0,P.jsx)(ge,{className:\`h-3.5 w-3.5 text-slate-400\`}),
-                    sessionUser?.label??\`Administrator\`
+                    sessionUser?.label ?? \`Administrator\`
                   ]
                 }),
-                healthData?.db && healthData.db !== \`up\` ? (0,P.jsxs)(S,{
-                  tone:\`amber\`,
-                  children:[
-                    (0,P.jsx)(M,{className:\`h-3 w-3\`}),
-                    \` Basis Data Terganggu\`
-                  ]
-                }) : null,
                 (0,P.jsxs)(C,{
                   to:\`/\`,
-                  className:\`flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-emerald-700\`,
+                  className:\`flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer\`,
                   children:[
                     (0,P.jsx)(h,{className:\`h-3.5 w-3.5 text-slate-400\`}),
                     \`Portal Publik\`
                   ]
                 }),
                 (0,P.jsxs)(\`button\`,{
+                  type:\`button\`,
                   onClick:Ce,
-                  className:\`flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700\`,
+                  className:\`flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-rose-600 transition cursor-pointer\`,
                   children:[
-                    (0,P.jsx)(me,{className:\`h-3.5 w-3.5\`}),
+                    (0,P.jsx)(me,{className:\`h-3.5 w-3.5 text-slate-400\`}),
                     \`Keluar\`
                   ]
                 })
@@ -385,53 +394,57 @@ function V(){
         className:\`mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6\`,
         children:[
           // Role Banner Section
-          isAdmin ? (
-            // Super Admin Title & Subtitle
-            (0,P.jsx)(\`div\`,{
-              className:\`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
-              children:(0,P.jsxs)(\`div\`,{
+          // Unified Executive Page Header (Flat Open Layout - design-system.md §3.A & §8)
+          (0,P.jsxs)(\`header\`,{
+            className:\`flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5 mb-6\`,
+            children:[
+              (0,P.jsxs)(\`div\`,{
+                className:\`flex-1 min-w-0\`,
                 children:[
-                  (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold tracking-tight text-slate-900\`,children:\`Pengelolaan Data Sektoral\`}),
-                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed\`,children:\`Unduh format template, perbarui berkas Excel, atau ekspor data komoditas dan kelembagaan daerah.\`})
+                  (0,P.jsx)(\`h1\`,{
+                    className:\`text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight\`,
+                    children:isAdmin ? \`Pengelolaan Data Sektoral\` : \`Pengelolaan Data — \${sessionUser?.label??'Bidang Teknis'}\`
+                  }),
+                  (0,P.jsx)(\`p\`,{
+                    className:\`mt-1.5 max-w-2xl text-xs sm:text-sm font-medium text-slate-500 leading-relaxed\`,
+                    children:isAdmin ? \`Pembaruan berkas Excel, pengelolaan katalog komoditas, dan pemantauan keterisian data operasional Kabupaten Banjarnegara.\` : \`Unduh format template, perbarui berkas Excel, atau ekspor data sesuai wewenang bidang tugas Anda.\`
+                  })
                 ]
+              }),
+              (0,P.jsx)(\`img\`,{
+                src:\`/img/domain/dashboard.png\`,
+                alt:\`Ilustrasi Pengelolaan Data\`,
+                className:\`hidden sm:block h-14 sm:h-16 w-auto object-contain shrink-0 select-none\`,
+                style:{maxHeight:\`60px\`}
               })
-            })
-          ) : (
-            // Technical Bidang Workspace Banner
-            (0,P.jsx)(\`div\`,{
-              className:\`mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
-              children:(0,P.jsxs)(\`div\`,{
-                children:[
-                  (0,P.jsx)(\`h1\`,{className:\`text-xl font-bold tracking-tight text-slate-900\`,children:\`Pengelolaan Data — \${sessionUser?.label??'Bidang Teknis'}\`}),
-                  (0,P.jsx)(\`p\`,{className:\`mt-1 text-xs text-slate-500 max-w-2xl leading-relaxed\`,children:\`Unduh format template, perbarui berkas Excel, atau ekspor data sesuai wewenang bidang tugas Anda.\`})
-                ]
-              })
-            })
-          ),
+            ]
+          }),
 
           // Action Error Notice
           actionErr&&(0,P.jsxs)(\`div\`,{
-            className:\`mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-medium text-red-800 shadow-sm\`,
+            className:\`mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-xs font-medium text-red-800 shadow-sm\`,
             children:[
               (0,P.jsx)(w,{className:\`mt-0.5 h-4 w-4 shrink-0 text-red-600\`}),
               (0,P.jsx)(\`span\`,{children:actionErr})
             ]
           }),
 
-          // KPI Stats Row
+          // KPI Stats Row (4-Pilar Border-Left-4 — design-system.md §3.C Pola 1)
           (0,P.jsxs)(\`div\`,{
             className:isAdmin?\`grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4\`:\`grid grid-cols-1 gap-4 sm:grid-cols-2\`,
             children:[
               (0,P.jsx)(H,{
-                icon:(0,P.jsx)(i,{className:\`h-5 w-5\`}),
-                color:\`bg-emerald-50 text-emerald-700 border border-emerald-200\`,
+                icon:(0,P.jsx)(i,{className:\`h-4 w-4 text-emerald-700\`}),
+                borderTone:\`border-l-emerald-600\`,
+                iconColor:\`text-emerald-700\`,
                 label:isAdmin?\`Domain Terdaftar\`:\`Domain Tugas Bidang\`,
                 value:domsData?domsData.length:null,
                 hint:\`Katalog sektor data\`
               }),
               (0,P.jsx)(H,{
-                icon:(0,P.jsx)(g,{className:\`h-5 w-5\`}),
-                color:\`bg-blue-50 text-blue-700 border border-blue-200\`,
+                icon:(0,P.jsx)(g,{className:\`h-4 w-4 text-blue-700\`}),
+                borderTone:\`border-l-blue-700\`,
+                iconColor:\`text-blue-700\`,
                 label:\`Total Tabel Data\`,
                 value:domsData?totalSheets:null,
                 hint:\`Format lembar data\`
@@ -439,15 +452,17 @@ function V(){
               isAdmin && (0,P.jsxs)(P.Fragment,{
                 children:[
                   (0,P.jsx)(H,{
-                    icon:(0,P.jsx)(a,{className:\`h-5 w-5\`}),
-                    color:\`bg-amber-50 text-amber-700 border border-amber-200\`,
+                    icon:(0,P.jsx)(a,{className:\`h-4 w-4 text-amber-700\`}),
+                    borderTone:\`border-l-amber-600\`,
+                    iconColor:\`text-amber-700\`,
                     label:\`Program Bantuan\`,
                     value:bantuanData?bantuanData.program.length:null,
                     hint:bantuanData&&bantuanData.program.length>0?\`Pagu \${k(totalBantuanNominal)} · \${totalPenerima.toLocaleString(\`id-ID\`)} penerima\`:\`Belum ada data bantuan\`
                   }),
                   (0,P.jsx)(H,{
-                    icon:(0,P.jsx)(fe,{className:\`h-5 w-5\`}),
-                    color:\`bg-indigo-50 text-indigo-700 border border-indigo-200\`,
+                    icon:(0,P.jsx)(fe,{className:\`h-4 w-4 text-purple-700\`}),
+                    borderTone:\`border-l-purple-700\`,
+                    iconColor:\`text-purple-700\`,
                     label:\`Riwayat Impor\`,
                     value:syncData?syncData.total:null,
                     hint:syncData&&syncData.rows.length>0?\`Terakhir: \${new Date(syncData.rows[0].created_at).toLocaleString(\`id-ID\`,{day:\`2-digit\`,month:\`short\`,hour:\`2-digit\`,minute:\`2-digit\`})}\`:\`Belum ada aktivitas impor\`
@@ -457,10 +472,9 @@ function V(){
             ]
           }),
 
-
           // Readiness Audit Dashboard (Super Admin Only)
           isAdmin && readinessData && (0,P.jsxs)(\`section\`,{
-            className:\`mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
+            className:\`mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white p-5 shadow-sm\`,
             children:[
               (0,P.jsxs)(\`div\`,{
                 className:\`flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4\`,
@@ -471,122 +485,177 @@ function V(){
                         className:\`flex items-center gap-2\`,
                         children:[
                           (0,P.jsx)(M,{className:\`h-5 w-5 text-emerald-600\`}),
-                          (0,P.jsx)(\`h2\`,{className:\`text-sm font-bold text-slate-800\`,children:\`Audit Kesiapan Data Sektoral (Readiness Matrix)\`}),
+                          (0,P.jsx)(\`h2\`,{className:\`text-sm font-bold text-slate-900\`,children:\`Audit Kesiapan Data Sektoral (Readiness Matrix)\`}),
                           (0,P.jsxs)(S,{
                             tone:readinessData.summary.readinessPercent>=70?\`emerald\`:\`amber\`,
-                            children:[readinessData.summary.readinessPercent,\`% Siap Publik\`]
+                            children:[readinessData.summary.mandiri,\` / \`,readinessData.domains.length,\` Sektor Terisi\`]
                           })
                         ]
                       }),
                       (0,P.jsx)(\`p\`,{
                         className:\`mt-1 text-xs text-slate-500\`,
-                        children:\`Pemetaan faktual ketersediaan baris basis data per sektor dan penyiapan format tagihan data ke dinas.\`
+                        children:\`Pemetaan faktual ketersediaan baris basis data per sektor dan pemantauan tahun pemutakhiran data dinas.\`
                       })
                     ]
                   }),
                   (0,P.jsx)(\`button\`,{
                     type:\`button\`,
                     onClick:()=>setShowReadinessDetails(!showReadinessDetails),
-                    className:\`rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition\`,
+                    className:\`rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer\`,
                     children:showReadinessDetails?\`Sembunyikan Matriks\`:\`Tampilkan Matriks Sektor\`
                   })
                 ]
               }),
+              // 5-Subcard KPI Matrix
               (0,P.jsxs)(\`div\`,{
-                className:\`mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4\`,
+                className:\`mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5\`,
                 children:[
+                  // 1. Keterisian Basis Data
                   (0,P.jsxs)(\`div\`,{
-                    className:\`rounded-lg border border-emerald-100 bg-emerald-50/60 p-3.5\`,
+                    className:\`rounded-lg border border-slate-200 bg-white p-3.5 shadow-sm\`,
                     children:[
-                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-emerald-700\`,children:\`Kesiapan Publik\`}),
-                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-emerald-800\`,children:[readinessData.summary.readinessPercent,\`%\`]}),
-                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-emerald-600\`,children:\`Agregat 24 domain\`})
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500\`,children:\`Keterisian Basis Data\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-bold font-mono tabular-nums text-emerald-700\`,children:[readinessData.summary.readinessPercent,\`%\`]}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-0.5 text-[11px] text-slate-400\`,children:[readinessData.summary.mandiri,\` dari \`,readinessData.domains.length,\` domain terisi\`]})
                     ]
                   }),
+                  // 2. Sektor Terisi
                   (0,P.jsxs)(\`div\`,{
-                    className:\`rounded-lg border border-blue-100 bg-blue-50/60 p-3.5\`,
+                    className:\`rounded-lg border border-slate-200 bg-white p-3.5 shadow-sm\`,
                     children:[
-                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-blue-700\`,children:\`Sektor Mandiri\`}),
-                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-blue-800\`,children:[readinessData.summary.mandiri,\` Domain\`]}),
-                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-blue-600\`,children:\`Terisi di MariaDB\`})
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500\`,children:\`Sektor Terisi\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-bold font-mono tabular-nums text-blue-700\`,children:[readinessData.summary.mandiri,\` Sektor\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-[11px] text-slate-400\`,children:\`Tersimpan di sistem\`})
                     ]
                   }),
+                  // 3. Data Mutakhir
                   (0,P.jsxs)(\`div\`,{
-                    className:\`rounded-lg border border-amber-100 bg-amber-50/60 p-3.5\`,
+                    className:\`rounded-lg border border-slate-200 bg-white p-3.5 shadow-sm\`,
                     children:[
-                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-amber-700\`,children:\`Sektor Penyangga\`}),
-                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-amber-800\`,children:[readinessData.summary.penyangga,\` Domain\`]}),
-                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-amber-600\`,children:\`Snapshot disk / cadangan\`})
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500\`,children:\`Data Mutakhir\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-bold font-mono tabular-nums text-emerald-700\`,children:[freshDoms.length,\` Sektor\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-[11px] text-emerald-600 font-medium\`,children:[\`Tahun \`,staleThresh,\`–\`,curYr]})
                     ]
                   }),
+                  // 4. Perlu Pembaruan
                   (0,P.jsxs)(\`div\`,{
-                    className:\`rounded-lg border border-rose-100 bg-rose-50/60 p-3.5\`,
+                    className:\`rounded-lg border border-slate-200 bg-white p-3.5 shadow-sm\`,
                     children:[
-                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-rose-700\`,children:\`Belum Ada Data\`}),
-                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-extrabold text-rose-800\`,children:[readinessData.summary.kosong,\` Domain\`]}),
-                      (0,P.jsx)(\`p\`,{className:\`text-[11px] text-rose-600\`,children:\`Menunggu data dinas\`})
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500\`,children:\`Perlu Pembaruan\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-bold font-mono tabular-nums text-amber-700\`,children:[staleDoms.length,\` Sektor\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-[11px] text-amber-600 font-medium\`,children:[\`Tahun ≤ \`,staleThresh - 1]})
+                    ]
+                  }),
+                  // 5. Belum Ada Data
+                  (0,P.jsxs)(\`div\`,{
+                    className:\`rounded-lg border border-slate-200 bg-white p-3.5 shadow-sm col-span-2 sm:col-span-1\`,
+                    children:[
+                      (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-500\`,children:\`Belum Ada Data\`}),
+                      (0,P.jsxs)(\`p\`,{className:\`mt-1 text-2xl font-bold font-mono tabular-nums text-slate-700\`,children:[readinessData.summary.kosong,\` Sektor\`]}),
+                      (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-[11px] text-slate-400\`,children:\`0 Baris basis data\`})
                     ]
                   })
                 ]
               }),
-              showReadinessDetails && (0,P.jsx)(\`div\`,{
-                className:\`mt-4 overflow-x-auto rounded-lg border border-slate-200\`,
-                children:(0,P.jsxs)(\`table\`,{
-                  className:\`min-w-full divide-y divide-slate-200 text-left text-xs\`,
-                  children:[
-                    (0,P.jsx)(\`thead\`,{
-                      className:\`bg-slate-50 font-semibold text-slate-600\`,
-                      children:(0,P.jsxs)(\`tr\`,{
+              // Alert Pembaruan Data Usang
+              staleDoms.length > 0 && (0,P.jsxs)(\`div\`,{
+                className:\`mt-3 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/70 p-3.5 text-xs text-amber-900\`,
+                children:[
+                  (0,P.jsx)(w,{className:\`mt-0.5 h-4 w-4 shrink-0 text-amber-600\`}),
+                  (0,P.jsxs)(\`div\`,{
+                    children:[
+                      (0,P.jsxs)(\`p\`,{
+                        className:\`font-bold text-amber-950\`,
                         children:[
-                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5\`,children:\`Sektor / Domain Data\`}),
-                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5\`,children:\`Status Kesiapan\`}),
-                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5 text-right\`,children:\`Baris Basis Data\`}),
-                          (0,P.jsx)(\`th\`,{className:\`px-3 py-2.5 text-center\`,children:\`Tahun Data Terakhir\`})
+                          \`Peringatan Pembaruan Data: \`,
+                          staleDoms.length,
+                          \` sektor memiliki data tahun ≤ \`,
+                          staleThresh - 1,
+                          \`.\`
+                        ]
+                      }),
+                      (0,P.jsxs)(\`p\`,{
+                        className:\`mt-0.5 text-amber-800 leading-relaxed text-[11px]\`,
+                        children:[
+                          \`Sektor yang memerlukan pembaruan berkas Excel: \`,
+                          staleDoms.map(d=>d.label).join(\`, \`),
+                          \`.\`
                         ]
                       })
-                    }),
-                    (0,P.jsx)(\`tbody\`,{
-                      className:\`divide-y divide-slate-100 bg-white\`,
-                      children:readinessData.domains.map(dom=>(0,P.jsxs)(\`tr\`,{
-                        className:\`hover:bg-slate-50/80 transition-colors\`,
-                        children:[
-                          (0,P.jsxs)(\`td\`,{
-                            className:\`px-3 py-2.5 font-medium text-slate-800\`,
-                            children:[
-                              (0,P.jsx)(\`div\`,{className:\`font-bold text-slate-900\`,children:dom.label}),
-                              (0,P.jsx)(\`div\`,{className:\`text-[11px] text-slate-500 line-clamp-1\`,children:dom.desc})
-                            ]
-                          }),
-                          (0,P.jsx)(\`td\`,{
-                            className:\`px-3 py-2.5\`,
-                            children:dom.status===\`mandiri\`?(0,P.jsx)(S,{tone:\`emerald\`,children:\`🟢 Mandiri (DB)\`}):dom.status===\`penyangga\`?(0,P.jsx)(S,{tone:\`amber\`,children:\`🟡 Penyangga (Disk)\`}):(0,P.jsx)(S,{tone:\`rose\`,children:\`🔴 Belum Ada Data\`})
-                          }),
-                          (0,P.jsxs)(\`td\`,{
-                            className:\`px-3 py-2.5 text-right font-mono tabular-nums text-slate-700\`,
-                            children:[dom.totalRows.toLocaleString(\`id-ID\`),dom.hasFallback?\` + Disk\`:\`\`]
-                          }),
-                          (0,P.jsx)(\`td\`,{
-                            className:\`px-3 py-2.5 text-center\`,
-                            children:dom.latestYear ? (0,P.jsx)(\`span\`,{
-                              className:\`inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 font-mono text-xs font-bold text-emerald-800 ring-1 ring-inset ring-emerald-600/20\`,
-                              children:dom.latestYear
-                            }) : (0,P.jsx)(\`span\`,{
-                              className:\`font-mono text-xs text-slate-400\`,
-                              children:\`-\`
+                    ]
+                  })
+                ]
+              }),
+                // Table of Sector Matrix
+                showReadinessDetails && (0,P.jsx)(\`div\`,{
+                  className:\`mt-4 overflow-x-auto rounded-lg border border-slate-200 bg-white\`,
+                  children:(0,P.jsxs)(\`table\`,{
+                    className:\`min-w-full divide-y divide-slate-200 text-left text-xs\`,
+                    children:[
+                      (0,P.jsx)(\`thead\`,{
+                        className:\`bg-slate-50 font-mono text-[11px] uppercase font-bold text-slate-600\`,
+                        children:(0,P.jsxs)(\`tr\`,{
+                          children:[
+                            (0,P.jsx)(\`th\`,{className:\`px-3.5 py-2.5\`,children:\`Sektor / Domain Data\`}),
+                            (0,P.jsx)(\`th\`,{className:\`px-3.5 py-2.5\`,children:\`Status Kesiapan\`}),
+                            (0,P.jsx)(\`th\`,{className:\`px-3.5 py-2.5 text-right\`,children:\`Baris Basis Data\`}),
+                            (0,P.jsx)(\`th\`,{className:\`px-3.5 py-2.5 text-center\`,children:\`Tahun Data Terakhir\`})
+                          ]
+                        })
+                      }),
+                      (0,P.jsx)(\`tbody\`,{
+                        className:\`divide-y divide-slate-100 bg-white\`,
+                        children:readinessData.domains.map(dom=>(0,P.jsxs)(\`tr\`,{
+                          className:\`hover:bg-slate-50/80 transition-colors\`,
+                          children:[
+                            (0,P.jsxs)(\`td\`,{
+                              className:\`px-3.5 py-2.5 font-medium text-slate-800\`,
+                              children:[
+                                (0,P.jsx)(\`div\`,{className:\`font-bold text-slate-900\`,children:dom.label}),
+                                (0,P.jsx)(\`div\`,{className:\`text-[11px] text-slate-500 line-clamp-1\`,children:dom.desc})
+                              ]
+                            }),
+                            (0,P.jsx)(\`td\`,{
+                              className:\`px-3.5 py-2.5\`,
+                              children:dom.status===\`mandiri\`?(0,P.jsx)(S,{tone:\`emerald\`,children:\`Lengkap\`}):dom.status===\`penyangga\`?(0,P.jsx)(S,{tone:\`amber\`,children:\`Perlu Pembaruan\`}):(0,P.jsx)(S,{tone:\`rose\`,children:\`Belum Ada Data\`})
+                            }),
+                            (0,P.jsxs)(\`td\`,{
+                              className:\`px-3.5 py-2.5 text-right font-mono tabular-nums text-slate-700 font-semibold\`,
+                              children:[dom.totalRows.toLocaleString(\`id-ID\`),\` baris\`]
+                            }),
+                            (0,P.jsx)(\`td\`,{
+                              className:\`px-3.5 py-2.5 text-center\`,
+                              children:dom.latestYear ? (
+                                dom.latestYear >= staleThresh ? (
+                                  (0,P.jsxs)(\`span\`,{
+                                    className:\`inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 font-mono text-xs font-semibold text-emerald-800 border border-emerald-200\`,
+                                    children:[dom.latestYear,\` • Mutakhir\`]
+                                  })
+                                ) : (
+                                  (0,P.jsxs)(\`span\`,{
+                                    className:\`inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 font-mono text-xs font-semibold text-amber-800 border border-amber-200\`,
+                                    children:[dom.latestYear,\` • Perlu Update\`]
+                                  })
+                                )
+                              ) : (
+                                (0,P.jsx)(\`span\`,{
+                                  className:\`inline-flex items-center rounded-md bg-rose-50 px-2 py-0.5 font-mono text-xs font-semibold text-rose-800 border border-rose-200\`,
+                                  children:\`Belum Ada\`
+                                })
+                              )
                             })
-                          })
-                        ]
-                      },dom.domain))
-                    })
-                  ]
+                          ]
+                        },dom.domain))
+                      })
+                    ]
+                  })
                 })
-              })
-            ]
-          }),
+              ]
+            }),
 
           // Import Result Banner
           importResult&&(0,P.jsxs)(\`section\`,{
-            className:\`mt-6 overflow-hidden rounded-xl border shadow-sm \${importResult.errors.length?\`border-amber-300 bg-amber-50/40\`:\`border-emerald-300 bg-emerald-50/40\`}\`,
+            className:\`mt-6 overflow-hidden rounded-lg border shadow-sm \${importResult.errors.length?\`border-amber-300 bg-amber-50/40\`:\`border-emerald-300 bg-emerald-50/40\`}\`,
             children:[
               (0,P.jsxs)(\`div\`,{
                 className:\`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 \${importResult.errors.length?\`border-amber-200 bg-amber-100/70\`:\`border-emerald-200 bg-emerald-100/70\`}\`,
@@ -654,9 +723,9 @@ function V(){
               (0,P.jsxs)(\`div\`,{
                 className:\`space-y-4 lg:col-span-2\`,
                 children:[
-                  // Search & Category Filter Section
+                  // Search & Category Filter Section (design-system.md §3.B)
                   (0,P.jsxs)(\`div\`,{
-                    className:\`rounded-xl border border-slate-200 bg-white p-4 shadow-sm\`,
+                    className:\`rounded-lg border border-slate-200 bg-white p-4 shadow-sm\`,
                     children:[
                       (0,P.jsxs)(\`div\`,{
                         className:\`flex flex-wrap items-center justify-between gap-3\`,
@@ -665,8 +734,8 @@ function V(){
                             className:\`flex items-center gap-2\`,
                             children:[
                               (0,P.jsx)(Fe_icon,{className:\`h-4 w-4 text-emerald-600\`}),
-                              (0,P.jsx)(\`span\`,{className:\`text-sm font-bold text-slate-800\`,children:\`Katalog Domain Data\`}),
-                              (0,P.jsxs)(\`span\`,{className:\`rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600\`,children:[(domsData?filteredDoms.length:\`...\`),\` domain\`]})
+                              (0,P.jsx)(\`span\`,{className:\`text-sm font-bold text-slate-900\`,children:\`Katalog Domain Data\`}),
+                              (0,P.jsxs)(\`span\`,{className:\`rounded-full bg-slate-100 px-2.5 py-0.5 font-mono text-xs font-semibold text-slate-700 border border-slate-200\`,children:[(domsData?filteredDoms.length:\`...\`),\` domain\`]})
                             ]
                           }),
                           (0,P.jsxs)(\`div\`,{
@@ -678,23 +747,34 @@ function V(){
                                 value:searchQ,
                                 onChange:e=>setSearchQ(e.target.value),
                                 placeholder:\`Cari domain atau sheet...\`,
-                                className:\`w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-xs text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500\`
+                                className:\`w-full rounded-md border border-slate-300 bg-white py-1.5 pl-8 pr-3 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
                               })
                             ]
                           })
                         ]
                       }),
 
-                      // Category Tabs (for Super Admin or All)
-                      isAdmin && (0,P.jsx)(\`div\`,{
-                        className:\`mt-3 flex flex-wrap gap-1.5 border-t border-slate-100 pt-3\`,
-                        children:CATEGORIES.map(cat=>(0,P.jsx)(\`button\`,{
-                          key:cat.id,
-                          type:\`button\`,
-                          onClick:()=>setCatActive(cat.id),
-                          className:\`rounded-lg px-2.5 py-1 text-xs font-medium transition \${catActive===cat.id?\`bg-emerald-600 text-white shadow-sm\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800\`}\`,
-                          children:cat.label
-                        }))
+                      // Category Tabs (Segmented Switcher - design-system.md §3.B)
+                      isAdmin && (0,P.jsxs)(\`div\`,{
+                        className:\`mt-3 flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3\`,
+                        children:[
+                          CATEGORIES.map(cat=>(0,P.jsx)(\`button\`,{
+                            key:cat.id,
+                            type:\`button\`,
+                            onClick:()=>setCatActive(cat.id),
+                            className:\`rounded-md px-3 py-1.5 text-xs font-semibold transition cursor-pointer \${catActive===cat.id?\`bg-emerald-700 text-white shadow-sm\`:\`bg-slate-100 text-slate-700 hover:bg-slate-200\`}\`,
+                            children:cat.label
+                          })),
+                          staleDoms.length > 0 && (0,P.jsxs)(\`button\`,{
+                            type:\`button\`,
+                            onClick:()=>setCatActive(catActive===\`stale\`?\`all\`:\`stale\`),
+                            className:\`rounded-md px-3 py-1.5 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 \${catActive===\`stale\`?\`bg-amber-600 text-white shadow-sm\`:\`bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100\`}\`,
+                            children:[
+                              (0,P.jsx)(w,{className:\`h-3.5 w-3.5\`}),
+                              \`Perlu Pembaruan (\${staleDoms.length})\`
+                            ]
+                          })
+                        ]
                       })
                     ]
                   }),
@@ -704,7 +784,7 @@ function V(){
                     (0,P.jsx)(re,{height:\`h-[260px]\`,label:\`Memuat katalog domain data...\`})
                   ) : filteredDoms.length===0 ? (
                     (0,P.jsxs)(\`div\`,{
-                      className:\`rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center\`,
+                      className:\`rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center\`,
                       children:[
                         (0,P.jsx)(i,{className:\`mx-auto h-8 w-8 text-slate-300\`}),
                         (0,P.jsx)(\`p\`,{className:\`mt-2 text-sm font-semibold text-slate-600\`,children:\`Tidak ada domain yang cocok\`}),
@@ -719,9 +799,10 @@ function V(){
                         let isBusy=busyAction?.startsWith(\`\${domItem.domain}:\`);
                         let styleMeta=ye(domItem.domain);
                         let DomIcon=styleMeta.icon;
+                        let rDom=readinessData?.domains?.find(d=>d.domain===domItem.domain);
 
                         return (0,P.jsxs)(\`section\`,{
-                          className:\`flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md\`,
+                          className:\`flex flex-col justify-between overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md\`,
                           children:[
                             // Card Header
                             (0,P.jsxs)(\`div\`,{
@@ -734,7 +815,7 @@ function V(){
                                       className:\`flex items-center gap-3 min-w-0\`,
                                       children:[
                                         (0,P.jsx)(\`div\`,{
-                                          className:\`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl \${styleMeta.color}\`,
+                                          className:\`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg \${styleMeta.color}\`,
                                           children:(0,P.jsx)(DomIcon,{className:\`h-5 w-5\`})
                                         }),
                                         (0,P.jsxs)(\`div\`,{
@@ -746,9 +827,32 @@ function V(){
                                         })
                                       ]
                                     }),
-                                    (0,P.jsxs)(\`span\`,{
-                                      className:\`shrink-0 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600\`,
-                                      children:[domItem.sheets.length,\` sheet\`]
+                                    (0,P.jsxs)(\`div\`,{
+                                      className:\`flex flex-col items-end gap-1 shrink-0\`,
+                                      children:[
+                                        (0,P.jsxs)(\`span\`,{
+                                          className:\`rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600\`,
+                                          children:[domItem.sheets.length,\` sheet\`]
+                                        }),
+                                        rDom?.latestYear ? (
+                                          rDom.latestYear >= staleThresh ? (
+                                            (0,P.jsxs)(\`span\`,{
+                                              className:\`rounded px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80\`,
+                                              children:[rDom.latestYear,\` • Mutakhir\`]
+                                            })
+                                          ) : (
+                                            (0,P.jsxs)(\`span\`,{
+                                              className:\`rounded px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-amber-50 text-amber-800 border border-amber-200/80\`,
+                                              children:[rDom.latestYear,\` • Perlu Update\`]
+                                            })
+                                          )
+                                        ) : (
+                                          (0,P.jsx)(\`span\`,{
+                                            className:\`rounded px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-rose-50 text-rose-800 border border-rose-200/80\`,
+                                            children:\`Belum Ada Data\`
+                                          })
+                                        )
+                                      ]
                                     })
                                   ]
                                 })
@@ -761,7 +865,7 @@ function V(){
                               children:(0,P.jsx)(\`ul\`,{
                                 className:\`space-y-1.5\`,
                                 children:domItem.sheets.map(sh=>(0,P.jsxs)(\`li\`,{
-                                  className:\`flex items-center justify-between gap-2 rounded-lg bg-white px-2.5 py-1.5 text-[11px] border border-slate-200/60\`,
+                                  className:\`flex items-center justify-between gap-2 rounded-md bg-white px-2.5 py-1.5 text-[11px] border border-slate-200/60\`,
                                   title:\`Tabel DB: \${sh.table}\`,
                                   children:[
                                     (0,P.jsxs)(\`div\`,{
@@ -791,9 +895,9 @@ function V(){
                                       type:\`button\`,
                                       onClick:()=>Te(domItem.domain,\`template\`),
                                       disabled:isBusy,
-                                      className:\`flex items-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50/50 px-2.5 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100 disabled:opacity-50\`,
+                                      className:\`flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 cursor-pointer\`,
                                       children:[
-                                        (0,P.jsx)(le,{className:\`h-3.5 w-3.5 text-emerald-600\`}),
+                                        (0,P.jsx)(le,{className:\`h-3.5 w-3.5 text-slate-500\`}),
                                         busyAction===\`\${domItem.domain}:template\`?\`Menyiapkan...\`:\`Template\`
                                       ]
                                     }),
@@ -801,9 +905,9 @@ function V(){
                                       type:\`button\`,
                                       onClick:()=>Te(domItem.domain,\`export\`),
                                       disabled:isBusy,
-                                      className:\`flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50\`,
+                                      className:\`flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50/50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 shadow-xs transition hover:bg-blue-100/70 disabled:opacity-50 cursor-pointer\`,
                                       children:[
-                                        (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-slate-400\`}),
+                                        (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-blue-600\`}),
                                         busyAction===\`\${domItem.domain}:export\`?\`Menyiapkan...\`:\`Ekspor\`
                                       ]
                                     })
@@ -813,7 +917,7 @@ function V(){
                                   children:[
                                     (0,P.jsx)(\`label\`,{
                                       htmlFor:inpId,
-                                      className:\`flex cursor-pointer items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold text-white shadow-sm transition \${isBusy?\`bg-emerald-400\`:\`bg-emerald-600 hover:bg-emerald-700\`}\`,
+                                      className:\`flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition \${isBusy?\`bg-emerald-400\`:\`bg-emerald-700 hover:bg-emerald-800\`}\`,
                                       children:busyAction===\`\${domItem.domain}:import\`?(0,P.jsxs)(P.Fragment,{
                                         children:[(0,P.jsx)(j,{className:\`h-3.5 w-3.5 animate-spin\`}),\`Mengunggah...\`]
                                       }):(0,P.jsxs)(P.Fragment,{
@@ -841,138 +945,163 @@ function V(){
                     })
                   ),
 
-                  // Catatan Penggunaan Card
+                  // Petunjuk Pengelolaan Data (design-system.md §3.F)
                   (0,P.jsxs)(\`section\`,{
-                    className:\`rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
+                    className:\`overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm\`,
                     children:[
-                      (0,P.jsxs)(\`h3\`,{
-                        className:\`flex items-center gap-2 text-sm font-bold text-slate-800\`,
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`flex items-center gap-2 border-b border-slate-100 bg-slate-50/70 px-4 py-3\`,
                         children:[
-                          (0,P.jsx)(u,{className:\`h-4 w-4 text-emerald-600\`}),
-                          \`Petunjuk Pengelolaan Data\`
+                          (0,P.jsx)(u,{className:\`h-4 w-4 text-emerald-700\`}),
+                          (0,P.jsx)(\`h2\`,{className:\`text-xs font-bold uppercase tracking-wide text-slate-800\`,children:\`Petunjuk Pengelolaan Data\`})
                         ]
                       }),
-                      (0,P.jsxs)(\`ol\`,{
-                        className:\`mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-slate-600\`,
+                      (0,P.jsx)(\`div\`,{
+                        className:\`p-4 space-y-2.5 bg-white\`,
                         children:[
-                          (0,P.jsxs)(\`li\`,{children:[\`Pembaruan data otomatis: Baris dengan tahun dan wilayah yang sama akan memperbarui data sebelumnya tanpa membuat duplikasi.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Pastikan penamaan kecamatan sesuai daftar standar pada lembar petunjuk template.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Baris data yang tidak sesuai format akan dilewati dan dilaporkan nomor barisnya pada ringkasan impor.\`]}),
-                          (0,P.jsxs)(\`li\`,{children:[\`Pembaruan data bantuan pemerintah akan langsung tersinkronisasi ke portal publik.\`]})
-                        ]
+                          {num:\`1\`,text:\`Pembaruan data otomatis: Baris dengan tahun dan wilayah yang sama akan memperbarui data sebelumnya tanpa membuat duplikasi.\`},
+                          {num:\`2\`,text:\`Pastikan penamaan kecamatan sesuai daftar standar pada lembar petunjuk template.\`},
+                          {num:\`3\`,text:\`Baris data yang tidak sesuai format akan dilewati dan dilaporkan nomor barisnya pada ringkasan impor.\`},
+                          {num:\`4\`,text:\`Pembaruan data bantuan pemerintah akan langsung tersinkronisasi ke portal publik.\`}
+                        ].map(st=>(0,P.jsxs)(\`div\`,{
+                          className:\`flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed\`,
+                          children:[
+                            (0,P.jsx)(\`span\`,{className:\`flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-slate-100 font-mono text-[10px] font-bold text-slate-700 mt-0.5\`,children:st.num}),
+                            (0,P.jsx)(\`span\`,{children:st.text})
+                          ]
+                        },st.num))
                       })
                     ]
                   })
                 ]
               }),
 
-              // Right Sidebar Column
+              // Right Sidebar Column (design-system.md §3.C & §1.B.4 Geometri)
               (0,P.jsxs)(\`div\`,{
                 className:\`space-y-4 lg:sticky lg:top-20 lg:self-start\`,
                 children:[
-                  // If Admin: Bantuan Overview Card
-                  isAdmin && (0,P.jsxs)(P.Fragment,{
-                    children:[
-                      (0,P.jsx)(U,{icon:(0,P.jsx)(a,{className:\`h-3.5 w-3.5\`}),title:\`Ringkasan Bantuan Pemerintah\`}),
-                      (0,P.jsx)(\`section\`,{
-                        className:\`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm\`,
-                        children:bantuanData===null ? (
-                          (0,P.jsx)(\`div\`,{className:\`px-5 py-6 text-center text-xs text-slate-400\`,children:\`Memuat data bantuan...\`})
-                        ) : bantuanData.program.length===0 ? (
+                  // If Admin: Bantuan Overview Card (design-system.md §3.C Pola 4 Divided Box)
+                  isAdmin && (0,P.jsx)(\`section\`,{
+                    className:\`overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm\`,
+                    children:bantuanData===null ? (
+                      (0,P.jsx)(\`div\`,{className:\`px-5 py-6 text-center text-xs text-slate-400\`,children:\`Memuat data bantuan...\`})
+                    ) : bantuanData.program.length===0 ? (
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`px-5 py-6 text-center\`,
+                        children:[
+                          (0,P.jsx)(\`p\`,{className:\`text-xs font-semibold text-slate-600\`,children:\`Belum ada data program bantuan\`}),
+                          (0,P.jsx)(\`p\`,{className:\`mt-1 text-[11px] text-slate-400\`,children:\`Impor domain bantuan-program untuk memuat data.\`})
+                        ]
+                      })
+                    ) : (
+                      (0,P.jsxs)(P.Fragment,{
+                        children:[
+                          // Integrated Card Header
                           (0,P.jsxs)(\`div\`,{
-                            className:\`px-5 py-6 text-center\`,
+                            className:\`flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-4 py-3\`,
                             children:[
-                              (0,P.jsx)(\`p\`,{className:\`text-xs font-semibold text-slate-600\`,children:\`Belum ada data program bantuan\`}),
-                              (0,P.jsx)(\`p\`,{className:\`mt-1 text-[11px] text-slate-400\`,children:\`Impor domain bantuan-program untuk memuat data.\`})
-                            ]
-                          })
-                        ) : (
-                          (0,P.jsxs)(P.Fragment,{
-                            children:[
-                              (0,P.jsx)(\`dl\`,{
-                                className:\`divide-y divide-slate-100\`,
+                              (0,P.jsxs)(\`div\`,{
+                                className:\`flex items-center gap-2\`,
                                 children:[
-                                  {k:\`Program Terdaftar\`,v:\`\${bantuanData.program.length} program\`},
-                                  {k:\`Total Alokasi\`,v:k(totalBantuanNominal)},
-                                  {k:\`Total Penerima\`,v:\`\${totalPenerima.toLocaleString(\`id-ID\`)} orang\`},
-                                  {k:\`Rasio APBD / APBN\`,v:\`\${bantuanData.program.filter(e=>e.sumber===\`APBD\`).length} / \${bantuanData.program.filter(e=>e.sumber===\`APBN\`).length}\`}
-                                ].map(row=>(0,P.jsxs)(\`div\`,{
-                                  className:\`flex items-center justify-between px-4 py-2.5 text-xs\`,
-                                  children:[
-                                    (0,P.jsx)(\`dt\`,{className:\`text-slate-500\`,children:row.k}),
-                                    (0,P.jsx)(\`dd\`,{className:\`font-bold text-slate-800 tabular-nums\`,children:row.v})
-                                  ]
-                                },row.k))
+                                  (0,P.jsx)(a,{className:\`h-4 w-4 text-emerald-700\`}),
+                                  (0,P.jsx)(\`h2\`,{className:\`text-xs font-bold uppercase tracking-wide text-slate-800\`,children:\`Ringkasan Bantuan Pemerintah\`})
+                                ]
+                              }),
+                              (0,P.jsx)(\`span\`,{
+                                className:\`rounded bg-amber-50 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-800 border border-amber-200/60\`,
+                                children:\`APBD / APBN\`
+                              })
+                            ]
+                          }),
+
+                          // 2-Col Divided Metrics (design-system.md §3.C Pola 4 Divided Box)
+                          (0,P.jsxs)(\`div\`,{
+                            className:\`grid grid-cols-2 divide-x divide-slate-100 border-b border-slate-100 bg-white\`,
+                            children:[
+                              (0,P.jsxs)(\`div\`,{
+                                className:\`p-3.5 text-left\`,
+                                children:[
+                                  (0,P.jsx)(\`span\`,{className:\`block text-[10px] font-bold uppercase tracking-wider text-slate-400\`,children:\`Total Alokasi\`}),
+                                  (0,P.jsx)(\`p\`,{className:\`mt-1 font-mono text-xl font-bold tabular-nums text-slate-900 leading-none\`,children:k(totalBantuanNominal)}),
+                                  (0,P.jsx)(\`span\`,{className:\`mt-1 block text-[10px] text-slate-400\`,children:\`Pagu bantuan dinas\`})
+                                ]
                               }),
                               (0,P.jsxs)(\`div\`,{
-                                className:\`border-t border-slate-100 bg-slate-50 px-4 py-2.5\`,
+                                className:\`p-3.5 text-left\`,
                                 children:[
-                                  (0,P.jsxs)(\`p\`,{className:\`text-[10px] text-slate-400\`,children:[\`Diperbarui \`,oe(bantuanData.updatedAt)]}),
-                                  (0,P.jsxs)(C,{
-                                    to:\`/government-assistance\`,
-                                    className:\`mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline\`,
-                                    children:[\`Buka Halaman Bantuan Publik\`,(0,P.jsx)(h,{className:\`h-3 w-3\`})]
-                                  })
+                                  (0,P.jsx)(\`span\`,{className:\`block text-[10px] font-bold uppercase tracking-wider text-slate-400\`,children:\`Penerima Manfaat\`}),
+                                  (0,P.jsxs)(\`p\`,{className:\`mt-1 font-mono text-xl font-bold tabular-nums text-emerald-700 leading-none\`,children:[totalPenerima.toLocaleString(\`id-ID\`),\` org\`]}),
+                                  (0,P.jsx)(\`span\`,{className:\`mt-1 block text-[10px] text-slate-400\`,children:\`Sasaran terverifikasi\`})
                                 ]
                               })
                             ]
+                          }),
+
+                          // Secondary Detail Rows
+                          (0,P.jsx)(\`dl\`,{
+                            className:\`divide-y divide-slate-100 bg-white\`,
+                            children:[
+                              {k:\`Program Terdaftar\`,v:\`\${bantuanData.program.length} program aktif\`},
+                              {k:\`Rasio Sumber Dana\`,v:\`\${bantuanData.program.filter(e=>e.sumber===\`APBD\`).length} APBD · \${bantuanData.program.filter(e=>e.sumber===\`APBN\`).length} APBN\`}
+                            ].map(row=>(0,P.jsxs)(\`div\`,{
+                              className:\`flex items-center justify-between px-4 py-2.5 text-xs\`,
+                              children:[
+                                (0,P.jsx)(\`dt\`,{className:\`text-slate-500 font-medium\`,children:row.k}),
+                                (0,P.jsx)(\`dd\`,{className:\`font-mono font-bold text-slate-800 tabular-nums\`,children:row.v})
+                              ]
+                            },row.k))
+                          }),
+
+                          // Integrated Action Footer
+                          (0,P.jsxs)(\`div\`,{
+                            className:\`flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-4 py-2.5 text-xs\`,
+                            children:[
+                              (0,P.jsxs)(\`span\`,{className:\`text-[10px] text-slate-400 font-mono\`,children:[\`Diperbarui \`,oe(bantuanData.updatedAt)]}),
+                              (0,P.jsxs)(C,{
+                                to:\`/government-assistance\`,
+                                className:\`flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition\`,
+                                children:[\`Buka Halaman Bantuan\`,(0,P.jsx)(h,{className:\`h-3 w-3\`})]
+                              })
+                            ]
                           })
-                        )
+                        ]
                       })
-                    ]
+                    )
                   }),
 
                   // If Technical Role: Quick Step Guide Card
-                  !isAdmin && (0,P.jsxs)(P.Fragment,{
+                  !isAdmin && (0,P.jsxs)(\`section\`,{
+                    className:\`overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm\`,
                     children:[
-                      (0,P.jsx)(U,{icon:(0,P.jsx)(d,{className:\`h-3.5 w-3.5\`}),title:\`Panduan Pembaruan Data\`}),
-                      (0,P.jsxs)(\`section\`,{
-                        className:\`rounded-xl border border-slate-200 bg-white p-4 shadow-sm\`,
+                      (0,P.jsxs)(\`div\`,{
+                        className:\`flex items-center gap-2 border-b border-slate-100 bg-slate-50/70 px-4 py-3\`,
                         children:[
-                          (0,P.jsxs)(\`div\`,{
-                            className:\`space-y-3\`,
-                            children:[
-                              {num:\`1\`,title:\`Unduh Template\`,desc:\`Unduh berkas template Excel resmi sesuai domain yang ingin diperbarui.\`},
-                              {num:\`2\`,title:\`Pengisian Data\`,desc:\`Isi tabel data sesuai petunjuk. Pastikan nama kecamatan dan tahun terisi benar.\`},
-                              {num:\`3\`,title:\`Unggah Berkas\`,desc:\`Gunakan tombol 'Impor Excel' untuk memperbarui data ke sistem.\`}
-                            ].map(st=>(0,P.jsxs)(\`div\`,{
-                              className:\`flex items-start gap-2.5 text-xs\`,
-                              children:[
-                                (0,P.jsx)(\`span\`,{className:\`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-700 text-[10px]\`,children:st.num}),
-                                (0,P.jsxs)(\`div\`,{
-                                  children:[
-                                    (0,P.jsx)(\`p\`,{className:\`font-bold text-slate-800\`,children:st.title}),
-                                    (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-slate-500 leading-relaxed\`,children:st.desc})
-                                  ]
-                                })
-                              ]
-                            },st.num))
-                          })
+                          (0,P.jsx)(d,{className:\`h-4 w-4 text-emerald-700\`}),
+                          (0,P.jsx)(\`h2\`,{className:\`text-xs font-bold uppercase tracking-wide text-slate-800\`,children:\`Panduan Pembaruan Data\`})
                         ]
+                      }),
+                      (0,P.jsx)(\`div\`,{
+                        className:\`p-4 space-y-3 bg-white\`,
+                        children:[
+                          {num:\`1\`,title:\`Unduh Template\`,desc:\`Unduh berkas template Excel resmi sesuai domain yang ingin diperbarui.\`},
+                          {num:\`2\`,title:\`Pengisian Data\`,desc:\`Isi tabel data sesuai petunjuk. Pastikan nama kecamatan dan tahun terisi benar.\`},
+                          {num:\`3\`,title:\`Unggah Berkas\`,desc:\`Gunakan tombol 'Impor Excel' untuk memperbarui data ke sistem.\`}
+                        ].map(st=>(0,P.jsxs)(\`div\`,{
+                          className:\`flex items-start gap-2.5 text-xs\`,
+                          children:[
+                            (0,P.jsx)(\`span\`,{className:\`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold font-mono text-slate-700 text-[10px] mt-0.5\`,children:st.num}),
+                            (0,P.jsxs)(\`div\`,{
+                              children:[
+                                (0,P.jsx)(\`p\`,{className:\`font-bold text-slate-800\`,children:st.title}),
+                                (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-slate-500 leading-relaxed\`,children:st.desc})
+                              ]
+                            })
+                          ]
+                        },st.num))
                       })
                     ]
                   }),
 
-                  // System Status Card
-                  (0,P.jsx)(U,{icon:(0,P.jsx)(M,{className:\`h-3.5 w-3.5\`}),title:\`Informasi Sistem\`}),
-                  (0,P.jsx)(\`section\`,{
-                    className:\`rounded-xl border border-slate-200 bg-white shadow-sm\`,
-                    children:(0,P.jsx)(\`dl\`,{
-                      className:\`divide-y divide-slate-100\`,
-                      children:[
-                        {k:\`Layanan API\`,v:healthData?.ok?\`Normal\`:healthData?\`Terganggu\`:\`Memeriksa...\`,tone:healthData?.ok??!1?\`emerald\`:\`amber\`},
-                        {k:\`Basis Data\`,v:healthData?.db===\`up\`?\`Terhubung\`:healthData?.db??\`...\`,tone:healthData?.db===\`up\`?\`emerald\`:\`amber\`},
-                        {k:\`Masa Sesi\`,v:\`Aktif (12 Jam)\`,tone:\`slate\`},
-                        {k:\`Cadangan Data\`,v:paketData?.snapshot??\`Tersedia\`,tone:\`slate\`}
-                      ].map(r=>(0,P.jsxs)(\`div\`,{
-                        className:\`flex items-center justify-between gap-2 px-4 py-2.5 text-xs\`,
-                        children:[
-                          (0,P.jsx)(\`dt\`,{className:\`text-slate-500\`,children:r.k}),
-                          (0,P.jsx)(\`dd\`,{children:(0,P.jsx)(S,{tone:r.tone,children:r.v})})
-                        ]
-                      },r.k))
-                    })
-                  })
                 ]
               })
             ]
@@ -1199,11 +1328,11 @@ function V(){
           isAdmin && paketData && paketData.groups.some(g=>g.files.length>0) && (0,P.jsxs)(\`section\`,{
             className:\`mt-8\`,
             children:[
-              (0,P.jsx)(U,{icon:(0,P.jsx)(ne,{className:\`h-3.5 w-3.5\`}),title:\`Unduhan Arsip Data (Excel & CSV)\`}),
+              (0,P.jsx)(U,{icon:(0,P.jsx)(ne,{className:\`h-3.5 w-3.5 text-emerald-700\`}),title:\`Unduhan Arsip Data (Excel & CSV)\`}),
               (0,P.jsx)(\`div\`,{
                 className:\`mt-3 grid gap-4 lg:grid-cols-2\`,
                 children:paketData.groups.filter(g=>g.files.length>0).map(grp=>(0,P.jsxs)(\`div\`,{
-                  className:\`rounded-xl border border-slate-200 bg-white p-4 shadow-sm\`,
+                  className:\`rounded-lg border border-slate-200 bg-white p-4 shadow-sm\`,
                   children:[
                     (0,P.jsxs)(\`div\`,{
                       className:\`flex items-baseline justify-between border-b border-slate-100 pb-2\`,
@@ -1325,12 +1454,12 @@ function V(){
 
               // Quick Role Desk Switcher
               (0,P.jsx)(\`div\`,{
-                className:\`mb-5 flex flex-wrap gap-1.5\`,
+                className:\`sispertani-role-selector\`,
                 children:QUICK_ROLES.map(qr=>(0,P.jsx)(\`button\`,{
                   key:qr.id,
                   type:\`button\`,
                   onClick:()=>{setLoginUser(qr.user);setLoginErr(null);},
-                  className:\`rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer \${loginUser===qr.user?\`bg-slate-900 text-white shadow-sm\`:\`bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900\`}\`,
+                  className:\`sispertani-role-btn \${loginUser===qr.user?\`sispertani-role-btn-active\`:\`sispertani-role-btn-inactive\`}\`,
                   children:qr.label
                 }))
               }),
@@ -1338,49 +1467,49 @@ function V(){
               // Credentials Form
               (0,P.jsxs)(\`form\`,{
                 onSubmit:we,
-                className:\`space-y-3.5\`,
+                className:\`sispertani-form-group\`,
                 children:[
                   (0,P.jsxs)(\`label\`,{
-                    className:\`block\`,
+                    className:\`sispertani-field\`,
                     children:[
-                      (0,P.jsx)(\`span\`,{className:\`mb-1.5 block text-xs font-medium text-slate-700\`,children:\`Nama Pengguna\`}),
+                      (0,P.jsx)(\`span\`,{className:\`sispertani-label\`,children:\`Nama Pengguna\`}),
                       (0,P.jsxs)(\`div\`,{
-                        className:\`relative\`,
+                        className:\`sispertani-input-wrapper\`,
                         children:[
-                          (0,P.jsx)(ge,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
+                          (0,P.jsx)(ge,{className:\`sispertani-input-icon-left\`}),
                           (0,P.jsx)(\`input\`,{
                             type:\`text\`,
                             value:loginUser,
                             onChange:e=>setLoginUser(e.target.value),
                             autoComplete:\`username\`,
                             required:true,
-                            className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
+                            className:\`sispertani-input\`
                           })
                         ]
                       })
                     ]
                   }),
                   (0,P.jsxs)(\`label\`,{
-                    className:\`block\`,
+                    className:\`sispertani-field\`,
                     children:[
-                      (0,P.jsx)(\`span\`,{className:\`mb-1.5 block text-xs font-medium text-slate-700\`,children:\`Kata Sandi\`}),
+                      (0,P.jsx)(\`span\`,{className:\`sispertani-label\`,children:\`Kata Sandi\`}),
                       (0,P.jsxs)(\`div\`,{
-                        className:\`relative\`,
+                        className:\`sispertani-input-wrapper\`,
                         children:[
-                          (0,P.jsx)(pe,{className:\`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400\`}),
+                          (0,P.jsx)(pe,{className:\`sispertani-input-icon-left\`}),
                           (0,P.jsx)(\`input\`,{
                             type:showPass?\`text\`:\`password\`,
                             value:loginPass,
                             onChange:e=>setLoginPass(e.target.value),
                             autoComplete:\`current-password\`,
                             required:true,
-                            className:\`w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-9 text-sm text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
+                            className:\`sispertani-input\`
                           }),
                           (0,P.jsx)(\`button\`,{
                             type:\`button\`,
                             onClick:()=>setShowPass(e=>!e),
                             title:showPass?\`Sembunyikan\`:\`Lihat\`,
-                            className:\`absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition cursor-pointer\`,
+                            className:\`sispertani-input-toggle-btn\`,
                             children:showPass?(0,P.jsx)(ue,{className:\`h-4 w-4\`}):(0,P.jsx)(de,{className:\`h-4 w-4\`})
                           })
                         ]
@@ -1391,7 +1520,7 @@ function V(){
                   // Error Alert
                   loginErr&&(0,P.jsx)(\`div\`,{
                     role:\`alert\`,
-                    className:\`rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-700\`,
+                    className:\`sispertani-error-alert\`,
                     children:(0,P.jsx)(\`span\`,{children:loginErr})
                   }),
 
@@ -1399,7 +1528,7 @@ function V(){
                   (0,P.jsx)(\`button\`,{
                     type:\`submit\`,
                     disabled:loadingAuth,
-                    className:\`w-full rounded-lg bg-emerald-700 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 active:bg-emerald-900 active:scale-[0.99] disabled:opacity-60 cursor-pointer\`,
+                    className:\`sispertani-submit-btn\`,
                     children:loadingAuth ? (
                       (0,P.jsxs)(P.Fragment,{children:[(0,P.jsx)(j,{className:\`inline mr-2 h-4 w-4 animate-spin\`}),\`Memproses...\`]})
                     ) : \`Masuk ke Dasbor\`
@@ -1410,7 +1539,7 @@ function V(){
               // Back to Public Link
               (0,P.jsxs)(C,{
                 to:\`/\`,
-                className:\`mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 transition hover:text-slate-800\`,
+                className:\`sispertani-back-link\`,
                 children:[
                   (0,P.jsx)(e,{className:\`h-3.5 w-3.5\`}),
                   \`Kembali ke Portal Publik\`
@@ -1424,19 +1553,22 @@ function V(){
   );
 }
 
-function H({icon:e,color:t,label:n,value:r,hint:i}){
+function H({icon:e,borderTone:t,label:n,value:r,hint:i,iconColor:o}){
   return (0,P.jsxs)(\`div\`,{
-    className:\`flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-slate-300 hover:shadow-md\`,
+    className:\`bg-white border border-slate-200 border-l-4 \${t||\`border-l-emerald-600\`} rounded-lg p-5 shadow-sm text-left transition hover:shadow-md\`,
     children:[
-      (0,P.jsx)(\`span\`,{className:\`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl \${t}\`,children:e}),
       (0,P.jsxs)(\`div\`,{
-        className:\`min-w-0\`,
+        className:\`flex items-center gap-2 \${o||\`text-slate-700\`}\`,
         children:[
-          (0,P.jsx)(\`p\`,{className:\`text-[10px] font-bold uppercase tracking-wider text-slate-400\`,children:n}),
-          (0,P.jsx)(\`p\`,{className:\`mt-0.5 text-xl font-extrabold tabular-nums tracking-tight text-slate-900\`,children:r===null?\`...\`:typeof r===\`number\`?r.toLocaleString(\`id-ID\`):r}),
-          i&&(0,P.jsx)(\`p\`,{className:\`mt-0.5 truncate text-[11px] text-slate-500\`,children:i})
+          e,
+          (0,P.jsx)(\`p\`,{className:\`text-xs font-semibold uppercase tracking-wide text-slate-700 truncate\`,children:n})
         ]
-      })
+      }),
+      (0,P.jsx)(\`p\`,{
+        className:\`text-3xl font-bold font-mono tabular-nums text-slate-900 mt-2 leading-none\`,
+        children:r===null?\`...\`:typeof r===\`number\`?r.toLocaleString(\`id-ID\`):r
+      }),
+      i&&(0,P.jsx)(\`p\`,{className:\`text-xs text-slate-500 mt-2 truncate leading-tight\`,children:i})
     ]
   });
 }

@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Eliminasi Deadcode, Favicon Multi-Resolusi Baku & Resiliensi Chatbot AI (ADR-055 & ADR-056) done=ALL last=Pembersihan tuntas 8 skrip patch deadcode di scripts/ dan scratch test files; penyelarasan favicon browser multi-resolusi 16x16-256x256 ICO dan PNG dengan cache-busting ?v=logo; resolusi ISSUE-040 Chatbot AI Si Pertani (perbaikan kecamatanParam, migrasi ke gemini-3.5-flash-lite, dan fallback stream SSE lokal anti-disconnect); perbaikan query komoditas_unggulan & horti_produksi next=Perilisan dan pemeliharaan rutin
+phase=Pembersihan Dev Metadata & Build Info dari Antarmuka Admin (/admin) done=ALL last=Menghapus seluruh referensi ADR, build status (API v1, MySQL, JWT, TLS/SSL), label teknis DB (Mandiri DB, MariaDB, Penyangga Disk), dan info kunci skema dari UI /admin. Antarmuka kini 100% bebas dari kebocoran istilah teknis dan ramah pengguna dinas. next=Perilisan dan pemeliharaan rutin
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -30,7 +30,7 @@ icon_lib=lucide
 [Komoditas-Per-Kecamatan]=GET /api/v1/komoditas-unggulan/per-kecamatan?tahun=→top per kecamatan dinamis dari tabel produksi
 [Nilai-Ekonomi]=GET /api/v1/ekonomi/nilai-ekonomi?bidang=→valuasi riil per bidang dari MySQL nilai_ekonomi_tahunan
 [AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN)→Gemini stream proxy→Direct Factual SSE
-[Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 23 domain, latest data year, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
+[Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 16 domain operasional, latest data year, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
 [Frontend]=GET /→express.static(dist)→SPA fallback index.html
 
 ## [PAGES] BUILT
@@ -47,6 +47,23 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-059] Standarisasi Berkas Normalisasi BPS ke Murni CSV & Pembersihan Dev Info UI Admin:
+- Standarisasi Penyimpanan Data 39 Folder Distankan: Seluruh 83 berkas normalisasi statistik di `dist/14. Distankan KP/` dibakukan dalam format murni CSV (wide format `<folder> CSV.csv` dan tidy/long format `tidy/<folder> tidy.csv`) tanpa ketergantungan berkas `.xlsx`/`.xls`.
+- Pembaruan Peta Database: Memperbarui dokumentasi `dist/14. Distankan KP/PETA_DATABASE.md` untuk mencerminkan arsitektur murni CSV.
+- Pembersihan Dev Info & Tech Leaks di UI Admin: Menghapus kartu status sistem (Layanan API v1, MySQL, JWT, TLS/SSL), kartu rekapitulasi otomatis (ADR-009), label internal DB (Mandiri DB, MariaDB, Penyangga Disk), dan info kunci tabel skema dari tampilan dasbor `/admin`.
+[ADR-058] Penegakan ADR-009 & Eliminasi Domain Redundan Komoditas Unggulan dari Katalog Impor:
+- Menghapus domain `komoditas-unggulan` dari konfigurasi `DOMAINS` di `src/lib/domains.js` dan peran bidang teknis di `src/lib/users.js` guna menegakkan prinsip Single Source of Truth ADR-009.
+- Mengonfirmasi bahwa `komoditas_unggulan` adalah tabel derivatif/agregasi otomatis dari data transaksi produksi fisik (`padi_produksi`, `palawija_produksi`, `horti_produksi`, `perkebunan_produksi`, `ternak_populasi`, `ternak_daging`, `ikan_budidaya`) dan acuan `harga_produsen` yang dieksekusi via `src/lib/komoditas-rekap.js` saat startup dan setiap kali impor data sektor dilakukan.
+- Menstandarkan jumlah domain operasional import/export menjadi 16 domain murni, dengan skor keterisian basis data faktual 100% mandiri (16/16).
+- Antarmuka dasbor `/admin` dibersihkan dari seluruh metadata developer, nomor referensi ADR, dan kartu build status internal yang tidak perlu ditampilkan ke pengguna dinas.
+[ADR-057] Penyelarasan Bentuk & Geometri Dasbor Admin dengan Design System & KPI Kesiapan:
+- Redesign Header Terbuka & Ilustrasi Organik: Mengubah header dasbor admin menjadi Flat Open Header terbuka (`border-b border-slate-200 pb-5 mb-6`) dengan H1 `text-2xl sm:text-3xl font-bold tracking-tight text-slate-900`, mengeliminasi badge klise "Super Administrator", dan menyematkan ilustrasi kanonikal unboxed `dashboard.png` (`h-14 sm:h-16 w-auto object-contain select-none max-h-[60px]`) di sisi kanan sesuai standar `design-system.md §3.A & §8`.
+- Pembersihan AI Slop & Tombol Redundan: Menghapus teks "100% Siap Publik" digantikan metrik faktual "17 / 17 Sektor Terisi" (Keterisian Basis Data) serta mengeliminasi tombol duplikat "Lihat Rincian Sektor" pada kotak alert pembaruan data usang karena sudah ada tombol toggle "Tampilkan/Sembunyikan Matriks" di header section.
+- 4-Pilar Border-Left-4 KPI: Menstandarkan 4 kartu ringkasan KPI ke pola pilar `border-l-4` (Emerald, Blue, Amber, Purple) dengan angka `font-mono tabular-nums text-3xl font-bold text-slate-900` (`design-system.md §3.C Pola 1`).
+- Pola 4 Divided Box pada Ringkasan Bantuan: Merefaktor kartu ringkasan bantuan pemerintah dari list `dl` generik menjadi kontainer `rounded-lg` terintegrasi dengan 2-kolom blok metrik terbagi (`divide-x divide-slate-100`) untuk Total Alokasi dan Penerima Manfaat (`font-mono tabular-nums text-xl font-bold`), baris metadata terstruktur, dan footer aksi dengan `ExternalLink` (`design-system.md §3.C Pola 4`).
+- Matriks Eksekutif 2×2 Informasi Sistem: Merefaktor kartu status sistem menjadi matriks 2×2 terbagi (`grid grid-cols-2 divide-x divide-y divide-slate-100`) dengan titik indikator live hijau berdenyut (`animate-pulse`) untuk API dan DB MySQL, rincian masa sesi JWT, status cadangan snapshot, serta footer verifikasi keamanan berikon `Shield` (`design-system.md §1.A.4 & §7.A`).
+- Pill Filter Cepat & Badge Status Tahun per Domain: Menambahkan pil filter `⚠️ Perlu Pembaruan (9)` pada bilah kategori serta menyematkan badge status tahun (`Mutakhir` atau `Perlu Update`) langsung di header setiap kartu domain katalog.
+- Harmonisasi Geometri: Menstandarkan seluruh radius kartu dan panel ke `--radius-md` (8px / `rounded-lg`) dan tombol aksi ke `--radius-sm` (`rounded-md`).
 [ADR-056] Eliminasi Deadcode & Leftover Ad-hoc Patch Scripts:
 - Audit Komprehensif Bundel Frontend: Analisis graf dependensi entry point `dist/assets/index-CI1XYnwk.js` mengonfirmasi 100% 84 berkas bundel JS di `dist/assets/` terhubung aktif (0 bundel mati / orphaned).
 - Eliminasi Skrip Patch Sekali Pakai: Menghapus 8 berkas skrip migrasi/patch ad-hoc di direktori `scripts/` (`fix_farmers_image.js`, `fix_index_ft.js`, `mount_domain_images.js`, `remove_card_wrappers.js`, `uniformize_header_images.js`, `apply_all_domain_images.js`, `sync_kulit_domba.js`, `analyze_deadcode.js`) guna mencegah risiko regresi unboxed UI jika dijalankan kembali.
