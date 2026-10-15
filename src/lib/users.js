@@ -34,6 +34,7 @@ export const USERS = [
   { user: "peternakan", role: "peternakan", passEnv: "PASS_PETERNAKAN" },
   { user: "perikanan", role: "perikanan", passEnv: "PASS_PERIKANAN" },
   { user: "ketahanan-pangan", role: "ketahanan-pangan", passEnv: "PASS_KETAHANAN_PANGAN" },
+  { user: "admin_ketahanan", role: "ketahanan-pangan", passEnv: "PASS_KETAHANAN_PANGAN" },
 ];
 
 /** Apakah peran berhak atas domain tertentu? admin = semua; peran tak dikenal = tidak. */

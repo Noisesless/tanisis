@@ -90,7 +90,8 @@ INSERT IGNORE INTO `users` (`id`, `username`, `password_hash`, `nama_lengkap`, `
 (4, 'admin_perkebunan', '67a4762f8ec1c899e4c6872ed190e9bd3573ec42ab137f570bf4b3f3ec5e8dc8', 'Admin Bidang Perkebunan', '198511182010011007', 'perkebunan@distankan.banjarnegarakab.go.id', 'admin_perkebunan', 'aktif', NULL, '2026-09-23 12:33:47', '2026-09-23 12:33:47'),
 (5, 'admin_peternakan', '5952365f75ebd0429d98a987758a33c905b6e7d289ec951d70db26811d877e3f', 'Admin Bidang Peternakan & Keswan', '198609042011011003', 'peternakan@distankan.banjarnegarakab.go.id', 'admin_peternakan', 'aktif', '2026-09-23 12:49:30', '2026-09-23 12:33:47', '2026-09-23 12:49:30'),
 (6, 'admin_perikanan', '781fe54fb77cc386f9e2ae6a306ea45356fc05b4d10b99529465fb0bd106904b', 'Admin Bidang Perikanan', '198801262014022001', 'perikanan@distankan.banjarnegarakab.go.id', 'admin_perikanan', 'aktif', NULL, '2026-09-23 12:33:47', '2026-09-23 12:33:47'),
-(7, 'admin_ketahanan', 'fbc6f253bc4973d4014981ad44d0c13faa0a63ca12244930eeae30390108b046', 'Admin Bidang Ketahanan Pangan & Penyuluhan', '198904142015031005', 'ketahanan@distankan.banjarnegarakab.go.id', 'admin_ketahanan_pangan', 'aktif', NULL, '2026-09-23 12:33:47', '2026-09-23 12:33:47');
+(7, 'admin_ketahanan', 'fbc6f253bc4973d4014981ad44d0c13faa0a63ca12244930eeae30390108b046', 'Admin Bidang Ketahanan Pangan & Penyuluhan', '198904142015031005', 'ketahanan@distankan.banjarnegarakab.go.id', 'admin_ketahanan_pangan', 'aktif', NULL, '2026-09-23 12:33:47', '2026-09-23 12:33:47'),
+(8, 'ketahanan-pangan', '8d6bebe0354c1f2629f8217d61ea54ef8ee0cb486add9d9b0be7b402588eb697', 'Admin Bidang Ketahanan Pangan', '198904142015031005', 'ketahanan.pangan@distankan.banjarnegarakab.go.id', 'admin_ketahanan_pangan', 'aktif', NULL, '2026-10-15 14:00:00', '2026-10-15 14:00:00');
 
 -- Tabel: user_sessions
 CREATE TABLE IF NOT EXISTS `user_sessions` (

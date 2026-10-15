@@ -47,6 +47,11 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-061] Registrasi Akun Bidang Ketahanan Pangan ke Basis Data & Konfigurasi RBAC:
+- Mendaftarkan akun `ketahanan-pangan` ke tabel `users` MySQL dengan peran `admin_ketahanan_pangan`, status aktif, dan password ter-hash SHA-256.
+- Menambahkan variabel `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` pada berkas `.env` dan template `.env.example`.
+- Menyelaraskan daftar peran di `src/lib/users.js` dengan menyertakan alias `admin_ketahanan` untuk kompatibilitas ganda, serta memperbarui `database/production_migration_patch.sql` dan menyediakan script seed idempoten `scripts/seed_ketahanan_pangan.js`.
+- Akun berhak mengelola 6 domain operasional: `harga-pasar`, `fsva-desa`, `neraca-pangan`, `psat-pduk`, `lumbung`, dan `harga-produsen`.
 [ADR-060] Refinement RAG Graceful Local Fallback dengan Rule-Based NLG & Offline Agricultural KB:
 - Mengeliminasi keluaran fallback raw data dump SQL kaku, digantikan dengan engine sintesis bahasa alami berbasis aturan (`src/lib/ai-nlg.js`) yang mengubah baris data produksi, luas panen, kelembagaan, dan FSVA menjadi narasi percakapan yang santun, luwes, dan terstruktur.
 - Membangun modul Offline Agricultural Knowledge Base (`src/lib/ai-offline-kb.js`) berisi profil komoditas khas Banjarnegara (Salak Pondoh, Kopi Robusta Karangkobar, Domba Batur, Sayuran Dieng, Gula Kelapa Deres), SOP teknis pengendalian hama (WBC padi, patek cabai, tikus sawah), serta panduan pendaftaran kelembagaan (SIMLUHTAN & proposal alsintan).
