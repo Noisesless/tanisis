@@ -568,16 +568,171 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   1. Menjalankan seeder idempoten `scripts/seed_ketahanan_pangan.js` untuk meregistrasi `ketahanan-pangan` (id: 8, role: `admin_ketahanan_pangan`) dengan password hash SHA-256 ke tabel `users`.
   2. Menambahkan `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` ke `.env` dan `.env.example`.
   3. Mendaftarkan alias `admin_ketahanan` di `src/lib/users.js` untuk kompatibilitas login ganda.
-  4. Memverifikasi login via `POST /api/v1/admin/login` mengembalikan status HTTP 200 OK dan hak akses 6 domain pangan (`fsva-desa`, `neraca-pangan`, `lumbung`, `psat-pduk`, `harga-pasar`, `harga-produsen`).
+### [ISSUE-044] Inkonsistensi Status Kesiapan Data Multi-Role & Teks Kunci PSAT Terpotong (ADR-062)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `src/routes/admin.js`, `scripts/build_admin_view.js`, `dist/assets/admin-C9Dakcgq.js`.
+- **Deskripsi:** Saat akun administrator masuk, kartu domain menampilkan tahun data dan status mutakhir, namun saat akun bidang teknis (seperti `ketahanan-pangan`) masuk, seluruh kartu tertulis "Belum Ada Data" berwarna merah. Selain itu, pada kartu Keamanan Pangan (PSAT-PDUK), teks nama sheet tertekan hilang dan hanya tersisa teks kunci natural yang panjang.
+- **Akar Masalah:**
+  1. Endpoint `/api/v1/admin/readiness` dikunci oleh middleware `requireAdminRole` sehingga akun bidang teknis menerima 403 Forbidden.
+  2. Komponen admin frontend memblokir pemanggilan readiness dengan `if (!n) return;` saat login sebagai non-admin sehingga `readinessData` selalu `null`.
+  3. Rentang kunci natural `psat_pduk` (52 karakter) menggunakan `shrink-0` tanpa batas lebar sehingga memampatkan elemen nama sheet di sebelahnya hingga 0px.
+  4. Domain `harga-produsen` belum terdaftar pada pemetaan styling warna `B` dan array kategori.
+- **Solusi & Verifikasi:**
+  1. Mengubah guard `/readiness` di `src/routes/admin.js` menjadi `requireAdmin` (terotentikasi).
+  2. Memindahkan pemanggilan readiness di `build_admin_view.js` sebelum `if (!n) return;` sehingga seluruh akun multi-role menerima data keterisian riil.
+  3. Menambahkan `flex-1` pada nama sheet dan `max-w-[140px] truncate` pada teks kunci tabel.
+  4. Mendaftarkan `harga-produsen` ke objek `B` dan kategori navigasi.
+### [ISSUE-045] Panel Pemetaan Status Sumber Data Halaman Publik & Pintasan Akses Portal di Dasbor Admin (ADR-063)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `src/lib/data-sources.js`, `src/routes/admin.js`, `scripts/build_admin_view.js`, `dist/assets/admin-C9Dakcgq.js`.
+- **Deskripsi:** Administrator dan staf bidang teknis membutuhkan kejelasan faktual mengenai data yang tampil di portal publik: halaman mana yang menggunakan data unggahan Distankan KP Banjarnegara (dengan status tahun dan jumlah baris), mana yang didampingi data rujukan/pembanding luar (BAPANAS, BPS, Kementan), serta tautan langsung untuk melihat halaman publik yang bersangkutan dari dasbor admin tanpa jargon teknis backend rumit.
+- **Solusi & Verifikasi:**
+  1. Membangun modul `src/lib/data-sources.js` yang memetakan 16 domain sektor ke rute publik, data unggahan lokal, dan sumber pembanding eksternal dengan bahasa lugas dan anti-AI-slop.
+  2. Mendaftarkan endpoint `GET /api/v1/admin/sumber-data` di `src/routes/admin.js` yang terintegrasi RBAC (administrator melihat seluruh 16 domain, akun bidang hanya melihat domain tanggung jawabnya).
+  3. Menambahkan tombol `[Lihat di Publik ↗]` di setiap kartu domain katalog berkas agar staf dinas dapat langsung memverifikasi tampilan data di portal publik.
+  4. Menambahkan tab switcher `[Katalog Berkas & Unggahan]` dan `[Sumber Data Halaman Publik]` di dasbor admin dengan tabel 5 kolom informatif: Halaman Publik, Data Distankan KP (Unggahan), Data Pembanding / Rujukan Luar, Status Tayang di Publik, dan Aksi Buka Halaman.
+### [ISSUE-046] Redesign Filter Card Hortikultura, Kontekstualisasi Ikon Sektoral & Eliminasi AI-Slop (ADR-064)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/horticulture-CCLLXyU1.js`.
+- **Deskripsi:** Filter card pada halaman hortikultura (`/horticulture`) memiliki ketimpangan visual vertikal parah di mana kolom sub-sektor memuat 4 tombol dalam grid 2x2 yang memakan 2 baris, sementara 3 kolom lainnya (Metrik Analisis, Tahun Data, Pilih Kecamatan) hanya 1 baris sehingga menyisakan ruang kosong besar di bawahnya. Selain itu, ikon Buah dan Tanaman Hias menggunakan ikon potongan pizza (`pizza`), Sayuran dan Biofarmaka memakai tunas generik (`sprout`), tombol aktif memakai warna biru pekat generik (`bg-blue-800`), dan seluruh teks tombol berhuruf kapital penuh (ALL CAPS).
+- **Akar Masalah:**
+  1. Definisi ikon `ue` pada bundle menggunakan path Lucide `pizza` alih-alih ikon hortikultura yang representatif.
+  2. Penempatan Sub-Sektor (kategori tingkat teratas) sejajar dalam grid 4-kolom yang sempit bersama parameter filter, menyebabkan pembengkakan tinggi secara asimetris.
+  3. Penggunaan warna default `bg-blue-800` dan kapitalisasi kaku yang tidak selaras dengan tema institusional SISPERTANI.
+- **Solusi & Verifikasi:**
+  1. Menstandarkan tata letak filter card ke format baku 4-kolom sejajar (`grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 p-4 rounded-lg bg-white border border-slate-200 shadow-sm`) yang 100% konsisten dengan halaman lain (`food-crops`, `plantation`, `livestock`).
+  2. Mengeliminasi total kapsul redundant "● Aktif: Sayuran" (AI slop) dan menghapus baris footer status yang membuat card tidak konsisten.
+  3. Menerapkan ikon Lucide representatif: Wortel (`Carrot`) untuk Sayuran, Apel (`Apple`) untuk Buah, Tunas (`Sprout`) untuk Biofarmaka, dan Bunga (`Flower-2`) untuk Tanaman Hias.
+  4. Kartu ringkasan metrik total di bawah filter diperbarui agar ikonnya dinamis mengikuti komoditas yang aktif.
+  5. Mengganti warna aktif dari `bg-blue-800` menjadi `bg-emerald-700 text-white font-semibold shadow-xs` dengan tipografi Title Case rapi.
+  6. Pengujian sintaks via `node -c` (exit code 0) dan verifikasi respon HTTP pada `http://127.0.0.1:5173/assets/horticulture-CCLLXyU1.js` (200 OK).
+### [ISSUE-047] Transformasi Dinamis Neraca Pangan Komposit (Non-Beras) & Integrasi Panen Lokal (ADR-065)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `src/routes/ketahanan.js`, `dist/assets/food-security-Dw2-7ErS.js`.
+- **Deskripsi:** Tab "Neraca Pangan Komposit (Non-Beras)" pada `/food-security` sebelumnya menggunakan konstanta array statis di memori frontend (`KOMPOSIT_DATA`) dan belum terhubung ke API backend, sehingga bila admin mengunggah berkas Excel NBM melalui dasbor admin, halaman publik belum dapat memperbarui data secara dinamis. Selain itu, belum ada pilihan tahun data dan data panen lokal Distankan KP yang sebenarnya sudah ada di database belum terhubung sebagai pembanding.
+- **Akar Masalah:**
+  1. Frontend meng-hardcode 8 baris kartu komoditas dengan placeholder statis tanpa pemanggilan `fetch('/api/v1/ketahanan/neraca-komposit')`.
+  2. Endpoint backend `/api/v1/ketahanan/neraca-komposit` belum menyediakan deteksi tahun otomatis (`MAX(tahun)`), daftar tahun (`availableYears`), dan metadata referensi panen lokal.
+- **Solusi & Verifikasi:**
+  1. Backend `src/routes/ketahanan.js`:
+     - Menambahkan deteksi tahun aktif dinamis dan array `availableYears` dari `neraca_pangan_komposit`.
+     - Mengagregasi data panen riil petani Banjarnegara tahun berjalan dari tabel `palawija_produksi` (Jagung: 51.146 Ton, Ubi Kayu: 78.886 Ton, Kedelai: 19 Ton) serta data peternakan (`ternak_daging` & `ternak_telur`) sebagai field `produksiLokalTon`.
+     - Menyediakan penentuan satuan otomatis (Liter untuk Minyak Goreng, Ton untuk komoditas lainnya).
+  2. Frontend `dist/assets/food-security-Dw2-7ErS.js`:
+     - Menambahkan state reaktif `kompositData`, `kompositTahun`, `kompositTahunList`, dan `loadingKomposit`.
+     - Mengintegrasikan pemanggilan API dinamis `fetch('/api/v1/ketahanan/neraca-komposit?tahun=' + kompositTahun)`.
+     - Menambahkan toolbar pemilih tahun data (`select`) yang responsif di atas grid kartu.
+     - Menyajikan badge status reaktif (Surplus: emerald, Seimbang: amber, Defisit: rose, Menunggu Data: netral amber) dan baris pembanding faktual *"Panen Lokal Banjarnegara: X Ton (Distankan KP)"*.
+  3. Verifikasi: `node -c dist/assets/food-security-Dw2-7ErS.js` lolos (exit code 0), query API mengembalikan 8 komoditas dengan tahun 2024 (200 OK), dan asset HTTP terverifikasi utuh.
+
+### [ISSUE-048] Penyelarasan Matriks Metrik Sub-Sektor Buah (Luas, Produksi, Produktivitas) (ADR-066)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/horticulture-CCLLXyU1.js`, `src/routes/hortikultura.js`.
+- **Deskripsi:** Saat pengguna memilih sub-sektor "Buah" pada halaman Hortikultura (`/horticulture`), tombol pilihan metrik analisis di Kolom 2 sebelumnya dikunci/dihilangkan dan digantikan oleh badge banner kaku *"Volume Produksi (Ton)"*. Sementara sub-sektor lain (Sayuran, Biofarmaka, Tanaman Hias) memiliki 3 metrik penuh (`Luas`, `Produksi`, `Produktivitas / T / Ha`).
+- **Akar Masalah:**
+  1. Frontend meng-hardcode seleksi metrik `U = A === "buah" ? "produksi" : j`, mengunci pilihan metrik buah hanya pada produksi.
+  2. Objek dataset buah `Ee` hanya mengisi `produksi` dan membiarkan `luas: {}` kosong tanpa properti komoditas.
+  3. Satuan `unitLuas` dan `unitProduktivitas` pada buah belum didefinisikan sebagai "Ha" dan "Ton/Ha".
+  4. Backend `/rekap-global` meng-hardcode nilai `luas: 0` untuk buah dan belum menyediakan endpoint `/buah-luas`.
+- **Solusi & Verifikasi:**
+  1. Backend `src/routes/hortikultura.js`:
+     - Menambahkan endpoint `GET /api/v1/hortikultura/buah-luas` yang menghitung luas panen (Ha) berdasarkan rasio agronomis standar BPS Distankan KP: Salak (22 T/Ha), Pisang (25 T/Ha), Durian (10 T/Ha), Mangga (12 T/Ha), Pepaya (40 T/Ha), Jeruk Besar (16 T/Ha), Jeruk Siam (18 T/Ha).
+     - Memperbarui `/rekap-global` agar menghitung total estimasi luas panen buah (11.229,72 Ha pada 2024) secara dinamis.
+  2. Frontend `dist/assets/horticulture-CCLLXyU1.js`:
+     - Memperbarui mapping `Ee` sehingga setiap komoditas buah memiliki properti `luas` (Ha) dan `produksi` (Ton) lengkap.
+     - Membuka kunci metrik: `U = j`, sehingga pengguna bebas beralih antara `Luas (Ha)`, `Produksi (Ton)`, dan `T / Ha` pada sub-sektor Buah.
+     - Menyamakan Kolom 2 Metrik Analisis untuk seluruh 4 sub-sektor menjadi 3 tombol baku: `Luas (${unitLuas})`, `Produksi`, dan `(A === "sayuran" || A === "buah") ? "T / Ha" : "Hasil/m²"`.
+     - Memperbarui satuan `unitLuas` ("Ha") dan `unitProduktivitas` ("Ton/Ha") untuk sub-sektor buah.
+     - Kartu statistik total, kecamatan tertinggi, komposisi komoditas, dan grafik tren/batang kini menampilkan data luas dan produktivitas buah secara konsisten tanpa NaN.
+  3. Verifikasi:
+     - `node -c dist/assets/horticulture-CCLLXyU1.js` (exit code 0).
+     - `node -c src/routes/hortikultura.js` (exit code 0).
+     - Query headless mengonfirmasi metrik buah 2024: Luas 11.229,69 Ha, Produksi 249.318,35 Ton, Produktivitas rata-rata 22,20 Ton/Ha.
+     - Pengujian HTTP fetch pada `/assets/horticulture-CCLLXyU1.js` berstatus 200 OK.
+
+### [ISSUE-049] Standardisasi Desain Filter Card Padi & Palawija (/food-crops) Seragam dengan Hortikultura (ADR-067)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/food-crops-BebUD7KU.js`.
+- **Deskripsi:** Filter card pada `/food-crops` memiliki ketidakkonsistenan visual dengan halaman hortikultura: tombol Kelompok Komoditas dan Indikator dibungkus dalam wadah kapsul abu-abu (`bg-slate-100 border border-slate-200 p-1 rounded-lg w-fit`) dengan perilaku `flex-wrap` yang menyebabkan tombol ketiga ("Kacang-kacangan") turun ke baris kedua dan membuat tinggi Kolom 1 tidak simetris dengan kolom lainnya. Selain itu, tombol aktif berwarna putih pucat (`bg-white text-slate-900`) alih-alih warna standar aplikasi (`bg-emerald-700 text-white`), dan terdapat baris teks footer redundan (*"Menampilkan: Padi Sawah & Padi Ladang · Produksi (Ton) · 2024 · Semua"*).
+- **Akar Masalah:** Format segmented-control kapsul lokal yang tidak mengadopsi standar baku 4-kolom sejajar SISPERTANI.
+- **Solusi & Verifikasi:**
+  1. Menstandarkan tata letak filter card ke format baku 4-kolom sejajar (`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-left`) yang identik 100% dengan hortikultura.
+  2. Mengubah tombol Kelompok Komoditas dan Indikator menjadi grid 3-kolom rapi (`grid grid-cols-3 gap-1.5`) dengan state aktif baku **`bg-emerald-700 text-white shadow-xs`** dan state inaktif `bg-white text-slate-800 hover:bg-slate-100 shadow-xs`.
+  3. Mempertahankan seluruh opsi indikator dan metrik komoditas tanpa perubahan fungsi (`Luas Panen`, `Produksi`, `Produktivitas`, serta `Padi Sawah·Ladang`, `Jagung & Umbi-umbian`, `Kacang-kacangan`).
+  4. Menyelaraskan dropdown pemilih Tahun Data dan Pilih Kecamatan dengan ikon kalender/lokasi abu-abu (`text-slate-500`) dan fokus cincin `focus:ring-emerald-600`.
+  5. Menghilangkan baris teks footer redundan di bawah kartu filter.
+  6. Verifikasi: `node -c dist/assets/food-crops-BebUD7KU.js` lolos (exit code 0), dan pengujian fetch HTTP berstatus 200 OK.
+
+### [ISSUE-050] Standardisasi Desain Filter Card Perikanan (/fisheries) Seragam dengan Hortikultura (ADR-068)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/fisheries-5_2RapTI.js`.
+- **Deskripsi:** Filter card pada `/fisheries` memiliki tampilan kaku dan asimetris: 5 tombol Kategori Perikanan (`Budidaya`, `Tangkap`, `Benih`, `Jenis Ikan`, `Ikan Hias`) dipaksa masuk ke dalam kolom 1 yang hanya berbobot 33% lebar card (`grid-cols-3 gap-6 p-6`), menyebabkan tombol sangat sempit, teks terpotong 2 baris, huruf kapital kaku (ALL CAPS), dan warna aktif menggunakan biru elektrik (`bg-blue-600`) yang menyimpang dari tema SISPERTANI.
+- **Akar Masalah:** Format layout `grid-cols-3` kaku dengan pembagian kolom sama rata serta tombol persegi berteks huruf kapital.
+- **Solusi & Verifikasi:**
+  1. Menstandarkan tata letak filter card ke format baku 4-kolom sejajar (`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-left`) yang identik dengan hortikultura.
+  2. Kategori Perikanan diberi rentang 2 kolom (`md:col-span-2 xl:col-span-2`) dengan `grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-1.5` sehingga ke-5 tombol memiliki ruang cukup luas untuk menampilkan nama kategori dalam 1 baris utuh.
+  3. Mengubah tipografi tombol menjadi Title Case rapi dengan state aktif baku **`bg-emerald-700 text-white shadow-xs`** dan state inaktif `bg-white text-slate-800 hover:bg-slate-100 shadow-xs border border-slate-200 rounded-md`.
+  4. Menyelaraskan kontras warna ikon di dalam tombol (aktif: `text-emerald-100`, inaktif: `text-emerald-600`).
+  5. Menstandarkan dropdown Tahun Data dan Pilih Kecamatan dengan label `text-slate-500 font-semibold uppercase`, ikon abu-abu vertikal-tengah, dan fokus cincin `focus:ring-emerald-600`.
+  6. Verifikasi: `node -c dist/assets/fisheries-5_2RapTI.js` lolos (exit code 0), dan pengujian fetch HTTP berstatus 200 OK.
+
+### [ISSUE-051] Eliminasi Tab Redundan & Optimasi Font Tombol Komoditas Padi & Palawija (/food-crops) (ADR-069)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/food-crops-BebUD7KU.js`.
+- **Deskripsi:** Pada halaman `/food-crops`:
+  1. Terdapat 2 tab navigasi atas (*"Produksi & Luas Panen"* dan *"LTT & Kalender Tanam"*) yang redundan karena kedua halaman sudah tersedia secara mandiri pada sidebar navigasi.
+  2. Tombol kelompok komoditas di Kolom 1 mengalami teks terpotong (*"agung & Umbi-umbia"*) akibat panjang string 20 karakter yang melebihi kapasitas lebar kolom kartu.
+- **Akar Masalah:**
+  1. Keberadaan wadah tab switcher redundan sebelum kartu filter.
+  2. String panjang `Jagung & Umbi-umbian` dan `Padi Sawah·Ladang` dalam grid 3-kolom kartu filter tanpa penyesuaian ukuran font atau pemendekan label yang ergonomis.
+- **Solusi & Verifikasi:**
+  1. Menghapus penuh elemen tab switcher 2-tombol di atas filter card sehingga kartu filter langsung berada di bawah header halaman secara rapi dan simetris (margin `mb-6`).
+  2. Menyesuaikan label tampilan tombol komoditas: **`Padi`**, **`Jagung & Umbi`**, dan **`Kacang-kacangan`** yang ringkas dan bebas terpotong.
+  3. Menambahkan atribut tooltip `title={w[e].label}` sehingga nama resmi lengkap komoditas (*"Padi Sawah & Padi Ladang"*, *"Jagung & Umbi-umbian"*, *"Kacang-kacangan"*) tetap muncul saat di-hover.
+  4. Menyelaraskan ukuran font ke `text-[11px] xl:text-xs font-semibold` pada tombol komoditas dan indikator.
+  5. Verifikasi: `node -c dist/assets/food-crops-BebUD7KU.js` lolos (exit code 0), dan pengujian fetch HTTP berstatus 200 OK.
+
+### [ISSUE-052] Eliminasi Data Tiruan (Dummy) & Penerapan Empty State Murni LTT & Kalender Tanam (/ltt-katam) (ADR-070)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-16
+- **Komponen:** `dist/assets/ltt-katam-DHFMKiIG.js`, `src/server.js`.
+- **Deskripsi:** 
+  1. Halaman `/ltt-katam` menampilkan tab switcher redundan 2-tombol (*"Produksi & Luas Panen"* dan *"LTT & Kalender Tanam"*) yang menumpuk di atas konten halaman.
+  2. Karena tabel basis data `ltt_katam` di MySQL `pertasis` saat ini masih berstatus 0 baris (belum diunggah oleh Dinas), halaman sebelumnya menggunakan fallback ke 15 baris data contoh fiktif (`F = [...]`), menampilkan banner peringatan oranye (*"Pratinjau dengan data contoh... Data resmi LTT & kalender tanam dijadwalkan tersedia 23 September 2026..."*), serta merender grafik batang, 4 kartu KPI, dan tabel tiruan yang melanggar prinsip *Zero Dummy Data*.
+- **Akar Masalah:**
+  1. Keberadaan wadah tab switcher redundan yang menumpuk di atas konten.
+  2. Mekanisme fallback `H ? F : l` yang menginjeksi mockup array fiktif saat data database kosong atau belum diisi dinas.
+  3. Ketiadaan rute API backend `GET /api/v1/ltt-katam` yang langsung menanyai tabel `ltt_katam`.
+- **Solusi & Verifikasi:**
+  1. **Backend:** Menambahkan endpoint `GET /api/v1/ltt-katam` dan `/sispertani-api/v1/ltt-katam` di `src/server.js` yang mengeksekusi kueri langsung `SELECT id, komoditas, kecamatan, jenis, luas_rencana, luas_tanam, luas_panen, produksi_rencana, produksi_aktual, bulan_mulai, bulan_panen, tahun FROM ltt_katam ORDER BY tahun DESC, kecamatan ASC`.
+  2. **Frontend Zero Dummy Data:**
+     - Mengosongkan konstanta mockup `F = []`.
+     - Menghapus elemen tab switcher redundan di atas halaman.
+     - Menghapus banner peringatan oranye data contoh placeholder.
+     - Mengimplementasikan **Empty State murni** (`if (!l || l.length === 0)`): menyajikan kartu status institusional bersih dengan ikon kalender lembut (`text-slate-400`), judul *"Data LTT & Kalender Tanam Belum Tersedia"*, deskripsi resmi bahwa data belum diunggah oleh dinas, dan tombol aksi *"← Kembali ke Tanaman Pangan"*.
+     - Jika data resmi telah diunggah di masa mendatang (`l && l.length > 0`), tampilan tabel, kartu KPI, dan grafik otomatis aktif menggunakan data riil database tanpa sisa teks dummy.
+  3. **Verifikasi:**
+     - `node -c dist/assets/ltt-katam-DHFMKiIG.js` lolos tanpa galat sintaks (exit code 0).
+     - Permintaan HTTP ke `/sispertani-api/v1/ltt-katam` mengembalikan array kosong riil `[]` (status 200 OK).
+     - Pengujian `read_url_content` pada `http://127.0.0.1:5173/ltt-katam` berjalan lancar tanpa rendering visual palsu.
 
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 43 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 52 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
 
 

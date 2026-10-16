@@ -58,12 +58,14 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/padi/production` | `src/routes/padi.js` | Publik | Produksi dan luas panen padi per kecamatan |
 | `GET` | `/v1/padi/history` | `src/routes/padi.js` | Publik | Historis tren produksi padi 2018–2024 |
 | `GET` | `/v1/padi/sawah-ladang` | `src/routes/padi.js` | Publik | Komparasi produksi padi sawah vs ladang |
+| `GET` | `/v1/ltt-katam` | `src/server.js` | Publik | Realisasi Luas Tambah Tanam (LTT) & Kalender Tanam (Katam) |
 | `GET` | `/v1/palawija/jagung-ubi-kayu` | `src/routes/padi.js` | Publik | Produksi jagung dan ubi kayu |
 | `GET` | `/v1/palawija/kacang-kedelai` | `src/routes/padi.js` | Publik | Produksi kacang tanah dan kedelai |
 | `GET` | `/v1/palawija/ubi-kacang-hijau` | `src/routes/padi.js` | Publik | Produksi ubi jalar dan kacang hijau |
 | `GET` | `/v1/hortikultura/sayuran-produksi` | `src/routes/hortikultura.js` | Publik | Produksi sayuran (kentang Dieng, kubis, wortel) |
 | `GET` | `/v1/hortikultura/sayuran-luas` | `src/routes/hortikultura.js` | Publik | Luas panen tanaman sayuran |
 | `GET` | `/v1/hortikultura/buah-produksi` | `src/routes/hortikultura.js` | Publik | Produksi tanaman buah-buahan |
+| `GET` | `/v1/hortikultura/buah-luas` | `src/routes/hortikultura.js` | Publik | Luas panen & produktivitas tanaman buah-buahan (ADR-066) |
 | `GET` | `/v1/hortikultura/produksi-tahunan` | `src/routes/hortikultura.js` | Publik | Total produksi hortikultura tahunan |
 | `GET` | `/v1/perkebunan/areal` | `src/routes/perkebunan.js` | Publik | Luas areal perkebunan per komoditas |
 | `GET` | `/v1/perkebunan/produksi` | `src/routes/perkebunan.js` | Publik | Volume produksi perkebunan per kecamatan |
@@ -128,6 +130,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
 | `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, tahun data terakhir, status tabel database, & pelacakan fallback |
+| `GET` | `/v1/admin/sumber-data` | `src/routes/admin.js` | Bearer (Admin) | Pemetaan dinamis status asal data (unggahan Distankan KP vs pembanding luar BAPANAS/BPS/Kementan) per domain dan rute publik (ADR-063) |
 | `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG & Resilient Offline NLG (`ai-nlg.js` + `ai-offline-kb.js` dengan streaming micro-chunk pacing SSE, grounding faktual 20 kecamatan, ADR-060) |
 
 ---

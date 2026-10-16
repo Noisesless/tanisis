@@ -97,39 +97,94 @@ ketahananRouter.get(
 ketahananRouter.get(
   "/neraca-komposit",
   route(async (req) => {
-    const thn = toIntOrNull(req.query.tahun);
-    let where = "WHERE 1=1";
-    const params = [];
+    // 1. Ambil daftar tahun yang tersedia
+    const yearRows = await q(
+      `SELECT DISTINCT tahun FROM neraca_pangan_komposit ORDER BY tahun DESC`
+    );
+    const availableYears = yearRows.map((y) => Number(y.tahun)).filter(Boolean);
+    const defaultYear = availableYears.length > 0 ? availableYears[0] : 2024;
+    const reqYear = toIntOrNull(req.query.tahun);
+    const activeYear = reqYear !== null ? reqYear : defaultYear;
 
-    if (thn !== null) {
-      where += " AND tahun = ?";
-      params.push(thn);
-    }
-
+    // 2. Ambil data neraca komposit dari tabel utama
     const rows = await q(
       `SELECT id, tahun, komoditas, kategori,
               ketersediaan_bersih_ton, kebutuhan_konsumsi_ton, neraca_ton,
               status_neraca, sumber_data
        FROM neraca_pangan_komposit
-       ${where}
+       WHERE tahun = ?
        ORDER BY id ASC`,
-      params,
+      [activeYear],
     );
+
+    // 3. Ambil data referensi panen lokal (Palawija & Ternak) tahun aktif sebagai data pembanding faktual
+    const palawijaRows = await q(
+      `SELECT komoditas, SUM(produksi_ton) as total_ton
+       FROM palawija_produksi
+       WHERE tahun = ? AND komoditas IN ('Jagung', 'Kedelai', 'Ubi Kayu')
+       GROUP BY komoditas`,
+      [activeYear]
+    );
+    const palawijaMap = {};
+    for (const p of palawijaRows) {
+      palawijaMap[p.komoditas] = Number(p.total_ton || 0);
+    }
+
+    const dagingRows = await q(
+      `SELECT jenis, SUM(produksi_kg)/1000 as total_ton
+       FROM ternak_daging
+       WHERE tahun = ?
+       GROUP BY jenis`,
+      [activeYear]
+    );
+    const dagingMap = {};
+    for (const d of dagingRows) {
+      dagingMap[d.jenis] = Number(d.total_ton || 0);
+    }
+
+    const telurRows = await q(
+      `SELECT jenis, SUM(produksi_kg)/1000 as total_ton
+       FROM ternak_telur
+       WHERE tahun = ?
+       GROUP BY jenis`,
+      [activeYear]
+    );
+    const telurMap = {};
+    for (const t of telurRows) {
+      telurMap[t.jenis] = Number(t.total_ton || 0);
+    }
 
     return {
       status: "success",
+      tahun: activeYear,
+      availableYears: availableYears.length > 0 ? availableYears : [2024],
       total: rows.length,
-      rows: rows.map((r) => ({
-        id: r.id,
-        tahun: r.tahun,
-        komoditas: r.komoditas,
-        kategori: r.kategori,
-        ketersediaanBersihTon: r.ketersediaan_bersih_ton !== null ? Number(r.ketersediaan_bersih_ton) : null,
-        kebutuhanKonsumsiTon: r.kebutuhan_konsumsi_ton !== null ? Number(r.kebutuhan_konsumsi_ton) : null,
-        neracaTon: r.neraca_ton !== null ? Number(r.neraca_ton) : null,
-        statusNeraca: r.status_neraca,
-        sumberData: r.sumber_data,
-      })),
+      rows: rows.map((r) => {
+        const kName = r.komoditas || "";
+        const satuan = kName.toLowerCase().includes("minyak") ? "Liter" : "Ton";
+        let prodLokal = null;
+
+        if (kName === "Jagung") prodLokal = palawijaMap["Jagung"] || null;
+        else if (kName.includes("Kedelai")) prodLokal = palawijaMap["Kedelai"] || null;
+        else if (kName.includes("Ubi Kayu") || kName.includes("Singkong")) prodLokal = palawijaMap["Ubi Kayu"] || null;
+        else if (kName.includes("Sapi")) prodLokal = dagingMap["Sapi"] || null;
+        else if (kName.includes("Ayam")) prodLokal = (dagingMap["Ayam Ras Layer"] || 0) + (dagingMap["Ayam Kampung"] || 0) || null;
+        else if (kName.includes("Telur")) prodLokal = telurMap["Ayam Ras Layer"] || null;
+
+        return {
+          id: r.id,
+          tahun: r.tahun,
+          komoditas: r.komoditas,
+          kategori: r.kategori,
+          satuan,
+          ketersediaanBersihTon: r.ketersediaan_bersih_ton !== null ? Number(r.ketersediaan_bersih_ton) : null,
+          kebutuhanKonsumsiTon: r.kebutuhan_konsumsi_ton !== null ? Number(r.kebutuhan_konsumsi_ton) : null,
+          neracaTon: r.neraca_ton !== null ? Number(r.neraca_ton) : null,
+          statusNeraca: r.status_neraca || "Menunggu Data",
+          produksiLokalTon: prodLokal !== null ? Math.round(prodLokal) : null,
+          sumberData: r.sumber_data || "Dinas Ketahanan Pangan & Pertanian Kab. Banjarnegara",
+        };
+      }),
     };
   }),
 );

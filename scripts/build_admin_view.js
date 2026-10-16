@@ -54,7 +54,8 @@ var B={
   "harga-pasar":{icon:a,color:\`bg-emerald-50 text-emerald-700 border border-emerald-200\`},
   "fsva-desa":{icon:d,color:\`bg-amber-50 text-amber-700 border border-amber-200\`},
   "neraca-pangan":{icon:_,color:\`bg-sky-50 text-sky-700 border border-sky-200\`},
-  "psat-pduk":{icon:i,color:\`bg-teal-50 text-teal-700 border border-teal-200\`}
+  "psat-pduk":{icon:i,color:\`bg-teal-50 text-teal-700 border border-teal-200\`},
+  "harga-produsen":{icon:a,color:\`bg-emerald-50 text-emerald-700 border border-emerald-200\`}
 };
 var ye=e=>B[e]??{icon:i,color:\`bg-slate-100 text-slate-700 border border-slate-200\`};
 
@@ -69,14 +70,33 @@ var QUICK_ROLES = [
 
 var CATEGORIES = [
   { id: "all", label: "Semua Domain", match: null },
-  { id: "pangan", label: "Tanaman Pangan", match: ["padi", "palawija", "ltt-katam", "kelembagaan-pertanian"] },
-  { id: "horti_kebun", label: "Horti & Perkebunan", match: ["hortikultura", "perkebunan"] },
-  { id: "peternakan", label: "Peternakan & Keswan", match: ["peternakan", "kelembagaan-pendukung"] },
-  { id: "perikanan", label: "Perikanan", match: ["perikanan", "kelembagaan-perikanan"] },
-  { id: "ketahanan_pangan", label: "Ketahanan Pangan", match: ["harga-pasar", "fsva-desa", "neraca-pangan", "psat-pduk", "lumbung"] },
-  { id: "kelembagaan", label: "Kelembagaan Lengkap", match: ["kelembagaan-pertanian", "kelembagaan-perikanan", "kelembagaan-pendukung", "kelembagaan"] },
-  { id: "bantuan_ekonomi", label: "Bantuan & Ekonomi", match: ["bantuan-program", "bantuan-alokasi", "bantuan-korelasi", "ekonomi", "lahan", "st2023", "renstra"] }
+  { id: "pangan", label: "Tanaman Pangan", match: ["tanaman-pangan", "padi", "palawija", "ltt-katam", "kelembagaan", "harga-produsen"] },
+  { id: "horti_kebun", label: "Horti & Perkebunan", match: ["hortikultura", "perkebunan", "kelembagaan", "harga-produsen"] },
+  { id: "peternakan", label: "Peternakan & Keswan", match: ["peternakan", "kelembagaan", "harga-produsen"] },
+  { id: "perikanan", label: "Perikanan", match: ["perikanan", "kelembagaan", "harga-produsen"] },
+  { id: "ketahanan_pangan", label: "Ketahanan Pangan", match: ["harga-pasar", "fsva-desa", "neraca-pangan", "psat-pduk", "lumbung", "harga-produsen"] },
+  { id: "kelembagaan", label: "Kelembagaan Lengkap", match: ["kelembagaan", "kelembagaan-pertanian", "kelembagaan-perikanan", "kelembagaan-pendukung"] },
+  { id: "bantuan_ekonomi", label: "Bantuan & Ekonomi", match: ["bantuan", "bantuan-program", "bantuan-alokasi", "bantuan-korelasi", "ekonomi", "lahan", "st2023", "renstra"] }
 ];
+
+var DOM_PAGE_MAP = {
+  "fsva-desa": { url: "/fsva" },
+  "harga-pasar": { url: "/price-volatility" },
+  "psat-pduk": { url: "/psat-pduk" },
+  "lumbung": { url: "/food-security" },
+  "neraca-pangan": { url: "/food-security" },
+  "harga-produsen": { url: "/nilai-ekonomi/pangan" },
+  "tanaman-pangan": { url: "/food-crops" },
+  "hortikultura": { url: "/horticulture" },
+  "perkebunan": { url: "/plantation" },
+  "peternakan": { url: "/livestock" },
+  "perikanan": { url: "/fisheries" },
+  "kelembagaan": { url: "/farmers" },
+  "bantuan": { url: "/government-assistance" },
+  "lahan": { url: "/lahan" },
+  "ekonomi": { url: "/nilai-ekonomi/pangan" },
+  "renstra": { url: "/renstra" }
+};
 
 function V(){
   let[token,setToken]=(0,N.useState)(()=>localStorage.getItem(F)||sessionStorage.getItem(F));
@@ -105,6 +125,22 @@ function V(){
   let[readinessData,setReadinessData]=(0,N.useState)(null);
   let[showReadinessDetails,setShowReadinessDetails]=(0,N.useState)(!1);
   let[copiedDomain,setCopiedDomain]=(0,N.useState)(null);
+  let[activeAdminTab,setActiveAdminTab]=(0,N.useState)(\`katalog\`);
+  let[sourcesData,setSourcesData]=(0,N.useState)(null);
+  let[loadingSources,setLoadingSources]=(0,N.useState)(!1);
+
+  async function loadSourcesData(){
+    if(!token)return;
+    setLoadingSources(!0);
+    try{
+      let r=await fetch(\`\${D}/v1/admin/sumber-data\`,{headers:L(token)});
+      let j=await r.json();
+      if(r.ok&&j.status===\`success\`&&Array.isArray(j.data)){
+        setSourcesData(j.data);
+      }
+    }catch{}
+    finally{setLoadingSources(!1)}
+  }
 
   async function loadSyncPage(pg=1){
     if(!token)return;
@@ -147,6 +183,14 @@ function V(){
         if(!e)return;
         setHealthData(r_h);
         setDomsData(i_d);
+        try{
+          let n_ready=await fetch(\`\${D}/v1/admin/readiness\`,{headers:L(token)}).then(e=>e.json());
+          e&&n_ready&&n_ready.status===\`success\`&&setReadinessData(n_ready);
+        }catch{}
+        try{
+          let n_src=await fetch(\`\${D}/v1/admin/sumber-data\`,{headers:L(token)}).then(e=>e.json());
+          e&&n_src&&n_src.status===\`success\`&&Array.isArray(n_src.data)&&setSourcesData(n_src.data);
+        }catch{}
         if(!n)return;
         setBantuanData(await O());
         try{
@@ -155,10 +199,6 @@ function V(){
         try{
           let n_pak=await fetch(\`\${D}/v1/admin/paket\`,{headers:L(token)}).then(e=>e.json());
           e&&n_pak&&Array.isArray(n_pak.groups)&&setPaketData(n_pak);
-        }catch{}
-        try{
-          let n_ready=await fetch(\`\${D}/v1/admin/readiness\`,{headers:L(token)}).then(e=>e.json());
-          e&&n_ready&&n_ready.status===\`success\`&&setReadinessData(n_ready);
         }catch{}
       }catch(t_err){
         if(!e)return;
@@ -715,6 +755,180 @@ function V(){
             ]
           }),
 
+          // View Switcher Bar: Katalog Berkas vs Sumber Data Publik
+          (0,P.jsxs)(\`div\`,{
+            className:\`mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3\`,
+            children:[
+              (0,P.jsxs)(\`div\`,{
+                className:\`flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg border border-slate-200\`,
+                children:[
+                  (0,P.jsxs)(\`button\`,{
+                    type:\`button\`,
+                    onClick:()=>setActiveAdminTab(\`katalog\`),
+                    className:\`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer \${activeAdminTab===\`katalog\`?\`bg-white text-slate-900 shadow-sm font-bold\`:\`text-slate-600 hover:text-slate-900\`}\`,
+                    children:[
+                      (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-emerald-600\`}),
+                      \`Katalog Berkas & Unggahan\`
+                    ]
+                  }),
+                  (0,P.jsxs)(\`button\`,{
+                    type:\`button\`,
+                    onClick:()=>{
+                      setActiveAdminTab(\`sumber\`);
+                      !sourcesData && loadSourcesData();
+                    },
+                    className:\`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer \${activeAdminTab===\`sumber\`?\`bg-white text-slate-900 shadow-sm font-bold\`:\`text-slate-600 hover:text-slate-900\`}\`,
+                    children:[
+                      (0,P.jsx)(h,{className:\`h-3.5 w-3.5 text-blue-600\`}),
+                      \`Sumber Data Halaman Publik\`
+                    ]
+                  })
+                ]
+              }),
+              activeAdminTab===\`sumber\` && (0,P.jsx)(\`button\`,{
+                type:\`button\`,
+                onClick:()=>loadSourcesData(),
+                disabled:loadingSources,
+                className:\`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition cursor-pointer shadow-xs\`,
+                children:[
+                  (0,P.jsx)(j,{className:\`h-3.5 w-3.5 \${loadingSources?\`animate-spin\`:void 0}\`}),
+                  loadingSources?\`Memeriksa...\`:\`Segarkan Data\`
+                ]
+              })
+            ]
+          }),
+
+          activeAdminTab===\`sumber\` ? (
+            // Panel Status Sumber Data Halaman Publik
+            (0,P.jsxs)(\`section\`,{
+              className:\`mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm\`,
+              children:[
+                (0,P.jsxs)(\`div\`,{
+                  className:\`border-b border-slate-100 pb-4 mb-4 flex flex-wrap items-center justify-between gap-3\`,
+                  children:[
+                    (0,P.jsxs)(\`div\`,{
+                      children:[
+                        (0,P.jsx)(\`h2\`,{className:\`text-base font-bold text-slate-900\`,children:\`Status Sumber Data Halaman Publik\`}),
+                        (0,P.jsx)(\`p\`,{className:\`text-xs text-slate-500 mt-1 leading-relaxed\`,children:\`Informasi asal data yang tampil di portal publik: apakah data hasil unggahan Distankan KP Banjarnegara atau menggunakan data pembanding/rujukan eksternal (BAPANAS, BPS, Kementan).\`})
+                      ]
+                    }),
+                    sourcesData && (0,P.jsxs)(\`div\`,{
+                      className:\`flex flex-wrap items-center gap-2\`,
+                      children:[
+                        (0,P.jsxs)(\`span\`,{
+                          className:\`inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 border border-emerald-200\`,
+                          children:[
+                            (0,P.jsx)(\`span\`,{className:\`h-2 w-2 rounded-full bg-emerald-500\`}),
+                            \`Data Distankan KP Aktif: \`,
+                            sourcesData.filter(s=>s.adaDataLokal).length,
+                            \` Halaman\`
+                          ]
+                        }),
+                        (0,P.jsxs)(\`span\`,{
+                          className:\`inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 border border-amber-200\`,
+                          children:[
+                            (0,P.jsx)(\`span\`,{className:\`h-2 w-2 rounded-full bg-amber-500\`}),
+                            \`Rujukan Luar Sementara: \`,
+                            sourcesData.filter(s=>!s.adaDataLokal).length,
+                            \` Halaman\`
+                          ]
+                        })
+                      ]
+                    })
+                  ]
+                }),
+
+                loadingSources ? (
+                  (0,P.jsx)(re,{height:\`h-[240px]\`,label:\`Memeriksa status sumber data...\`})
+                ) : sourcesData && sourcesData.length>0 ? (
+                  (0,P.jsx)(\`div\`,{
+                    className:\`overflow-x-auto rounded-lg border border-slate-200\`,
+                    children:(0,P.jsxs)(\`table\`,{
+                      className:\`w-full text-left text-xs divide-y divide-slate-200\`,
+                      children:[
+                        (0,P.jsx)(\`thead\`,{
+                          className:\`bg-slate-50 font-bold text-slate-600 uppercase text-[10px] tracking-wider\`,
+                          children:(0,P.jsxs)(\`tr\`,{
+                            children:[
+                              (0,P.jsx)(\`th\`,{className:\`px-4 py-3\`,children:\`Halaman Publik\`}),
+                              (0,P.jsx)(\`th\`,{className:\`px-4 py-3\`,children:\`Data Distankan KP (Unggahan)\`}),
+                              (0,P.jsx)(\`th\`,{className:\`px-4 py-3\`,children:\`Data Pembanding / Rujukan Luar\`}),
+                              (0,P.jsx)(\`th\`,{className:\`px-4 py-3\`,children:\`Status Tayang di Publik\`}),
+                              (0,P.jsx)(\`th\`,{className:\`px-4 py-3 text-center\`,children:\`Aksi\`})
+                            ]
+                          })
+                        }),
+                        (0,P.jsx)(\`tbody\`,{
+                          className:\`divide-y divide-slate-100 bg-white\`,
+                          children:sourcesData.map(item=>(0,P.jsxs)(\`tr\`,{
+                            key:item.domain,
+                            className:\`hover:bg-slate-50/80 transition\`,
+                            children:[
+                              (0,P.jsxs)(\`td\`,{
+                                className:\`px-4 py-3 font-medium text-slate-900 align-top\`,
+                                children:[
+                                  (0,P.jsx)(\`p\`,{className:\`font-bold text-slate-900 text-xs\`,children:item.halamanLabel}),
+                                  (0,P.jsx)(\`span\`,{className:\`font-mono text-[10px] text-slate-400\`,children:item.halamanUrl})
+                                ]
+                              }),
+                              (0,P.jsxs)(\`td\`,{
+                                className:\`px-4 py-3 align-top\`,
+                                children:[
+                                  item.adaDataLokal ? (
+                                    (0,P.jsxs)(\`span\`,{
+                                      className:\`inline-flex items-center gap-1 rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-800 border border-emerald-200\`,
+                                      children:[
+                                        item.latestYear ? \`Tahun \${item.latestYear}\` : \`Tersedia\`,
+                                        \` • \`,
+                                        item.totalRows.toLocaleString(\`id-ID\`),
+                                        \` baris\`
+                                      ]
+                                    })
+                                  ) : (
+                                    (0,P.jsx)(\`span\`,{
+                                      className:\`inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200\`,
+                                      children:\`Belum Ada Berkas Unggahan\`
+                                    })
+                                  ),
+                                  (0,P.jsx)(\`p\`,{className:\`text-[11px] text-slate-600 mt-1\`,children:item.namaDataLokal})
+                                ]
+                              }),
+                              (0,P.jsxs)(\`td\`,{
+                                className:\`px-4 py-3 align-top\`,
+                                children:[
+                                  (0,P.jsx)(\`span\`,{className:\`inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-800 border border-blue-200\`,children:item.sumberLuar}),
+                                  (0,P.jsx)(\`p\`,{className:\`text-[11px] text-slate-500 mt-1\`,children:item.keterangan})
+                                ]
+                              }),
+                              (0,P.jsx)(\`td\`,{
+                                className:\`px-4 py-3 align-top leading-relaxed text-[11px] text-slate-700 font-medium\`,
+                                children:item.statusTayang
+                              }),
+                              (0,P.jsx)(\`td\`,{
+                                className:\`px-4 py-3 text-center align-top whitespace-nowrap\`,
+                                children:(0,P.jsxs)(C,{
+                                  to:item.halamanUrl,
+                                  target:\`_blank\`,
+                                  rel:\`noopener noreferrer\`,
+                                  className:\`inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition shadow-xs cursor-pointer\`,
+                                  children:[
+                                    (0,P.jsx)(h,{className:\`h-3.5 w-3.5 text-slate-400\`}),
+                                    \`Buka Halaman\`
+                                  ]
+                                })
+                              })
+                            ]
+                          }))
+                        })
+                      ]
+                    })
+                  })
+                ) : (
+                  (0,P.jsx)(\`p\`,{className:\`text-xs text-slate-400 text-center py-8\`,children:\`Belum ada data pemetaan sumber.\`})
+                )
+              ]
+            })
+          ) : (
           // Main Layout Grid (Domains List on Left, Information on Right)
           (0,P.jsxs)(\`div\`,{
             className:\`mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3\`,
@@ -869,14 +1083,15 @@ function V(){
                                   title:\`Tabel DB: \${sh.table}\`,
                                   children:[
                                     (0,P.jsxs)(\`div\`,{
-                                      className:\`flex items-center gap-1.5 min-w-0\`,
+                                      className:\`flex items-center gap-1.5 min-w-0 flex-1\`,
                                       children:[
                                         (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-slate-400 shrink-0\`}),
                                         (0,P.jsx)(\`span\`,{className:\`font-semibold text-slate-700 truncate\`,children:sh.name})
                                       ]
                                     }),
-                                    (0,P.jsxs)(\`span\`,{
-                                      className:\`shrink-0 text-[10px] text-slate-400 font-mono\`,
+                                    sh.key?.length>0 && (0,P.jsxs)(\`span\`,{
+                                      className:\`font-mono text-[10px] text-slate-400 shrink-0 truncate max-w-[140px] sm:max-w-[180px] text-right\`,
+                                      title:\`Kunci Natural: \${sh.key.join('+')}\`,
                                       children:[\`kunci: \`,sh.key.join(\`+\`)]
                                     })
                                   ]
@@ -909,6 +1124,17 @@ function V(){
                                       children:[
                                         (0,P.jsx)(g,{className:\`h-3.5 w-3.5 text-blue-600\`}),
                                         busyAction===\`\${domItem.domain}:export\`?\`Menyiapkan...\`:\`Ekspor\`
+                                      ]
+                                    }),
+                                    DOM_PAGE_MAP[domItem.domain] && (0,P.jsxs)(C,{
+                                      to:DOM_PAGE_MAP[domItem.domain].url,
+                                      target:\`_blank\`,
+                                      rel:\`noopener noreferrer\`,
+                                      className:\`flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-emerald-700 cursor-pointer\`,
+                                      title:\`Lihat halaman publik yang menampilkan data ini\`,
+                                      children:[
+                                        (0,P.jsx)(h,{className:\`h-3.5 w-3.5 text-slate-400\`}),
+                                        \`Lihat di Publik\`
                                       ]
                                     })
                                   ]
@@ -1105,7 +1331,8 @@ function V(){
                 ]
               })
             ]
-          }),
+          })
+        ),
 
           // Log Section: Riwayat Pembaruan & Log Aktivitas (Admin Only)
           isAdmin && (0,P.jsxs)(\`section\`,{

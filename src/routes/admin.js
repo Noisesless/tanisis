@@ -18,6 +18,7 @@ import express from "express";
 import crypto from "node:crypto";
 import multer from "multer";
 import { listDomains, getReadinessAudit } from "../lib/domains.js";
+import { DATA_SOURCES_MAP } from "../lib/data-sources.js";
 import { USERS, roleAllowsDomain, roleLabel } from "../lib/users.js";
 import { buildWorkbook, importWorkbook } from "../lib/excel.js";
 import { rekapKomoditasUnggulan } from "../lib/komoditas-rekap.js";
@@ -231,9 +232,9 @@ function requireDomainAccess(req, res, next) {
 
 /**
  * GET /api/v1/admin/readiness
- * Audit kesiapan data (Readiness Matrix) per sektor/domain [Super Admin].
+ * Audit kesiapan data (Readiness Matrix) per sektor/domain [Super Admin & Bidang Teknis].
  */
-router.get("/readiness", requireAdmin, requireAdminRole, async (req, res) => {
+router.get("/readiness", requireAdmin, async (req, res) => {
   try {
     const audit = await getReadinessAudit();
     res.json(audit);
@@ -250,6 +251,47 @@ router.get("/domains", requireAdmin, async (req, res) => {
   } catch (e) {
     console.error("[admin] domains fetch error:", e?.message);
     res.status(500).json({ error: "Gagal memuat daftar domain." });
+  }
+});
+
+/**
+ * GET /api/v1/admin/sumber-data
+ * Status sumber data publik (data unggahan Distankan KP vs data pembanding eksternal).
+ */
+router.get("/sumber-data", requireAdmin, async (req, res) => {
+  try {
+    const audit = await getReadinessAudit();
+    const domainAuditMap = new Map((audit.domains || []).map((d) => [d.domain, d]));
+
+    const items = DATA_SOURCES_MAP.map((item) => {
+      const dAudit = domainAuditMap.get(item.domain);
+      const totalRows = dAudit?.totalRows || 0;
+      const latestYear = dAudit?.latestYear || null;
+      const adaDataLokal = totalRows > 0;
+
+      let statusTayang = "";
+      if (adaDataLokal) {
+        statusTayang = `Menampilkan data unggahan Distankan KP (${latestYear ? "Tahun " + latestYear + " — " : ""}${totalRows.toLocaleString("id-ID")} baris) didampingi data pembanding ${item.sumberLuar}`;
+      } else {
+        statusTayang = `Menampilkan data rujukan ${item.sumberLuar} sementara waktu (karena berkas Distankan KP belum diunggah)`;
+      }
+
+      return {
+        ...item,
+        totalRows,
+        latestYear,
+        adaDataLokal,
+        statusTayang,
+      };
+    });
+
+    if (req.adminRole === "admin") {
+      return res.json({ status: "success", data: items });
+    }
+    const filtered = items.filter((it) => roleAllowsDomain(req.adminRole, it.domain));
+    res.json({ status: "success", data: filtered });
+  } catch (err) {
+    res.status(500).json({ error: "Gagal memuat status sumber data: " + (err.message || String(err)) });
   }
 });
 

@@ -226,6 +226,19 @@ api.get("/v1/komoditas-unggulan", async (req, res) => {
   }
 });
 
+// Endpoint LTT & Katam (Realisasi Luas Tambah Tanam & Rencana Kalender Tanam — Zero Dummy Law)
+api.get("/v1/ltt-katam", async (_req, res) => {
+  try {
+    const [rows] = await getPool().query(
+      "SELECT id, komoditas, kecamatan, jenis, luas_rencana, luas_tanam, luas_panen, produksi_rencana, produksi_aktual, bulan_mulai, bulan_panen, tahun FROM ltt_katam ORDER BY tahun DESC, kecamatan ASC"
+    );
+    return res.json(Array.isArray(rows) ? rows : []);
+  } catch (err) {
+    console.error("[ltt-katam] Query error:", err?.message);
+    return res.json([]);
+  }
+});
+
 // Catch-all 404 di dalam router — berlaku untuk kedua prefix (/api & /sispertani-api).
 api.use((_req, res) => res.status(404).json({ error: "not_found" }));
 

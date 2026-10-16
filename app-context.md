@@ -1,5 +1,5 @@
-<!-- app-context.md v2.7 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-15T14:30:00+07:00 | Phase: Refinement RAG Offline NLG (ADR-060) & Registrasi Akun Ketahanan Pangan (ADR-061) | Build: OK -->
+<!-- app-context.md v3.3 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-16T14:10:00+07:00 | Phase: Eliminasi Dummy & Empty State LTT Katam (ADR-070) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Registrasi Akun Ketahanan Pangan (ADR-061) & Sinkronisasi Dokumentasi Utama done=ALL last=Mendaftarkan akun ketahanan-pangan ke tabel users MySQL, konfigurasi RBAC 6 domain pangan di users.js, penambahan PASS_KETAHANAN_PANGAN di .env, serta sinkronisasi komprehensif seluruh 9 dokumen teknis di .docs/ dan README.md. next=Perilisan dan pemeliharaan rutin
+phase=Eliminasi Dummy & Empty State LTT Katam (ADR-070) done=ALL last=Menghapus 2-tab switcher redundan di /ltt-katam, mengeliminasi 15 baris data contoh fiktif (F=[]) dan banner placeholder, mengimplementasikan endpoint riil GET /api/v1/ltt-katam, dan menyajikan Empty State bersih sesuai Zero Dummy Data Law. next=Pemeliharaan rutin
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -31,6 +31,7 @@ icon_lib=lucide
 [Nilai-Ekonomi]=GET /api/v1/ekonomi/nilai-ekonomi?bidang=→valuasi riil per bidang dari MySQL nilai_ekonomi_tahunan
 [AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN)→Gemini stream proxy→Direct Factual SSE
 [Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 16 domain operasional, latest data year, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
+[Sumber-Data-Audit]=GET /api/v1/admin/sumber-data→pemetaan dinamis status asal data (unggahan Distankan KP vs pembanding luar BAPANAS/BPS/Kementan) per domain dan rute publik (ADR-063)
 [Frontend]=GET /→express.static(dist)→SPA fallback index.html
 
 ## [PAGES] BUILT
@@ -47,6 +48,45 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-069] Eliminasi Tab Redundan & Optimasi Font Tombol Komoditas Food Crops:
+- Menghapus elemen wadah 2-tab navigasi atas (*"Produksi & Luas Panen"* dan *"LTT & Kalender Tanam"*) pada `/food-crops` karena redundan dengan menu navigasi sidebar yang sudah memisahkan kedua tautan tersebut.
+- Mengoptimalkan teks label tombol kelompok komoditas menjadi: **`Padi`**, **`Jagung & Umbi`**, dan **`Kacang-kacangan`** dengan ukuran font responsif `text-[11px] xl:text-xs font-semibold` dan atribut `title={w[e].label}` sehingga nama lengkap resmi tetap dapat dibaca saat kursor diarahkan, menghilangkan anomali teks terpotong (*"agung & Umbi-umbia"*).
+[ADR-068] Standardisasi Desain Filter Card Perikanan (/fisheries) Seragam dengan Hortikultura:
+- Menstandarkan kembali tata letak filter card `/fisheries` ke format baku 4-kolom sejajar (`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-left`) yang identik dengan hortikultura dan tanaman pangan.
+- Memberikan rentang 2 kolom (`md:col-span-2 xl:col-span-2`) untuk 5 tombol Kategori Perikanan (`grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-1.5`) sehingga seluruh nama kategori tampil rapi 1 baris tanpa terpotong.
+- Mengubah warna tombol aktif dari biru elektrik (`bg-blue-600`) menjadi hijau institusional `bg-emerald-700 text-white shadow-xs`, inaktif `bg-white text-slate-800 hover:bg-slate-100 shadow-xs border border-slate-200 rounded-md`, dan tipografi Title Case.
+- Menyelaraskan kontras warna ikon di dalam tombol kategori (aktif: `text-emerald-100`, inaktif: `text-emerald-600`) serta menyelaraskan dropdown Tahun Data dan Pilih Kecamatan.
+[ADR-067] Standardisasi Desain Filter Card Padi & Palawija (/food-crops) Seragam dengan Hortikultura:
+- Menstandarkan kembali tata letak filter card `/food-crops` ke format baku 4-kolom sejajar (`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-left`) yang identik dengan hortikultura.
+- Mengeliminasi pembungkus kapsul segmented control abu-abu dan menggantinya dengan grid 3-kolom tombol individual ber-state aktif `bg-emerald-700 text-white shadow-xs`.
+- Mempertahankan seluruh opsi indikator dan komoditas tanpa perubahan fungsi (`Luas Panen`, `Produksi`, `Produktivitas`, serta `Padi Sawah·Ladang`, `Jagung & Umbi-umbian`, `Kacang-kacangan`).
+- Menyelaraskan dropdown pemilih Tahun Data dan Pilih Kecamatan serta menghapus baris footer status redundan di bawah filter card.
+[ADR-066] Penyelarasan Matriks Metrik Sub-Sektor Buah (Luas Ha, Produksi Ton, T/Ha):
+- Membuka kunci metrik analisis pada sub-sektor Buah di `/horticulture` sehingga memiliki 3 tombol pilihan metrik baku: `Luas (Ha)`, `Produksi`, dan `T / Ha` yang seragam dengan Sayuran, Biofarmaka, dan Tanaman Hias.
+- Menghubungkan kalkulasi agronomis standar BPS Distankan KP untuk tanaman buah tahunan (Salak 22 T/Ha, Pisang 25 T/Ha, Durian 10 T/Ha, Mangga 12 T/Ha, Pepaya 40 T/Ha, Jeruk Besar 16 T/Ha, Jeruk Siam 18 T/Ha) pada dataset frontend `Ee`.
+- Menambahkan endpoint `GET /api/v1/hortikultura/buah-luas` dan memperbarui endpoint `/rekap-global` agar estimasi luas panen buah (11.229,72 Ha pada 2024) dihitung secara dinamis.
+- Memperbarui kartu statistik total, kartu peringkat kecamatan tertinggi, komposisi komoditas, dan grafik tren/batang agar merespons dinamis tanpa nilai NaN atau terkunci pada Ton.
+[ADR-065] Transformasi Dinamis Neraca Pangan Komposit (Non-Beras) & Integrasi Panen Lokal:
+- Mengubah tab Neraca Komposit di `/food-security` dari konstanta memori statis menjadi pemanggilan API reaktif `GET /api/v1/ketahanan/neraca-komposit?tahun=`.
+- Sisi backend mengagregasi data panen lokal Distankan KP Banjarnegara (Jagung 51.146 Ton, Ubi Kayu 78.886 Ton, Kedelai 19 Ton, Daging Sapi 1.859 Ton, Telur Ayam 70.701 Ton) dari tabel `palawija_produksi`, `ternak_daging`, dan `ternak_telur` sebagai referensi pembanding faktual.
+- Menyediakan dropdown pemilih tahun data (`select`) yang terisi otomatis dari `availableYears` basis data.
+- Kartu komoditas secara reaktif menyesuaikan badge warna dan nilai surplus/defisit jika admin mengunggah berkas Excel NBM melalui dasbor `/admin`.
+[ADR-064] Redesign Filter Card Hortikultura, Kontekstualisasi Ikon Sektoral & Eliminasi AI-Slop:
+- Menstandarkan kembali tata letak filter card `/horticulture` ke format baku 4-kolom sejajar (`grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm`) agar 100% konsisten dengan halaman lain (`plantation`, `food-crops`, `livestock`).
+- Mengeliminasi total kapsul redundant "● Aktif: Sayuran" (AI slop) dan menghapus footer status teks bawah yang merusak konsistensi desain.
+- Menerapkan ikon resmi Lucide: Wortel (`Carrot`) untuk Sayuran, Apel (`Apple`) untuk Buah, Tunas (`Sprout`) untuk Biofarmaka, dan Bunga (`Flower-2`) untuk Tanaman Hias (bebas dari ikon pizza slice).
+- Menyelaraskan kartu ringkasan total (`Total`) di bawah filter agar ikonnya dinamis mengikuti sub-sektor yang sedang aktif (Wortel, Apel, Sprout, atau Bunga).
+- Mengubah styling tombol aktif dari biru elektrik generik (`bg-blue-800`) menjadi hijau institusional `bg-emerald-700 text-white font-semibold shadow-xs` serta mengubah kapitalisasi kaku ALL CAPS menjadi Title Case yang tenang dan manusiawi.
+[ADR-063] Integrasi Status Sumber Data Halaman Publik & Pintasan Verifikasi Langsung di Dasbor Admin:
+- Membangun `src/lib/data-sources.js` yang memetakan 16 domain sektor ke URL halaman publik dan sumber pembanding eksternal (BAPANAS, BPS, Kementan) dengan narasi faktual lugas tanpa jargon backend.
+- Mendaftarkan endpoint `GET /api/v1/admin/sumber-data` di `src/routes/admin.js` dengan pengamanan RBAC sesuai bidang tugas pengguna.
+- Menambahkan tab switcher `[Katalog Berkas & Unggahan]` dan `[Sumber Data Halaman Publik]` di dasbor admin untuk melihat ringkasan status tayang.
+- Menyediakan tombol `[Lihat di Publik ↗]` di setiap kartu domain agar staf dinas dapat langsung memverifikasi visual tampilan publik tanpa harus berpindah manual.
+[ADR-062] Resolusi Konsistensi Status Readiness Multi-Role Dasbor Admin & Penataan Layout Kartu PSAT:
+- Mengubah guard `/api/v1/admin/readiness` dari `requireAdminRole` menjadi `requireAdmin` (terotentikasi) agar seluruh operator bidang teknis mendapatkan metadata keterisian baris dan tahun data terbaru.
+- Menghapus pembatas `if (!n) return;` pada `build_admin_view.js` sebelum fetch readiness, menyelesaikan anomali badge "Belum Ada Data" palsu saat login sebagai akun non-admin.
+- Menata ulang layout daftar tabel/kunci pada kartu domain dengan `flex-1` pada nama sheet dan `max-w-[140px] truncate` pada kunci natural, mencegah nama sheet PSAT-PDUK tertekan hilang.
+- Mendaftarkan domain `harga-produsen` pada pemetaan styling warna `B` dan array kategori navigasi admin.
 [ADR-061] Registrasi Akun Bidang Ketahanan Pangan ke Basis Data & Konfigurasi RBAC:
 - Mendaftarkan akun `ketahanan-pangan` ke tabel `users` MySQL dengan peran `admin_ketahanan_pangan`, status aktif, dan password ter-hash SHA-256.
 - Menambahkan variabel `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` pada berkas `.env` dan template `.env.example`.

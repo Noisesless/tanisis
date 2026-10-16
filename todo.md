@@ -80,3 +80,12 @@
 - [x] **Unifikasi Tab ke Executive Segmented Pill:** Mengubah seluruh tab di `/food-crops`, `/ltt-katam`, `/sebaran/bidang`, `/farmers`, `/peternakan/susu-kulit`, `/livestock-flow`, dan `/sensus` ke standar baku `flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit` dengan item aktif putih bersinar dan inaktif lembut.
 - [x] **Harmonisasi `/livestock-flow` & `/sensus`:** Menghubungkan PageHeader berilustrasi domain dan menata ulang tab data dari form input berbingkai menjadi tab navigasi utama.
 
+---
+
+### Fase 9: Standardisasi Filter Card Sektoral & Eliminasi Dummy Data (ADR-066 s/d ADR-070)
+- [x] **Metrik Penuh Hortikultura Buah (ADR-066):** Membuka kunci 3 metrik penuh sub-sektor buah (`Luas Ha`, `Produksi Ton`, `T/Ha`), menghubungkan estimasi agronomis dinamis, dan menambahkan endpoint `GET /api/v1/hortikultura/buah-luas`.
+- [x] **Standardisasi Filter Card Tanaman Pangan (ADR-067):** Menata ulang filter card `/food-crops` ke format baku 4-kolom sejajar dengan tema warna `bg-emerald-700 text-white shadow-xs` dan eliminasi footer filter redundan.
+- [x] **Standardisasi Filter Card Perikanan (ADR-068):** Menata ulang filter card `/fisheries` ke layout 4-kolom sejajar dengan rentang 2-kolom untuk 5 kategori dalam tipografi Title Case dan warna tema hijau institusional.
+- [x] **Eliminasi Tab Redundan & Optimasi Font Food Crops (ADR-069):** Menghapus tab switcher redundan di atas filter card dan menyingkat label komoditas (`Padi`, `Jagung & Umbi`, `Kacang-kacangan`) dengan font `text-[11px] xl:text-xs` serta atribut tooltip `title` agar tidak terpotong.
+- [x] **Eliminasi Data Tiruan & Empty State LTT Katam (ADR-070):** Menghapus 15 baris dummy mockup `F=[]`, banner disclaimer oranye, dan tab switcher di `/ltt-katam`. Mengimplementasikan Empty State resmi berjarak bantalan lega (`py-16 px-6`, padding 64px 32px), serta menambahkan endpoint backend kueri riil `GET /api/v1/ltt-katam`.
+

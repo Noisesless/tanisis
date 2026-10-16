@@ -97,6 +97,36 @@ hortikulturaRouter.get(
   }),
 );
 
+const FRUIT_YIELD_MAP = {
+  Salak: 22,
+  Pisang: 25,
+  Durian: 10,
+  Mangga: 12,
+  Pepaya: 40,
+  "Jeruk Besar": 16,
+  "Jeruk Siam": 18,
+};
+
+/** GET /api/v1/hortikultura/buah-luas -> FruitArea[] (ha) */
+hortikulturaRouter.get(
+  "/buah-luas",
+  route(async () => {
+    const rows = await q(
+      `SELECT k.nama AS kecamatan, t.tahun, t.komoditas, t.nilai
+       FROM horti_produksi t JOIN kecamatan k ON k.id = t.kecamatan_id
+       WHERE t.kelompok = 'buah_tahunan' ORDER BY k.nama, t.tahun`,
+    );
+    return pivotLong(rows, (r) => {
+      const f = BUAH_MAP.get(r.komoditas);
+      if (!f) return null;
+      const prod = num0(r.nilai);
+      const y = FRUIT_YIELD_MAP[r.komoditas] || 18;
+      const luas = prod > 0 ? Number((prod / y).toFixed(2)) : 0;
+      return [f, luas];
+    });
+  }),
+);
+
 /** GET /api/v1/hortikultura/biofarmaka-produksi -> (kg) */
 hortikulturaRouter.get(
   "/biofarmaka-produksi",
@@ -204,11 +234,20 @@ hortikulturaRouter.get(
       params,
     );
 
-    // 2. Buah-Buahan (Ton) — menggabungkan buah tahunan pohon + buah semusim (melon/semangka)
+    // 2. Buah-Buahan (Ton & Ha)
     const [buahProd] = await q(
       `SELECT SUM(nilai) as total_produksi FROM horti_produksi ${whereTahun} AND kelompok = 'buah_tahunan' AND nilai > 0`,
       params,
     );
+    const buahByKom = await q(
+      `SELECT komoditas, SUM(nilai) as prod_kom FROM horti_produksi ${whereTahun} AND kelompok = 'buah_tahunan' AND nilai > 0 GROUP BY komoditas`,
+      params,
+    );
+    let totalBuahLuas = 0;
+    for (const r of buahByKom) {
+      const y = FRUIT_YIELD_MAP[r.komoditas] || 18;
+      totalBuahLuas += num0(r.prod_kom) / y;
+    }
 
     // 3. Biofarmaka (Tangkai / Kg)
     const [bioProd] = await q(
@@ -245,7 +284,7 @@ hortikulturaRouter.get(
           label: "Buah-Buahan",
           produksi: num0(buahProd?.total_produksi),
           satuanProduksi: "Ton",
-          luas: 0,
+          luas: Number(totalBuahLuas.toFixed(2)),
           satuanLuas: "Ha",
         },
         biofarmaka: {

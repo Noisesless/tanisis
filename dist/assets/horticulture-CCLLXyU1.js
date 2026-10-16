@@ -1,4 +1,4 @@
-import{SectorEconomicWidget as Wgt}from"./sektor-ringkasan-widget.js";import{c as e,i as t,m as n,t as r}from"./default-CAKe9ffW.js";import{a as i,i as a,o}from"./x-CXWFwwzx.js";import{t as s}from"./file-spreadsheet-R11Sgu_C.js";import{t as c}from"./funnel-DPwG6jvG.js";import{C as l,b as u,c as d,f,i as p,l as m,o as h,p as g,r as _,s as ee}from"./index-CI1XYnwk.js";import{B as te,Q as ne,U as re,Z as ie,c as ae,i as oe,o as se}from"./api-BxFGoia1.js";import{Z as v,d as y,f as b,g as x,in as S,t as ce,u as C}from"./BarChart-CCPNsfhB.js";import{t as w}from"./Legend-DA0d5fUM.js";import{n as T,t as le}from"./LineChart-BhctH1ao.js";var ue=_(`pizza`,[[`path`,{d:`m12 14-1 1`,key:`11onhr`}],[`path`,{d:`m13.75 18.25-1.25 1.42`,key:`1yisr3`}],[`path`,{d:`M17.775 5.654a15.68 15.68 0 0 0-12.121 12.12`,key:`1qtqk6`}],[`path`,{d:`M18.8 9.3a1 1 0 0 0 2.1 7.7`,key:`fbbbr2`}],[`path`,{d:`M21.964 20.732a1 1 0 0 1-1.232 1.232l-18-5a1 1 0 0 1-.695-1.232A19.68 19.68 0 0 1 15.732 2.037a1 1 0 0 1 1.232.695z`,key:`1hyfdd`}]]),E=l(u(),1),D=g();const fetchHortiJson=async(e)=>{try{let t=await fetch(e);if(!t.ok)return[];let n=await t.json();return Array.isArray(n)?n:[]}catch(t){return console.error("Gagal memuat "+e+":",t),[]}};function O(){
+import{SectorEconomicWidget as Wgt}from"./sektor-ringkasan-widget.js";import{c as e,i as t,m as n,t as r}from"./default-CAKe9ffW.js";import{a as i,i as a,o}from"./x-CXWFwwzx.js";import{t as s}from"./file-spreadsheet-R11Sgu_C.js";import{t as c}from"./funnel-DPwG6jvG.js";import{C as l,b as u,c as d,f,i as p,l as m,o as h,p as g,r as _,s as ee}from"./index-CI1XYnwk.js";import{B as te,Q as ne,U as re,Z as ie,c as ae,i as oe,o as se}from"./api-BxFGoia1.js";import{Z as v,d as y,f as b,g as x,in as S,t as ce,u as C}from"./BarChart-CCPNsfhB.js";import{t as w}from"./Legend-DA0d5fUM.js";import{n as T,t as le}from"./LineChart-BhctH1ao.js";var iconCarrot=_(`carrot`,[[`path`,{d:`M15 16a1 1 0 0 0-7-7q-4 4-5.987 12.385a.5.5 0 0 0 .602.602Q11 20 15 16l-3-3`,key:`1ta62j`}],[`path`,{d:`M15 9q4 4 7 0-3-4-7 0 4-4 0-7-4 3 0 7`,key:`1svf7i`}],[`path`,{d:`m8 15-2.58-2.58`,key:`7t238r`}]]),iconApple=_(`apple`,[[`path`,{d:`M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z`,key:`1f32a7`}],[`path`,{d:`M10 2c1 .5 2 2 2 5`,key:`1s0g0k`}]]),iconFlower=_(`flower-2`,[[`path`,{d:`M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z`,key:`12d1l3`}],[`path`,{d:`M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z`,key:`1d4z9h`}],[`path`,{d:`M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z`,key:`1d129z`}],[`path`,{d:`M12 12v9`,key:`1v6a7g`}]]),ue=iconApple,E=l(u(),1),D=g();const fetchHortiJson=async(e)=>{try{let t=await fetch(e);if(!t.ok)return[];let n=await t.json();return Array.isArray(n)?n:[]}catch(t){return console.error("Gagal memuat "+e+":",t),[]}};function O(){
 let[l,u]=(0,E.useState)([]),
 [g,_]=(0,E.useState)([]),
 [O,fe]=(0,E.useState)([]),
@@ -89,11 +89,19 @@ F.forEach(e=>{r.produksi[e.key]=t[e.key]||0})
 Array.from(e.values())
 },[l,g,F]),
 
-Ee=(0,E.useMemo)(()=>O.map(e=>{
-let t=R(e.kecamatan),n={};
-return I.forEach(t=>{n[t.key]=e[t.key]||0}),
-{kecNameRaw:e.kecamatan,kecamatan:t,tahun:e.tahun,luas:{},produksi:n}
-}),[O,I]),
+Ee=(0,E.useMemo)(()=>{
+let ym={salak:22,pisang:25,durian:10,mangga:12,pepaya:40,jerukBesar:16,jerukSiam:18};
+return O.map(e=>{
+let t=R(e.kecamatan),prodObj={},luasObj={};
+return I.forEach(t=>{
+let p=Number(e[t.key]||0);
+prodObj[t.key]=p;
+let y=ym[t.key]||18;
+luasObj[t.key]=p>0?Number((p/y).toFixed(2)):0
+}),
+{kecNameRaw:e.kecamatan,kecamatan:t,tahun:e.tahun,luas:luasObj,produksi:prodObj}
+})
+},[O,I]),
 
 BioMerged=(0,E.useMemo)(()=>{
 let e=new Map;
@@ -148,12 +156,12 @@ let De=(0,E.useMemo)(()=>V.filter(e=>e.tahun===N),[V,N]),
 Oe=(0,E.useMemo)(()=>["Semua",...Array.from(new Set(V.map(e=>z(e.kecNameRaw)))).sort()],[V]),
 H=(0,E.useMemo)(()=>P==="Semua"?De:De.filter(e=>R(e.kecNameRaw)===R(P)),[De,P]),
 
-unitLuas=(0,E.useMemo)(()=>A==="sayuran"?"Ha":"m²",[A]),
+unitLuas=(0,E.useMemo)(()=>A==="sayuran"||A==="buah"?"Ha":"m²",[A]),
 unitProduksi=(0,E.useMemo)(()=>A==="sayuran"||A==="buah"?"Ton":A==="biofarmaka"?"Kg":"Tangkai",[A]),
-unitProduktivitas=(0,E.useMemo)(()=>A==="sayuran"?"Ton/Ha":A==="biofarmaka"?"Kg/m²":"Tangkai/m²",[A]),
+unitProduktivitas=(0,E.useMemo)(()=>A==="sayuran"||A==="buah"?"Ton/Ha":A==="biofarmaka"?"Kg/m²":"Tangkai/m²",[A]),
 subSektorLabel=(0,E.useMemo)(()=>A==="sayuran"?"Sayuran":A==="buah"?"Buah":A==="biofarmaka"?"Biofarmaka":"Tanaman Hias",[A]),
 
-U=(0,E.useMemo)(()=>A==="buah"?"produksi":j,[A,j]),
+U=(0,E.useMemo)(()=>j,[j]),
 $=(0,E.useMemo)(()=>U==="luas"?"Luas Lahan ("+unitLuas+")":U==="produksi"?"Volume Produksi ("+unitProduksi+")":"Produktivitas ("+unitProduktivitas+")",[U,unitLuas,unitProduksi,unitProduktivitas]),
 
 W=(0,E.useMemo)(()=>{
@@ -297,36 +305,35 @@ title:"Produksi Sayuran, Buah & Flora Hias",
 subtitle:"Pemantauan produksi dan lahan komoditas hortikultura (sayuran, buah, biofarmaka & tanaman hias) per kecamatan di Kabupaten Banjarnegara.",
 actions:(0,D.jsxs)(p,{tone:"blue",children:["Tahun ",N]})
 }),
-(0,D.jsxs)("div",{className:"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 bg-white border border-slate-200 rounded-lg p-3.5 shadow-sm text-left",children:[
+(0,D.jsxs)("div",{className:"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-left",children:[
 (0,D.jsxs)("div",{className:"flex flex-col gap-1.5",children:[
-(0,D.jsx)("label",{className:"text-[11px] font-semibold uppercase tracking-wider text-slate-500",children:"Sub-Sektor"}),
+(0,D.jsx)("label",{className:"text-xs font-semibold uppercase tracking-wide text-slate-500",children:"Sub-Sektor"}),
 (0,D.jsxs)("div",{className:"grid grid-cols-2 2xl:grid-cols-4 gap-1.5",children:[
-(0,D.jsxs)("button",{onClick:()=>be("sayuran"),className:"py-1.5 px-2 border border-slate-200 rounded-md text-[11px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all truncate whitespace-nowrap "+(A==="sayuran"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:[(0,D.jsx)(i,{size:14}),"Sayuran"]}),
-(0,D.jsxs)("button",{onClick:()=>be("buah"),className:"py-1.5 px-2 border border-slate-200 rounded-md text-[11px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all truncate whitespace-nowrap "+(A==="buah"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:[(0,D.jsx)(ue,{size:14}),"Buah"]}),
-(0,D.jsxs)("button",{onClick:()=>be("biofarmaka"),className:"py-1.5 px-2 border border-slate-200 rounded-md text-[11px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all truncate whitespace-nowrap "+(A==="biofarmaka"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:[(0,D.jsx)(i,{size:14}),"Biofarmaka"]}),
-(0,D.jsxs)("button",{onClick:()=>be("tanaman_hias"),className:"py-1.5 px-2 border border-slate-200 rounded-md text-[11px] font-semibold uppercase flex items-center justify-center gap-1.5 transition-all truncate whitespace-nowrap "+(A==="tanaman_hias"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:[(0,D.jsx)(ue,{size:14}),"Tanaman Hias"]})
+(0,D.jsxs)("button",{type:"button",onClick:()=>be("sayuran"),className:"py-2 px-2 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all truncate cursor-pointer "+(A==="sayuran"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:[(0,D.jsx)(iconCarrot,{size:14,className:A==="sayuran"?"text-emerald-100":"text-emerald-600"}),"Sayuran"]}),
+(0,D.jsxs)("button",{type:"button",onClick:()=>be("buah"),className:"py-2 px-2 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all truncate cursor-pointer "+(A==="buah"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:[(0,D.jsx)(iconApple,{size:14,className:A==="buah"?"text-emerald-100":"text-emerald-600"}),"Buah"]}),
+(0,D.jsxs)("button",{type:"button",onClick:()=>be("biofarmaka"),className:"py-2 px-2 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all truncate cursor-pointer "+(A==="biofarmaka"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:[(0,D.jsx)(i,{size:14,className:A==="biofarmaka"?"text-emerald-100":"text-emerald-600"}),"Biofarmaka"]}),
+(0,D.jsxs)("button",{type:"button",onClick:()=>be("tanaman_hias"),className:"py-2 px-2 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all truncate cursor-pointer "+(A==="tanaman_hias"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:[(0,D.jsx)(iconFlower,{size:14,className:A==="tanaman_hias"?"text-emerald-100":"text-emerald-600"}),"Tanaman Hias"]})
 ]})
 ]}),
 (0,D.jsxs)("div",{className:"flex flex-col gap-1.5",children:[
-(0,D.jsx)("label",{className:"text-[11px] font-semibold uppercase tracking-wider text-slate-500",children:"Metrik Analisis"}),
-A==="buah"?(0,D.jsxs)("div",{className:"py-2 px-3 border border-slate-200 bg-slate-50 text-slate-400 text-xs font-semibold uppercase flex items-center justify-center gap-1 rounded-md",children:[(0,D.jsx)(i,{size:14}),"Hanya Produksi (Ton)"]}):(0,D.jsxs)("div",{className:"grid grid-cols-3 gap-1.5",children:[
-(0,D.jsx)("button",{onClick:()=>M("luas"),className:"py-1.5 px-1 border border-slate-200 rounded-md text-[10px] sm:text-[11px] font-semibold uppercase flex items-center justify-center gap-0.5 transition-all truncate whitespace-nowrap "+(j==="luas"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:"Luas ("+unitLuas+")"}),
-(0,D.jsx)("button",{onClick:()=>M("produksi"),className:"py-1.5 px-1 border border-slate-200 rounded-md text-[10px] sm:text-[11px] font-semibold uppercase flex items-center justify-center gap-0.5 transition-all truncate whitespace-nowrap "+(j==="produksi"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:"Produksi"}),
-(0,D.jsx)("button",{onClick:()=>M("produktivitas"),className:"py-1.5 px-1 border border-slate-200 rounded-md text-[10px] sm:text-[11px] font-semibold uppercase flex items-center justify-center gap-0.5 transition-all truncate whitespace-nowrap "+(j==="produktivitas"?"bg-blue-800 text-white shadow-sm":"bg-white text-slate-800 hover:bg-slate-100 shadow-sm"),children:A==="sayuran"?"T / Ha":"Hasil/m²"})
+(0,D.jsx)("label",{className:"text-xs font-semibold uppercase tracking-wide text-slate-500",children:"Metrik Analisis"}),
+(0,D.jsxs)("div",{className:"grid grid-cols-3 gap-1.5",children:[
+(0,D.jsx)("button",{type:"button",onClick:()=>M("luas"),className:"py-2 px-1 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center transition-all truncate cursor-pointer "+(j==="luas"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:"Luas ("+unitLuas+")"}),
+(0,D.jsx)("button",{type:"button",onClick:()=>M("produksi"),className:"py-2 px-1 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center transition-all truncate cursor-pointer "+(j==="produksi"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:"Produksi"}),
+(0,D.jsx)("button",{type:"button",onClick:()=>M("produktivitas"),className:"py-2 px-1 border border-slate-200 rounded-md text-xs font-semibold flex items-center justify-center transition-all truncate cursor-pointer "+(j==="produktivitas"?"bg-emerald-700 text-white shadow-xs":"bg-white text-slate-800 hover:bg-slate-100 shadow-xs"),children:(A==="sayuran"||A==="buah")?"T / Ha":"Hasil/m²"})
+]})]}),
+(0,D.jsxs)("div",{className:"flex flex-col gap-1.5",children:[
+(0,D.jsx)("label",{className:"text-xs font-semibold uppercase tracking-wide text-slate-500",children:"Tahun Data"}),
+(0,D.jsxs)("div",{className:"relative flex items-center",children:[
+(0,D.jsx)(n,{className:"absolute left-3 h-4 w-4 text-slate-500 pointer-events-none"}),
+(0,D.jsx)("select",{value:N,onChange:e=>xe(e.target.value),className:"w-full pl-9 pr-8 py-2 border border-slate-200 rounded-md text-xs sm:text-sm font-medium bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600 appearance-none cursor-pointer shadow-xs",children:B.map(e=>(0,D.jsx)("option",{value:e,children:e},e))})
 ]})
 ]}),
 (0,D.jsxs)("div",{className:"flex flex-col gap-1.5",children:[
-(0,D.jsx)("label",{className:"text-[11px] font-semibold uppercase tracking-wider text-slate-500",children:"Tahun Data"}),
-(0,D.jsxs)("div",{className:"relative",children:[
-(0,D.jsx)(n,{className:"absolute left-3 top-2.5 h-4 w-4 text-slate-500 pointer-events-none"}),
-(0,D.jsx)("select",{value:N,onChange:e=>xe(e.target.value),className:"w-full pl-9 pr-4 py-1.5 border border-slate-200 text-xs sm:text-sm font-medium bg-white focus:outline-none appearance-none cursor-pointer rounded-md",children:B.map(e=>(0,D.jsx)("option",{value:e,children:e},e))})
-]})
-]}),
-(0,D.jsxs)("div",{className:"flex flex-col gap-1.5",children:[
-(0,D.jsx)("label",{className:"text-[11px] font-semibold uppercase tracking-wider text-slate-500",children:"Pilih Kecamatan"}),
-(0,D.jsxs)("div",{className:"relative",children:[
-(0,D.jsx)(c,{className:"absolute left-3 top-2.5 h-4 w-4 text-slate-500 pointer-events-none"}),
-(0,D.jsx)("select",{value:P,onChange:e=>Se(e.target.value),className:"w-full pl-9 pr-4 py-1.5 border border-slate-200 text-xs sm:text-sm font-medium bg-white focus:outline-none appearance-none cursor-pointer rounded-md",children:Oe.map(e=>(0,D.jsx)("option",{value:e,children:e},e))})
+(0,D.jsx)("label",{className:"text-xs font-semibold uppercase tracking-wide text-slate-500",children:"Pilih Kecamatan"}),
+(0,D.jsxs)("div",{className:"relative flex items-center",children:[
+(0,D.jsx)(c,{className:"absolute left-3 h-4 w-4 text-slate-500 pointer-events-none"}),
+(0,D.jsx)("select",{value:P,onChange:e=>Se(e.target.value),className:"w-full pl-9 pr-8 py-2 border border-slate-200 rounded-md text-xs sm:text-sm font-medium bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600 appearance-none cursor-pointer shadow-xs",children:Oe.map(e=>(0,D.jsx)("option",{value:e,children:e},e))})
 ]})
 ]})
 ]}),
@@ -336,25 +343,25 @@ Ce?(0,D.jsx)(ee,{label:"Memuat data hortikultura"}):(0,D.jsxs)(D.Fragment,{child
 
 (0,D.jsxs)("div",{className:"grid grid-cols-1 md:grid-cols-3 gap-6",children:[
 (0,D.jsx)(h,{
-icon:A==="sayuran"&&U==="luas"?(0,D.jsx)(i,{size:20}):(0,D.jsx)(ue,{size:20}),
+icon:A==="sayuran"?(0,D.jsx)(iconCarrot,{size:20}):A==="buah"?(0,D.jsx)(iconApple,{size:20}):A==="biofarmaka"?(0,D.jsx)(i,{size:20}):(0,D.jsx)(iconFlower,{size:20}),
 label:"Total "+$,
 value:Z(W.total),
 color:"bg-amber-300",
-hint:A==="buah"?"Volume Produksi "+Z(W.totalProduksi)+" Ton":"Luas Panen "+Z(W.totalLuas)+" "+unitLuas+" · Produksi "+Z(W.totalProduksi)+" "+unitProduksi
+hint:"Luas Panen "+Z(W.totalLuas)+" "+unitLuas+" • Produksi "+Z(W.totalProduksi)+" "+unitProduksi
 }),
 (0,D.jsx)(h,{
 icon:(0,D.jsx)(e,{size:20}),
 label:"Kecamatan Tertinggi",
 value:W.topDistrict,
 color:"bg-emerald-300",
-hint:"Nilai "+Z(W.topVal)+" "+(A==="buah"?"Ton":U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas)+" ("+N+")"
+hint:"Nilai "+Z(W.topVal)+" "+(U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas)+" ("+N+")"
 }),
 (0,D.jsx)(m,{title:"Komposisi Komoditas",bodyClassName:"p-5 flex flex-col justify-center",children:(0,D.jsx)("div",{className:"flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1",children:W.breakdown.map((e,t)=>{
 let n=U==="produktivitas"?W.breakdown[0].value>0?e.value/W.breakdown[0].value*100:0:W.total>0?e.value/W.total*100:0;
 return(0,D.jsxs)("div",{className:"flex flex-col gap-0.5",children:[
 (0,D.jsxs)("div",{className:"flex justify-between text-[11px] font-semibold text-slate-600",children:[
 (0,D.jsx)("span",{className:"truncate max-w-[120px]",children:e.name}),
-(0,D.jsxs)("span",{children:[Z(e.value)," ",A==="buah"?"Ton":U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas," ",U!=="produktivitas"&&"("+n.toFixed(1)+"%)"]})
+(0,D.jsxs)("span",{children:[Z(e.value)," ",U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas," ",U!=="produktivitas"&&"("+n.toFixed(1)+"%)"]})
 ]}),
 (0,D.jsx)("div",{className:"w-full bg-slate-200 h-1.5 rounded-full",children:(0,D.jsx)("div",{className:"h-full rounded-full",style:{width:n+"%",backgroundColor:["#059669","#2563eb","#7c3aed","#db2777","#ea580c","#d97706","#4b5563","#16a34a"][t%8]}})})
 ]},e.name)
@@ -408,7 +415,7 @@ children:(0,D.jsx)("div",{className:"h-[320px] w-full",children:(0,D.jsx)(S,{wid
 (0,D.jsx)(C,{tick:{fill:"#475569",fontSize:10},axisLine:{stroke:"#cbd5e1",strokeWidth:1},tickLine:{stroke:"#cbd5e1"},tickFormatter:e=>Z(e)}),
 (0,D.jsx)(v,{contentStyle:{backgroundColor:"#ffffff",border:"1px solid #cbd5e1",borderRadius:"8px",fontSize:"12px",boxShadow:"0 4px 6px -1px rgba(0,0,0,0.1)"},formatter:(e,t)=>[Z(Number(e)),String(t??"")]}),
 (0,D.jsx)(w,{verticalAlign:"top",height:36,wrapperStyle:{fontSize:"10px"}}),
-(0,D.jsx)(T,{type:"monotone",dataKey:"total",name:"Total "+(A==="buah"?"Ton":U==="luas"?unitLuas:U==="produksi"?unitProduksi:"Rata-Rata"),stroke:"#64748b",strokeWidth:3,dot:{fill:"#475569",r:4},activeDot:{r:6},connectNulls:!1}),
+(0,D.jsx)(T,{type:"monotone",dataKey:"total",name:"Total "+(U==="luas"?unitLuas:U==="produksi"?unitProduksi:"Rata-Rata"),stroke:"#64748b",strokeWidth:3,dot:{fill:"#475569",r:4},activeDot:{r:6},connectNulls:!1}),
 U!=="produktivitas"&&(0,D.jsx)(T,{type:"monotone",dataKey:"proyeksi",name:"Proyeksi",stroke:"#ef4444",strokeWidth:2,strokeDasharray:"6 4",dot:{fill:"#ef4444",r:4},connectNulls:!0}),
 L.map((e,t)=>{
 let n=["#059669","#2563eb","#7c3aed","#db2777","#ea580c","#d97706","#4b5563","#16a34a"];
@@ -466,7 +473,7 @@ Y.items.map(e=>(0,D.jsxs)("div",{className:"border border-slate-200 bg-white rou
 (0,D.jsx)(x,{strokeDasharray:"3 3",stroke:"#64748b",strokeOpacity:.1,vertical:!1}),
 (0,D.jsx)(y,{dataKey:"name",tick:{fill:"#475569",fontSize:10},axisLine:{stroke:"#cbd5e1",strokeWidth:1},tickLine:{stroke:"#cbd5e1"},interval:0,angle:-45,textAnchor:"end",height:70}),
 (0,D.jsx)(C,{width:70,tick:{fill:"#475569",fontSize:10},axisLine:{stroke:"#cbd5e1",strokeWidth:1},tickLine:{stroke:"#cbd5e1"}}),
-(0,D.jsx)(v,{contentStyle:{backgroundColor:"#ffffff",border:"1px solid #cbd5e1",borderRadius:"8px",fontSize:"12px",boxShadow:"0 4px 6px -1px rgba(0,0,0,0.1)"},formatter:(e,t)=>[Z(Number(e||0))+" "+(A==="buah"?"Ton":U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas),String(t??"")],labelFormatter:e=>"Kec. "+e}),
+(0,D.jsx)(v,{contentStyle:{backgroundColor:"#ffffff",border:"1px solid #cbd5e1",borderRadius:"8px",fontSize:"12px",boxShadow:"0 4px 6px -1px rgba(0,0,0,0.1)"},formatter:(e,t)=>[Z(Number(e||0))+" "+(U==="luas"?unitLuas:U==="produksi"?unitProduksi:unitProduktivitas),String(t??"")],labelFormatter:e=>"Kec. "+e}),
 (0,D.jsx)(w,{verticalAlign:"top",height:36,wrapperStyle:{fontSize:"10px"}}),
 L.map((e,t)=>{
 let n=["#059669","#2563eb","#7c3aed","#db2777","#ea580c","#d97706","#4b5563","#16a34a"];

@@ -113,6 +113,8 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
   Data produksi kacang tanah dan kedelai lokal.
 - **`GET /api/v1/palawija/ubi-kacang-hijau`**  
   Data produksi ubi jalar dan kacang hijau.
+- **`GET /api/v1/ltt-katam`**  
+  Data realisasi Luas Tambah Tanam (LTT) dan rencana Kalender Tanam (Katam) per kecamatan, komoditas, dan musim dari basis data `ltt_katam`. Mengembalikan array objek JSON (atau `[]` jika dinas belum mengunggah).
 
 ### B. Hortikultura & Perkebunan
 - **`GET /api/v1/hortikultura/sayuran-produksi`**  
@@ -121,6 +123,8 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
   Luas panen komoditas sayuran menurut kecamatan.
 - **`GET /api/v1/hortikultura/buah-produksi`**  
   Produksi buah-buahan semusim dan tahunan (salak pondoh Banjarnegara, durian, alpukat).
+- **`GET /api/v1/hortikultura/buah-luas`**  
+  Data luas panen (Ha) dan produktivitas (Ton/Ha) komoditas buah-buahan per kecamatan (ADR-066).
 - **`GET /api/v1/hortikultura/produksi-tahunan`**  
   Agregat produksi hortikultura kabupaten per tahun.
 - **`GET /api/v1/perkebunan/areal`**  

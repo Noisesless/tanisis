@@ -47,6 +47,7 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 | [`scripts/seed_ketahanan_pangan.js`](file:///d:/Project/pertanian_main/scripts/seed_ketahanan_pangan.js) | Skrip seed idempoten akun ketahanan-pangan ke database users | Skrip CLI pemeliharaan DB (ADR-061) |
 | [`tests/ai-fallback.test.js`](file:///d:/Project/pertanian_main/tests/ai-fallback.test.js) | Unit test otomatis modul AI Offline KB dan Natural Language Generator | Test runner |
 | [`tests/endpoint.test.js`](file:///d:/Project/pertanian_main/tests/endpoint.test.js) | Integration test endpoint streaming SSE `/api/v1/ai/chat` | Test runner |
+| [`src/lib/data-sources.js`](file:///d:/Project/pertanian_main/src/lib/data-sources.js) | Katalog pemetaan sumber data publik vs rujukan luar per domain | Digunakan oleh `src/routes/admin.js` (ADR-063) |
 | [`src/lib/helpers.js`](file:///d:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
 
 ---
