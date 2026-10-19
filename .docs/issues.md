@@ -769,8 +769,22 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 54 isu operasional berstatus RESOLVED).*
+### [ISSUE-055] Sinkronisasi & Migrasi Data Renstra Faktual ke Basis Data MySQL (Tabel renstra_target) dan Integrasi API Live
+- **Status:** OPEN
+- **Tanggal Dicatat:** 2026-10-19
+- **Komponen:** `database/`, `src/routes/`, `src/lib/domains.js`, `dist/assets/renstra-v242.js`.
+- **Deskripsi:** 
+  1. Data resmi Rencana Strategis (Renstra) 2025–2029 (9 Indikator Sasaran/IKU dan 18 Indikator Program/IKK) serta data evaluasi Renstra 2019–2022 saat ini baru tertanam pada bundel antarmuka frontend (`dist/assets/renstra-v242.js`).
+  2. Tabel basis data MySQL `renstra_target` di database `pertasis` saat ini masih kosong (hanya tersimpan 1 baris dummy pengujian lama), sehingga data di database belum mencerminkan dokumen resmi Renstra yang sudah diunggah dan ditampilkan pada aplikasi.
+- **Rencana Tindakan (Diagendakan Pengerjaan Besok):**
+  1. **Normalisasi Skema Database `renstra_target`:** Menyesuaikan skema tabel agar mampu menampung struktur data matriks Renstra secara utuh: kolom `sektor`, `jenis` (IKU/IKK), `no_urut`, `indikator`, `satuan`, `baseline_2024`, target tahunan `t2025` s/d `t2030`, serta pemisahan periode (`2025-2029` vs `2019-2022`).
+  2. **Skrip Migrasi / Seeder Otomatis:** Membuat skrip migrasi data (`scripts/seed_renstra_target.js`) untuk menyalin seluruh 27 indikator resmi 2025–2029 dan 4 indikator 2019–2022 dari dataset faktual ke tabel MySQL `renstra_target` di `pertasis`.
+  3. **Penyediaan API Endpoint Backend:** Membuat rute API publik `GET /api/v1/renstra/target` (dan sinkronisasi dengan endpoint template/impor di Dasbor Admin) yang mengembalikan data dari database secara terstruktur.
+  4. **Integrasi Live Fetch Frontend:** Menghubungkan halaman antarmuka `/renstra` untuk mengambil data secara dinamis dari API backend, dengan tetap mempertahankan data lokal sebagai fallback jika koneksi database mengalami kendala.
 
+---
+
+### Rencana Peningkatan Lainnya:
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
 
