@@ -28,7 +28,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
    - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA Desa (`/fsva` — 16 Indikator Fisik & Rasio Validasi Bapanas Terintegrasi Database), Rantai Pasok/RMU, Fluktuasi Harga Pasar.
-   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra`), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
+   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra` — Dual Periode: Renstra 2025–2029 [9 IKU & 18 IKK] & Renstra 2019–2022 [4 Indikator Historis] dengan unduh berkas resmi PDF), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
 4. **Kelembagaan & Data:**
    - `Kelembagaan Tani` (3 Submenu Navbar Terisolasi):
      - `Tani, Gapoktan & KWT` (`/farmers?klaster=tani`) — 2.687 Poktan/KWT/Gapoktan & Rekapitulasi Validasi SK Kadistan 20 Kecamatan.

@@ -261,6 +261,23 @@ app.use((req, res, next) => {
 // Di dev (tanpa dist/) bagian ini tidak mengganggu — frontend tetap via Vite.
 const DIST_DIR = process.env.DIST_DIR || "./dist";
 const distRoot = path.isAbsolute(DIST_DIR) ? DIST_DIR : path.join(process.cwd(), DIST_DIR);
+// Migrasi otomatis berkas bundle usang ke versi terkini (Anti-Stale Asset Guard)
+const SUPERSEDED_ASSETS = {
+  "/assets/food-crops-BebUD7KU.js": "/assets/food-crops-v241.js",
+  "/assets/horticulture-CCLLXyU1.js": "/assets/horticulture-v241.js",
+  "/assets/ltt-katam-DHFMKiIG.js": "/assets/ltt-katam-v241.js",
+  "/assets/fisheries-5_2RapTI.js": "/assets/fisheries-v241.js",
+  "/assets/admin-C9Dakcgq.js": "/assets/admin-v241.js",
+  "/assets/food-security-Dw2-7ErS.js": "/assets/food-security-v241.js",
+  "/assets/renstra-CX0NWSBK.js": "/assets/renstra-v242.js",
+};
+app.use((req, res, next) => {
+  if (SUPERSEDED_ASSETS[req.path]) {
+    return res.redirect(301, SUPERSEDED_ASSETS[req.path]);
+  }
+  next();
+});
+
 // Normalisasi modul JS: Bersihkan query string (?v=...) agar browser hanya memuat 1 instance modul React tunggal
 app.use((req, res, next) => {
   if (req.path.startsWith("/assets/") && req.path.endsWith(".js") && Object.keys(req.query).length > 0) {
@@ -278,7 +295,7 @@ app.use(
         res.setHeader("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
       } else {
         // Berkas aplikasi (HTML, JS, CSS) tetap no-cache agar pembaruan kode langsung aktif
-        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
         res.setHeader("Pragma", "no-cache");
         res.setHeader("Expires", "0");
       }
@@ -294,6 +311,9 @@ app.use((req, res, next) => {
   }
   if (req.path === "/kecamatan/") {
     return res.redirect(302, "/kecamatan");
+  }
+  if (req.path === "/ltt" || req.path === "/ltt/") {
+    return res.redirect(302, "/ltt-katam");
   }
   next();
 });

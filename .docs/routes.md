@@ -26,7 +26,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/fsva` | Kebijakan & Ketapang | Peta Kerawanan Pangan (FSVA) | `food-security.png` | Publik | STABLE |
 | `/supply-chain` | Kebijakan & Ketapang | Rantai Pasok & Distribusi Beras | `supply-chain.png` | Publik | STABLE |
 | `/price-volatility` | Kebijakan & Ketapang | Fluktuasi Harga Pasar | `price-volatility.png` | Publik | STABLE |
-| `/renstra` | Kebijakan & Ketapang | Analisis Renstra & Program Dinas | - | Publik | STABLE |
+| `/renstra` | Kebijakan & Ketapang | Analisis Renstra & RKPD (Dual Periode: 2025–2029 & 2019–2022) | - | Publik | STABLE |
 | `/recommendations` | Kebijakan & Ketapang | Rekomendasi Kebijakan Dinas | - | Publik | STABLE |
 | `/farmers` / `/farmers?klaster=tani` | Kelembagaan & Data | Kelembagaan Tani, Gapoktan & KWT | `farmers.png` | Publik | STABLE |
 | `/farmers?klaster=ekonomi` | Kelembagaan & Data | Kelembagaan Ekonomi Petani | `farmers.png` | Publik | STABLE |
@@ -40,6 +40,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `/admin` | Portal Admin | Portal Administrasi Sektoral | - | Admin/Bidang | STABLE |
 | `/info` | Bantuan & Info | Informasi SISPERTANI | - | Publik | STABLE |
 | `/manual` | Bantuan & Info | Panduan Penggunaan | - | Publik | STABLE |
+| `/ltt` | Sektor Komoditas | Alias Redirect → `/ltt-katam` | - | Publik | REDIRECT (302) |
 
 ---
 
@@ -152,4 +153,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `Multer MemoryStorage (SP-003)` | `POST /api/v1/admin/import/*` | Menangani upload berkas Excel multipart (limit 15 MB) secara efisien di memori |
 | `Safe Error Masking (SP-019)` | Seluruh route API (`route()`) | Mengisolasi pesan internal error database saat HTTP 500 (mencegah kebocoran skema SQL) |
 | `Trailing-Slash Normalizer` | `GET /kecamatan/`, `GET /sebaran/` | Mengalihkan rute bertrailing slash (302 redirect) ke path kanonikal untuk mencegah redirect loop di sisi klien |
+| `Anti-Stale Asset Guard (SP-025)` | `GET /assets/*` | Pengalihan otomatis HTTP 301 untuk aset chunk usang ke chunk aktif terkini (`renstra-v242.js`, dll) dan penyajian langsung modul kanonikal `index-CI1XYnwk.js` tanpa redirect |
+| `JS Query String Normalizer` | `GET /assets/*.js?v=...` | Mengalihkan permintaan modul ber-query (302 redirect) ke path murni tanpa query string agar peramban hanya memuat satu instance React singleton |
+| `Static PDF Document Serving` | `/renstra-2025-2029.pdf`, `/renstra.pdf` | Menyajikan berkas PDF resmi Renstra langsung dari `distRoot` dengan header no-cache |
 | `SPA HTML Fallback` | Seluruh `GET` non-API non-ekstensi | Mengarahkan navigasi peramban ke `index.html` untuk mendukung routing klien |

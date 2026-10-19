@@ -33,6 +33,8 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Standarisasi CSV Data BPS & Pembersihan Dev Leaks (ADR-059)** | Sangat Baik | ✅ PASSED | Pembakuan 83 berkas normalisasi di `dist/14. Distankan KP/` murni ke format CSV (wide & tidy format); pembersihan kartu status dev internal (TLS/SSL, MariaDB, JWT) dari antarmuka pengguna. |
 | **Refinement RAG Hybrid & Offline NLG Engine (ADR-060)** | Sangat Baik | ✅ PASSED | Transformasi fallback lokal dari raw data dump menjadi Rule-Based NLG Engine (`src/lib/ai-nlg.js`) dan Offline Agricultural KB (`src/lib/ai-offline-kb.js`) dengan streaming micro-chunk pacing SSE (100% lulus 5/5 unit test). |
 | **Registrasi Akun Bidang Ketahanan Pangan (ADR-061)** | Sangat Baik | ✅ PASSED | Registrasi akun `ketahanan-pangan` ke tabel MySQL `users`, konfigurasi RBAC terintegrasi 6 domain khusus pangan, dan sinkronisasi kata sandi di `.env` & `.env.example`. |
+| **Integrasi Renstra Dual-Periode & Anti-Slop (ADR-072)** | Sangat Baik | ✅ PASSED | Integrasi 9 IKU & 18 IKK Renstra 2025–2029 (PDF resmi 77 halaman) dan Renstra 2019–2022. Eliminasi kata lebai/slop ("tahun berjalan", "periode berjalan", "Tabel 4.5", "Tabel 4.7"). Penataan 5-slot visual simetris ber-key stabil. |
+| **Resolusi React Singleton & DOM Reconciler (ADR-073)** | Sangat Baik | ✅ PASSED | Penegakan `index-CI1XYnwk.js` sebagai root bundle kanonikal yang diimpor seluruh 76 chunk dan `index.html`. Eliminasi permanen Minified React error #321 dan error reconciler DOM `removeChild`. |
 
 ---
 

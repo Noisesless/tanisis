@@ -8,9 +8,10 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 
 | File | Imported By (Count) | Tipe | Alasan Kritis |
 |---|---|---|---|
-| [`src/db.js`](file:///e:/Project/pertanian_main/src/db.js) | 12 berkas (semua routes & lib) | Database Core | Mengelola pool koneksi MySQL, konfigurasi decimalNumbers, dan helper kueri `q()`. Kerusakan di sini melumpuhkan seluruh API. |
-| [`src/server.js`](file:///e:/Project/pertanian_main/src/server.js) | Entrypoint (Root) | Server Core | Inisialisasi Express, CORS, dual-mount API router, static handler, dan SPA fallback. |
-| [`src/lib/domains.js`](file:///e:/Project/pertanian_main/src/lib/domains.js) | 3 berkas (`admin.js`, `excel.js`, tests) | Schema & Registry | Mengatur 16 domain operasional (ADR-009), kunci upsert, pemetaan tabel-sheet, normalisasi nama kecamatan & desa, serta alias geografi. |
+| [`src/db.js`](file:///d:/Project/pertanian_main/src/db.js) | 12 berkas (semua routes & lib) | Database Core | Mengelola pool koneksi MySQL, konfigurasi decimalNumbers, dan helper kueri `q()`. Kerusakan di sini melumpuhkan seluruh API. |
+| [`src/server.js`](file:///d:/Project/pertanian_main/src/server.js) | Entrypoint (Root) | Server Core | Inisialisasi Express, CORS, dual-mount API router, static handler, dan SPA fallback. |
+| [`src/lib/domains.js`](file:///d:/Project/pertanian_main/src/lib/domains.js) | 3 berkas (`admin.js`, `excel.js`, tests) | Schema & Registry | Mengatur 16 domain operasional (ADR-009), kunci upsert, pemetaan tabel-sheet, normalisasi nama kecamatan & desa, serta alias geografi. |
+| [`dist/assets/index-CI1XYnwk.js`](file:///d:/Project/pertanian_main/dist/assets/index-CI1XYnwk.js) | 76 chunk modul frontend | Frontend Core Bundle | Entry point React 19, router SPA, dan shared dispatcher. Wajib tetap sebagai modul kanonikal tanpa redirect 301 untuk mencegah duplikasi instance React. |
 
 ---
 
@@ -105,5 +106,6 @@ dist/index.html (Entry Point)
               ├── /komoditas-unggulan/:bidang -> komoditas-unggulan-BhWh4UVQ.js
               ├── /nilai-ekonomi/:bidang -> nilai-ekonomi-uFV4-6ig.js (Khusus peternakan: 4 tab mandiri live API)
               ├── /livestock -> livestock-D6KAVcvO.js (Populasi Ternak Murni & Domba Batur)
-              └── /peternakan/susu-kulit -> peternakan-susu-kulit-B1vV3OM5.js (Produksi Utama, Hasil Ikutan Spesies-Centric & Simulasi HPT)
+              ├── /peternakan/susu-kulit -> peternakan-susu-kulit-B1vV3OM5.js (Produksi Utama, Hasil Ikutan Spesies-Centric & Simulasi HPT)
+              └── /renstra -> renstra-v242.js (Dual Periode Renstra 2025–2029 [9 IKU, 18 IKK] & 2019–2022)
 ```

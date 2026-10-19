@@ -89,3 +89,13 @@
 - [x] **Eliminasi Tab Redundan & Optimasi Font Food Crops (ADR-069):** Menghapus tab switcher redundan di atas filter card dan menyingkat label komoditas (`Padi`, `Jagung & Umbi`, `Kacang-kacangan`) dengan font `text-[11px] xl:text-xs` serta atribut tooltip `title` agar tidak terpotong.
 - [x] **Eliminasi Data Tiruan & Empty State LTT Katam (ADR-070):** Menghapus 15 baris dummy mockup `F=[]`, banner disclaimer oranye, dan tab switcher di `/ltt-katam`. Mengimplementasikan Empty State resmi berjarak bantalan lega (`py-16 px-6`, padding 64px 32px), serta menambahkan endpoint backend kueri riil `GET /api/v1/ltt-katam`.
 
+---
+
+### Fase 10: Integrasi Renstra Dual-Periode, Pembersihan AI Slop & Resolusi Error React 321 / removeChild (ADR-072 & ADR-073)
+- [x] **Integrasi Renstra Dual-Periode Faktual (ADR-072):** Menambahkan selektor periode interaktif (`Renstra 2025–2029` dan `Renstra 2019–2022`). Mengintegrasikan 9 Indikator Sasaran (IKU Tabel 4.5) dan 18 Indikator Program (IKK Tabel 4.7) hasil ekstraksi faktual salinan PDF 77 halaman resmi DISTANKANKP Banjarnegara.
+- [x] **Pembersihan Teks Lebai & AI Slop:** Mengeliminasi seluruh kata-kata lebai ("tahun berjalan", "periode berjalan", "Tabel 4.5", "Tabel 4.7") serta merestrukturisasi 3 KPI cards menjadi metrik ringkas: 9 Indikator Sasaran, 18 Indikator Program, dan Periode 2025–2029 (5 tahun).
+- [x] **Harmonisasi 5-Slot Layout & Unduh PDF Dinamis:** Menyelaraskan layout kedua periode (Header & Dropdown, 3 Kartu Metrik, 4 Sasaran Strategis 01-04, Tabel Kinerja, Catatan Sumber). Tautan unduh PDF secara dinamis mengarah ke `/renstra-2025-2029.pdf` dan `/renstra.pdf`.
+- [x] **Resolusi Minified React Error #321 & Reconciler removeChild (ADR-073):** Menetapkan kembali `index-CI1XYnwk.js` sebagai root bundle kanonikal yang diimpor 76 chunk dan disajikan langsung (HTTP 200 OK) di `dist/index.html` dan `src/server.js`, menjamin 100% singleton instance React tanpa duplikasi modul atau kegagalan hook.
+- [x] **Stabilitas DOM Reconciler:** Memisahkan kedua view ke sub-komponen ber-key stabil (`<Renstra2025View key="view-2025" />` & `<Renstra2019View key="view-2019" />`) serta memberikan key unik pada seluruh tabel dan baris data.
+- [x] **Sinkronisasi Seluruh Dokumentasi Utama:** Memperbarui 9 berkas blueprint `.docs/` (`routes.md`, `architecture.md`, `dependency-graph.md`, `quality_review.md`, `issues.md`, dll), `app-context.md`, `todo.md`, dan `README.md`.
+

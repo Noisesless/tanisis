@@ -70,6 +70,11 @@ graph TD
    - **Pembersihan Kartu Pembungkus Global `Ft`:** Komponen global `Ft` di `index-CI1XYnwk.js` dikonversi menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain max-h-[60px]`).
    - **Favicon Multi-Resolusi Terpadu:** Seluruh browser favicon (.ico dan .png 16×16 s/d 256×256) di-generate langsung dari aset master resmi `dist/logo.png`.
 
+6. **Arsitektur Renstra Dual-Periode & Resolusi Singleton React (ADR-072 & ADR-073):**
+   - **Dual-View Sub-Components Ber-Key Stabil:** Halaman `/renstra` mengisolasi tampilan ke dua sub-komponen terpisah: `<Renstra2025View key="view-2025" />` (memuat 9 Indikator Sasaran/IKU dan 18 Indikator Program/IKK resmi Renstra 2025–2029) serta `<Renstra2019View key="view-2019" />` (memuat evaluasi 4 indikator historis Renstra 2019–2022). Setiap tabel dan baris data memiliki atribut `key` unik untuk menjamin stabilitas DOM reconciler dan mengeliminasi bug `removeChild: The node to be removed is not a child of this node`.
+   - **Kanonikalitas Modul Entry-Point (`index-CI1XYnwk.js`):** Menetapkan kembali `index-CI1XYnwk.js` sebagai root bundle di `dist/index.html` dan `src/server.js` tanpa pengalihan HTTP 301, memastikan seluruh 76 chunk modul frontend berbagi instansiasi tunggal React (*ReactCurrentDispatcher singleton*) tanpa risiko Minified React Error #321.
+   - **Harmonisasi Struktur 5-Slot & Unduh PDF Dinamis:** Struktur visual kedua periode diselaraskan secara simetris (Header & Dropdown, 3 Kartu Metrik KPI, 4 Kotak Sasaran Strategis 01–04, Tabel Target Kinerja, dan Sumber Dokumen Resmi). Tombol unduh dokumen secara dinamis mengarah ke berkas salinan resmi PDF 77 halaman (`/renstra-2025-2029.pdf`) atau berkas historis (`/renstra.pdf`).
+
 ---
 
 ## 3. Lapisan Logika & Kontrol (Logic Layer)

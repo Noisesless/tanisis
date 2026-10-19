@@ -724,11 +724,52 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
      - Permintaan HTTP ke `/sispertani-api/v1/ltt-katam` mengembalikan array kosong riil `[]` (status 200 OK).
      - Pengujian `read_url_content` pada `http://127.0.0.1:5173/ltt-katam` berjalan lancar tanpa rendering visual palsu.
 
+### [ISSUE-053] Integrasi Renstra Dual-Periode (2025–2029 & 2019–2022) Faktual & Pembersihan Teks Lebai / AI Slop (ADR-072)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-19
+- **Komponen:** `dist/assets/renstra-v242.js`, `dist/renstra-2025-2029.pdf`, `dist/renstra.pdf`.
+- **Deskripsi:** 
+  1. Halaman `/renstra` sebelumnya memuat data historis tahun 2019–2022 namun dilabeli rancu sebagai 2022–2024.
+  2. Data resmi Rencana Strategis (Renstra) 2025–2029 Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara (77 halaman PDF) belum terintegrasi ke antarmuka.
+  3. Terdapat kata-kata lebai/AI slop ("tahun berjalan", "periode berjalan", "Tabel 4.5", "Tabel 4.7") dan kartu metrik nonsens ("Tahun 2025" / "Target tahun 2025").
+- **Akar Masalah:** Ketiadaan selektor periode resmi dan penggunaan teks template AI generik yang melanggar Anti-AI-Slop Law (COPY_RULES.md).
+- **Solusi & Verifikasi:**
+  1. **Dual-Periode Selector:** Menyediakan dropdown periode interaktif pada header: `Renstra 2025–2029` dan `Renstra 2019–2022`.
+  2. **Integrasi Data Faktual 2025–2029:**
+     - 9 Indikator Sasaran (IKU): Nilai SAKIP, IPP, IKP, PDRB Pertanian, PPH, Produksi Pangan, Hortikultura/Perkebunan, Populasi Ternak, Produksi Perikanan.
+     - 18 Indikator Program (IKK): AKE, AKP, Penanganan Desa Rentan, PSAT, Ketersediaan Energi, Produktivitas Pangan, Luas Panen, Bencana Lahan, Pembinaan Poktan, Produktivitas Horti/Kebun, Luas Panen Horti/Kebun, Populasi Kambing/Domba, Vaksinasi Zoonosis, Produksi Budidaya Ikan, Benih Ikan, Tangkap, Pokmaswas, dan Pengolahan Ikan.
+  3. **Pembersihan Teks Lebai & Harmonisasi Visual:**
+     - Menghapus total kata "tahun berjalan", "periode berjalan", "Tabel 4.5", "Tabel 4.7".
+     - Merestrukturisasi 3 Kartu Ringkasan: Card 1 (9 Indikator Sasaran), Card 2 (18 Indikator Program), Card 3 (2025–2029 Periode Perencanaan).
+     - Subjudul tabel dinamis: "Indikator Sasaran (IKU) tahun 2025 sampai 2030" vs "Indikator Program (IKK) tahun 2025 sampai 2030".
+     - Tautan unduh PDF dinamis: `/renstra-2025-2029.pdf` dan `/renstra.pdf`.
+  4. **Verifikasi:** `node --check dist/assets/renstra-v242.js` lolos (exit code 0).
+
+### [ISSUE-054] Resolusi Minified React Error #321 & Reconciler DOM removeChild pada Halaman Renstra (ADR-073)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-19
+- **Komponen:** `dist/index.html`, `dist/assets/index-CI1XYnwk.js`, `src/server.js`, `dist/assets/renstra-v242.js`.
+- **Deskripsi:** 
+  Navigasi ke halaman `/renstra` memicu fatal error di peramban: `Minified React error #321 (Invalid Hook Call)` pada `e.useState` di `RenstraPage`, diikuti error sekunder DOM reconciler: `NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.`
+- **Akar Masalah:**
+  1. Seluruh 76 berkas chunk di `dist/assets/` mengimpor React menggunakan specifier `./index-CI1XYnwk.js`.
+  2. Saat berkas utama diubah menjadi `index-v241.js` dan server memberikan respon *HTTP 301 Redirect* ke `v241`, peramban (Chromium/V8) menganggapnya sebagai modul berbeda sehingga menginstansiasi salinan kedua modul React.
+  3. Pada instansiasi kedua, `ReactCurrentDispatcher.current` bernilai null (`Vs` dengan fungsi `z()`), sehingga pemanggilan `useState` melempar React Error #321.
+  4. Saat `ErrorBoundary` mencoba meng-unmount subtree `<Suspense>` fallback di tengah error, DOM melempar `removeChild` exception.
+- **Solusi & Verifikasi:**
+  1. Menetapkan kembali `dist/assets/index-CI1XYnwk.js` sebagai root bundle kanonikal pada `dist/index.html` dan menyajikannya langsung (HTTP 200 OK) tanpa redirect 301 di `src/server.js`.
+  2. Memastikan seluruh chunk (termasuk `renstra-v242.js`) mengimpor langsung dari `./index-CI1XYnwk.js`, menjamin 100% singleton instance React tunggal di seluruh aplikasi.
+  3. Memisahkan kedua view ke sub-komponen ber-key stabil (`<Renstra2025View key="view-2025" />` & `<Renstra2019View key="view-2019" />`) serta memberikan key unik pada seluruh tabel dan baris data.
+  4. **Verifikasi:**
+     - `curl.exe -I "http://127.0.0.1:5173/assets/index-CI1XYnwk.js"` mengembalikan status 200 OK langsung.
+     - `read_url_content` pada `http://127.0.0.1:5173/renstra` memuat HTML bersih tanpa redirect loop.
+     - Pengujian sintaks AST `node --check` pada seluruh berkas lolos tanpa galat.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
-*(Tidak ada isu terbuka aktif saat ini. Seluruh 52 isu operasional berstatus RESOLVED).*
+*(Tidak ada isu terbuka aktif saat ini. Seluruh 54 isu operasional berstatus RESOLVED).*
 
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

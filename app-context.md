@@ -1,5 +1,5 @@
-<!-- app-context.md v3.3 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-16T14:10:00+07:00 | Phase: Eliminasi Dummy & Empty State LTT Katam (ADR-070) | Build: OK -->
+<!-- app-context.md v3.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-19T16:35:00+07:00 | Phase: Integrasi Renstra Dual-Periode & Resolusi React Singleton (ADR-072 & ADR-073) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Eliminasi Dummy & Empty State LTT Katam (ADR-070) done=ALL last=Menghapus 2-tab switcher redundan di /ltt-katam, mengeliminasi 15 baris data contoh fiktif (F=[]) dan banner placeholder, mengimplementasikan endpoint riil GET /api/v1/ltt-katam, dan menyajikan Empty State bersih sesuai Zero Dummy Data Law. next=Pemeliharaan rutin
+phase=Integrasi Renstra Dual-Periode & Resolusi React Singleton (ADR-072 & ADR-073) done=ALL last=Menyelesaikan integrasi data faktual Renstra 2025–2029 (9 IKU & 18 IKK) dan Renstra 2019–2022, pembersihan teks lebai/AI slop, perbaikan Minified React error #321 dan removeChild via penetapan index-CI1XYnwk.js sebagai kanonikal singleton, serta sinkronisasi 100% seluruh dokumentasi utama. next=Pemeliharaan rutin
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -48,6 +48,30 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-073] Resolusi Tuntas Minified React Error #321, Reconciler DOM & Pembersihan Teks Lebai Renstra:
+- Mengidentifikasi akar masalah Minified React error #321 (Invalid Hook Call): seluruh 76 berkas chunk di `dist/assets/` mengimpor `from "./index-CI1XYnwk.js"`. Pengalihan HTTP 301 ke `index-v241.js` menyebabkan peramban (Chrome/V8) menginstansiasi modul React sekunder sehingga `ReactCurrentDispatcher.current` bernilai null saat `useState` dipanggil.
+- Menetapkan `dist/assets/index-CI1XYnwk.js` sebagai berkas modul utama yang disajikan langsung (HTTP 200 OK) dan mengarahkan `<script type="module" src="/assets/index-CI1XYnwk.js">` di `dist/index.html`. Menghapus redirect 301 untuk modul root dari `src/server.js`, menjamin 100% singleton instance React tanpa duplikasi.
+- Menghilangkan error sekunder `removeChild: The node to be removed is not a child of this node` yang terjadi saat ErrorBoundary mencoba meng-unmount Suspense fallback di tengah kegagalan render.
+- Memperbaiki microcopy 3 kartu KPI Renstra 2025–2029 (menghapus teks aneh "Tahun 2025" / "Target tahun 2025"):
+  1. Indikator Sasaran: 9 Indikator (Sasaran kinerja utama dinas)
+  2. Indikator Program: 18 Indikator (Target program sektoral dinas)
+  3. Periode Perencanaan: 2025–2029 (5 tahun pelaksanaan Renstra)
+- Memperjelas subjudul tabel secara dinamis: "Indikator Sasaran (IKU) tahun 2025 sampai 2030" vs "Indikator Program (IKK) tahun 2025 sampai 2030", menghilangkan seluruh kata-kata lebai/slop birokrasi.
+[ADR-072] Implementasi Dual-Periode Renstra (2025–2029 & 2019–2022) Anti-Slop & Resolusi Reconciler DOM:
+- Menyediakan selektor dropdown periode pada header halaman `/renstra`: `Renstra 2025–2029` dan `Renstra 2019–2022` (membersihkan seluruh label AI slop: "tahun berjalan", "periode berjalan", "arsip historis", serta menghapus kapsul status redundan sesuai COPY_RULES.md).
+- Memisahkan tampilan ke dua sub-komponen terisolasi ber-key stabil (`<Renstra2025View key="view-renstra-2025" />` dan `<Renstra2019View key="view-renstra-2019" />`) serta memberikan key unik pada setiap baris tabel; mengatasi bug React reconciler `Failed to execute 'removeChild' on 'Node'` akibat pertukaran anak DOM tanpa key.
+- Renstra 2025–2029: Mengintegrasikan 9 Indikator Kinerja Utama (IKU Tabel 4.5) dan 18 Indikator Kinerja Kunci (IKK Tabel 4.7) hasil verifikasi faktual PDF resmi (77 halaman), dilengkapi filter sektoral interaktif.
+- Renstra 2019–2022: Mempertahankan evaluasi 4 indikator historis (Padi, Sapi, Domba/Kambing, Perikanan) terhadap realisasi riil kompilasi statistik sektoral 2022.
+- Harmonisasi 5-Slot Antarmuka: Kedua periode memiliki struktur identik (Slot 1 Header & Dropdown, Slot 2 Tiga Kartu KPI Border-Left-4, Slot 3 Empat Pilar Sasaran Strategis 01-04, Slot 4 Tabel Indikator Kinerja, Slot 5 Catatan Regulasi & Unduh PDF dinamis: `renstra-2025-2029.pdf` dan `renstra.pdf`).
+- Menerapkan bundle chunk baru `dist/assets/renstra-v242.js`, mendaftarkannya pada `index-v241.js`, dan memasang pengalihan otomatis HTTP 301 di `src/server.js`.
+[ADR-071] Eliminasi Dead Code, Pembersihan File .bak & Cache-Busting Terisolasi v241:
+- Menghapus seluruh berkas backup mentah (`manual-DxZ1PSew.js.bak`, `pages-BdW-ZTL4.js.bak`, `suitability-BoKTpxZD.js.bak`) dari folder publik `dist/assets/`.
+- Menghapus 7 berkas bundle chunk usang yang telah disubstitusi (`admin-C9Dakcgq.js`, `fisheries-5_2RapTI.js`, `food-crops-BebUD7KU.js`, `food-security-Dw2-7ErS.js`, `horticulture-CCLLXyU1.js`, `index-CI1XYnwk.js`, `ltt-katam-DHFMKiIG.js`).
+- Menerapkan arsitektur bundle versi terisolasi `v241` pada `index.html` dan seluruh dynamic chunk import, sehingga browser klien dipaksa mengunduh versi termutakhir tanpa tertahan di disk cache.
+- Menambahkan middleware Anti-Stale Asset Guard di `src/server.js` (HTTP 301 dari URL aset lama ke `v241`), header `max-age=0` pada aset kode, dan mengalihkan rute usang `/ltt` langsung ke `/ltt-katam` (HTTP 302 & SPA router).
+[ADR-070] Eliminasi Dummy Data & Desain Bersih Empty State LTT Katam:
+- Mengeliminasi 15 baris data contoh fiktif `F=[]`, menghapus banner placeholder kuning, dan menghubungkan endpoint riil `GET /api/v1/ltt-katam`.
+- Menghadirkan tampilan Empty State elegan yang lapang dan manusiawi saat data resmi dari dinas belum diunggah ke database.
 [ADR-069] Eliminasi Tab Redundan & Optimasi Font Tombol Komoditas Food Crops:
 - Menghapus elemen wadah 2-tab navigasi atas (*"Produksi & Luas Panen"* dan *"LTT & Kalender Tanam"*) pada `/food-crops` karena redundan dengan menu navigasi sidebar yang sudah memisahkan kedua tautan tersebut.
 - Mengoptimalkan teks label tombol kelompok komoditas menjadi: **`Padi`**, **`Jagung & Umbi`**, dan **`Kacang-kacangan`** dengan ukuran font responsif `text-[11px] xl:text-xs font-semibold` dan atribut `title={w[e].label}` sehingga nama lengkap resmi tetap dapat dibaca saat kursor diarahkan, menghilangkan anomali teks terpotong (*"agung & Umbi-umbia"*).
