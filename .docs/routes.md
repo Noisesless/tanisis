@@ -120,6 +120,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/ketahanan/harga-pasar` | `src/routes/ketahanan.js` | Publik | Data harian komoditas pasar tradisional Banjarnegara |
 | `GET` | `/v1/st2023/desa` | `src/routes/st2023.js` | Publik | Rumah tangga petani/nelayan Sensus ST2023 |
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah (mendukung pemisahan Uang & Barang/Paket tanpa nominal rupiah) |
+| `GET` | `/v1/renstra/target` | `src/routes/renstra.js` | Publik | Data target indikator kinerja Renstra dinamis (2019–2022 & 2025–2029) dengan filter jenis dan sektor |
+| `GET` | `/v1/renstra/summary` | `src/routes/renstra.js` | Publik | Ringkasan agregat total indikator sasaran dan program per periode Renstra |
 | `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin & 5 bidang teknis (`admin`, `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, `ketahanan-pangan`), generate bearer token, rate-limited, & catat activity_logs (ADR-061) |
 | `POST`| `/v1/admin/logout` | `src/routes/admin.js` | Bearer (Auth) | Logout sesi admin & pencatatan audit activity_logs |
 | `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 16 domain operasional terpadu bebas redundansi difilter sesuai peran aktif (ADR-058) |

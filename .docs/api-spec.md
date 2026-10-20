@@ -222,8 +222,9 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
 - **`GET /api/v1/ketahanan/fsva`** — Data 12 Indikator Peta Ketahanan dan Kerentanan Pangan (FSVA Bapanas) per kecamatan.
 - **`GET /api/v1/ketahanan/neraca`** — Neraca pangan komposit ketersediaan, kebutuhan, dan surplus/defisit komoditas pangan pokok.
 - **`GET /api/v1/ketahanan/logistik`** — Hasil survei kapasitas gilingan padi (RMU) dan rantai pasok beras antar-wilayah.
-- **`GET /api/v1/st2023/desa`** — Data profil rumah tangga tani (RTUP) berdasarkan Sensus Pertanian 2023.
 - **`GET /api/v1/bantuan`** — Rekapitulasi program bantuan sarana prasarana, alsintan, dan benih.
+- **`GET /api/v1/renstra/target?periode={periode}&jenis={jenis}&sektor={sektor}`** — Data target indikator kinerja Renstra dinamis (2019–2022 & 2025–2029) yang mencakup indikator sasaran (IKU/Sasaran Renstra) dan program (IKK/Program RPJMD) dengan target tahunan multi-tahun dari MySQL `renstra_target`.
+- **`GET /api/v1/renstra/summary?periode={periode}`** — Ringkasan agregat total indikator sasaran dan program beserta metadata sumber dokumen resmi per periode.
 
 ---
 

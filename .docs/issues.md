@@ -790,42 +790,29 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)
 
 ### [ISSUE-055] Sinkronisasi & Migrasi Data Renstra Faktual ke Basis Data MySQL (Tabel renstra_target) dan Integrasi API Live
-- **Status:** OPEN
-- **Tanggal Dicatat:** 2026-10-19
-- **Komponen:** `database/`, `src/routes/`, `src/lib/domains.js`, `dist/assets/renstra-v242.js`, `dist/renstra.pdf`, `dist/renstra-2025-2029.pdf`.
-- **Deskripsi & Analisis Faktual:** 
-  1. **Disparitas Data Periode 2025–2029 vs 2019–2022:**
-     - Data Renstra 2025–2029 sudah terpetakan lengkap (27 indikator: 9 IKU Tabel 4.5 dan 18 IKK Tabel 4.7) dari berkas resmi 77 halaman.
-     - Sebaliknya, data Renstra 2019–2022 pada antarmuka saat ini **sangat tereduksi (hanya 4 baris ringkas: Padi, Sapi, Kambing/Domba, Perikanan Budidaya)**.
-  2. **Temuan Faktual Dokumen Resmi Renstra 2019–2022 (`dist/renstra.pdf` — 123 Halaman):**
-     Setelah dilakukan pembacaan mendalam (*deep parse*) terhadap berkas resmi 123 halaman `dist/renstra.pdf`, ditemukan bahwa dokumen historis sebenarnya memiliki data yang jauh lebih kaya dan strategis:
-     - **Tabel 4.1 (Halaman 60–63):** Memuat **42 Indikator Tujuan dan Sasaran** periode 2017–2022 lengkap dengan target tahunan beruntun (2017, 2018, 2019, 2020, 2021, 2022). Indikator ini mencakup komoditas unggulan dan ikonik khas Banjarnegara yang saat ini hilang dari antarmuka:
-       - *Tanaman Pangan:* Padi (162.069 ton), Jagung (68.468 ton), Kedelai (381 ton), Ubi Kayu (222.919 ton).
-       - *Hortikultura Unggulan Dieng & Dataran Rendah:* Kentang (148.543 ton), Salak Pondoh (275.300 ton), Pisang (11.757 ton), Durian (5.323 ton), Cabai (24.274 ton).
-       - *Perkebunan:* Kopi (1.368 ton), Kelapa Dalam (9.125 ton), Kelapa Deres/Gula (10.392 ton), Teh (2.024 ton), Tembakau (135,6 ton), Lada (121,5 ton).
-       - *Peternakan & Zoonosis:* Sapi (32.269 ekor), Kambing/Domba (263.925 ekor), **Domba Batur khas Dataran Tinggi Dieng (9.500 ekor)**, Status Bebas 4 Zoonosis (0 kejadian), Penurunan Kematian AI Unggas, Produksi Daging (4.785 ton), Unit Usaha Pra-NKV (3 unit).
-       - *Perikanan:* Budidaya Ikan (41.901 ton), Benih Ikan (2,76 miliar ekor), Perikanan Tangkap (1.250 ton), Konsumsi Ikan (22,50 kg/kapita/tahun).
-       - *Ketahanan & Cadangan Pangan:* Ketersediaan Pangan Utama (162.069 ton), Skor PPH (95), Cadangan Pangan (23%), Stabilitas Harga Pangan Pokok (10%), Cakupan Keamanan Pangan (85%), Pengawasan Pupuk & Pestisida.
-       - *Ekonomi Makro & Kesejahteraan:* Pertumbuhan Sektor Pertanian (3% s.d. 4%), RTM Terfasilitasi (20 RTM), dan Lahan Tidur Tertanami (5 ha).
-     - **Tabel 7.1 & 7.2 (Halaman 117–121):** Indikator Kinerja Sasaran Daerah & Program yang selaras dengan RPJMD 2017–2022.
-  3. **Kekosongan Tabel Basis Data MySQL (`renstra_target`):**
-     Tabel `renstra_target` di database `pertasis` saat ini hanya berisi 1 baris dummy (`Test indikator`, 100.00, tahun 2026) dan belum menyimpan baik data 2025–2029 maupun data 2019–2022.
-
-- **Rencana Tindakan Komprehensif (Diagendakan Besok):**
-  1. **Penyusunan Skema Database Fleksibel & Terstruktur:**
-     Menyesuaikan skema tabel MySQL `renstra_target` (atau relasional) agar mendukung:
-     - `periode`: `'2025-2029'` vs `'2019-2022'`
-     - `kategori_sektor`: Tata Kelola, Pangan, Pertanian, Perkebunan, Peternakan, Perikanan
-     - `jenis_tabel`: `'IKU'` (Sasaran/Makro), `'IKK'` (Program), `'KOMODITAS'` (Target Produksi Unggulan)
-     - `no_urut`, `indikator`, `satuan`, `baseline`
-     - Kolom target tahunan multi-tahun: `t1` s/d `t6` (dinamis sesuai periode tahun).
-  2. **Ekstraksi & Migrasi Seeder Lengkap (`scripts/seed_renstra_target.js`):**
-     - Memasukkan 27 Indikator resmi 2025–2029 (Tabel 4.5 & 4.7).
-     - Memasukkan 42 Indikator komprehensif 2019–2022 (Tabel 4.1 dari PDF 123 halaman) termasuk komoditas Kentang, Salak, Domba Batur, Kopi, Teh, dan Ikan.
-  3. **Penyediaan REST API Backend (`GET /api/v1/renstra/target`):**
-     Menyajikan filter `?periode=2025-2029` dan `?periode=2019-2022` beserta filter kategori secara efisien dari MySQL.
-  4. **Peningkatan Tampilan Antarmuka Renstra 2019–2022 di Frontend:**
-     Menyejajarkan kualitas tab 2019–2022 agar menyajikan tabel komoditas unggulan dan program strategis lengkap tanpa reduksi berlebihan, tetap mematuhi kaidah anti-slop microcopy.
+- **Status:** RESOLVED
+- **Tanggal Selesai:** 2026-10-20
+- **Komponen:** `database/`, `src/routes/renstra.js`, `scripts/migrate_renstra_schema.js`, `scripts/seed_renstra_target.js`, `dist/assets/renstra-v242.js`, `dist/renstra.pdf`, `dist/renstra-2025-2029.pdf`.
+- **Akar Masalah:**
+  1. Data Renstra 2019–2022 pada antarmuka sebelumnya sangat tereduksi (hanya 4 baris sampel statis), padahal dokumen resmi `dist/renstra.pdf` (123 halaman) memuat 43 indikator sasaran dan 17 indikator program dengan rincian komoditas unggulan (Salak, Kentang, Domba Batur, Kopi, Teh, dll).
+  2. Tabel MySQL `renstra_target` sebelumnya hanya berisi 1 baris dummy pengujian dan tidak memiliki skema multi-tahun.
+  3. Ketiadaan router REST API `/api/v1/renstra/*` di backend.
+- **Solusi yang Diterapkan (ADR-075):**
+  1. **Migrasi Skema Database (`scripts/migrate_renstra_schema.js`):**
+     Membuat skema multi-tahun pada tabel `renstra_target` di basis data `pertasis` dengan kolom `periode`, `jenis_tabel`, `kategori_sektor`, `no_urut`, `indikator`, `satuan`, `baseline_tahun`, `baseline_nilai`, `t1` s/d `t6`, `sumber_tabel`, dan `sumber_dokumen`, serta indeks performa `idx_renstra_periode`, `idx_renstra_sektor`, `idx_renstra_jenis`.
+  2. **Seeding Data Faktual Utuh (`scripts/seed_renstra_target.js`):**
+     Mengimpor 87 record resmi 100% faktual:
+     - 43 Indikator Sasaran Renstra 2019–2022 (Tabel 4.1).
+     - 17 Indikator Program RPJMD 2019–2022 (Tabel 7.2).
+     - 9 Indikator Kinerja Utama / IKU 2025–2029 (Tabel 4.5).
+     - 18 Indikator Kinerja Kunci / IKK 2025–2029 (Tabel 4.7).
+  3. **REST API Backend (`src/routes/renstra.js` & `src/server.js`):**
+     Menyediakan endpoint `GET /api/v1/renstra/target` (filter `?periode=`, `?jenis=`, `?sektor=`) dan `GET /api/v1/renstra/summary`.
+  4. **Standardisasi Antarmuka Pengguna (`dist/assets/renstra-v242.js`):**
+     Menata ulang antarmuka menjadi arsitektur 5-layer terpadu (Header & Kontrol Periode, Top 3 Metric Cards, 4 Pilar Sasaran Pokok, Tabel Matriks Target Multi-Tahun, dan Sumber Dokumen Resmi). Kedua periode memiliki struktur visual, tab segmented, filter sektor, dan pencarian yang setara dan presisi, dengan kepatuhan penuh pada `design-system.md` dan anti-AI-slop.
+- **Verifikasi:**
+  - `node --check dist/assets/renstra-v242.js` lolos dengan status exit code 0.
+  - Endpoint `/api/v1/renstra/summary` dan `/api/v1/renstra/target` diverifikasi via `read_url_content` dan mengembalikan data faktual valid (HTTP 200 OK).
 
 ---
 

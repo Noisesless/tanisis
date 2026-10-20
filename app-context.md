@@ -1,5 +1,5 @@
-<!-- app-context.md v3.5 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-20T13:30:00+07:00 | Phase: Resolusi Peta Choropleth & Dashboard Eksekutif Resilience (ADR-074) | Build: OK -->
+<!-- app-context.md v3.6 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-20T14:40:00+07:00 | Phase: Fase 12 Migrasi Renstra Faktual & UI Konsisten (ADR-075, ISSUE-055) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,8 +10,8 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Resolusi Peta Choropleth & Dashboard Eksekutif Resilience (ADR-074) done=ALL last=Menyelesaikan pemisahan pemanggilan data desa (decoupled fetch 46ms), validasi anti-empty cache di localStorage, auto-purge 5MB GeoJSON dari DOMStorage, dan proksi fallback CKAN dengan snapshot lokal 170 dataset (ADR-074, ISSUE-056). next=Pengerjaan ISSUE-055: Migrasi Data Renstra Faktual ke MySQL & Integrasi API Live
-build=OK issues=1 (ISSUE-055)
+phase=Fase 12: Migrasi Data Renstra Faktual ke MySQL & Integrasi UI Konsisten (ADR-075, ISSUE-055) done=ALL last=Menyelesaikan standardisasi tampilan menu Renstra (2019–2022 & 2025–2029) dengan layout 5-layer identik, migrasi skema tabel renstra_target di MySQL pertasis, seeding 87 data faktual utuh dari PDF resmi, dan penyediaan REST API dinamis /api/v1/renstra/target serta /api/v1/renstra/summary. next=Monitoring performa aplikasi & integrasi data berkelanjutan
+build=OK issues=0
 
 ## [VISUAL_GATE]
 icon_lib=lucide

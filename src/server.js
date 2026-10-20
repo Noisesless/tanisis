@@ -20,6 +20,7 @@ import adminRouter from "./routes/admin.js";
 import aiRouter from "./routes/ai.js";
 import { psatRouter } from "./routes/psat.js";
 import { ketahananRouter } from "./routes/ketahanan.js";
+import { renstraRouter } from "./routes/renstra.js";
 import { getDynamicKomoditasUnggulan } from "./lib/komoditas-dinamis.js";
 let compressionMiddleware = (_req, _res, next) => next();
 try {
@@ -241,6 +242,7 @@ api.use("/v1/admin", adminRouter);
 api.use("/v1/ai", aiRouter);
 api.use("/v1/psat-pduk", psatRouter);
 api.use("/v1/ketahanan", ketahananRouter);
+api.use("/v1/renstra", renstraRouter);
 
 // Endpoint Komoditas Unggulan Dinamis Multi-Sektor (Zero Hardcode, Zero Dummy Law)
 api.get("/v1/komoditas-unggulan", async (req, res) => {

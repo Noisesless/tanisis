@@ -111,12 +111,12 @@
 ---
 
 ### Fase 12: Migrasi Data Renstra Faktual ke MySQL & Integrasi API Live (ISSUE-055)
-- [ ] **Penyusunan Skema Database Fleksibel & Terstruktur:** Menyesuaikan skema tabel MySQL `renstra_target` di database `pertasis` agar mendukung multi-periode (`2025-2029` dan `2019-2022`), kategori sektor, jenis indikator (`IKU`, `IKK`, `KOMODITAS`), satuan, baseline, dan target tahunan dinamis (`t1` s/d `t6`).
-- [ ] **Ekstraksi & Migrasi Seeder Lengkap (`scripts/seed_renstra_target.js`):**
+- [x] **Penyusunan Skema Database Fleksibel & Terstruktur:** Menyesuaikan skema tabel MySQL `renstra_target` di database `pertasis` agar mendukung multi-periode (`2025-2029` dan `2019-2022`), kategori sektor, jenis indikator (`IKU`, `IKK`, `SASARAN_RENSTRA`, `PROGRAM_RPJMD`), satuan, baseline, dan target tahunan dinamis (`t1` s/d `t6`). (Selesai via `scripts/migrate_renstra_schema.js`)
+- [x] **Ekstraksi & Migrasi Seeder Lengkap (`scripts/seed_renstra_target.js`):**
   - Mengimpor 27 Indikator resmi 2025–2029 (Tabel 4.5 & 4.7).
-  - Mengimpor 42 Indikator komprehensif 2019–2022 (Tabel 4.1 dari PDF resmi 123 halaman `dist/renstra.pdf`) termasuk komoditas Kentang, Salak, Domba Batur Dieng, Kopi, Teh, dan Ikan.
-- [ ] **Penyediaan REST API Backend (`GET /api/v1/renstra/target`):** Menyajikan endpoint dengan filter `?periode=2025-2029` dan `?periode=2019-2022` beserta filter kategori secara efisien dari MySQL.
-- [ ] **Peningkatan Tampilan Antarmuka Renstra 2019–2022 di Frontend:** Menyejajarkan kualitas tab 2019–2022 di `dist/assets/renstra-v242.js` agar menyajikan tabel komoditas unggulan dan program strategis lengkap tanpa reduksi berlebihan, tetap mematuhi kaidah anti-slop microcopy.
-- [ ] **Sinkronisasi Seluruh Dokumentasi Utama:** Memperbarui 9 berkas `.docs/`, `app-context.md`, dan `README.md`.
+  - Mengimpor 60 Indikator komprehensif 2019–2022 (43 Indikator Sasaran Tabel 4.1 + 17 Indikator Program Tabel 7.2 dari PDF resmi 123 halaman `dist/renstra.pdf`) termasuk komoditas Kentang, Salak, Domba Batur Dieng, Kopi, Teh, dan Ikan. Total 87 baris tersimpan di MySQL `pertasis`.
+- [x] **Penyediaan REST API Backend (`GET /api/v1/renstra/target` & `GET /api/v1/renstra/summary`):** Menyajikan endpoint dengan filter `?periode=2025-2029` dan `?periode=2019-2022`, `?jenis=...`, beserta filter sektor dinamis dari MySQL di `src/routes/renstra.js` dan ter-mount di `src/server.js`.
+- [x] **Peningkatan Tampilan Antarmuka Renstra 2019–2022 & 2025–2029 di Frontend:** Menyejajarkan kualitas tab 2019–2022 dan 2025–2029 di `dist/assets/renstra-v242.js` menjadi 5-layer layout konsisten (Top 3 Metric Cards, 4 Strategic Pillars, Target Matrix Table, Sumber Dokumen), dynamic API fetching, filter sektor, pencarian indikator, dan kepatuhan penuh design-system.md + anti-AI-slop.
+- [x] **Sinkronisasi Seluruh Dokumentasi Utama:** Memperbarui 9 berkas `.docs/`, `app-context.md`, dan `README.md`.
 
 

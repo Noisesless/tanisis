@@ -175,6 +175,20 @@ Menyimpan identitas akun dinas, kredensial password ter-hash (SHA-256), dan rela
   - `username` (VARCHAR(50), Unique) — mencakup `admin` (super_admin), `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, serta `ketahanan-pangan` (id: 8, `admin_ketahanan_pangan`, ADR-061).
   - `password_hash` (VARCHAR(255)) — enkripsi hash SHA-256 standar institusional.
   - `nama_lengkap`, `nip`, `email`, `role_id` (FK → `roles.id`), `status` (`aktif`/`nonaktif`), `last_login`, `created_at`, `updated_at`.
-- **Tabel `user_sessions`:**
-  - `id` (INT, Auto Increment, Primary Key), `token` (VARCHAR(100), Unique), `user_id` (INT), `role_id` (VARCHAR(50)), `expires_at` (DATETIME).
+### `renstra_target` (Target Kinerja Renstra Multi-Periode — ADR-075, ISSUE-055)
+Menyimpan target indikator kinerja rencana strategis dinas untuk periode 2019–2022 dan 2025–2029 (total 87 baris resmi):
+- `id` (INT UNSIGNED, Primary Key, Auto Increment)
+- `periode` (VARCHAR(20) — `2019-2022` atau `2025-2029`)
+- `jenis_tabel` (ENUM('IKU', 'IKK', 'SASARAN_RENSTRA', 'PROGRAM_RPJMD'))
+- `kategori_sektor` (VARCHAR(50) — `Pangan & Gizi`, `Tanaman Pangan`, `Horti & Perkebunan`, `Peternakan`, `Perikanan`, `Tata Kelola`)
+- `no_urut` (INT UNSIGNED)
+- `indikator` (VARCHAR(255) — nama indikator kinerja/komoditas)
+- `satuan` (VARCHAR(50) — ton, ekor, %, nilai, dll.)
+- `baseline_tahun` (INT UNSIGNED — 2017 untuk 2019–2022, 2024 untuk 2025–2029)
+- `baseline_nilai` (VARCHAR(50))
+- `t1` s/d `t6` (VARCHAR(50) — target tahunan berurutan)
+- `sumber_tabel` (VARCHAR(50) — Tabel 4.1, Tabel 4.5, Tabel 4.7, Tabel 7.2)
+- `sumber_dokumen` (VARCHAR(150))
+- `created_at`, `updated_at` (TIMESTAMP)
+- **Index:** `idx_renstra_periode`, `idx_renstra_sektor`, `idx_renstra_jenis`
 
