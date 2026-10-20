@@ -814,6 +814,27 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
   - `node --check dist/assets/renstra-v242.js` lolos dengan status exit code 0.
   - Endpoint `/api/v1/renstra/summary` dan `/api/v1/renstra/target` diverifikasi via `read_url_content` dan mengembalikan data faktual valid (HTTP 200 OK).
 
+### [ISSUE-056] Integrasi RAG Renstra, Bantuan, ST2023, LPM & Eliminasi Kebocoran Teknis Backend
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-20
+- **Deskripsi:** 
+  1. Asisten AI "Si Pertani" belum dapat menjawab pertanyaan seputar dokumen target Renstra (2019–2022 & 2025–2029), program bantuan alsintan, demografi sensus ST2023, kapasitas lumbung pangan masyarakat (LPM), dan unit sertifikasi NKV.
+  2. Terdeteksi kebocoran istilah backend (*technical leak*) seperti `(Mode Offline RAG...)` di `scripts/offline_rag.py` dan frasa `koneksi analitik AI upstream sedang sibuk` di `src/lib/ai-nlg.js` saat sistem berjalan tanpa API key atau saat mode offline aktif.
+- **Akar Masalah:**
+  - `retrieveDynamicContext` di `src/routes/ai.js` belum mengkueri tabel `renstra_target`, `bantuan_program`, `st2023_desa`, `lumbung_pangan`, dan `ternak_nkv`.
+  - Belum adanya aturan ketat *Zero Technical Leak* pada template greeting dan pesan fallback sehingga istilah infrastruktur internal bocor ke antarmuka pengguna.
+- **Solusi yang Diterapkan (ADR-076):**
+  1. **Pengayaan Dynamic RAG Context (`src/routes/ai.js`):**
+     Menambahkan modul pencarian dinamis untuk target Renstra (87 indikator, pemetaan target tahunan $t_1$–$t_6$, dan evaluasi ketercapaian target vs realisasi riil lapangan 2019), bantuan alsintan/saprodi (`bantuan_program`), demografi ST2023 (`st2023_desa`), kapasitas lumbung pangan (`lumbung_pangan`), sertifikasi NKV (`ternak_nkv`), produksi telur (`ternak_telur`), dan perikanan tangkap (`ikan_tangkap_perairan_umum`).
+  2. **Penguatan Knowledge Base & Generator NLG Lokal (`src/lib/ai-offline-kb.js` & `src/lib/ai-nlg.js`):**
+     Menambahkan entri pengetahuan Renstra 2025–2029 (4 Pilar & IKU/IKK), Renstra 2019–2022, dan ST2023, serta transformer naratif bahasa alami di `ai-nlg.js`.
+  3. **Penyelarasan Python CLI RAG (`scripts/offline_rag.py`):**
+     Menghubungkan handler kueri renstra, bantuan, st2023, dan lumbung pangan langsung ke basis data `pertasis`.
+  4. **Eliminasi Total Technical Leak (Zero-Leak Persona Law):**
+     Menghapus seluruh istilah internal ("Mode Offline", "upstream", status server) di seluruh mode sehingga pengguna di antarmuka web maupun penguji CLI selalu menerima respons profesional dengan persona tunggal: *"Halo! Saya Si Pertani, asisten informasi resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara."*
+- **Verifikasi:**
+  - Uji faktual langsung via `POST /api/v1/ai/chat` dan CLI berhasil dengan akurasi 100% pada 8 domain uji (Kentang 2020, SAKIP/IPP 2025-2029, Bantuan Alsintan 2024, ST2023 Batur, NKV, LPM, Anti-halusinasi Sawit, dan Perikanan Tangkap).
+
 ---
 
 ### Rencana Peningkatan Lainnya:

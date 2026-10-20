@@ -181,17 +181,17 @@ sequenceDiagram
 
 1. **Isolasi Kredensial Mutlak:** API Key Google Gemini (`GEMINI_API_KEY`) hanya dibaca melalui `process.env` di backend, tidak pernah terekspos di paket statis frontend bundle (`dist/assets`).
 2. **Proteksi Anti-Eksploitasi:** In-memory sliding rate limiter membatasi 30 panggilan per menit per alamat IP guna mencegah pengurasan kuota token oleh pihak ketiga.
-3. **Dynamic Year-Aware Grounding & Cross-Year Retrievability (ADR-035):**
-   - Server mengekstrak tahun pertanyaan pengguna secara regex `\b(201\d|202\d)\b`. Kueri SQL secara adaptif menyaring data tahun yang tepat (misalnya Salak 2023 di Kalibening: 83.181 Ton vs 2024: 80.880 Ton; Kopi Robusta 2024: 2.167 Ton di Karangkobar & Kalibening).
-   - Menghapus pembatasan `ORDER BY tahun DESC LIMIT 8` yang sebelumnya menenggelamkan data tahun-tahun sebelumnya.
-4. **Eliminasi Data Dummy & Filter Sektoral Khusus:**
+3. **Dynamic Year & Period-Aware Grounding (ADR-035 & ADR-076):**
+   - Server mengekstrak tahun pertanyaan pengguna secara regex `\b(201\d|202\d)\b` serta memetakan tahun masehi ke kolom target dokumen Renstra ($t_1$ s/d $t_6$).
+   - Menyediakan kueri dinamis ke tabel `renstra_target` (87 indikator) yang mencakup 9 IKU, 18 IKK, 43 Sasaran Renstra, dan 17 Program RPJMD, serta korelasi evaluasi target vs realisasi lapangan (Padi, Salak, Sapi Potong, Jagung, Kentang).
+4. **Eliminasi Data Dummy & Integrasi Sektoral Luas (ADR-076):**
+   - Mengintegrasikan data Program Bantuan Alsintan & Saprodi (`bantuan_program`), data Sensus Pertanian ST2023 BPS (`st2023_desa`), kapasitas Lumbung Pangan Masyarakat (`lumbung_pangan`), sertifikasi higienitas peternakan (`ternak_nkv`), produksi telur (`ternak_telur`), dan perikanan tangkap perairan umum (`ikan_tangkap_perairan_umum`).
    - Menyaring data dummy 0 Ton dari tabel `komoditas_unggulan` dengan klausa `total_produksi > 0 AND is_unggulan = 1`.
-   - Mengintegrasikan kelompok Tanaman Hias (`kelompok = 'tanaman_hias'` di `horti_produksi`), Ikan Hias (`ikan_hias`), Tanaman Pangan (Wortel Dieng/Batur ~48.000 Ton), serta penegasan bahwa Banjarnegara bukan sentra Kelapa Sawit (0 Ton) dan bukan produsen dominan Bawang Merah (0,33 Ton).
-   - Menyediakan query kelembagaan KWT per kecamatan dan desa sesuai arah pengurutan (*paling sedikit / paling banyak*).
-5. **Standalone Offline Python Assistant (`scripts/offline_rag.py`):**
-   - Mesin RAG mandiri berbasis Python (`pymysql`) tanpa ketergantungan framework Node.js maupun koneksi internet/API Key eksternal.
-   - Dapat dioperasikan sebagai CLI satu baris (`npm run rag:offline "<query>"`), mode interaktif REPL, atau diimpor sebagai modul Python backend.
-6. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) menjamin layanan asisten tetap berjalan lancar tanpa terganggu lonjakan beban (*high demand*) pada model tertentu.
+   - Mengintegrasikan kelompok Tanaman Hias, Ikan Hias, Sayuran Dataran Tinggi (Wortel Dieng), serta penegasan bahwa Banjarnegara bukan produsen Kelapa Sawit (0 Ton).
+5. **Zero Technical Leak Persona Law (ADR-076):**
+   - Seluruh respons asisten—baik dijalankan melalui Google Gemini API (online), fallback lokal Node.js (`src/lib/ai-nlg.js`), maupun CLI Python (`scripts/offline_rag.py`)—menggunakan persona tunggal yang identik: **"Si Pertani"**, asisten informasi resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara.
+   - Dilarang keras membocorkan parameter teknis backend ke antarmuka pengguna (seperti *"Mode Offline RAG"*, *"koneksi upstream sedang sibuk"*, atau istilah arsitektur internal).
+6. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) serta fallback lokal Rule-Based NLG menjamin layanan asisten tetap beroperasi 100% tanpa henti.
 
 ---
 

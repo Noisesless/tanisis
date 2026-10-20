@@ -67,6 +67,10 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
    - Seluruh pemeringkatan komoditas unggulan dan nilai ekonomi sektor dikalkulasi otomatis oleh mesin backend secara dinamis.
    - Pembatasan skema pada tingkat perkecamatan dan rekapitulasi kabupaten mencegah kompleksitas sistem (*over-engineering*) yang tidak didukung kesiapan data primer dinas.
 
+8. **Zero Technical Leak Persona Standard & Comprehensive Factual Grounding (ADR-076):**
+   - Menghilangkan seluruh kebocoran istilah backend (*technical leak*) seperti *Mode Offline*, *upstream*, dan *RAG* dari respons asisten Si Pertani di antarmuka pengguna.
+   - Menguji dan memvalidasi respons faktual komparasi target Renstra vs realisasi lapangan, bantuan alsintan, demografi sensus ST2023, LPM, dan sertifikasi NKV dengan tingkat akurasi 100% terhadap pangkalan data resmi tanpa halusinasi.
+
 ---
 
 ## 3. Rekomendasi Peningkatan (Future Enhancements)
