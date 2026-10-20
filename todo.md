@@ -99,3 +99,24 @@
 - [x] **Stabilitas DOM Reconciler:** Memisahkan kedua view ke sub-komponen ber-key stabil (`<Renstra2025View key="view-2025" />` & `<Renstra2019View key="view-2019" />`) serta memberikan key unik pada seluruh tabel dan baris data.
 - [x] **Sinkronisasi Seluruh Dokumentasi Utama:** Memperbarui 9 berkas blueprint `.docs/` (`routes.md`, `architecture.md`, `dependency-graph.md`, `quality_review.md`, `issues.md`, dll), `app-context.md`, `todo.md`, dan `README.md`.
 
+---
+
+### Fase 11: Resolusi Peta Choropleth & Dashboard Eksekutif Resilience (ADR-074 & ISSUE-056)
+- [x] **Decoupled Data Fetching:** Memisahkan pemanggilan data lahan desa `C()` agar berjalan mandiri (46 ms) tanpa menunggu CKAN, dengan auto-fallback instan ke `/data/lahan-fallback.json` jika network gagal.
+- [x] **Auto-Purge & Anti-Empty Cache Guard:** Menghapus key cache kosong (`length < 50`) dan mencegah array kosong tersimpan di `localStorage` (`api-BxFGoia1.js`), memecahkan deadlock *stale-while-revalidate*.
+- [x] **GeoJSON Quota Optimization:** Menghapus `geojson_desa_cache` dari `localStorage` klien untuk membebaskan kuota 5 MB DOMStorage browser, mendelegasikannya ke browser HTTP disk cache resmi.
+- [x] **Proksi CKAN Fallback di Server:** Memangkas timeout proksi CKAN di `src/server.js` dari 15s menjadi 4s dengan graceful fallback ke snapshot lokal `ckan-catalog.json` (170 dataset) saat upstream Pemkab timeout atau offline.
+- [x] **Verifikasi Bebas Regresi DOM:** Memvalidasi tidak ada unmount kontainer peta atau modifikasi JSX root yang dapat memicu `removeChild on Node` atau React Error #321.
+
+---
+
+### Fase 12: Migrasi Data Renstra Faktual ke MySQL & Integrasi API Live (ISSUE-055)
+- [ ] **Penyusunan Skema Database Fleksibel & Terstruktur:** Menyesuaikan skema tabel MySQL `renstra_target` di database `pertasis` agar mendukung multi-periode (`2025-2029` dan `2019-2022`), kategori sektor, jenis indikator (`IKU`, `IKK`, `KOMODITAS`), satuan, baseline, dan target tahunan dinamis (`t1` s/d `t6`).
+- [ ] **Ekstraksi & Migrasi Seeder Lengkap (`scripts/seed_renstra_target.js`):**
+  - Mengimpor 27 Indikator resmi 2025–2029 (Tabel 4.5 & 4.7).
+  - Mengimpor 42 Indikator komprehensif 2019–2022 (Tabel 4.1 dari PDF resmi 123 halaman `dist/renstra.pdf`) termasuk komoditas Kentang, Salak, Domba Batur Dieng, Kopi, Teh, dan Ikan.
+- [ ] **Penyediaan REST API Backend (`GET /api/v1/renstra/target`):** Menyajikan endpoint dengan filter `?periode=2025-2029` dan `?periode=2019-2022` beserta filter kategori secara efisien dari MySQL.
+- [ ] **Peningkatan Tampilan Antarmuka Renstra 2019–2022 di Frontend:** Menyejajarkan kualitas tab 2019–2022 di `dist/assets/renstra-v242.js` agar menyajikan tabel komoditas unggulan dan program strategis lengkap tanpa reduksi berlebihan, tetap mematuhi kaidah anti-slop microcopy.
+- [ ] **Sinkronisasi Seluruh Dokumentasi Utama:** Memperbarui 9 berkas `.docs/`, `app-context.md`, dan `README.md`.
+
+

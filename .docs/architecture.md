@@ -32,7 +32,7 @@ graph TD
     
     subgraph Data_Storage [Penyimpanan & Upstream]
         DBModule -->|mysql2/promise| MySQL[(MySQL Database: pertasis)]
-        ProxyCKAN -->|HTTP GET fetch| OpenDataServer[opendata.banjarnegarakab.go.id]
+        ProxyCKAN -->|HTTP GET fetch (4s timeout) + Local Snapshot Fallback| OpenDataServer[opendata.banjarnegarakab.go.id / ckan-catalog.json]
     end
 ```
 
@@ -50,7 +50,8 @@ graph TD
    - Peta dan data vektor disajikan dalam format GeoJSON statis dari direktori `./dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`, `danau.geojson`, `sungai.geojson`, `jalan.geojson`, dll).
    - **Optimasi Geometri & Koordinat (ADR-051):** Seluruh berkas GeoJSON dioptimasi via `scripts/optimize_geojson.js` (`npm run geojson:optimize`) dengan pembulatan koordinat 6 desimal (~11 cm akurasi), 2D flattening (eliminasi elevasi Z `0`), serta pembersihan metadata shapefile mentah (`METADATA`, `SRS_ID`, dll), memangkas ukuran total dari 23,30 MB menjadi 13,72 MB (-41,1%).
    - **True-Lazy Layer Loading:** Bundel frontend (`pages-BdW-ZTL4.js`) mengimplementasikan pemuatan on-demand via event Leaflet `overlayadd`. Layer berat (Jaringan Jalan 5,5 MB, Sawah 1,1 MB, Kebun 1,8 MB, Ladang 1,1 MB) hanya diunduh saat pengguna mencentang toggle layer bersangkutan, memangkas transfer awal halaman sebesar 85,8% (~3,3 MB initial payload).
-   - **Ketahanan Cache Browser:** Berkas `peta_desa_v3.geojson` yang terpangkas menjadi 2,48 MB kini muat aman dalam kuota 5 MB `localStorage` browser tanpa `QuotaExceededError`. Dilengkapi header HTTP `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
+   - **Ketahanan Cache Browser & Eliminasi Quota Storage (ADR-074):** Berkas `peta_desa_v3.geojson` (2,63 MB) tidak lagi disimpan di `localStorage` klien untuk menghindari `QuotaExceededError` (5 MB DOMStorage limit) dan mencegah risiko memuat geometri cacat dari cache usang. Caching GeoJSON didelegasikan 100% ke HTTP Disk Cache browser resmi dengan header `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
+   - **Decoupled Data Fetching:** Pengambilan data statistik desa (`fetchLahanDesa`) dipisahkan dari pemanggilan CKAN OpenData, sehingga poligon choropleth peta dan tabel langsung ter-render dalam ~46 ms tanpa terhambat oleh delay server upstream.
 
 3. **Arsitektur Aset Bersih & Ilustrasi Header Sektoral (ADR-052):**
    - Direktori `./dist/assets` dikelola secara bersih (*deterministic asset pruning*) hanya menyisakan berkas aktif terverifikasi (84 bundel JS aktif terhubung ke entry point `index-CI1XYnwk.js` dan CSS `index-DmHYJUQI.css`).

@@ -35,6 +35,7 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Registrasi Akun Bidang Ketahanan Pangan (ADR-061)** | Sangat Baik | ✅ PASSED | Registrasi akun `ketahanan-pangan` ke tabel MySQL `users`, konfigurasi RBAC terintegrasi 6 domain khusus pangan, dan sinkronisasi kata sandi di `.env` & `.env.example`. |
 | **Integrasi Renstra Dual-Periode & Anti-Slop (ADR-072)** | Sangat Baik | ✅ PASSED | Integrasi 9 IKU & 18 IKK Renstra 2025–2029 (PDF resmi 77 halaman) dan Renstra 2019–2022. Eliminasi kata lebai/slop ("tahun berjalan", "periode berjalan", "Tabel 4.5", "Tabel 4.7"). Penataan 5-slot visual simetris ber-key stabil. |
 | **Resolusi React Singleton & DOM Reconciler (ADR-073)** | Sangat Baik | ✅ PASSED | Penegakan `index-CI1XYnwk.js` sebagai root bundle kanonikal yang diimpor seluruh 76 chunk dan `index.html`. Eliminasi permanen Minified React error #321 dan error reconciler DOM `removeChild`. |
+| **Resilience Peta Choropleth & Dashboard Eksekutif (ADR-074)** | Sangat Baik | ✅ PASSED | Decoupled data fetching data desa mandiri (46 ms) tanpa terblokir CKAN timeout; auto-purge key kosong di localStorage; eliminasi 5 MB GeoJSON dari DOMStorage mendelegasikannya ke HTTP Disk Cache; proksi CKAN timeout 4s dengan fallback snapshot lokal 170 dataset (ISSUE-056). |
 
 ---
 

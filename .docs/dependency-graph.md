@@ -91,6 +91,8 @@ dist/index.html (Entry Point)
   │     ├── dist/assets/default-CAKe9ffW.js (Layout Master & Interactive Avatar Dropdown Header)
   │     │     ├── dist/assets/site-B5h-x_N5.js (Sidebar Navigation Structure)
   │     │     └── Shared Utility Icons & User Menu Logic
+  │     ├── dist/assets/pages-BdW-ZTL4.js (/ -> Dashboard Eksekutif: Decoupled Fetching, Peta Choropleth, Top 15 Desa, Analisa Lahan Kritis [ADR-074])
+  │     ├── dist/assets/api-BxFGoia1.js (Client API Gateway & Anti-Empty localStorage Cache Guard [ADR-074])
   │     └── Route Splitting to 35+ Active Views
   │
   ├── dist/assets/sektor-ringkasan-widget.js (SectorEconomicWidget)

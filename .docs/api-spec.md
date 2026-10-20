@@ -576,5 +576,37 @@ Menyediakan asisten analitik cerdas Si Pertani dengan arsitektur **Hybrid Resili
   - `stream: true`: `text/event-stream` (Server-Sent Events) OpenAI-compatible format `data: {"choices":[{"delta":{"content":"..."}}]}` diakhiri `data: [DONE]`.
   - `stream: false`: `application/json` format `{"choices":[{"message":{"content":"..."}}]}`.
 
+---
 
+## 5. Endpoint Proksi CKAN Open Data Pemkab & Fallback Katalog
 
+### `GET /api/3/action/package_search` & `GET /sispertani-api/3/action/package_search`
+Proksi cerdas untuk katalog data terbuka Dinas Kominfo / Pemkab Banjarnegara (`opendata.banjarnegarakab.go.id`) yang disajikan dari origin SISPERTANI sendiri.
+- **Tujuan:** Menghubungkan kartu KPI dan pencarian katalog Open Data di dashboard publik tanpa kendala CORS.
+- **Parameter Query:** `?q=pertanian&rows=10`
+- **Proteksi Resilience (ADR-074):**
+  - **Timeout:** 4.000 ms (dipangkas dari 15.000 ms agar tidak memicu lag browser).
+  - **Graceful Local Fallback:** Jika upstream Pemkab lambat, timeout, atau mengembalikan 502 Bad Gateway, proksi otomatis membaca berkas snapshot terverifikasi `dist/data/snapshots/ckan-catalog.json` (170 dataset) dan mengembalikan respons HTTP 200 OK dengan header `cache-control: public, max-age=300`.
+- **Response Format (JSON):**
+  ```json
+  {
+    "help": "https://opendata.banjarnegarakab.go.id/api/3/action/help_show",
+    "success": true,
+    "result": {
+      "count": 170,
+      "sort": "score desc, metadata_modified desc",
+      "results": [
+        {
+          "id": "3b54ebd8-0ff3-428d-a75d-f243ec2a79ea",
+          "name": "3b54ebd8-0ff3-428d-a75d-f243ec2a79ea",
+          "title": "Data Luas Lahan Pertanian di Kecamatan Purwanegara",
+          "notes": "Data Luas Lahan Pertanian di Kecamatan Purwanegara",
+          "organization": { "title": "Kecamatan Purwanegara" },
+          "resources": [
+            { "format": "CSV", "url": "https://opendata.banjarnegarakab.go.id/..." }
+          ]
+        }
+      ]
+    }
+  }
+  ```

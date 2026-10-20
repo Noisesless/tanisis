@@ -52,7 +52,7 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 |---|---|---|---|---|
 | `GET` | `/health` | `src/server.js` | Publik | Health check & verifikasi pool koneksi MySQL |
 | `GET` | `/v1` | `src/server.js` | Publik | Metadata versi API & katalog rute publik |
-| `GET` | `/3/*` | `src/server.js` | Publik | CKAN proxy ke Open Data Pemkab Banjarnegara |
+| `GET` | `/3/*` | `src/server.js` | Publik | CKAN proxy ke Open Data Pemkab Banjarnegara (4s timeout + local snapshot fallback ADR-074) |
 | `GET` | `/v1/lahan/desa` | `src/routes/lahan.js` | Publik | Data penggunaan lahan tingkat desa |
 | `GET` | `/v1/lahan/kabupaten` | `src/routes/lahan.js` | Publik | Data penggunaan lahan agregat kabupaten |
 | `GET` | `/v1/lahan/kesesuaian` | `src/routes/lahan.js` | Publik | Evaluasi kesesuaian lahan multi-sektor (Pangan, Horti, Kebun) & tutupan lahan |
