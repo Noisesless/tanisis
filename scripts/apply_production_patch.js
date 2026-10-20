@@ -136,6 +136,20 @@ async function main() {
       console.warn(`[Migrasi Patch Warning] Patch bantuan:`, bantuanErr.message);
     }
   }
+
+  // Jalankan migrasi skema & seeder renstra_target multi-periode (ADR-075)
+  const renstraMigrateScript = path.resolve(process.cwd(), "scripts/migrate_renstra_schema.js");
+  const renstraSeedScript = path.resolve(process.cwd(), "scripts/seed_renstra_target.js");
+  if (fs.existsSync(renstraMigrateScript) && fs.existsSync(renstraSeedScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Memeriksa & menyinkronkan tabel renstra_target multi-periode (ADR-075)...`);
+      execSync(`node "${renstraMigrateScript}"`, { stdio: "inherit", env: process.env });
+      execSync(`node "${renstraSeedScript}"`, { stdio: "inherit", env: process.env });
+    } catch (renstraErr) {
+      console.warn(`[Migrasi Patch Warning] Renstra patch gagal:`, renstraErr.message);
+    }
+  }
+
   const verifyConn = await mysql.createConnection({
     host: envHost,
     port: envPort,
@@ -160,7 +174,8 @@ async function main() {
       "ternak_pemotongan",
       "ternak_daging",
       "horti_luas_kabupaten",
-      "horti_produksi_kabupaten"
+      "horti_produksi_kabupaten",
+      "renstra_target"
     ];
 
     console.log(`\n=== STATUS VERIFIKASI SEEDER PRODUKSI ===`);

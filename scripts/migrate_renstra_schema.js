@@ -10,10 +10,19 @@ async function migrate() {
   console.log(`[MIGRATE] Connecting to MySQL ${user}@${host}:${port}/${database}...`);
   const conn = await mysql.createConnection({ host, port, user, password, database });
 
-  // 1. Backup existing table if exists and has data
+  // 1. Check if renstra_target already has multi-year structure and data (Idempotent Guard)
   try {
     const [check] = await conn.query("SHOW TABLES LIKE 'renstra_target'");
     if (check.length > 0) {
+      const [cols] = await conn.query("SHOW COLUMNS FROM `renstra_target` LIKE 'periode'");
+      if (cols.length > 0) {
+        const [[{ count }]] = await conn.query("SELECT COUNT(*) as count FROM `renstra_target`");
+        if (count >= 87) {
+          console.log(`[MIGRATE] Tabel renstra_target multi-periode sudah mutakhir (${count} baris). Melewati migrasi.`);
+          await conn.end();
+          return;
+        }
+      }
       console.log('[MIGRATE] Backing up existing renstra_target to renstra_target_bak...');
       await conn.query("DROP TABLE IF EXISTS renstra_target_bak");
       await conn.query("CREATE TABLE renstra_target_bak AS SELECT * FROM renstra_target");

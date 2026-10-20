@@ -50,20 +50,28 @@ cd ~/htdocs/pertanian.sistemdata.id
 # 2. Tarik pembaruan kode dan bundel terbaru dari GitHub
 git pull origin main
 
-# 3. Jalankan migrasi skema tabel renstra_target & seeder faktual (ADR-075)
-node scripts/migrate_renstra_schema.js
-node scripts/seed_renstra_target.js
+# 3. Jalankan patch migrasi basis data terpadu (otomatis idempoten: skema, normalisasi, & seeder Renstra ADR-075)
+npm run db:patch
 
-# 4. Pasang dependensi jika terdapat pembaruan package.json
+# 4. Pasang dependensi jika terdapat pembaruan package.json (opsional)
 npm ci --omit=dev
 
-# 5. Restart proses aplikasi via PM2
-pm2 reload ecosystem.config.cjs || pm2 restart pertanian-api
+# 5. Reload proses aplikasi via PM2 (zero-downtime)
+pm2 reload ecosystem.config.cjs || pm2 restart sispertani-api
 
-# 6. Verifikasi status aplikasi & endpoint Renstra
+# 6. Verifikasi status aplikasi & kesehatan backend
 pm2 status
 curl -s http://127.0.0.1:5173/api/health
-curl -s http://127.0.0.1:5173/api/v1/renstra/summary?periode=2025-2029
+```
+
+#### Perintah Cepat Sekali Jalan (*One-Liner Production*):
+
+```bash
+# Rilis Cepat Rutin (Kode, Frontend, API — tanpa perubahan DB):
+cd ~/htdocs/pertanian.sistemdata.id && git pull origin main && pm2 reload ecosystem.config.cjs
+
+# Rilis Lengkap (Termasuk patch migrasi database baru):
+cd ~/htdocs/pertanian.sistemdata.id && git pull origin main && npm run db:patch && pm2 reload ecosystem.config.cjs
 ```
 
 ---

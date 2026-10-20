@@ -122,6 +122,17 @@ async function seed() {
   console.log(`[SEED] Connecting to MySQL ${user}@${host}:${port}/${database}...`);
   const conn = await mysql.createConnection({ host, port, user, password, database });
 
+  try {
+    const [[{ count }]] = await conn.query("SELECT COUNT(*) as count FROM `renstra_target`");
+    if (count >= 87) {
+      console.log(`[SEED] Tabel renstra_target sudah berisi ${count} baris data faktual. Melewati seeding.`);
+      await conn.end();
+      return;
+    }
+  } catch (checkErr) {
+    // Tabel belum ada atau belum siap
+  }
+
   console.log('[SEED] Truncating table renstra_target...');
   await conn.query("TRUNCATE TABLE renstra_target");
 
