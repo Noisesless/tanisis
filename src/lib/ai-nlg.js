@@ -51,17 +51,18 @@ export function synthesizeNaturalResponse(rawContext, kbItems = [], userQuery = 
   // 4. Jika tidak ada data spesifik yang cocok sama sekali
   if (!hasData) {
     parts.push(
-      "Saat ini koneksi analitik AI upstream sedang sibuk atau data spesifik yang Anda cari belum tercocokkan secara langsung di sistem.\n\n" +
+      "Data spesifik yang Anda cari belum tercatat pada basis data kami atau memerlukan kata kunci yang lebih spesifik.\n\n" +
       "**Anda dapat menanyakan hal-hal berikut secara spesifik:**\n" +
-      "1. **Komoditas & Produksi:** Misalnya *\"Berapa produksi padi di Susukan?\"*, *\"Komoditas unggulan Karangkobar\"*, atau *\"Populasi sapi di Batur\"*.\n" +
-      "2. **Hortikultura & Sayuran:** *\"Produksi wortel Dieng\"*, *\"Tanaman hias Banjarnegara\"*, atau *\"Budidaya salak pondoh\"*.\n" +
-      "3. **Kelembagaan & Bantuan:** *\"Jumlah kelompok wanita tani (KWT)\"* atau *\"Syarat pengajuan bantuan alsintan\"*.\n" +
-      "4. **Ketahanan Pangan:** *\"Peta FSVA kerentanan pangan desa\"* atau *\"Neraca pangan beras\"*."
+      "1. **Target Perencanaan & Renstra:** *\"Target padi renstra 2019\"*, *\"Indikator IKU renstra 2025\"*, atau *\"Evaluasi renstra 2019\"*.\n" +
+      "2. **Komoditas & Produksi:** *\"Berapa produksi padi di Susukan?\"*, *\"Komoditas unggulan Karangkobar\"*, atau *\"Populasi sapi di Batur\"*.\n" +
+      "3. **Hortikultura & Sayuran:** *\"Produksi wortel Dieng\"*, *\"Tanaman hias Banjarnegara\"*, atau *\"Budidaya salak pondoh\"*.\n" +
+      "4. **Kelembagaan & Bantuan:** *\"Jumlah kelompok wanita tani (KWT)\"*, *\"Program bantuan alsintan\"*, atau *\"Hasil sensus ST2023\"*.\n" +
+      "5. **Ketahanan Pangan:** *\"Peta FSVA kerentanan pangan desa\"*, *\"Lumbung pangan masyarakat\"*, atau *\"Neraca pangan beras\"*."
     );
   } else {
     // Penutup Informatif
     parts.push(
-      "*(Informasi di atas bersumber langsung dari data operasional terverifikasi SISPERTANI Kabupaten Banjarnegara. Silakan sebutkan nama komoditas atau kecamatan lain jika Anda memerlukan rincian lebih lanjut.)*"
+      "*(Informasi di atas bersumber langsung dari data resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara. Silakan sebutkan topik atau komoditas lain jika Anda memerlukan rincian lebih lanjut.)*"
     );
   }
 
@@ -127,6 +128,60 @@ function transformRawContextToNarrative(rawContext) {
     } else if (trimmed.includes("VALIDASI FSVA-DESA BANJARNEGARA")) {
       let secText = "### 🛡️ Peta Ketahanan & Kerentanan Pangan (FSVA Desa)\n";
       secText += "Berdasarkan pemetaan 16 indikator fisik dan rasio Badan Pangan Nasional (Bapanas), desa dengan prioritas atensi meliputi:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("TARGET DOKUMEN RENSTRA RESMI")) {
+      let secText = "### 🎯 Target Indikator Renstra Distankan KP\n";
+      secText += "Berdasarkan dokumen resmi Rencana Strategis (Renstra) Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• **${l.replace(/^-\s*/, "")}**\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA REALISASI STATISTIK LAPANGAN TAHUN 2019")) {
+      let secText = "### 📈 Evaluasi Ketercapaian Target Renstra (Realisasi 2019)\n";
+      secText += "Perbandingan capaian riil statistik pertanian di lapangan terhadap target dokumen Renstra:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA PROGRAM BANTUAN PEMERINTAH")) {
+      let secText = "### 🚜 Program Bantuan Alsintan & Saprodi Dinas\n";
+      secText += "Alokasi program bantuan sarana dan prasarana pertanian Kabupaten Banjarnegara:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA RESMI SENSUS PERTANIAN ST2023")) {
+      let secText = "### 📊 Rekapitulasi Sensus Pertanian ST2023 (BPS Banjarnegara)\n";
+      secText += "Profil demografi dan sebaran rumah tangga petani menurut hasil Sensus Pertanian BPS:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA LUMBUNG PANGAN MASYARAKAT")) {
+      let secText = "### 🏛️ Data Cadangan & Lumbung Pangan Masyarakat (LPM)\n";
+      secText += "Kapasitas simpan cadangan pangan fisik di tingkat kelompok dan kecamatan:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA PRODUKSI TELUR PETERNAKAN") || trimmed.includes("UNIT USAHA BERSERTIFIKAT NOMOR KONTROL VETERINER")) {
+      let secText = "### 🥚 Hilirisasi Peternakan & Sertifikasi Higienitas\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• ${l.replace(/^-\s*/, "")}\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA PRODUKSI BENIH IKAN") || trimmed.includes("DATA PERIKANAN TANGKAP PERAIRAN UMUM")) {
+      let secText = "### 🐟 Perikanan Benih & Tangkap Perairan Umum\n";
       const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
       for (const l of lines) {
         secText += `• ${l.replace(/^-\s*/, "")}\n`;

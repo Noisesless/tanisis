@@ -141,6 +141,47 @@ export const OFFLINE_AGRICULTURE_KB = [
       "Verifikasi PPL & BPP: Proposal diketahui dan ditandatangani oleh PPL pendamping serta Koordinator BPP Kecamatan.",
       "Pengajuan ke Dinas: Berkas diserahkan ke Bidang Prasarana dan Sarana Pertanian (PSP) Distankan KP Banjarnegara untuk dimasukkan dalam perencanaan anggaran (APBD/APBN)."
     ]
+  },
+  {
+    id: "kb_renstra_2025_2029",
+    category: "perencanaan",
+    keywords: ["renstra 2025", "2025-2029", "iku", "ikk", "target 2025", "arah kebijakan", "4 pilar", "transformasi"],
+    title: "Arah Kebijakan & 4 Pilar Strategis Renstra Distankan KP 2025–2029",
+    summary:
+      "Renstra 2025–2029 memuat 9 Indikator Kinerja Utama (IKU) dan 18 Indikator Kinerja Kunci (IKK) yang berfokus pada transformasi agribisnis berkelanjutan dari on-farm menuju hilirisasi dan nilai tambah.",
+    guidance: [
+      "Pilar 1 - Ketahanan & Kemandirian Pangan: Menjaga skor PPH (target 94,03) dan penguatan IKP desa rentan pangan.",
+      "Pilar 2 - Nilai Tambah & Hilirisasi Agro: Mendorong pertumbuhan PDRB pertanian (target 1–3%) melalui diversifikasi olahan salak, kopi robusta, dan hortikultura Dieng.",
+      "Pilar 3 - Kelembagaan Tani Mandiri: Peningkatan kapasitas KWT, Gapoktan, dan Pokdakan berbasis korporasi petani dan kemitraan pasar.",
+      "Pilar 4 - Tata Kelola Birokrasi Berdampak: Target nilai SAKIP dinas mencapai 73,20 dan Indeks Pelayanan Publik (IPP) mencapai 3,30 pada tahun 2029."
+    ]
+  },
+  {
+    id: "kb_renstra_2019_2022",
+    category: "perencanaan",
+    keywords: ["renstra 2019", "2019-2022", "target renstra", "sasaran renstra", "target 2019", "evaluasi renstra", "capaian 2019"],
+    title: "Target Sasaran & Evaluasi Kinerja Renstra Distankan KP 2019–2022",
+    summary:
+      "Renstra 2019–2022 (Tabel 4.1 & Tabel 7.2 RPJMD) memuat 43 Sasaran dan 17 Program yang berorientasi pada peningkatan volume produksi komoditas pangan, hortikultura, perkebunan, dan peternakan.",
+    guidance: [
+      "Target Produksi Padi: Ditargetkan 159.662,89 Ton pada 2019 (realisasi tercatat 148.776 Ton atau 93,2% dari target).",
+      "Target Hortikultura Unggulan: Target Kentang 128.700 Ton (realisasi 113.498,2 Ton) dan Salak Pondoh 254.323,23 Ton (realisasi melampaui target mencapai 260.114 Ton / 102,3%).",
+      "Target Peternakan: Populasi Sapi Potong 31.695 Ekor (realisasi melampaui target mencapai 32.140 Ekor / 101,4%), Kambing/Domba 262.348 Ekor.",
+      "Evaluasi Lapangan: Komoditas perkebunan dan peternakan mencatatkan keberhasilan melampaui target dokumen, sedangkan tanaman pangan padi mengalami tantangan kekeringan musiman."
+    ]
+  },
+  {
+    id: "kb_sensus_st2023",
+    category: "perencanaan",
+    keywords: ["st2023", "sensus pertanian", "petani gurem", "milenial", "bps banjarnegara"],
+    title: "Ikhtisar Sensus Pertanian 2023 (ST2023 BPS) Banjarnegara",
+    summary:
+      "Hasil Sensus Pertanian 2023 oleh BPS memetakan struktur pelaku usaha tani di 278 desa Kabupaten Banjarnegara.",
+    guidance: [
+      "Karakteristik Usaha: Didominasi oleh Usaha Pertanian Perorangan (UTP) dengan komoditas hortikultura sayuran, perkebunan kelapa/kopi, dan ternak.",
+      "Struktur Kelembagaan: Sebagian besar petani telah tergabung dalam kelompok tani binaan penyuluh BPP di masing-masing kecamatan.",
+      "Regenerasi Tani: Distankan KP menggalakkan pelatihan P4S dan fasilitasi alsintan modern untuk meningkatkan minat generasi muda dalam agribisnis bernilai tinggi."
+    ]
   }
 ];
 

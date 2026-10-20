@@ -565,13 +565,17 @@ Menyediakan asisten analitik cerdas Si Pertani dengan arsitektur **Hybrid Resili
     "max_tokens": 8192
   }
   ```
-- **Fitur Live RAG Engine:**
-  - **Dynamic Year Extraction:** Mengurai tahun spesifik (2023, 2024, 2025) secara dinamis via regex `\b(201\d|202\d)\b`.
-  - **Filter Faktual Bebas Dummy:** Menyaring `total_produksi > 0 AND is_unggulan = 1` pada `komoditas_unggulan`.
-  - **Spesialisasi Sektoral:** Menarik data faktual kelompok tanaman hias, ikan hias, perkebunan (kopi robusta vs arabika), sayuran dataran tinggi (wortel Dieng), dan direktori kelembagaan KWT per kecamatan/desa.
-  - **Injeksi Pengetahuan Pertanian Lokal:** Saat upstream online, panduan teknis SOP dan profil komoditas dari `src/lib/ai-offline-kb.js` disuntikkan ke dalam instruksi sistem untuk memperkaya jawaban.
-- **Graceful Local Fallback (Anti-Down / Keyless Resilient):**
+- **Fitur Live RAG Engine (Terintegrasi 87 Target Renstra & Data Sektoral):**
+  - **Dynamic Year & Period Extraction:** Mengurai tahun spesifik (2017–2029) secara dinamis via regex `\b(201\d|202\d)\b` serta memetakan tahun kalender masehi ke kolom target Renstra ($t_1$ s/d $t_6$).
+  - **Target Dokumen Renstra (2019–2022 & 2025–2029):** Terhubung ke tabel `renstra_target` (87 indikator). Mampu menjelaskan 9 IKU, 18 IKK, 43 Sasaran Renstra, 17 Program RPJMD, serta cross-referencing komparasi target vs realisasi statistik komoditas di lapangan.
+  - **Bantuan Alsintan & Saprodi:** Menampilkan data program bantuan traktor, pompa air, hibah modal tani, dan benih dari tabel `bantuan_program`.
+  - **Sensus Pertanian ST2023 (BPS):** Menampilkan agregat petani, rumah tangga tani, anggota poktan, dan RTUP per kecamatan dari tabel `st2023_desa`.
+  - **Lumbung Pangan Masyarakat (LPM):** Menampilkan unit dan kapasitas tampung cadangan gabah dari tabel `lumbung_pangan`.
+  - **Filter Faktual Bebas Dummy:** Menyaring data riil berproduksi dan berstatus aktif dari pangkalan data resmi.
+  - **Injeksi Pengetahuan Pertanian Lokal:** Panduan teknis SOP dan profil komoditas dari `src/lib/ai-offline-kb.js` disuntikkan ke dalam instruksi sistem untuk memperkaya jawaban.
+- **Graceful Local Fallback (Anti-Down / Keyless Resilient / Zero-Leak Persona):**
   - Jika upstream Gemini overload (503), kuota terlampaui (429), atau server berjalan tanpa `GEMINI_API_KEY`, sistem otomatis menyintesis respons lokal via `src/lib/ai-nlg.js` dan `src/lib/ai-offline-kb.js`.
+  - **Zero Technical Leak:** Jawaban pada mode online maupun offline menghasilkan identitas persona yang konsisten ("Si Pertani") tanpa membocorkan istilah teknis infrastruktur backend seperti "Mode Offline", "upstream", atau status koneksi server.
   - Mengalirkan respons dengan generator *micro-chunk pacing* (12–15 ms per kata) sehingga efek pengetikan alami (*smooth typing*) di peramban pengguna tetap aktif dengan status HTTP 200 OK.
 - **Response Modes:**
   - `stream: true`: `text/event-stream` (Server-Sent Events) OpenAI-compatible format `data: {"choices":[{"delta":{"content":"..."}}]}` diakhiri `data: [DONE]`.

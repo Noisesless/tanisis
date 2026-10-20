@@ -1,5 +1,5 @@
-<!-- app-context.md v3.6 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-20T14:40:00+07:00 | Phase: Fase 12 Migrasi Renstra Faktual & UI Konsisten (ADR-075, ISSUE-055) | Build: OK -->
+<!-- app-context.md v3.7 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-20T15:45:00+07:00 | Phase: Fase 13 Integrasi RAG Renstra Faktual & Eliminasi Technical Leak (ADR-076) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Fase 12: Migrasi Data Renstra Faktual ke MySQL & Integrasi UI Konsisten (ADR-075, ISSUE-055) done=ALL last=Menyelesaikan standardisasi tampilan menu Renstra (2019–2022 & 2025–2029) dengan layout 5-layer identik, migrasi skema tabel renstra_target di MySQL pertasis, seeding 87 data faktual utuh dari PDF resmi, dan penyediaan REST API dinamis /api/v1/renstra/target serta /api/v1/renstra/summary. next=Monitoring performa aplikasi & integrasi data berkelanjutan
+phase=Fase 13: Integrasi Data Renstra & Sektoral ke RAG Chatbot Si Pertani serta Eliminasi Technical Leak (ADR-076) done=ALL last=Menutup knowledge gap pada RAG Online (ai.js) dan RAG Offline (ai-nlg.js, ai-offline-kb.js, offline_rag.py) dengan menghubungkan 87 target resmi Renstra 2019-2022 & 2025-2029, bantuan alsintan, ST2023, lumbung pangan, serta membersihkan seluruh technical leak backend ("Mode Offline", "upstream") agar persona Si Pertani konsisten 100% di semua mode. next=Monitoring performa chat & evaluasi model AI
 build=OK issues=0
 
 ## [VISUAL_GATE]

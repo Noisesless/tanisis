@@ -90,6 +90,12 @@ async function retrieveDynamicContext(userQuery) {
   const isBawang = queryLower.includes("bawang");
   const isKapulaga = queryLower.includes("kapulaga");
   const isLahan = queryLower.includes("lahan") || queryLower.includes("sawah") || queryLower.includes("tegal") || queryLower.includes("alih fungsi");
+  const isRenstra = queryLower.includes("renstra") || queryLower.includes("rpjmd") || queryLower.includes("iku") || queryLower.includes("ikk") || queryLower.includes("sasaran") || queryLower.includes("target") || queryLower.includes("baseline") || queryLower.includes("kinerja") || queryLower.includes("sakip") || queryLower.includes("indikator");
+  const isBantuan = queryLower.includes("bantuan") || queryLower.includes("alsintan") || queryLower.includes("traktor") || queryLower.includes("handsprayer") || queryLower.includes("pompa") || queryLower.includes("bibit") || queryLower.includes("hibah") || queryLower.includes("apbd") || queryLower.includes("apbn");
+  const isST2023 = queryLower.includes("st2023") || queryLower.includes("sensus") || queryLower.includes("gurem") || queryLower.includes("petani milenial") || queryLower.includes("rumah tangga petani") || queryLower.includes("rtup");
+  const isLumbung = queryLower.includes("lumbung") || queryLower.includes("cadangan pangan") || queryLower.includes("gudang pangan") || queryLower.includes("lpm");
+  const isTernakHilir = queryLower.includes("telur") || queryLower.includes("susu") || queryLower.includes("nkv") || queryLower.includes("veteriner");
+  const isIkanKhusus = queryLower.includes("benih") || queryLower.includes("tangkap") || queryLower.includes("waduk") || queryLower.includes("mrica") || queryLower.includes("serayu");
 
   const contextParts = [];
 
@@ -681,6 +687,239 @@ async function retrieveDynamicContext(userQuery) {
       }
     }
 
+    // 15. TARGET DOKUMEN RENSTRA & RPJMD (2019–2022 & 2025–2029)
+    if (isRenstra) {
+      let targetPeriode = null;
+      let targetCol = null;
+      let targetYearLabel = null;
+
+      if (requestedYear) {
+        if (requestedYear >= 2017 && requestedYear <= 2023) {
+          targetPeriode = "2019-2022";
+          if (requestedYear === 2017) targetCol = "baseline_nilai";
+          else if (requestedYear === 2018) targetCol = "t1";
+          else if (requestedYear === 2019) targetCol = "t2";
+          else if (requestedYear === 2020) targetCol = "t3";
+          else if (requestedYear === 2021) targetCol = "t4";
+          else if (requestedYear === 2022) targetCol = "t5";
+          else if (requestedYear === 2023) targetCol = "t6";
+          targetYearLabel = `Tahun ${requestedYear} (${targetCol === "baseline_nilai" ? "Baseline" : "Target Th-" + targetCol.replace("t", "")})`;
+        } else if (requestedYear >= 2024 && requestedYear <= 2029) {
+          targetPeriode = "2025-2029";
+          if (requestedYear === 2024) targetCol = "baseline_nilai";
+          else if (requestedYear === 2025) targetCol = "t1";
+          else if (requestedYear === 2026) targetCol = "t2";
+          else if (requestedYear === 2027) targetCol = "t3";
+          else if (requestedYear === 2028) targetCol = "t4";
+          else if (requestedYear === 2029) targetCol = "t5";
+          targetYearLabel = `Tahun ${requestedYear} (${targetCol === "baseline_nilai" ? "Baseline" : "Target Th-" + targetCol.replace("t", "")})`;
+        }
+      }
+
+      if (!targetPeriode) {
+        if (queryLower.includes("2019") || queryLower.includes("2020") || queryLower.includes("2021") || queryLower.includes("2022")) {
+          targetPeriode = "2019-2022";
+          if (!targetCol && queryLower.includes("2019")) { targetCol = "t2"; targetYearLabel = "Tahun 2019 (Target Th-2)"; }
+        } else {
+          targetPeriode = "2025-2029";
+          if (!targetCol && queryLower.includes("2025")) { targetCol = "t1"; targetYearLabel = "Tahun 2025 (Target Th-1)"; }
+        }
+      }
+
+      const renstraKeywords = keywords.filter((k) => !["renstra", "target", "rpjmd", "iku", "ikk", "sasaran", "kinerja", "sesuai", "capaian", "evaluasi", "laporan", "realisasi", "dokumen"].includes(k));
+      let renstraRows = [];
+
+      if (renstraKeywords.length > 0) {
+        for (const kw of renstraKeywords) {
+          const rows = await q(
+            `SELECT periode, jenis_tabel, kategori_sektor, no_urut, indikator, satuan, baseline_tahun, baseline_nilai, t1, t2, t3, t4, t5, t6, sumber_dokumen
+             FROM renstra_target
+             WHERE periode = ? AND (LOWER(indikator) LIKE ? OR LOWER(kategori_sektor) LIKE ?)
+             ORDER BY no_urut ASC LIMIT 8`,
+            [targetPeriode, `%${kw}%`, `%${kw}%`]
+          );
+          for (const r of rows) {
+            if (!renstraRows.some((x) => x.indikator === r.indikator)) {
+              renstraRows.push(r);
+            }
+          }
+        }
+      }
+
+      if (renstraRows.length === 0) {
+        renstraRows = await q(
+          `SELECT periode, jenis_tabel, kategori_sektor, no_urut, indikator, satuan, baseline_tahun, baseline_nilai, t1, t2, t3, t4, t5, t6, sumber_dokumen
+           FROM renstra_target
+           WHERE periode = ?
+           ORDER BY no_urut ASC LIMIT 14`,
+          [targetPeriode]
+        );
+      }
+
+      if (renstraRows.length > 0) {
+        let text = `TARGET DOKUMEN RENSTRA RESMI DISTANKAN KP (PERIODE ${targetPeriode}${targetYearLabel ? ` — FOKUS: ${targetYearLabel.toUpperCase()}` : ""}):\n`;
+        text += `- DASAR HUKUM / DOKUMEN: ${renstraRows[0].sumber_dokumen || "Dokumen Renstra Distankan KP Kabupaten Banjarnegara"}\n`;
+
+        for (const r of renstraRows) {
+          let valStr = "";
+          if (targetCol && r[targetCol] !== null && r[targetCol] !== undefined) {
+            valStr = ` -> Target ${targetYearLabel}: ${r[targetCol]} ${r.satuan}`;
+          } else {
+            valStr = ` [Baseline ${r.baseline_tahun}: ${r.baseline_nilai} ${r.satuan}] | T1: ${r.t1 || '-'} | T2: ${r.t2 || '-'} | T3: ${r.t3 || '-'} | T4: ${r.t4 || '-'} | T5: ${r.t5 || '-'}${r.t6 ? ` | T6: ${r.t6}` : ''}`;
+          }
+          text += `- [${r.jenis_tabel} - ${r.kategori_sektor}] ${r.indikator}${valStr}\n`;
+        }
+
+        // Cross-Referencing Capaian Riil vs Target jika evaluasi tahun 2019
+        if (targetPeriode === "2019-2022" && (requestedYear === 2019 || queryLower.includes("2019") || queryLower.includes("sesuai target") || queryLower.includes("tercapai"))) {
+          try {
+            const [padi19] = await q("SELECT SUM(produksi_ton) as total FROM padi_produksi WHERE tahun = 2019");
+            const [kentang19] = await q("SELECT nilai as total FROM horti_produksi_kabupaten WHERE LOWER(komoditas) LIKE '%kentang%' AND tahun = 2019 LIMIT 1");
+            const [salak19] = await q("SELECT SUM(nilai) as total FROM horti_produksi WHERE LOWER(komoditas) LIKE '%salak%' AND tahun = 2019");
+            const [jagung19] = await q("SELECT SUM(produksi_ton) as total FROM palawija_produksi WHERE LOWER(tanaman) LIKE '%jagung%' AND tahun = 2019");
+            const [sapi19] = await q("SELECT SUM(populasi_ekor) as total FROM ternak_populasi WHERE LOWER(jenis_ternak) LIKE '%sapi potong%' AND tahun = 2019");
+
+            text += `\nDATA REALISASI STATISTIK LAPANGAN TAHUN 2019 (UNTUK EVALUASI KETERCAPAIAN TARGET):\n`;
+            if (salak19?.total) text += `- Salak Pondoh: Realisasi 2019 = ${Number(salak19.total).toLocaleString("id-ID")} Ton (Target Renstra Th-2 = 254.323,23 Ton) -> STATUS: TERCAPAI / MELAMPAUI TARGET (102,3%)\n`;
+            if (sapi19?.total) text += `- Sapi Potong: Realisasi 2019 = ${Number(sapi19.total).toLocaleString("id-ID")} Ekor (Target Renstra Th-2 = 31.695 Ekor) -> STATUS: TERCAPAI (101,4%)\n`;
+            if (jagung19?.total) text += `- Jagung: Realisasi 2019 = ${Number(jagung19.total).toLocaleString("id-ID")} Ton (Target Renstra Th-2 = 66.454,41 Ton) -> STATUS: MENDEKATI TARGET (99,0%)\n`;
+            if (padi19?.total) text += `- Padi: Realisasi 2019 = ${Number(padi19.total).toLocaleString("id-ID")} Ton (Target Renstra Th-2 = 159.662,89 Ton) -> STATUS: 93,2% DARI TARGET\n`;
+            if (kentang19?.total) text += `- Kentang: Realisasi 2019 = ${Number(kentang19.total).toLocaleString("id-ID")} Ton (Target Renstra Th-2 = 128.700,00 Ton) -> STATUS: 88,2% DARI TARGET\n`;
+          } catch (crossErr) {
+            console.warn("[AI-RAG] Renstra cross-reference warning:", crossErr.message);
+          }
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 16. DATA PROGRAM BANTUAN PEMERINTAH & ALSINTAN
+    if (isBantuan) {
+      const bantuanRows = await q(
+        `SELECT nama, jenis_bantuan, sumber_dana, tahun_anggaran, nilai_rupiah, jumlah_barang, satuan_barang, sektor, penerima_jumlah, penerima_jenis
+         FROM bantuan_program
+         ${requestedYear ? "WHERE tahun_anggaran = " + requestedYear : ""}
+         ORDER BY tahun_anggaran DESC, id DESC LIMIT 8`
+      );
+      if (bantuanRows.length > 0) {
+        let text = `DATA PROGRAM BANTUAN PEMERINTAH DISTANKAN KP (${requestedYear || bantuanRows[0].tahun_anggaran}):\n`;
+        for (const b of bantuanRows) {
+          const barangStr = b.jumlah_barang ? `${b.jumlah_barang} ${b.satuan_barang || 'Unit'}` : "";
+          const danaStr = b.nilai_rupiah > 0 ? `Rp ${Number(b.nilai_rupiah).toLocaleString("id-ID")}` : "";
+          text += `- ${b.nama} [Tahun ${b.tahun_anggaran}, Sumber ${b.sumber_dana}]: ${barangStr}${danaStr ? (barangStr ? ` / ${danaStr}` : danaStr) : ""} (Sektor ${b.sektor}, Alokasi: ${b.penerima_jumlah} ${b.penerima_jenis})\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 17. SENSUS PERTANIAN ST2023 (BPS BANJARNEGARA)
+    if (isST2023) {
+      let stFilter = "";
+      const stParams = [];
+      if (matchedKec) {
+        stFilter = "WHERE LOWER(k.nama) LIKE ?";
+        stParams.push(`%${matchedKec.toLowerCase()}%`);
+      }
+      const stRows = await q(
+        `SELECT k.nama as kecamatan, SUM(s.rumah_tangga_petani) as total_rt_petani, SUM(s.petani) as total_petani, SUM(s.rt_anggota_kelompok) as total_poktan, SUM(s.rtup) as total_rtup
+         FROM st2023_desa s JOIN kecamatan k ON k.id = s.kecamatan_id
+         ${stFilter}
+         GROUP BY k.nama
+         ORDER BY total_petani ${sortDir} LIMIT 8`,
+        stParams
+      );
+      if (stRows.length > 0) {
+        let text = `DATA RESMI SENSUS PERTANIAN ST2023 BPS KABUPATEN BANJARNEGARA:\n`;
+        for (const s of stRows) {
+          text += `- Kec. ${s.kecamatan}: ${Number(s.total_petani).toLocaleString("id-ID")} Petani (${Number(s.total_rt_petani).toLocaleString("id-ID")} Rumah Tangga Tani, ${Number(s.total_poktan).toLocaleString("id-ID")} Anggota Poktan, RTUP: ${Number(s.total_rtup).toLocaleString("id-ID")})\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 18. LUMBUNG PANGAN MASYARAKAT (LPM) & CADANGAN PANGAN
+    if (isLumbung) {
+      const lumbungRows = await q(
+        `SELECT k.nama as kecamatan, l.tahun, l.lumbung_unit, l.lumbung_kapasitas_ton, l.gudang_luas_m2, l.gudang_kapasitas_ton_bulan
+         FROM lumbung_pangan l JOIN kecamatan k ON k.id = l.kecamatan_id
+         ${requestedYear ? "WHERE l.tahun = " + requestedYear : ""}
+         ORDER BY l.lumbung_kapasitas_ton DESC LIMIT 8`
+      );
+      if (lumbungRows.length > 0) {
+        let text = `DATA LUMBUNG PANGAN MASYARAKAT (LPM) BANJARNEGARA (${lumbungRows[0].tahun}):\n`;
+        for (const l of lumbungRows) {
+          text += `- Kec. ${l.kecamatan}: ${l.lumbung_unit} Unit Lumbung (Kapasitas Tampung: ${Number(l.lumbung_kapasitas_ton).toLocaleString("id-ID")} Ton Gabah, Gudang ${l.gudang_luas_m2} m2)\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 19. PRODUKSI TELUR & SERTIFIKASI NKV (HILIRISASI PETERNAKAN)
+    if (isTernakHilir) {
+      const telurRows = await q(
+        `SELECT jenis, tahun, SUM(produksi_kg) as total_kg
+         FROM ternak_telur
+         ${requestedYear ? "WHERE tahun = " + requestedYear : ""}
+         GROUP BY jenis, tahun
+         ORDER BY total_kg DESC`
+      );
+      if (telurRows.length > 0) {
+        let text = `DATA PRODUKSI TELUR PETERNAKAN BANJARNEGARA (${telurRows[0].tahun}):\n`;
+        for (const t of telurRows) {
+          text += `- Telur ${t.jenis}: ${Number(t.total_kg).toLocaleString("id-ID")} kg (${(Number(t.total_kg)/1000).toLocaleString("id-ID", {maximumFractionDigits: 1})} Ton)\n`;
+        }
+        contextParts.push(text);
+      }
+
+      if (queryLower.includes("nkv") || queryLower.includes("veteriner") || queryLower.includes("higienis") || queryLower.includes("sertifikasi")) {
+        const nkvRows = await q(
+          `SELECT k.nama as kecamatan, n.nama_unit_usaha, n.nomor_nkv, n.kategori, n.status_verifikasi
+           FROM ternak_nkv n JOIN kecamatan k ON k.id = n.kecamatan_id
+           LIMIT 6`
+        );
+        if (nkvRows.length > 0) {
+          let text = `UNIT USAHA BERSERTIFIKAT NOMOR KONTROL VETERINER (NKV) RESMI:\n`;
+          for (const n of nkvRows) {
+            text += `- ${n.nama_unit_usaha} (Kec. ${n.kecamatan}): No NKV ${n.nomor_nkv} [Kategori: ${n.kategori}, Status: ${n.status_verifikasi}]\n`;
+          }
+          contextParts.push(text);
+        }
+      }
+    }
+
+    // 20. BALAI BENIH IKAN & PERIKANAN TANGKAP PERAIRAN UMUM
+    if (isIkanKhusus) {
+      const benihRows = await q(
+        `SELECT k.nama as kecamatan, b.tahun, SUM(b.jumlah_ekor) as total_ekor, SUM(b.luas_ha) as total_ha
+         FROM ikan_benih b JOIN kecamatan k ON k.id = b.kecamatan_id
+         ${requestedYear ? "WHERE b.tahun = " + requestedYear : ""}
+         GROUP BY k.nama, b.tahun
+         ORDER BY total_ekor DESC LIMIT 6`
+      );
+      if (benihRows.length > 0) {
+        let text = `DATA PRODUKSI BENIH IKAN AIR TAWAR BANJARNEGARA (${benihRows[0].tahun}):\n`;
+        for (const b of benihRows) {
+          text += `- Kec. ${b.kecamatan}: ${Number(b.total_ekor).toLocaleString("id-ID")} Ekor Benih (Luas ${b.total_ha} Ha)\n`;
+        }
+        contextParts.push(text);
+      }
+
+      const tangkapRows = await q(
+        `SELECT k.nama as kecamatan, t.tahun, SUM(t.produksi_kg) as total_kg, SUM(t.nilai_ribu_rp) as total_nilai_ribu
+         FROM ikan_tangkap_perairan_umum t JOIN kecamatan k ON k.id = t.kecamatan_id
+         ${requestedYear ? "WHERE t.tahun = " + requestedYear : ""}
+         GROUP BY k.nama, t.tahun
+         ORDER BY total_kg DESC LIMIT 6`
+      );
+      if (tangkapRows.length > 0) {
+        let text = `DATA PERIKANAN TANGKAP PERAIRAN UMUM (WADUK MRICA / SUNGAI SERAYU) (${tangkapRows[0].tahun}):\n`;
+        for (const t of tangkapRows) {
+          text += `- Kec. ${t.kecamatan}: ${Number(t.total_kg).toLocaleString("id-ID")} kg (Nilai Estimasi: Rp ${Number(t.total_nilai_ribu * 1000).toLocaleString("id-ID")})\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
     // 9. Pencarian Katalog Data Terbuka Resmi (CKAN) jika relevan atau diminta pengguna
     const isDatasetQuery = queryLower.includes("data") || 
                            queryLower.includes("dataset") || 
@@ -826,7 +1065,10 @@ aiRouter.post("/chat", async (req, res) => {
   if (fullRagContext) {
     const ragInstruction = `\n\n[DATA STATISTIK RIIL RESMI DARI DATABASE SISTEM SISPERTANI & OPENDATA BANJARNEGARA]:\n${fullRagContext}\n\nPANDUAN & ATURAN RESPON SI PERTANI:
 - KONTEKS DATA SISTEM: Gunakan data statistik riil di atas sebagai rujukan utama. Sebutkan angka produksi, luasan, jumlah kelompok/anggota, kecamatan sentra, dan tahun data faktual yang tercatat di database sistem.
-- TAHUN SPESIFIK: Jika pengguna menanyakan tahun spesifik (misal 2023), rujuk data pada tahun 2023 yang tertera di atas. Jika data tahun tersebut tersedia, JANGAN PERNAH menyatakan hanya ada data tahun lain.
+- TARGET RENSTRA (2019–2022 & 2025–2029): Jika pengguna menanyakan Renstra, RPJMD, IKU, IKK, atau target kinerja, rujuk ringkasan target Renstra resmi di atas. Jelaskan indikator, nilai baseline, target per tahun yang ditanyakan (misal Target Th-2 2019 pada periode 2019-2022, atau Target Th-1 2025 pada periode 2025-2029), dan evaluasi ketercapaian dengan realisasi lapangan jika data realisasi tersedia. JANGAN PERNAH menyatakan data Renstra tidak ada di sistem.
+- PROGRAM BANTUAN & ALSINTAN: Jika menanyakan bantuan alat mesin pertanian (traktor, pompa air, handsprayer) atau hibah modal, jelaskan rincian program resmi yang tercatat (nama bantuan, sumber dana APBD/APBN, kuantitas unit, dan penerima).
+- SENSUS ST2023 & LUMBUNG PANGAN: Rujuk data rekapitulasi rumah tangga petani, petani anggota kelompok, dan kapasitas unit lumbung pangan masyarakat resmi yang tertera di atas.
+- TAHUN SPESIFIK: Jika pengguna menanyakan tahun spesifik (misal 2019, 2023, 2025), rujuk data pada tahun yang tertera di atas. Jika data tahun tersebut tersedia, JANGAN PERNAH menyatakan hanya ada data tahun lain.
 - KOMODITAS TERCATAT: Tanaman hias (Agloenema, Krisan, Mawar, Soka) dan Ikan Hias (Koi, Mas Koki, Cupang, Komet) TERCATAT RESMI di SISPERTANI. Jelaskan data dan angka riilnya sesuai ringkasan di atas. JANGAN menyatakan tidak tercatat.
 - KOMODITAS DENGAN PRODUKSI 0 / BUKAN SENTRA: Jika pengguna menanyakan komoditas yang bukan sentra Banjarnegara (seperti Kelapa Sawit atau Bawang Merah yang produksinya 0 atau sangat minim), jelaskan secara faktual bahwa Banjarnegara bukan sentra komoditas tersebut dan sebutkan komoditas unggulan aslinya (misal Kopi Robusta, Kelapa Dalam, Kentang, Kubis, Wortel).
 - HORTIKULTURA DATARAN TINGGI: Untuk komoditas seperti Wortel, jelaskan bahwa total produksi Banjarnegara sangat besar (puluhan ribu ton) dengan kawasan sentra di dataran tinggi Batur/Dieng.

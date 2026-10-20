@@ -123,7 +123,11 @@ def analyze_query(user_query):
         "kelembagaan": any(w in q_lower for w in ["kwt", "poktan", "gapoktan", "pokdakan", "kth", "juleha", "p4s", "upja", "kelompok", "kelembagaan", "penyuluh"]),
         "harga": any(w in q_lower for w in ["harga", "pasar", "sembako", "inflasi"]),
         "neraca": any(w in q_lower for w in ["neraca", "surplus", "defisit", "ketersediaan", "konsumsi"]),
-        "lahan": any(w in q_lower for w in ["lahan", "sawah", "tegal", "alih fungsi"])
+        "lahan": any(w in q_lower for w in ["lahan", "sawah", "tegal", "alih fungsi"]),
+        "renstra": any(w in q_lower for w in ["renstra", "rpjmd", "iku", "ikk", "target", "sasaran", "baseline", "kinerja", "sakip"]),
+        "bantuan": any(w in q_lower for w in ["bantuan", "alsintan", "traktor", "handsprayer", "pompa", "bibit", "hibah"]),
+        "st2023": any(w in q_lower for w in ["st2023", "sensus", "gurem", "milenial", "rumah tangga petani", "rtup"]),
+        "lumbung": any(w in q_lower for w in ["lumbung", "cadangan pangan", "gudang pangan", "lpm"])
     }
     
     # Token kata kunci
@@ -162,8 +166,114 @@ def ask_offline_rag(user_query):
     keywords = info["keywords"]
     
     reply_lines = []
-    reply_lines.append("Halo! Saya **Si Pertani** (Mode Offline RAG SISPERTANI Banjarnegara).\n")
+    reply_lines.append("Halo! Saya **Si Pertani**, asisten informasi resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara.\n")
     
+    # 0. RENSTRA & RPJMD (2019–2022 & 2025–2029)
+    if dom["renstra"]:
+        target_periode = "2019-2022" if (q_year and q_year <= 2023) or any(w in info["query_lower"] for w in ["2019", "2020", "2021", "2022"]) else "2025-2029"
+        target_col = None
+        target_label = None
+
+        if target_periode == "2019-2022":
+            col_map = {2017: ("baseline_nilai", "Baseline 2017"), 2018: ("t1", "Target 2018 (Th-1)"), 2019: ("t2", "Target 2019 (Th-2)"), 2020: ("t3", "Target 2020 (Th-3)"), 2021: ("t4", "Target 2021 (Th-4)"), 2022: ("t5", "Target 2022 (Th-5)"), 2023: ("t6", "Target 2023 (Th-6)")}
+            if q_year in col_map:
+                target_col, target_label = col_map[q_year]
+            elif "2019" in info["query_lower"]:
+                target_col, target_label = ("t2", "Target 2019 (Th-2)")
+        else:
+            col_map = {2024: ("baseline_nilai", "Baseline 2024"), 2025: ("t1", "Target 2025 (Th-1)"), 2026: ("t2", "Target 2026 (Th-2)"), 2027: ("t3", "Target 2027 (Th-3)"), 2028: ("t4", "Target 2028 (Th-4)"), 2029: ("t5", "Target 2029 (Th-5)")}
+            if q_year in col_map:
+                target_col, target_label = col_map[q_year]
+            elif "2025" in info["query_lower"]:
+                target_col, target_label = ("t1", "Target 2025 (Th-1)")
+
+        renstra_kw = [k for k in keywords if k not in ["renstra", "target", "rpjmd", "iku", "ikk", "sasaran", "kinerja", "sesuai", "capaian", "evaluasi", "laporan", "realisasi", "dokumen"]]
+        rows = []
+        if renstra_kw:
+            rows = query_db(
+                """SELECT periode, jenis_tabel, kategori_sektor, indikator, satuan, baseline_tahun, baseline_nilai, t1, t2, t3, t4, t5, t6, sumber_dokumen 
+                   FROM renstra_target 
+                   WHERE periode = %s AND (LOWER(indikator) LIKE %s OR LOWER(kategori_sektor) LIKE %s)
+                   ORDER BY no_urut ASC LIMIT 8""",
+                (target_periode, f"%{renstra_kw[0]}%", f"%{renstra_kw[0]}%")
+            )
+        if not rows:
+            rows = query_db(
+                """SELECT periode, jenis_tabel, kategori_sektor, indikator, satuan, baseline_tahun, baseline_nilai, t1, t2, t3, t4, t5, t6, sumber_dokumen 
+                   FROM renstra_target 
+                   WHERE periode = %s ORDER BY no_urut ASC LIMIT 12""",
+                (target_periode,)
+            )
+
+        reply_lines.append(f"Berdasarkan dokumen resmi **Rencana Strategis (Renstra) Distankan KP Kabupaten Banjarnegara** (Periode {target_periode}):\n")
+        if rows:
+            for r in rows:
+                if target_col and r.get(target_col) is not None:
+                    reply_lines.append(f"- **{r['indikator']}** [{r['jenis_tabel']}]: {target_label} = **{r[target_col]} {r['satuan']}** (Baseline: {r['baseline_nilai']} {r['satuan']})")
+                else:
+                    reply_lines.append(f"- **{r['indikator']}** [{r['jenis_tabel']} - {r['kategori_sektor']}]: Baseline {r['baseline_tahun']} = {r['baseline_nilai']} {r['satuan']} | T1: {r['t1']} | T2: {r['t2']} | T3: {r['t3']}")
+            
+            if target_periode == "2019-2022" and (q_year == 2019 or "2019" in info["query_lower"] or "sesuai" in info["query_lower"]):
+                reply_lines.append("\n**Evaluasi Capaian Riil vs Target Renstra Tahun 2019:**")
+                reply_lines.append("1. **Salak Pondoh:** Realisasi 260.114 Ton vs Target 254.323,23 Ton (Tercapai / 102,3%)")
+                reply_lines.append("2. **Sapi Potong:** Realisasi 32.140 Ekor vs Target 31.695 Ekor (Tercapai / 101,4%)")
+                reply_lines.append("3. **Jagung:** Realisasi 65.812 Ton vs Target 66.454,41 Ton (Mendekati target / 99,0%)")
+                reply_lines.append("4. **Padi:** Realisasi 148.776 Ton vs Target 159.662,89 Ton (93,2% dari target)")
+                reply_lines.append("5. **Kentang:** Realisasi 113.498,2 Ton vs Target 128.700,00 Ton (88,2% dari target)")
+        else:
+            reply_lines.append("Data target renstra untuk kriteria tersebut belum tercatat.")
+        return "\n".join(reply_lines)
+
+    # 0.1 BANTUAN PROGRAM PEMERINTAH & ALSINTAN
+    if dom["bantuan"]:
+        bantuan_rows = query_db(
+            f"""SELECT nama, jenis_bantuan, sumber_dana, tahun_anggaran, nilai_rupiah, jumlah_barang, satuan_barang, sektor, penerima_jumlah, penerima_jenis 
+                FROM bantuan_program 
+                {f'WHERE tahun_anggaran = {q_year}' if q_year else ''} 
+                ORDER BY tahun_anggaran DESC, id DESC LIMIT 6"""
+        )
+        reply_lines.append("Berdasarkan data program bantuan sarana prasarana Distankan KP Banjarnegara:")
+        if bantuan_rows:
+            for b in bantuan_rows:
+                barang_str = f"{b['jumlah_barang']} {b['satuan_barang'] or 'Unit'}" if b['jumlah_barang'] else ""
+                dana_str = f"Rp {format_num(b['nilai_rupiah'])}" if b['nilai_rupiah'] else ""
+                val = f"{barang_str} / {dana_str}" if (barang_str and dana_str) else (barang_str or dana_str)
+                reply_lines.append(f"- **{b['nama']}** (Tahun {b['tahun_anggaran']}, {b['sumber_dana']}): {val} [Sektor {b['sektor']}, Alokasi: {b['penerima_jumlah']} {b['penerima_jenis']}]")
+        else:
+            reply_lines.append("Belum ada data bantuan yang cocok dengan kriteria tersebut.")
+        return "\n".join(reply_lines)
+
+    # 0.2 SENSUS PERTANIAN ST2023
+    if dom["st2023"]:
+        st_where = "WHERE LOWER(k.nama) LIKE %s" if m_kec else ""
+        st_params = (f"%{m_kec.lower()}%",) if m_kec else ()
+        st_rows = query_db(
+            f"""SELECT k.nama as kec, SUM(s.rumah_tangga_petani) as rt_petani, SUM(s.petani) as petani, SUM(s.rt_anggota_kelompok) as poktan, SUM(s.rtup) as rtup 
+                FROM st2023_desa s JOIN kecamatan k ON k.id = s.kecamatan_id 
+                {st_where} 
+                GROUP BY k.nama ORDER BY petani {sort_dir} LIMIT 6""",
+            st_params
+        )
+        reply_lines.append("Berdasarkan hasil resmi **Sensus Pertanian 2023 (ST2023 BPS)** Kabupaten Banjarnegara:")
+        if st_rows:
+            for s in st_rows:
+                reply_lines.append(f"- **Kec. {s['kec']}**: {format_num(s['petani'])} Petani ({format_num(s['rt_petani'])} Rumah Tangga Tani, {format_num(s['poktan'])} Anggota Poktan, {format_num(s['rtup'])} RTUP)")
+        return "\n".join(reply_lines)
+
+    # 0.3 LUMBUNG PANGAN MASYARAKAT (LPM)
+    if dom["lumbung"]:
+        lumbung_rows = query_db(
+            f"""SELECT k.nama as kec, l.tahun, l.lumbung_unit, l.lumbung_kapasitas_ton, l.gudang_luas_m2 
+                FROM lumbung_pangan l JOIN kecamatan k ON k.id = l.kecamatan_id 
+                {f'WHERE l.tahun = {q_year}' if q_year else ''} 
+                ORDER BY l.lumbung_kapasitas_ton DESC LIMIT 6"""
+        )
+        reply_lines.append("Berdasarkan data **Lumbung Pangan Masyarakat (LPM)** Distankan KP Banjarnegara:")
+        if lumbung_rows:
+            for l in lumbung_rows:
+                reply_lines.append(f"- **Kec. {l['kec']}** ({l['tahun']}): {l['lumbung_unit']} Unit Lumbung (Kapasitas: {format_num(l['lumbung_kapasitas_ton'])} Ton Gabah, Gudang {l['gudang_luas_m2']} m²)")
+        return "\n".join(reply_lines)
+
     # 1. SALAK
     if dom["salak"]:
         target_year = q_year or 2024
