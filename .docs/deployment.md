@@ -50,10 +50,9 @@ cd ~/htdocs/pertanian.sistemdata.id
 # 2. Tarik pembaruan kode dan bundel terbaru dari GitHub
 git pull origin main
 
-# 3. Jalankan patch normalisasi relasional database & bantuan barang (ADR-046 s/d ADR-049)
-npm run db:patch
-# Atau jika menggunakan SQL native secara langsung:
-# mysql -u pertalit -pw1x4pYxx7u3WYNqVX4g4 pertasis < database/patch_bantuan_dan_domain_2026.sql
+# 3. Jalankan migrasi skema tabel renstra_target & seeder faktual (ADR-075)
+node scripts/migrate_renstra_schema.js
+node scripts/seed_renstra_target.js
 
 # 4. Pasang dependensi jika terdapat pembaruan package.json
 npm ci --omit=dev
@@ -61,9 +60,10 @@ npm ci --omit=dev
 # 5. Restart proses aplikasi via PM2
 pm2 reload ecosystem.config.cjs || pm2 restart pertanian-api
 
-# 6. Verifikasi status aplikasi & kesiapan domain
+# 6. Verifikasi status aplikasi & endpoint Renstra
 pm2 status
 curl -s http://127.0.0.1:5173/api/health
+curl -s http://127.0.0.1:5173/api/v1/renstra/summary?periode=2025-2029
 ```
 
 ---

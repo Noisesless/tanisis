@@ -50,6 +50,9 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 | [`tests/endpoint.test.js`](file:///d:/Project/pertanian_main/tests/endpoint.test.js) | Integration test endpoint streaming SSE `/api/v1/ai/chat` | Test runner |
 | [`src/lib/data-sources.js`](file:///d:/Project/pertanian_main/src/lib/data-sources.js) | Katalog pemetaan sumber data publik vs rujukan luar per domain | Digunakan oleh `src/routes/admin.js` (ADR-063) |
 | [`src/lib/helpers.js`](file:///d:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
+| [`src/routes/renstra.js`](file:///d:/Project/pertanian_main/src/routes/renstra.js) | Endpoint kueri target indikator kinerja Renstra dinamis (`/target`, `/summary`) | Terisolasi pada domain Renstra & RKPD (ADR-075) |
+| [`scripts/migrate_renstra_schema.js`](file:///d:/Project/pertanian_main/scripts/migrate_renstra_schema.js) | Skrip migrasi DDL multi-tahun tabel `renstra_target` MySQL | Skrip CLI pemeliharaan DB (ADR-075) |
+| [`scripts/seed_renstra_target.js`](file:///d:/Project/pertanian_main/scripts/seed_renstra_target.js) | Skrip seeding 87 data faktual resmi Renstra 2019–2022 & 2025–2029 | Skrip CLI pemeliharaan DB (ADR-075) |
 
 ---
 

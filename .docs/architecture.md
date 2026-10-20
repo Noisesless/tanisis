@@ -71,10 +71,11 @@ graph TD
    - **Pembersihan Kartu Pembungkus Global `Ft`:** Komponen global `Ft` di `index-CI1XYnwk.js` dikonversi menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain max-h-[60px]`).
    - **Favicon Multi-Resolusi Terpadu:** Seluruh browser favicon (.ico dan .png 16×16 s/d 256×256) di-generate langsung dari aset master resmi `dist/logo.png`.
 
-6. **Arsitektur Renstra Dual-Periode & Resolusi Singleton React (ADR-072 & ADR-073):**
-   - **Dual-View Sub-Components Ber-Key Stabil:** Halaman `/renstra` mengisolasi tampilan ke dua sub-komponen terpisah: `<Renstra2025View key="view-2025" />` (memuat 9 Indikator Sasaran/IKU dan 18 Indikator Program/IKK resmi Renstra 2025–2029) serta `<Renstra2019View key="view-2019" />` (memuat evaluasi 4 indikator historis Renstra 2019–2022). Setiap tabel dan baris data memiliki atribut `key` unik untuk menjamin stabilitas DOM reconciler dan mengeliminasi bug `removeChild: The node to be removed is not a child of this node`.
-   - **Kanonikalitas Modul Entry-Point (`index-CI1XYnwk.js`):** Menetapkan kembali `index-CI1XYnwk.js` sebagai root bundle di `dist/index.html` dan `src/server.js` tanpa pengalihan HTTP 301, memastikan seluruh 76 chunk modul frontend berbagi instansiasi tunggal React (*ReactCurrentDispatcher singleton*) tanpa risiko Minified React Error #321.
-   - **Harmonisasi Struktur 5-Slot & Unduh PDF Dinamis:** Struktur visual kedua periode diselaraskan secara simetris (Header & Dropdown, 3 Kartu Metrik KPI, 4 Kotak Sasaran Strategis 01–04, Tabel Target Kinerja, dan Sumber Dokumen Resmi). Tombol unduh dokumen secara dinamis mengarah ke berkas salinan resmi PDF 77 halaman (`/renstra-2025-2029.pdf`) atau berkas historis (`/renstra.pdf`).
+6. **Arsitektur Renstra Dual-Periode & Integrasi REST API MySQL (ADR-072, ADR-073 & ADR-075):**
+   - **Unified 5-Layer Layout Engine:** Halaman `/renstra` mengimplementasikan arsitektur visual terpadu 5 lapis (`dist/assets/renstra-v242.js`) yang setara dan presisi untuk kedua periode: Header & Pemilih Periode, 3 Top Metric Cards beraksen `border-l-4`, 4 Pilar Sasaran Pokok, Tabel Matriks Target Multi-Tahun (dengan tab segmented Sasaran vs Program, filter 7 sektor, dan live text search), serta Sumber Dokumen Resmi.
+   - **Integrasi REST API Dinamis (`/api/v1/renstra/target` & `/api/v1/renstra/summary`):** Komponen frontend secara asinkron mengambil data live dari basis data MySQL `pertasis` (tabel `renstra_target`), dengan fallback instan ke dataset terverifikasi (87 record resmi: 27 indikator 2025–2029 dan 60 indikator 2019–2022) untuk menjamin zero-flicker dan ketersediaan offline.
+   - **Kanonikalitas Modul Entry-Point (`index-CI1XYnwk.js`):** Menetapkan kembali `index-CI1XYnwk.js` sebagai root bundle di `dist/index.html` dan `src/server.js` tanpa pengalihan HTTP 301, memastikan seluruh chunk modul frontend berbagi instansiasi tunggal React (*ReactCurrentDispatcher singleton*) tanpa risiko Minified React Error #321.
+   - **Harmonisasi Unduh PDF Dinamis:** Tombol unduh dokumen secara dinamis mengarah ke berkas salinan resmi PDF 77 halaman (`/renstra-2025-2029.pdf`) atau berkas historis 123 halaman (`/renstra.pdf`).
 
 ---
 
