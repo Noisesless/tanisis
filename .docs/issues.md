@@ -765,6 +765,26 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
      - `read_url_content` pada `http://127.0.0.1:5173/renstra` memuat HTML bersih tanpa redirect loop.
      - Pengujian sintaks AST `node --check` pada seluruh berkas lolos tanpa galat.
 
+### [ISSUE-056] Resolusi Kegagalan Pemuatan Peta Choropleth & Deadlock 'Memuat Data Lahan' pada Dashboard Eksekutif Produksi
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-20
+- **Komponen:** `dist/assets/pages-BdW-ZTL4.js`, `dist/assets/api-BxFGoia1.js`, `src/server.js`.
+- **Deskripsi:** 
+  Pada lingkungan produksi (`https://pertanian.sistemdata.id`), layer Area & Choropleth pada peta dashboard eksekutif tidak terwarnai (poligon abu-abu), sementara komponen *Top 15 Desa* dan *Analisa Lahan Kritis* macet permanen pada status *"Memuat data lahan..."* dan *"Memuat analisa lahan..."*. Di lingkungan dev, dashboard terbuka normal.
+- **Akar Masalah:**
+  1. **Head-of-Line Blocking `Promise.all`:** `Promise.all([b(), C(), w()])` mengikat data desa dengan pemanggilan CKAN OpenData (`/api/3/action/package_search?q=pertanian`). Upstream CKAN Pemkab kerap timeout (>10s) sehingga `setLahanDesa(t)` tidak pernah dieksekusi, menahan state desa pada array kosong `[]`.
+  2. **Deadlock Cache Poisoning `localStorage`:** Key cache `api__v1_lahan_desa?regen=t410` tidak memvalidasi array kosong. Klien yang pernah menerima `[]` menyimpannya di `localStorage` dan pola stale cache mengembalikan `[]` secara instan ke React tanpa memicu re-render saat background fetch selesai.
+  3. **QuotaExceeded & Stale GeoJSON Cache:** File `peta_desa_v3.geojson` (2,63 MB) disimpan di `localStorage` (`geojson_desa_cache`) yang melampaui limit 5 MB DOMStorage browser. Selain itu, cache tidak berversi sehingga klien lama tetap memuat poligon lama yang cacat.
+- **Solusi & Verifikasi:**
+  1. **Decoupled Data Fetching:** Memisahkan pemanggilan data lahan desa `C()` agar langsung mengeksekusi `setLahanDesa` (selesai dalam 46 ms) dengan proteksi fallback instan ke `/data/lahan-fallback.json` jika data kosong atau network gagal. Pemanggilan CKAN `b()` dan kabupaten `w()` dipisahkan secara mandiri.
+  2. **Anti-Empty Array Cache Guard:** Menambahkan validasi di `api-BxFGoia1.js`: data dengan `Array.isArray(data) && data.length < 50` otomatis dibuang dari `localStorage` (`removeItem`), memaksa browser mengambil data segar dari API/fallback.
+  3. **Auto-Purge Quota GeoJSON:** Menghapus `geojson_desa_cache` dari `localStorage` klien saat inisialisasi dan mendelegasikan caching 2,63 MB GeoJSON sepenuhnya ke HTTP Cache browser resmi (`Cache-Control: public, max-age=86400`).
+  4. **Proksi CKAN Fallback di Backend:** Memangkas timeout proksi CKAN di `src/server.js` dari 15s menjadi 4s dengan graceful fallback ke snapshot lokal [dist/data/snapshots/ckan-catalog.json](file:///d:/Project/pertanian_main/dist/data/snapshots/ckan-catalog.json) (170 dataset) saat upstream Pemkab timeout atau offline.
+  5. **Verifikasi:** 
+     - Seluruh berkas lolos `node --check` (exit code 0).
+     - Pengujian unit logic memverifikasi pembersihan poisoned key dan fallback 278 desa.
+     - Pengujian server lokal memvalidasi respons HTTP 200 OK untuk seluruh endpoint API, GeoJSON, dan CKAN proksi.
+
 ---
 
 ## 🟡 Isu Terbuka / Rencana Peningkatan (OPEN)

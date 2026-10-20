@@ -136,7 +136,7 @@ api.use("/3", async (req, res) => {
     }
     const upstream = await fetch(targetUrl.href, {
       headers: { accept: req.headers.accept || "application/json" },
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(4000),
     });
     const body = await upstream.text();
     res.status(upstream.status);
@@ -145,7 +145,34 @@ api.use("/3", async (req, res) => {
     res.set("cache-control", "public, max-age=300");
     res.send(body);
   } catch {
-    res.status(502).json({ error: "ckan_unreachable" });
+    // Fallback cerdas: Jika upstream CKAN timeout/gagal, layani snapshot lokal terverifikasi
+    try {
+      const fs = await import("node:fs/promises");
+      const snapshotPath = path.join(distRoot, "data", "snapshots", "ckan-catalog.json");
+      const raw = await fs.readFile(snapshotPath, "utf8");
+      const catalog = JSON.parse(raw);
+      res.set("content-type", "application/json; charset=utf-8");
+      res.set("cache-control", "public, max-age=300");
+      return res.json({
+        help: "https://opendata.banjarnegarakab.go.id/api/3/action/help_show",
+        success: true,
+        result: {
+          count: catalog.totalDatasets || 170,
+          sort: "score desc, metadata_modified desc",
+          facets: {},
+          results: (catalog.entries || []).map((e) => ({
+            id: e.id,
+            name: e.id,
+            title: e.title,
+            notes: e.notes,
+            organization: { title: e.org },
+            resources: (e.csvUrls || []).map((u) => ({ format: "CSV", url: u })),
+          })),
+        },
+      });
+    } catch {
+      res.status(502).json({ error: "ckan_unreachable" });
+    }
   }
 });
 

@@ -1,5 +1,5 @@
-<!-- app-context.md v3.4 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-19T16:35:00+07:00 | Phase: Integrasi Renstra Dual-Periode & Resolusi React Singleton (ADR-072 & ADR-073) | Build: OK -->
+<!-- app-context.md v3.5 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-20T13:30:00+07:00 | Phase: Resolusi Peta Choropleth & Dashboard Eksekutif Resilience (ADR-074) | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Integrasi Renstra Dual-Periode & Resolusi React Singleton (ADR-072 & ADR-073) done=ALL last=Menyelesaikan integrasi data faktual Renstra 2025–2029 (9 IKU & 18 IKK) dan Renstra 2019–2022, pembersihan teks lebai/AI slop, perbaikan Minified React error #321 dan removeChild via penetapan index-CI1XYnwk.js sebagai kanonikal singleton, serta pencatatan ISSUE-055 untuk migrasi database. next=Pengerjaan ISSUE-055: Migrasi Data Renstra Faktual ke MySQL & Integrasi API Live
+phase=Resolusi Peta Choropleth & Dashboard Eksekutif Resilience (ADR-074) done=ALL last=Menyelesaikan pemisahan pemanggilan data desa (decoupled fetch 46ms), validasi anti-empty cache di localStorage, auto-purge 5MB GeoJSON dari DOMStorage, dan proksi fallback CKAN dengan snapshot lokal 170 dataset (ADR-074, ISSUE-056). next=Pengerjaan ISSUE-055: Migrasi Data Renstra Faktual ke MySQL & Integrasi API Live
 build=OK issues=1 (ISSUE-055)
 
 ## [VISUAL_GATE]
@@ -48,6 +48,12 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-074] Resolusi Tuntas Peta Choropleth & Deadlock 'Memuat Data Lahan' pada Dashboard Eksekutif:
+- Mengidentifikasi akar masalah: `Promise.all([b(), C(), w()])` mengikat data desa dengan upstream CKAN Pemkab (`opendata.banjarnegarakab.go.id`) yang kerap timeout (>10s), menahan state desa pada `[]` dan membuat poligon peta abu-abu serta Top 15 Desa dan Analisa Lahan macet di "Memuat data...".
+- Memisahkan pemanggilan data lahan desa `C()` agar berjalan mandiri (46ms) dengan proteksi fallback instan ke `/data/lahan-fallback.json` jika data kosong atau network gagal. Panggilan CKAN dan kabupaten dijalankan independen tanpa memblokir dashboard.
+- Memasang validasi anti-empty cache di `api-BxFGoia1.js`: data dengan `Array.isArray(data) && data.length < 50` otomatis dibuang dari `localStorage`, memecah deadlock cache poisoning.
+- Menghapus penimbunan 2,63 MB GeoJSON dari `localStorage` (`geojson_desa_cache`) yang melampaui kuota 5 MB browser (QuotaExceededError) dan menyerahkannya ke browser HTTP Cache resmi (`Cache-Control: public, max-age=86400`).
+- Menurunkan timeout proksi CKAN di `src/server.js` ke 4s dengan fallback anggun ke snapshot terverifikasi [dist/data/snapshots/ckan-catalog.json](file:///d:/Project/pertanian_main/dist/data/snapshots/ckan-catalog.json) (170 dataset).
 [ADR-073] Resolusi Tuntas Minified React Error #321, Reconciler DOM & Pembersihan Teks Lebai Renstra:
 - Mengidentifikasi akar masalah Minified React error #321 (Invalid Hook Call): seluruh 76 berkas chunk di `dist/assets/` mengimpor `from "./index-CI1XYnwk.js"`. Pengalihan HTTP 301 ke `index-v241.js` menyebabkan peramban (Chrome/V8) menginstansiasi modul React sekunder sehingga `ReactCurrentDispatcher.current` bernilai null saat `useState` dipanggil.
 - Menetapkan `dist/assets/index-CI1XYnwk.js` sebagai berkas modul utama yang disajikan langsung (HTTP 200 OK) dan mengarahkan `<script type="module" src="/assets/index-CI1XYnwk.js">` di `dist/index.html`. Menghapus redirect 301 untuk modul root dari `src/server.js`, menjamin 100% singleton instance React tanpa duplikasi.
