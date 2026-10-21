@@ -206,7 +206,8 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
     }
     ```
 - **`GET /api/v1/ekonomi/inflasi`** — Tingkat inflasi bahan pangan tahunan & bulanan.
-- **`GET /api/v1/ekonomi/pasar`** — Profil pasar tradisional & pusat perdagangan komoditas.
+- **`GET /api/v1/ekonomi/pasar`** — Profil pasar tradisional & pusat perdagangan komoditas (agregat tahunan).
+- **`GET /api/v1/ekonomi/pasar-titik?kecamatan={kecamatan}&kategori={kategori}`** — Direktori 36 titik pasar fisik resmi Banjarnegara dari database `pasar_banjarnegara` mencakup nama pasar, kategori spesifik (Tradisional, Ikan, Hewan, Buah, Unggas), kecamatan, alamat lengkap, dan koordinat GPS.
 - **`GET /api/v1/ekonomi/nilai-ekonomi?bidang={bidang}`** — Valuasi nilai ekonomi tahunan resmi per bidang dari MySQL `nilai_ekonomi_tahunan`.
 - **`GET /api/v1/komoditas-unggulan`** — Daftar komoditas unggulan dinamis per bidang (pangan, hortikultura, perkebunan, peternakan, perikanan) dengan kalkulasi otomatis dari tabel produksi riil (termasuk 10 jenis ikan).
 - **`GET /api/v1/komoditas-unggulan/per-kecamatan?tahun={tahun}`** — Komoditas unggulan teratas (ranking #1) per kecamatan untuk 5 bidang utama, dihitung server-side dari tabel produksi riil.
@@ -225,6 +226,8 @@ Gerbang proksi CKAN menuju repositori Open Data Kabupaten Banjarnegara (`opendat
 - **`GET /api/v1/bantuan`** — Rekapitulasi program bantuan sarana prasarana, alsintan, dan benih.
 - **`GET /api/v1/renstra/target?periode={periode}&jenis={jenis}&sektor={sektor}`** — Data target indikator kinerja Renstra dinamis (2019–2022 & 2025–2029) yang mencakup indikator sasaran (IKU/Sasaran Renstra) dan program (IKK/Program RPJMD) dengan target tahunan multi-tahun dari MySQL `renstra_target`.
 - **`GET /api/v1/renstra/summary?periode={periode}`** — Ringkasan agregat total indikator sasaran dan program beserta metadata sumber dokumen resmi per periode.
+- **`GET /api/v1/renstra/evaluasi?periode={periode}`** — Evaluasi analitik ketercapaian indikator Renstra Model A vs transaksi riil database (Padi, Palawija, Hortikultura, Peternakan, Perikanan, dan FSVA) dengan rasio persentase dinamis dan penanganan data kosong ("—").
+- **`GET /api/v1/renstra/pagu?periode={periode}`** — Pagu indikatif belanja APBD program dan kegiatan utama Renstra dari Tabel 4.3 (2025–2029) dan Bab VI (2019–2022).
 
 ---
 
@@ -568,6 +571,8 @@ Menyediakan asisten analitik cerdas Si Pertani dengan arsitektur **Hybrid Resili
 - **Fitur Live RAG Engine (Terintegrasi 87 Target Renstra & Data Sektoral):**
   - **Dynamic Year & Period Extraction:** Mengurai tahun spesifik (2017–2029) secara dinamis via regex `\b(201\d|202\d)\b` serta memetakan tahun kalender masehi ke kolom target Renstra ($t_1$ s/d $t_6$).
   - **Target Dokumen Renstra (2019–2022 & 2025–2029):** Terhubung ke tabel `renstra_target` (87 indikator). Mampu menjelaskan 9 IKU, 18 IKK, 43 Sasaran Renstra, 17 Program RPJMD, serta cross-referencing komparasi target vs realisasi statistik komoditas di lapangan.
+  - **Grounding Spasial Pasar & Toko Peternakan (ADR-078):** Mengintegrasikan data 36 pasar fisik dari tabel `pasar_banjarnegara` (termasuk 2 pasar ikan: Krandegan & Karangkobar, pasar hewan Petambakan, pasar buah Kalibening, pasar unggas Kutabanjarnegara) serta 15 toko pakan ternak / poultry shop dari tabel `ternak_poultry_shop` (termasuk 6 toko resmi di Kota Banjarnegara: Jl. Jend. Sudirman, Jl. Mayjend Soetojo, Sunan Gripit, Serma Mukhlas).
+  - **Toleransi Tipografi (Typo Tolerance) & Deteksi Lokasi:** Menangkap variasi salah ketik (misal `"pasa ikan"`, `"psar"`, `"kios"`, `"bazar"`) serta pola pertanyaan lokasi (`"dimana"`, `"lokasi"`, `"alamat"` + komoditas) untuk langsung mengekstrak titik koordinat, nama pasar/toko, dan alamat resmi tanpa salah rute ke statistik tonase murni.
   - **Bantuan Alsintan & Saprodi:** Menampilkan data program bantuan traktor, pompa air, hibah modal tani, dan benih dari tabel `bantuan_program`.
   - **Sensus Pertanian ST2023 (BPS):** Menampilkan agregat petani, rumah tangga tani, anggota poktan, dan RTUP per kecamatan dari tabel `st2023_desa`.
   - **Lumbung Pangan Masyarakat (LPM):** Menampilkan unit dan kapasitas tampung cadangan gabah dari tabel `lumbung_pangan`.

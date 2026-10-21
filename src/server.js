@@ -210,7 +210,8 @@ api.get("/v1", (_req, res) => {
       "/api/v1/peternakan/susu-kulit",
       "/api/v1/perikanan/budidaya", "/api/v1/perikanan/tangkap", "/api/v1/perikanan/benih",
       "/api/v1/perikanan/nilai-budidaya", "/api/v1/perikanan/nilai-tangkap",
-      "/api/v1/ekonomi/inflasi", "/api/v1/ekonomi/pasar", "/api/v1/lumbung",
+      "/api/v1/ekonomi/inflasi", "/api/v1/ekonomi/pasar", "/api/v1/ekonomi/pasar-titik", "/api/v1/lumbung",
+      "/api/v1/renstra/target", "/api/v1/renstra/summary", "/api/v1/renstra/evaluasi", "/api/v1/renstra/pagu",
       "/api/v1/kelembagaan/kelompok-tani", "/api/v1/kelembagaan/kth",
       "/api/v1/st2023/desa",
       "/api/v1/bantuan",
@@ -268,6 +269,72 @@ api.get("/v1/ltt-katam", async (_req, res) => {
   }
 });
 
+// Endpoint Kewirausahaan KWT & Kelompok Binaan (Live Database Parity)
+api.get("/v1/kewirausahaan/kwt", async (req, res) => {
+  try {
+    const { kecamatan, jenis, q: search } = req.query;
+    let params = [];
+    let whereKWT = "WHERE jenis_lembaga = 'KWT'";
+    if (kecamatan && kecamatan !== "all") {
+      whereKWT += " AND kecamatan = ?";
+      params.push(kecamatan);
+    }
+    if (search) {
+      whereKWT += " AND (nama_kelompok LIKE ? OR desa LIKE ? OR subsektor_utama LIKE ?)";
+      const term = `%${search}%`;
+      params.push(term, term, term);
+    }
+
+    const [kwtRows] = await getPool().query(
+      `SELECT id, nama_kelompok, kecamatan, desa, jenis_lembaga AS jenis,
+              jumlah_anggota, subsektor_utama AS produk_andalan, tahun_berdiri AS tahun_registrasi
+       FROM kelembagaan_pertanian
+       ${whereKWT}
+       ORDER BY kecamatan ASC, nama_kelompok ASC`,
+      params
+    );
+
+    let fishRows = [];
+    if (!jenis || jenis === "all" || jenis === "Pokdakan" || jenis === "Poklahsar") {
+      let paramsFish = [];
+      let whereFish = "WHERE jenis_lembaga IN ('Pokdakan', 'Poklahsar', 'Pokmaswas')";
+      if (jenis && jenis !== "all") {
+        whereFish = "WHERE jenis_lembaga = ?";
+        paramsFish.push(jenis);
+      }
+      if (kecamatan && kecamatan !== "all") {
+        whereFish += " AND kecamatan = ?";
+        paramsFish.push(kecamatan);
+      }
+      if (search) {
+        whereFish += " AND (nama_kelompok LIKE ? OR desa LIKE ? OR komoditas_utama LIKE ?)";
+        const term = `%${search}%`;
+        paramsFish.push(term, term, term);
+      }
+      const [fRows] = await getPool().query(
+        `SELECT id, nama_kelompok, kecamatan, desa, jenis_lembaga AS jenis,
+                jumlah_anggota, komoditas_utama AS produk_andalan, 2024 AS tahun_registrasi
+         FROM kelembagaan_perikanan
+         ${whereFish}
+         ORDER BY kecamatan ASC, nama_kelompok ASC`,
+        paramsFish
+      );
+      fishRows = Array.isArray(fRows) ? fRows : [];
+    }
+
+    let combined = [];
+    if (!jenis || jenis === "all" || jenis === "KWT") {
+      combined = combined.concat(Array.isArray(kwtRows) ? kwtRows : []);
+    }
+    combined = combined.concat(fishRows);
+
+    return res.json(combined);
+  } catch (err) {
+    console.error("[kewirausahaan/kwt] Query error:", err?.message);
+    return res.status(500).json({ error: "internal_error", message: "Gagal memproses data kewirausahaan KWT." });
+  }
+});
+
 // Catch-all 404 di dalam router — berlaku untuk kedua prefix (/api & /sispertani-api).
 api.use((_req, res) => res.status(404).json({ error: "not_found" }));
 
@@ -315,12 +382,109 @@ app.use((req, res, next) => {
   next();
 });
 
+// Dynamic GeoJSON Handlers for Point Layers (Live MySQL database synchronization)
+app.get("/data/poultry-banjarnegara.geojson", async (req, res, next) => {
+  try {
+    const rows = await getPool().query(`
+      SELECT p.id, p.nama_toko, p.jenis_layanan, p.alamat, p.koordinat, p.kontak, k.nama AS kecamatan
+      FROM ternak_poultry_shop p
+      JOIN kecamatan k ON k.id = p.kecamatan_id
+      ORDER BY p.id ASC
+    `);
+    const list = Array.isArray(rows) ? (rows[0] || []) : [];
+    const features = [];
+    for (const r of list) {
+      if (!r.koordinat) continue;
+      const parts = r.koordinat.split(",").map((s) => parseFloat(s.trim()));
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        let lat = parts[0];
+        let lng = parts[1];
+        if (lat > 100 && lng < 0) {
+          lat = parts[1];
+          lng = parts[0];
+        }
+        features.push({
+          type: "Feature",
+          properties: {
+            name: r.nama_toko,
+            kategori: "Poultry Shop",
+            jenis_layanan: r.jenis_layanan || "Pakan & Sapronak",
+            alamat: r.alamat || "",
+            kecamatan: r.kecamatan || "",
+            kontak: r.kontak || "",
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [lng, lat],
+          },
+        });
+      }
+    }
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    return res.json({
+      type: "FeatureCollection",
+      name: "poultry-banjarnegara",
+      features,
+    });
+  } catch (err) {
+    console.error("[GeoJSON] Error generating dynamic poultry-banjarnegara.geojson:", err?.message);
+    next();
+  }
+});
+
+app.get("/data/pasar-banjarnegara.geojson", async (req, res, next) => {
+  try {
+    const rows = await getPool().query(`
+      SELECT id, nama, kategori, kecamatan, alamat, latitude, longitude
+      FROM pasar_banjarnegara
+      ORDER BY id ASC
+    `);
+    const list = Array.isArray(rows) ? (rows[0] || []) : [];
+    const features = [];
+    for (const r of list) {
+      const lat = parseFloat(r.latitude);
+      const lng = parseFloat(r.longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        features.push({
+          type: "Feature",
+          properties: {
+            name: r.nama,
+            kategori: r.kategori,
+            alamat: r.alamat || "",
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [lng, lat],
+          },
+        });
+      }
+    }
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    return res.json({
+      type: "FeatureCollection",
+      features,
+    });
+  } catch (err) {
+    console.error("[GeoJSON] Error generating dynamic pasar-banjarnegara.geojson:", err?.message);
+    next();
+  }
+});
+
 app.use(
   express.static(distRoot, {
     setHeaders: (res, filePath) => {
-      // Asset statis besar (GeoJSON, gambar, fonts, fallback dataset) di-cache browser (1 hari)
-      // agar tidak mendownload puluhan megabyte berulang kali dan memicu net::ERR_HTTP2_PROTOCOL_ERROR.
-      if (/\.(geojson|png|jpg|jpeg|svg|webp|woff2?|ico)$/i.test(filePath) || filePath.includes("fallback.json")) {
+      // Pengecualian khusus: GeoJSON dinamis (poultry & pasar) selalu no-cache agar pembaruan data titik langsung tampil
+      if (filePath.includes("poultry-banjarnegara.geojson") || filePath.includes("pasar-banjarnegara.geojson")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      } else if (/\.(geojson|png|jpg|jpeg|svg|webp|woff2?|ico)$/i.test(filePath) || filePath.includes("fallback.json")) {
         res.setHeader("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
       } else {
         // Berkas aplikasi (HTML, JS, CSS) tetap no-cache agar pembaruan kode langsung aktif

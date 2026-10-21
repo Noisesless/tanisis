@@ -1,5 +1,5 @@
-<!-- app-context.md v3.7 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
-<!-- Last: 2026-10-20T15:45:00+07:00 | Phase: Fase 13 Integrasi RAG Renstra Faktual & Eliminasi Technical Leak (ADR-076) | Build: OK -->
+<!-- app-context.md v3.9 — MACHINE-OPTIMIZED CONTEXT SNAPSHOT -->
+<!-- Last: 2026-10-21T14:10:00+07:00 | Phase: Fase 16 Audit Gap Menyeluruh Frontend-Backend-Database Selesai | Build: OK -->
 
 ## [APP]
 name=SISPERTANI slug=pertanian_main type=web stack=node|express|mysql|vanilla-js|python
@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Fase 13: Integrasi Data Renstra & Sektoral ke RAG Chatbot Si Pertani serta Eliminasi Technical Leak (ADR-076) done=ALL last=Menutup knowledge gap pada RAG Online (ai.js) dan RAG Offline (ai-nlg.js, ai-offline-kb.js, offline_rag.py) dengan menghubungkan 87 target resmi Renstra 2019-2022 & 2025-2029, bantuan alsintan, ST2023, lumbung pangan, serta membersihkan seluruh technical leak backend ("Mode Offline", "upstream") agar persona Si Pertani konsisten 100% di semua mode. next=Monitoring performa chat & evaluasi model AI
+phase=Fase 16: Audit Mendalam Seluruh Aplikasi (Frontend, Backend, Database) & Eliminasi Seluruh Gap Faktual (ADR-080) done=ALL last=Menjalankan pemindaian faktual 73 tabel MySQL pertasis, 29 berkas backend src/, dan 84 bundle frontend dist/assets/; memperbaiki gap kolom SQL LOWER(tanaman) -> LOWER(komoditas) pada palawija_produksi (src/routes/ai.js); menambahkan handler GET /api/v1/ai/chat informatif (mencegah 404); mengintegrasikan endpoint GET /api/v1/kewirausahaan/kwt dengan data riil 232 KWT dan Pokdakan/Poklahsar dari MySQL; serta memvalidasi 67 endpoint frontend dengan tingkat kelulusan 100% OK. next=Pemeliharaan berkala dan deployment
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -29,13 +29,18 @@ icon_lib=lucide
 [Komoditas-Unggulan]=GET /api/v1/komoditas-unggulan→kalkulasi dinamis real-time multi-sektor dari tabel operasional MySQL (ternak_populasi, ternak_daging, ikan_produksi_jenis, padi, horti, perkebunan) dengan tahun & satuan adaptif (Zero Hardcode, Zero Dummy Law)
 [Komoditas-Per-Kecamatan]=GET /api/v1/komoditas-unggulan/per-kecamatan?tahun=→top per kecamatan dinamis dari tabel produksi
 [Nilai-Ekonomi]=GET /api/v1/ekonomi/nilai-ekonomi?bidang=→valuasi riil per bidang dari MySQL nilai_ekonomi_tahunan
-[AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN)→Gemini stream proxy→Direct Factual SSE
+[Pasar-Titik]=GET /api/v1/ekonomi/pasar-titik?kecamatan=&kategori=→36 pasar fisik terverifikasi Banjarnegara dari MySQL pasar_banjarnegara
+[Renstra-Target]=GET /api/v1/renstra/target?periode=&jenis=&sektor=→target indikator resmi 2019–2022 & 2025–2029 dari MySQL renstra_target
+[Renstra-Evaluasi]=GET /api/v1/renstra/evaluasi?periode=→matriks perbandingan target vs realisasi Th-1 s/d Th-4 Model A
+[Renstra-Pagu]=GET /api/v1/renstra/pagu?periode=→alokasi pagu APBD Murni & Perubahan per program dinas
+[AI-Chat]=POST /api/v1/ai/chat→Rate limit→Dynamic RAG Query (MySQL + CKAN + pasar + poultry + renstra)→Gemini stream proxy→Direct Factual SSE
 [Readiness-Audit]=GET /api/v1/admin/readiness→audit agregat baris DB 16 domain operasional, latest data year, status publik vs fallback disk/CKAN (Anti-Over-Engineering)
 [Sumber-Data-Audit]=GET /api/v1/admin/sumber-data→pemetaan dinamis status asal data (unggahan Distankan KP vs pembanding luar BAPANAS/BPS/Kementan) per domain dan rute publik (ADR-063)
 [Frontend]=GET /→express.static(dist)→SPA fallback index.html
 
 ## [PAGES] BUILT
 /=SISPERTANI Banjarnegara=public=STABLE
+/renstra=Perencanaan & Renstra Distankan (5-Segmented Tab Model A)=public=STABLE
 /recommendations=Rekomendasi & Chatbot Si Pertani=public=STABLE
 /komoditas-unggulan/:bidang=Komoditas Unggulan Dinamis per Bidang=public=STABLE
 /nilai-ekonomi/:bidang=Valuasi Nilai Ekonomi Dinamis per Bidang=public=STABLE
@@ -45,9 +50,25 @@ icon_lib=lucide
 /ltt-katam=LTT & Kalender Tanam (Pangan)=public=STABLE
 
 ## [SCHEMA]
-pertasis(bantuan,ekonomi,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,activity_logs,sync_log)
+pertasis(bantuan,ekonomi,pasar_banjarnegara,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,ternak_poultry_shop,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,renstra_target,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-079] Penyempurnaan Chatbot AI Si Pertani RAG dengan Grounding Spasial Pasar & Typo Tolerance:
+- Menambahkan modul typo tolerance pada deteksi kueri pasar dan lokasi (`"pasa ikan"`, `"psar"`, `"kios"`, `"bazar"`) serta kueri poultry shop (`"poultry"`, `"pakan ternak"`, `"toko ternak"`, `"sapronak"`).
+- Menyuntikkan 36 titik pasar dari tabel `pasar_banjarnegara` dan 15 toko pakan dari `ternak_poultry_shop` ke prompt sistem AI dengan direktif tegas agar AI menyebutkan nama pasar, kecamatan, dan alamat resmi serta dilarang mengklaim titik fisik tidak tercatat.
+- Melengkapi generator bahasa alami lokal (`src/lib/ai-nlg.js`) dengan format narasi pasar dan poultry shop untuk ketersediaan offline tanpa ketergantungan koneksi upstream.
+[ADR-078] Integrasi Faktual Pasar Tradisional (36 Titik) & Layer Spasial Poultry Shop pada Peta Eksekutif:
+- Membuat tabel database `pasar_banjarnegara` (36 titik) yang memigrasikan seluruh entitas dari `dist/data/pasar-banjarnegara.geojson` lengkap dengan nama pasar, kategori spesifik (Pasar Buah, Pasar Hewan, Pasar Ikan, Pasar Unggas, Pasar Tradisional), kecamatan_id, kecamatan, alamat, dan koordinat GPS latitude/longitude.
+- Menghadirkan endpoint publik `GET /api/v1/ekonomi/pasar-titik` (?kecamatan= & ?kategori=) untuk melayani data pasar secara langsung dari database tanpa rekaan.
+- Memperluas mesin Dynamic RAG AI Si Pertani (`src/routes/ai.js`) dengan deteksi domain pasar (`isPasar`) dan poultry shop (`isPoultry`), memungkinkan chatbot menjawab kueri pasar dan toko peternakan secara faktual langsung dari tabel database `pasar_banjarnegara` dan `ternak_poultry_shop`.
+- Menambahkan layer overlay spasial baru "Poultry Shop & Pakan" (`/data/poultry-banjarnegara.geojson`, warna ungu `#7c3aed`) pada Leaflet Map Dashboard Eksekutif (`/` - `pages-BdW-ZTL4.js`), menyajikan titik sebaran toko peternakan terverifikasi secara interaktif berdampingan dengan layer Pasar.
+- Penyajian Dynamic GeoJSON Live di `src/server.js`: Rute `/data/poultry-banjarnegara.geojson` dan `/data/pasar-banjarnegara.geojson` meng-generate FeatureCollection secara real-time langsung dari query database MySQL (dengan fallback ke file statis), sehingga setiap data toko atau pasar baru yang diinput ke basis data akan langsung muncul di peta secara instan.
+[ADR-077] Implementasi Model A Evaluasi Kinerja Renstra & Pagu Anggaran APBD (Tabel 4.3):
+- Menghadirkan sistem 5-Segmented Tab Model A pada antarmuka `/renstra`: [Target], [Realisasi], [Prosentase], [Ringkasan], dan [Pagu Anggaran] dengan sub-filter [Indikator Sasaran] vs [Indikator Program] (Opsi 1A).
+- Membangun modul analitik dinamis `src/lib/renstra-evaluasi.js` yang secara matematis menghitung rasio ketercapaian antara target resmi `renstra_target` (87 indikator) dengan data transaksi statistik riil di MySQL `pertasis` (Padi, Palawija, Hortikultura, Peternakan, Perikanan, dan FSVA).
+- Menegakkan prinsip Zero Dummy Data Law (ADR-002) dan Sparse Data Tolerance (ADR-010): indikator yang belum memiliki data riil di database atau tahun yang belum berjalan menampilkan tanda tenang "—" (muted dash) tanpa nilai rekaan dan tanpa galat pembagian nol / NaN (Opsi 2A).
+- Mengintegrasikan data Pagu Anggaran APBD resmi per Program dan Kegiatan utama dari Tabel 4.3 Renstra 2025–2029 (11 program) dan Bab VI Renstra 2019–2022 (7 program) dengan format rupiah tabular (Opsi 3A).
+- Mendaftarkan endpoint publik baru `GET /api/v1/renstra/evaluasi` dan `GET /api/v1/renstra/pagu`, serta memperbarui bundel antarmuka `dist/assets/renstra-v242.js` via `scripts/build_renstra_view.js` dengan verifikasi 100% lolos linting dan bebas error runtime.
 [ADR-074] Resolusi Tuntas Peta Choropleth & Deadlock 'Memuat Data Lahan' pada Dashboard Eksekutif:
 - Mengidentifikasi akar masalah: `Promise.all([b(), C(), w()])` mengikat data desa dengan upstream CKAN Pemkab (`opendata.banjarnegarakab.go.id`) yang kerap timeout (>10s), menahan state desa pada `[]` dan membuat poligon peta abu-abu serta Top 15 Desa dan Analisa Lahan macet di "Memuat data...".
 - Memisahkan pemanggilan data lahan desa `C()` agar berjalan mandiri (46ms) dengan proteksi fallback instan ke `/data/lahan-fallback.json` jika data kosong atau network gagal. Panggilan CKAN dan kabupaten dijalankan independen tanpa memblokir dashboard.

@@ -195,6 +195,22 @@ function transformRawContextToNarrative(rawContext) {
         secText += `• ${l.replace(/^-\s*/, "")}\n`;
       }
       narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA PASAR RESMI DI KABUPATEN BANJARNEGARA")) {
+      let secText = "### 🛒 Titik Lokasi Pasar Resmi di Banjarnegara\n";
+      secText += "Berdasarkan basis data geospasial resmi SISPERTANI Kabupaten Banjarnegara, berikut lokasi pasar yang tercatat:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• **${l.replace(/^-\s*/, "")}**\n`;
+      }
+      narrativeSections.push(secText);
+    } else if (trimmed.includes("DATA TOKO PETERNAKAN & POULTRY SHOP")) {
+      let secText = "### 🏪 Sebaran Toko Pakan Ternak & Poultry Shop Terverifikasi\n";
+      secText += "Berdasarkan basis data peternakan dan sarana produksi SISPERTANI Banjarnegara:\n\n";
+      const lines = trimmed.split("\n").filter((l) => l.startsWith("- "));
+      for (const l of lines) {
+        secText += `• **${l.replace(/^-\s*/, "")}**\n`;
+      }
+      narrativeSections.push(secText);
     } else {
       // Format umum untuk blok data lainnya
       narrativeSections.push(trimmed);

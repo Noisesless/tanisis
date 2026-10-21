@@ -96,6 +96,9 @@ async function retrieveDynamicContext(userQuery) {
   const isLumbung = queryLower.includes("lumbung") || queryLower.includes("cadangan pangan") || queryLower.includes("gudang pangan") || queryLower.includes("lpm");
   const isTernakHilir = queryLower.includes("telur") || queryLower.includes("susu") || queryLower.includes("nkv") || queryLower.includes("veteriner");
   const isIkanKhusus = queryLower.includes("benih") || queryLower.includes("tangkap") || queryLower.includes("waduk") || queryLower.includes("mrica") || queryLower.includes("serayu");
+  const isWhereQuery = queryLower.includes("dimana") || queryLower.includes("dmana") || queryLower.includes("mana") || queryLower.includes("lokasi") || queryLower.includes("tempat") || queryLower.includes("alamat") || queryLower.includes("cari");
+  const isPasar = queryLower.includes("pasar") || queryLower.includes("pasa") || queryLower.includes("psar") || queryLower.includes("bazar") || queryLower.includes("kios") || queryLower.includes("tempat jual") || (isWhereQuery && (queryLower.includes("ikan") || queryLower.includes("hewan") || queryLower.includes("buah") || queryLower.includes("sayur") || queryLower.includes("salak") || queryLower.includes("unggas")));
+  const isPoultry = queryLower.includes("poultry") || queryLower.includes("pakan ternak") || queryLower.includes("toko ternak") || queryLower.includes("sapronak") || queryLower.includes("toko pakan") || queryLower.includes("petshop") || (isWhereQuery && (queryLower.includes("pakan") || queryLower.includes("konsentrat") || queryLower.includes("doc")));
 
   const contextParts = [];
 
@@ -776,7 +779,7 @@ async function retrieveDynamicContext(userQuery) {
             const [padi19] = await q("SELECT SUM(produksi_ton) as total FROM padi_produksi WHERE tahun = 2019");
             const [kentang19] = await q("SELECT nilai as total FROM horti_produksi_kabupaten WHERE LOWER(komoditas) LIKE '%kentang%' AND tahun = 2019 LIMIT 1");
             const [salak19] = await q("SELECT SUM(nilai) as total FROM horti_produksi WHERE LOWER(komoditas) LIKE '%salak%' AND tahun = 2019");
-            const [jagung19] = await q("SELECT SUM(produksi_ton) as total FROM palawija_produksi WHERE LOWER(tanaman) LIKE '%jagung%' AND tahun = 2019");
+            const [jagung19] = await q("SELECT SUM(produksi_ton) as total FROM palawija_produksi WHERE LOWER(komoditas) LIKE '%jagung%' AND tahun = 2019");
             const [sapi19] = await q("SELECT SUM(populasi_ekor) as total FROM ternak_populasi WHERE LOWER(jenis_ternak) LIKE '%sapi potong%' AND tahun = 2019");
 
             text += `\nDATA REALISASI STATISTIK LAPANGAN TAHUN 2019 (UNTUK EVALUASI KETERCAPAIAN TARGET):\n`;
@@ -920,6 +923,85 @@ async function retrieveDynamicContext(userQuery) {
       }
     }
 
+    // 21. DATA PASAR TRADISIONAL & KHUSUS RESMI BANJARNEGARA (DATABASE SISPERTANI: 36 PASAR)
+    if (isPasar) {
+      let pasarRows = [];
+      let filterKat = null;
+      if (queryLower.includes("hewan")) filterKat = 'Pasar Hewan';
+      else if (queryLower.includes("ikan")) filterKat = 'Pasar Ikan';
+      else if (queryLower.includes("buah") || queryLower.includes("salak")) filterKat = 'Pasar Buah';
+      else if (queryLower.includes("unggas")) filterKat = 'Pasar Unggas';
+
+      if (matchedKec && filterKat) {
+        pasarRows = await q(
+          `SELECT nama, kategori, kecamatan, alamat, koordinat 
+           FROM pasar_banjarnegara 
+           WHERE LOWER(kecamatan) LIKE ? AND kategori = ? 
+           ORDER BY nama ASC`,
+          [`%${matchedKec.toLowerCase()}%`, filterKat]
+        );
+      } else if (matchedKec) {
+        pasarRows = await q(
+          `SELECT nama, kategori, kecamatan, alamat, koordinat 
+           FROM pasar_banjarnegara 
+           WHERE LOWER(kecamatan) LIKE ? 
+           ORDER BY nama ASC`,
+          [`%${matchedKec.toLowerCase()}%`]
+        );
+      } else if (filterKat) {
+        pasarRows = await q(
+          `SELECT nama, kategori, kecamatan, alamat, koordinat 
+           FROM pasar_banjarnegara 
+           WHERE kategori = ? 
+           ORDER BY nama ASC`,
+          [filterKat]
+        );
+      } else {
+        pasarRows = await q(`SELECT nama, kategori, kecamatan, alamat, koordinat FROM pasar_banjarnegara ORDER BY kecamatan ASC, nama ASC LIMIT 15`);
+      }
+
+      if (pasarRows.length > 0) {
+        let text = `DATA PASAR RESMI DI KABUPATEN BANJARNEGARA (TOTAL DATABASE: 36 PASAR):\n`;
+        for (const p of pasarRows) {
+          text += `- ${p.nama} [${p.kategori}] (Kec. ${p.kecamatan}) | Alamat: ${p.alamat || "—"} | Koordinat: ${p.koordinat}\n`;
+        }
+        if (pasarRows.length === 15 && !matchedKec) {
+          text += `(Catatan: Ditampilkan 15 pasar pertama dari 36 pasar resmi. Sebutkan nama kecamatan untuk rincian spesifik)\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
+    // 22. DATA TOKO PETERNAKAN & POULTRY SHOP RESMI
+    if (isPoultry) {
+      let poultryRows = [];
+      if (matchedKec) {
+        poultryRows = await q(
+          `SELECT p.nama_toko, k.nama as kecamatan, p.jenis_layanan, p.alamat, p.koordinat, p.kontak 
+           FROM ternak_poultry_shop p 
+           JOIN kecamatan k ON k.id = p.kecamatan_id 
+           WHERE LOWER(k.nama) LIKE ? 
+           ORDER BY p.nama_toko ASC`,
+          [`%${matchedKec.toLowerCase()}%`]
+        );
+      } else {
+        poultryRows = await q(
+          `SELECT p.nama_toko, k.nama as kecamatan, p.jenis_layanan, p.alamat, p.koordinat, p.kontak 
+           FROM ternak_poultry_shop p 
+           JOIN kecamatan k ON k.id = p.kecamatan_id 
+           ORDER BY k.nama ASC, p.nama_toko ASC`
+        );
+      }
+
+      if (poultryRows.length > 0) {
+        let text = `DATA TOKO PETERNAKAN & POULTRY SHOP TERVERIFIKASI BANJARNEGARA (DATABASE SISPERTANI):\n`;
+        for (const ps of poultryRows) {
+          text += `- ${ps.nama_toko} (Kec. ${ps.kecamatan}) | Layanan: ${ps.jenis_layanan} | Lokasi: ${ps.alamat} | Koordinat: ${ps.koordinat} | Kontak: ${ps.kontak || "—"}\n`;
+        }
+        contextParts.push(text);
+      }
+    }
+
     // 9. Pencarian Katalog Data Terbuka Resmi (CKAN) jika relevan atau diminta pengguna
     const isDatasetQuery = queryLower.includes("data") || 
                            queryLower.includes("dataset") || 
@@ -999,6 +1081,16 @@ async function sendSimulatedStream(req, res, fullText) {
   }
 }
 
+aiRouter.get("/chat", (req, res) => {
+  res.json({
+    status: "ok",
+    endpoint: "/api/v1/ai/chat",
+    method: "POST",
+    description: "Si Pertani AI Assistant Streaming Chat Endpoint (Gemini + Live MySQL RAG)",
+    supported_models: SUPPORTED_MODELS
+  });
+});
+
 aiRouter.post("/chat", async (req, res) => {
   const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "127.0.0.1";
 
@@ -1072,6 +1164,8 @@ aiRouter.post("/chat", async (req, res) => {
 - KOMODITAS TERCATAT: Tanaman hias (Agloenema, Krisan, Mawar, Soka) dan Ikan Hias (Koi, Mas Koki, Cupang, Komet) TERCATAT RESMI di SISPERTANI. Jelaskan data dan angka riilnya sesuai ringkasan di atas. JANGAN menyatakan tidak tercatat.
 - KOMODITAS DENGAN PRODUKSI 0 / BUKAN SENTRA: Jika pengguna menanyakan komoditas yang bukan sentra Banjarnegara (seperti Kelapa Sawit atau Bawang Merah yang produksinya 0 atau sangat minim), jelaskan secara faktual bahwa Banjarnegara bukan sentra komoditas tersebut dan sebutkan komoditas unggulan aslinya (misal Kopi Robusta, Kelapa Dalam, Kentang, Kubis, Wortel).
 - HORTIKULTURA DATARAN TINGGI: Untuk komoditas seperti Wortel, jelaskan bahwa total produksi Banjarnegara sangat besar (puluhan ribu ton) dengan kawasan sentra di dataran tinggi Batur/Dieng.
+- DATA PASAR TRADISIONAL & KHUSUS (36 PASAR RESMI): Jika pengguna menanyakan pasar, pasar ikan, pasar hewan, pasar buah, pasar unggas, atau pasar tradisional dan lokasinya, SEBUTKAN DENGAN JELAS titik lokasi fisik resmi yang tercatat di database di atas (nama pasar, kategori, kecamatan, alamat lengkap, dan koordinatnya). Contoh: Pasar Ikan Purwonegoro di Kec. Purwanegara dan Pasar Ikan Segar di Krandegan Kota Banjarnegara. DILARANG KERAS menyatakan titik lokasi fisik pasar tidak tercatat di database sistem, karena database SISPERTANI telah memuat 36 pasar resmi lengkap dengan alamat dan koordinatnya.
+- DATA TOKO PETERNAKAN & POULTRY SHOP (15 TOKO RESMI): Jika pengguna menanyakan toko pakan, poultry shop, obat ternak, atau sapronak di Banjarnegara atau kecamatan tertentu (seperti Kota Banjarnegara, Klampok, Bawang, dll.), SEBUTKAN toko-toko resmi yang tercatat di atas (seperti Pioneer Poultry Shop, Sekawan Animal Food, dll.) beserta alamat, kontak, dan layanannya.
 - Gunakan Bahasa Indonesia yang ramah, ringkas, lugas, profesional, dan objektif. DILARANG menggunakan kata-kata hiperbola atau buzzwords.`;
 
     if (finalMessages[0]?.role === "system") {

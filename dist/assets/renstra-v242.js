@@ -9,110 +9,13 @@ import { C as l, b as u, p as d } from "./index-CI1XYnwk.js";
 var f = l(u(), 1);
 var p = d();
 
-// =========================================================================
-// DATASET RESMI RENSTRA 2025–2029 (Dokumen dist/renstra-2025-2029.pdf)
-// =========================================================================
-const ikuList2025 = [
-  { no: 1, sektor: "Tata Kelola", indikator: "Nilai SAKIP", satuan: "Nilai", baseline: "64,55", t1: "68,30", t2: "69,98", t3: "70,36", t4: "71,76", t5: "73,20", t6: "74,60" },
-  { no: 2, sektor: "Tata Kelola", indikator: "Indeks Pelayanan Publik (IPP)", satuan: "Angka", baseline: "2,05", t1: "2,26", t2: "2,48", t3: "2,73", t4: "3,00", t5: "3,30", t6: "3,63" },
-  { no: 3, sektor: "Pangan & Gizi", indikator: "Indeks Ketahanan Pangan (IKP)", satuan: "Angka", baseline: "79,40", t1: "80,86", t2: "81,15", t3: "81,43", t4: "81,72", t5: "82,00", t6: "82,29" },
-  { no: 4, sektor: "Pangan & Gizi", indikator: "Laju Pertumbuhan PDRB Sektor Pertanian", satuan: "%", baseline: "3,80", t1: "1–3", t2: "1–3", t3: "1–3", t4: "1–3", t5: "1–3", t6: "1–3" },
-  { no: 5, sektor: "Pangan & Gizi", indikator: "Skor Pola Pangan Harapan (PPH)", satuan: "Angka", baseline: "93,86", t1: "93,90", t2: "94,00", t3: "94,01", t4: "94,02", t5: "94,03", t6: "94,05" },
-  { no: 6, sektor: "Tanaman Pangan", indikator: "Peningkatan Produksi Tanaman Pangan", satuan: "%", baseline: "1,00", t1: "0,50", t2: "1,00", t3: "1,50", t4: "2,00", t5: "2,50", t6: "3,00" },
-  { no: 7, sektor: "Horti & Perkebunan", indikator: "Peningkatan Produksi Hortikultura & Perkebunan", satuan: "%", baseline: "5,50", t1: "1,00", t2: "1,50", t3: "2,00", t4: "2,50", t5: "3,00", t6: "3,50" },
-  { no: 8, sektor: "Peternakan", indikator: "Kenaikan Populasi Ternak", satuan: "%", baseline: "1,00", t1: "0,40", t2: "0,40", t3: "0,50", t4: "0,50", t5: "0,60", t6: "0,60" },
-  { no: 9, sektor: "Perikanan", indikator: "Kenaikan Produksi Perikanan", satuan: "%", baseline: "1,02", t1: "0,50", t2: "1,20", t3: "1,90", t4: "2,90", t5: "3,70", t6: "4,90" }
-];
-
-const ikkList2025 = [
-  { no: 1, sektor: "Pangan & Gizi", indikator: "Angka Kecukupan Energi (AKE)", satuan: "kkal/kapita/hari", baseline: "1.982", t1: "2.100", t2: "2.100", t3: "2.100", t4: "2.100", t5: "2.100", t6: "2.100" },
-  { no: 2, sektor: "Pangan & Gizi", indikator: "Angka Kecukupan Protein (AKP)", satuan: "g/kapita/hari", baseline: "58,5", t1: "57,0", t2: "57,0", t3: "57,0", t4: "57,0", t5: "57,0", t6: "57,0" },
-  { no: 3, sektor: "Pangan & Gizi", indikator: "Penanganan Desa Rentan Rawan Pangan", satuan: "%", baseline: "100", t1: "100", t2: "100", t3: "100", t4: "100", t5: "100", t6: "100" },
-  { no: 4, sektor: "Pangan & Gizi", indikator: "Keamanan Produk Pangan Segar (PSAT)", satuan: "%", baseline: "95,67", t1: "85,0", t2: "86,0", t3: "87,0", t4: "88,0", t5: "89,0", t6: "90,0" },
-  { no: 5, sektor: "Pangan & Gizi", indikator: "Ketersediaan Energi Masyarakat", satuan: "kkal/kapita/hari", baseline: "2.899", t1: "2.400", t2: "2.400", t3: "2.400", t4: "2.400", t5: "2.400", t6: "2.400" },
-  { no: 6, sektor: "Tanaman Pangan", indikator: "Produktivitas Tanaman Pangan", satuan: "%", baseline: "1,90", t1: "0,50", t2: "1,00", t3: "1,50", t4: "2,00", t5: "2,50", t6: "3,00" },
-  { no: 7, sektor: "Tanaman Pangan", indikator: "Luas Panen Tanaman Pangan", satuan: "%", baseline: "1,90", t1: "1,91", t2: "1,92", t3: "1,93", t4: "1,94", t5: "1,95", t6: "1,96" },
-  { no: 8, sektor: "Tanaman Pangan", indikator: "Lahan Terdampak Bencana Tertangani", satuan: "%", baseline: "100", t1: "100", t2: "100", t3: "100", t4: "100", t5: "100", t6: "100" },
-  { no: 9, sektor: "Tata Kelola", indikator: "Cakupan Pembinaan Kelompok Tani", satuan: "%", baseline: "25,0", t1: "25,0", t2: "30,0", t3: "35,0", t4: "40,0", t5: "45,0", t6: "50,0" },
-  { no: 10, sektor: "Horti & Perkebunan", indikator: "Produktivitas Hortikultura & Perkebunan", satuan: "%", baseline: "5,50", t1: "1,00", t2: "1,50", t3: "2,00", t4: "2,50", t5: "3,00", t6: "3,50" },
-  { no: 11, sektor: "Horti & Perkebunan", indikator: "Penambahan Luas Panen Horti & Kebun", satuan: "%", baseline: "25,0", t1: "1,00", t2: "1,50", t3: "2,00", t4: "2,50", t5: "2,70", t6: "3,00" },
-  { no: 12, sektor: "Peternakan", indikator: "Populasi Ternak Kecil (Kambing & Domba)", satuan: "Ekor", baseline: "257.889", t1: "1,50%", t2: "2,00%", t3: "2,50%", t4: "3,00%", t5: "3,50%", t6: "4,00%" },
-  { no: 13, sektor: "Peternakan", indikator: "Vaksinasi Hewan Rentan Zoonosis", satuan: "%", baseline: "60,0", t1: "65,0", t2: "68,0", t3: "71,0", t4: "74,0", t5: "77,0", t6: "80,0" },
-  { no: 14, sektor: "Perikanan", indikator: "Produksi Perikanan Budidaya", satuan: "Ton", baseline: "40.510", t1: "40.712", t2: "41.016", t3: "41.320", t4: "41.725", t5: "42.029", t6: "42.535" },
-  { no: 15, sektor: "Perikanan", indikator: "Produksi Benih Ikan", satuan: "Ekor", baseline: "2.534.358.034", t1: "2.547.029.824", t2: "2.566.037.509", t3: "2.585.045.194", t4: "2.610.388.775", t5: "2.629.396.460", t6: "2.661.075.935" },
-  { no: 16, sektor: "Perikanan", indikator: "Produksi Perikanan Tangkap", satuan: "Ton", baseline: "575,56", t1: "580,0", t2: "580,0", t3: "580,0", t4: "590,0", t5: "590,0", t6: "590,0" },
-  { no: 17, sektor: "Perikanan", indikator: "Kelompok Masyarakat Pengawas (Pokmaswas)", satuan: "Kelompok", baseline: "5", t1: "5", t2: "5", t3: "5", t4: "5", t5: "5", t6: "5" },
-  { no: 18, sektor: "Perikanan", indikator: "Produksi Pengolahan Hasil Perikanan", satuan: "Ton/Tahun", baseline: "120,89", t1: "121,5", t2: "123,5", t3: "125,0", t4: "126,5", t5: "128,0", t6: "130,0" }
-];
-
-// =========================================================================
-// DATASET RESMI RENSTRA 2019–2022 (Dokumen dist/renstra.pdf)
-// =========================================================================
-const sasaranList2019 = [
-  { no: 1, sektor: "Tanaman Pangan", indikator: "Produksi Padi", satuan: "Ton", baseline: "158.078,16", t1: "158.868,55", t2: "159.662,89", t3: "160.461,21", t4: "161.263,51", t5: "162.069,83" },
-  { no: 2, sektor: "Tanaman Pangan", indikator: "Produksi Jagung", satuan: "Ton", baseline: "65.145,00", t1: "65.796,45", t2: "66.454,41", t3: "67.118,96", t4: "67.790,15", t5: "68.468,05" },
-  { no: 3, sektor: "Tanaman Pangan", indikator: "Produksi Kedelai", satuan: "Ton", baseline: "125,00", t1: "156,25", t2: "195,31", t3: "244,14", t4: "305,18", t5: "381,47" },
-  { no: 4, sektor: "Tanaman Pangan", indikator: "Produksi Ubi Kayu", satuan: "Ton", baseline: "212.100,00", t1: "214.221,00", t2: "216.363,21", t3: "218.526,84", t4: "220.712,11", t5: "222.919,23" },
-  { no: 5, sektor: "Horti & Perkebunan", indikator: "Produksi Kentang", satuan: "Ton", baseline: "120.900,00", t1: "124.800,00", t2: "128.700,00", t3: "132.600,00", t4: "140.400,00", t5: "148.543,20" },
-  { no: 6, sektor: "Horti & Perkebunan", indikator: "Produksi Salak Pondoh", satuan: "Ton", baseline: "242.983,98", t1: "251.083,45", t2: "254.323,23", t3: "259.182,91", t4: "267.282,34", t5: "275.300,81" },
-  { no: 7, sektor: "Horti & Perkebunan", indikator: "Produksi Pisang", satuan: "Ton", baseline: "8.392,02", t1: "9.277,36", t2: "9.888,80", t3: "11.074,01", t4: "11.414,72", t5: "11.757,16" },
-  { no: 8, sektor: "Horti & Perkebunan", indikator: "Produksi Durian", satuan: "Ton", baseline: "3.975,00", t1: "4.382,44", t2: "4.601,56", t3: "4.831,64", t4: "5.073,22", t5: "5.323,88" },
-  { no: 9, sektor: "Horti & Perkebunan", indikator: "Produksi Cabai", satuan: "Ton", baseline: "17.500,00", t1: "19.000,00", t2: "20.280,00", t3: "21.450,00", t4: "22.900,00", t5: "24.274,00" },
-  { no: 10, sektor: "Horti & Perkebunan", indikator: "Produksi Kopi", satuan: "Ton", baseline: "1.068,73", t1: "1.168,73", t2: "1.218,73", t3: "1.268,73", t4: "1.318,73", t5: "1.368,73" },
-  { no: 11, sektor: "Horti & Perkebunan", indikator: "Produksi Kelapa Dalam", satuan: "Ton", baseline: "9.033,50", t1: "9.050,10", t2: "9.070,30", t3: "9.088,60", t4: "9.107,00", t5: "9.125,30" },
-  { no: 12, sektor: "Horti & Perkebunan", indikator: "Produksi Kelapa Deres (Gula)", satuan: "Ton", baseline: "10.148,00", t1: "10.265,80", t2: "10.291,20", t3: "10.329,20", t4: "10.360,90", t5: "10.392,60" },
-  { no: 13, sektor: "Horti & Perkebunan", indikator: "Produksi Teh", satuan: "Ton", baseline: "1.989,50", t1: "1.996,50", t2: "2.003,50", t3: "2.010,50", t4: "2.017,60", t5: "2.024,60" },
-  { no: 14, sektor: "Horti & Perkebunan", indikator: "Produksi Tembakau", satuan: "Ton", baseline: "130,50", t1: "131,80", t2: "133,10", t3: "133,60", t4: "134,30", t5: "135,60" },
-  { no: 15, sektor: "Horti & Perkebunan", indikator: "Produksi Lada", satuan: "Ton", baseline: "112,05", t1: "117,50", t2: "119,25", t3: "120,50", t4: "121,00", t5: "121,50" },
-  { no: 16, sektor: "Peternakan", indikator: "Populasi Sapi", satuan: "Ekor", baseline: "31.318", t1: "31.506", t2: "31.695", t3: "31.885", t4: "32.076", t5: "32.269" },
-  { no: 17, sektor: "Peternakan", indikator: "Populasi Kambing/Domba", satuan: "Ekor", baseline: "260.780", t1: "261.824", t2: "262.348", t3: "263.873", t4: "263.398", t5: "263.925" },
-  { no: 18, sektor: "Peternakan", indikator: "Populasi Domba Batur Dieng", satuan: "Ekor", baseline: "8.250", t1: "8.500", t2: "8.750", t3: "9.000", t4: "9.250", t5: "9.500" },
-  { no: 19, sektor: "Peternakan", indikator: "Status Bebas 4 Zoonosis", satuan: "Kasus", baseline: "0", t1: "0", t2: "0", t3: "0", t4: "0", t5: "0" },
-  { no: 20, sektor: "Peternakan", indikator: "Penurunan Kematian Unggas AI", satuan: "Kasus", baseline: "0,50", t1: "0,45", t2: "0,40", t3: "0,35", t4: "0,30", t5: "0,25" },
-  { no: 21, sektor: "Peternakan", indikator: "Produksi Daging", satuan: "Ton", baseline: "4.738,06", t1: "4.747,54", t2: "4.757,03", t3: "4.766,54", t4: "4.776,08", t5: "4.785,63" },
-  { no: 22, sektor: "Peternakan", indikator: "Unit Pangan Hewan Pra-NKV", satuan: "Unit", baseline: "3", t1: "3", t2: "3", t3: "3", t4: "3", t5: "3" },
-  { no: 23, sektor: "Perikanan", indikator: "Produksi Perikanan Budidaya", satuan: "Ton", baseline: "27.240", t1: "28.619", t2: "31.481", t3: "34.629", t4: "38.092", t5: "41.901" },
-  { no: 24, sektor: "Perikanan", indikator: "Produksi Benih Ikan", satuan: "Ekor", baseline: "1.719.000.000", t1: "1.890.900.000", t2: "2.079.900.000", t3: "2.287.890.000", t4: "2.516.679.000", t5: "2.768.466.690" },
-  { no: 25, sektor: "Perikanan", indikator: "Produksi Perikanan Tangkap", satuan: "Ton", baseline: "1.250", t1: "1.250", t2: "1.250", t3: "1.250", t4: "1.250", t5: "1.250" },
-  { no: 26, sektor: "Pangan & Gizi", indikator: "Luas Lahan Tidur Tertanami", satuan: "Ha", baseline: "0", t1: "0", t2: "5", t3: "5", t4: "5", t5: "5" },
-  { no: 27, sektor: "Pangan & Gizi", indikator: "Ketersediaan Pangan Utama", satuan: "Ton/Tahun", baseline: "123.433,99", t1: "158.868,55", t2: "159.662,89", t3: "160.461,21", t4: "161.263,51", t5: "162.069,83" },
-  { no: 28, sektor: "Pangan & Gizi", indikator: "Ketersediaan Energi & Protein", satuan: "%", baseline: "77", t1: "80", t2: "85", t3: "90", t4: "95", t5: "97" },
-  { no: 29, sektor: "Pangan & Gizi", indikator: "Cadangan Pangan Kabupaten", satuan: "%", baseline: "15", t1: "17", t2: "19", t3: "21", t4: "23", t5: "23" },
-  { no: 30, sektor: "Pangan & Gizi", indikator: "Stabilitas Harga Pangan Pokok", satuan: "%", baseline: "10", t1: "10", t2: "10", t3: "10", t4: "10", t5: "10" },
-  { no: 31, sektor: "Pangan & Gizi", indikator: "Skor Pola Pangan Harapan (PPH)", satuan: "Nilai", baseline: "85", t1: "85", t2: "90", t3: "92", t4: "93", t5: "95" },
-  { no: 32, sektor: "Pangan & Gizi", indikator: "Cakupan Mutu & Keamanan Pangan", satuan: "%", baseline: "75", t1: "75", t2: "77", t3: "80", t4: "82", t5: "85" },
-  { no: 33, sektor: "Pangan & Gizi", indikator: "Pengawasan Pupuk & Pestisida", satuan: "Kegiatan", baseline: "1 monev, 4 rakor", t1: "1 monev, 4 rakor", t2: "1 monev, 4 rakor", t3: "1 monev, 4 rakor", t4: "1 monev, 4 rakor", t5: "1 monev, 4 rakor" },
-  { no: 34, sektor: "Pangan & Gizi", indikator: "Persentase Penurunan Rawan Pangan", satuan: "%", baseline: "19", t1: "19", t2: "18", t3: "17", t4: "16", t5: "15" },
-  { no: 35, sektor: "Tata Kelola", indikator: "Cakupan Bina Kelompok Tani", satuan: "%", baseline: "90,00", t1: "90,00", t2: "90,00", t3: "90,00", t4: "90,00", t5: "90,00" },
-  { no: 36, sektor: "Tata Kelola", indikator: "Cakupan Bina Kelompok Pembudidaya Ikan", satuan: "%", baseline: "18,10", t1: "18,80", t2: "20,00", t3: "24,00", t4: "27,30", t5: "30,00" },
-  { no: 37, sektor: "Tata Kelola", indikator: "Nilai Tukar Petani (NTP) Pertanian", satuan: "%", baseline: "102 s.d 103", t1: "102 s.d 103", t2: "103 s.d 104", t3: "103 s.d 104", t4: "103 s.d 104", t5: "103 s.d 105" },
-  { no: 38, sektor: "Tata Kelola", indikator: "Pertumbuhan Sektor Pertanian", satuan: "%", baseline: "2,5 s.d 3,5", t1: "2,7 s.d 3,7", t2: "2,7 s.d 3,7", t3: "3 s.d 4", t4: "3 s.d 4", t5: "3 s.d 4" },
-  { no: 39, sektor: "Tata Kelola", indikator: "Rumah Tangga Miskin Terfasilitasi", satuan: "RTM", baseline: "0", t1: "20", t2: "20", t3: "20", t4: "20", t5: "20" },
-  { no: 40, sektor: "Tata Kelola", indikator: "Pelaksanaan Event Promosi", satuan: "Kali", baseline: "12", t1: "4", t2: "6", t3: "4", t4: "6", t5: "4" },
-  { no: 41, sektor: "Perikanan", indikator: "Konsumsi Ikan Masyarakat", satuan: "kg/kap/thn", baseline: "20,04", t1: "21,30", t2: "21,50", t3: "21,70", t4: "21,90", t5: "22,50" },
-  { no: 42, sektor: "Tata Kelola", indikator: "Survei Kepuasan Masyarakat (SKM)", satuan: "Nilai", baseline: "68,00", t1: "70,00", t2: "72,00", t3: "74,00", t4: "76,00", t5: "78,00" },
-  { no: 43, sektor: "Tata Kelola", indikator: "Nilai Akuntabilitas Kinerja (SAKIP)", satuan: "Nilai (Predikat)", baseline: "48,00 (C)", t1: "53 (CC)", t2: "58 (CC)", t3: "63 (B)", t4: "68 (B)", t5: "73 (BB)" }
-];
-
-const programList2019 = [
-  { no: 1, sektor: "Pangan & Gizi", indikator: "Ketersediaan Energi per Kapita", satuan: "kkal/kap/hari", baseline: "2.544", t1: "2.644", t2: "2.744", t3: "2.744", t4: "2.794", t5: "2.844" },
-  { no: 2, sektor: "Pangan & Gizi", indikator: "Ketersediaan Protein per Kapita", satuan: "gr/kap/hari", baseline: "56,71", t1: "57,71", t2: "58,21", t3: "58,71", t4: "59,21", t5: "59,21" },
-  { no: 3, sektor: "Pangan & Gizi", indikator: "Ketersediaan Pangan Utama Daerah", satuan: "Ton", baseline: "123.433,99", t1: "158.868,55", t2: "159.662,89", t3: "160.461,21", t4: "161.263,51", t5: "162.069,83" },
-  { no: 4, sektor: "Pangan & Gizi", indikator: "Pengawasan Pupuk dan Pestisida", satuan: "Monev/Rakor", baseline: "1 monev, 4 rakor", t1: "1 monev, 4 rakor", t2: "1 monev, 4 rakor", t3: "1 monev, 4 rakor", t4: "1 monev, 4 rakor", t5: "1 monev, 4 rakor" },
-  { no: 5, sektor: "Tanaman Pangan", indikator: "Pemanfaatan Lahan Tidur untuk Pangan", satuan: "Ha", baseline: "0", t1: "0", t2: "5", t3: "5", t4: "5", t5: "5" },
-  { no: 6, sektor: "Tata Kelola", indikator: "Promosi Pemasaran Hasil Pertanian", satuan: "Kali", baseline: "12", t1: "4", t2: "6", t3: "4", t4: "6", t5: "4" },
-  { no: 7, sektor: "Horti & Perkebunan", indikator: "Teknologi Produksi Kopi", satuan: "Ton", baseline: "1.068,73", t1: "1.168,73", t2: "1.218,73", t3: "1.268,73", t4: "1.318,73", t5: "1.368,73" },
-  { no: 8, sektor: "Horti & Perkebunan", indikator: "Teknologi Produksi Durian", satuan: "Ton", baseline: "3.975,00", t1: "4.382,44", t2: "4.601,56", t3: "4.831,64", t4: "5.073,22", t5: "5.323,88" },
-  { no: 9, sektor: "Horti & Perkebunan", indikator: "Teknologi Produksi Cabai", satuan: "Ton", baseline: "17.500,00", t1: "19.000,00", t2: "20.280,00", t3: "21.450,00", t4: "22.900,00", t5: "24.274,00" },
-  { no: 10, sektor: "Tanaman Pangan", indikator: "Produksi Padi Utama", satuan: "Ton", baseline: "158.078,16", t1: "158.868,55", t2: "159.662,89", t3: "160.461,21", t4: "161.263,51", t5: "162.069,83" },
-  { no: 11, sektor: "Tanaman Pangan", indikator: "Produksi Jagung Utama", satuan: "Ton", baseline: "65.145,00", t1: "65.796,45", t2: "66.454,41", t3: "67.118,96", t4: "67.790,15", t5: "68.468,05" },
-  { no: 12, sektor: "Horti & Perkebunan", indikator: "Produksi Lada Perkebunan", satuan: "Ton", baseline: "112,05", t1: "117,50", t2: "119,25", t3: "120,50", t4: "121,00", t5: "121,50" },
-  { no: 13, sektor: "Tata Kelola", indikator: "Cakupan Bina Petani oleh Penyuluh", satuan: "%", baseline: "90,00", t1: "90,00", t2: "90,00", t3: "90,00", t4: "90,00", t5: "90,00" },
-  { no: 14, sektor: "Peternakan", indikator: "Pencegahan Status Bebas 4 Zoonosis", satuan: "Kasus", baseline: "0", t1: "0", t2: "0", t3: "0", t4: "0", t5: "0" },
-  { no: 15, sektor: "Peternakan", indikator: "Pengembangan Populasi Domba Batur", satuan: "Ekor", baseline: "8.250", t1: "8.500", t2: "8.750", t3: "9.000", t4: "9.250", t5: "9.500" },
-  { no: 16, sektor: "Peternakan", indikator: "Pengembangan Populasi Sapi", satuan: "Ekor", baseline: "31.318", t1: "31.506", t2: "31.695", t3: "31.885", t4: "32.076", t5: "32.269" },
-  { no: 17, sektor: "Perikanan", indikator: "Budidaya dan Benih Ikan Air Tawar", satuan: "Ton", baseline: "27.240", t1: "28.619", t2: "31.481", t3: "34.629", t4: "38.092", t5: "41.901" }
-];
+// Helper parser angka format ID
+function parseVal(v) {
+  if (!v || v === '-' || v === '—') return null;
+  const clean = String(v).replace(/\./g, '').replace(',', '.').replace('%', '').trim();
+  const num = parseFloat(clean);
+  return isNaN(num) ? null : num;
+}
 
 // Helper gaya badge sektor terstandarisasi (design-system.md)
 function getSectorBadge(sektor) {
@@ -135,76 +38,346 @@ function getSectorBadge(sektor) {
   return (0, p.jsx)("span", { className: "px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200", children: sektor });
 }
 
+// Helper badge persentase ketercapaian
+function getPercentBadge(pct) {
+  if (pct === null || pct === undefined || isNaN(pct)) {
+    return (0, p.jsx)("span", { className: "text-slate-400 font-mono text-xs", children: "—" });
+  }
+  let colorClass = "bg-slate-100 text-slate-700 border-slate-200";
+  if (pct >= 100) colorClass = "bg-emerald-50 text-emerald-800 border-emerald-200";
+  else if (pct >= 80) colorClass = "bg-amber-50 text-amber-800 border-amber-200";
+  else colorClass = "bg-rose-50 text-rose-800 border-rose-200";
+
+  return (0, p.jsxs)("span", {
+    className: `inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold font-mono tabular-nums border ${colorClass}`,
+    children: [pct, "%"]
+  });
+}
+
+// Format Rupiah
+function formatRp(num) {
+  if (!num || isNaN(num)) return "Rp 0";
+  return "Rp " + Number(num).toLocaleString("id-ID");
+}
+
 // =========================================================================
-// KOMPONEN UNIFIED: RENSTRA VIEW (Digunakan untuk 2025–2029 dan 2019–2022)
+// KOMPONEN: BAR CHART TARGET VS REALISASI INDIKATOR UTAMA
+// =========================================================================
+function RenstraBarChart({ evaluasiData, periode, is2025 }) {
+  const years = is2025 ? [2024, 2025] : [2018, 2019, 2020, 2021, 2022];
+  const [selectedYear, setSelectedYear] = (0, f.useState)(is2025 ? 2024 : 2021);
+
+  // Ambil komoditas & indikator utama fisik terverifikasi
+  const chartItems = (0, f.useMemo)(() => {
+    if (!evaluasiData || evaluasiData.length === 0) return [];
+
+    const candidates = evaluasiData.filter(d => {
+      const name = d.indikator.toLowerCase();
+      if (is2025) {
+        return (
+          name.includes("pangan") ||
+          name.includes("padi") ||
+          name.includes("hortikultura") ||
+          name.includes("ternak") ||
+          name.includes("perikanan") ||
+          name.includes("ikp") ||
+          name.includes("ketahanan")
+        );
+      } else {
+        return (
+          name.includes("produksi padi") ||
+          name.includes("produksi jagung") ||
+          name.includes("produksi salak") ||
+          name.includes("produksi kentang") ||
+          name.includes("populasi sapi") ||
+          name.includes("populasi kambing") ||
+          name.includes("perikanan budidaya")
+        );
+      }
+    });
+
+    return candidates.slice(0, 7).map(item => {
+      let tgtVal = null;
+      if (is2025) {
+        if (selectedYear === 2024) tgtVal = parseVal(item.target?.baseline);
+        else if (selectedYear === 2025) tgtVal = parseVal(item.target?.t1);
+      } else {
+        if (selectedYear === 2018) tgtVal = parseVal(item.target?.t1);
+        else if (selectedYear === 2019) tgtVal = parseVal(item.target?.t2);
+        else if (selectedYear === 2020) tgtVal = parseVal(item.target?.t3);
+        else if (selectedYear === 2021) tgtVal = parseVal(item.target?.t4);
+        else if (selectedYear === 2022) tgtVal = parseVal(item.target?.t5);
+      }
+
+      const realVal = item.realisasi?.[selectedYear] ?? null;
+      let pct = null;
+      if (tgtVal !== null && realVal !== null && tgtVal > 0) {
+        pct = Number(((realVal / tgtVal) * 100).toFixed(1));
+      }
+
+      return {
+        nama: item.indikator,
+        sektor: item.sektor,
+        satuan: item.satuan,
+        target: tgtVal,
+        realisasi: realVal,
+        prosentase: pct
+      };
+    });
+  }, [evaluasiData, selectedYear, is2025]);
+
+  return (0, p.jsxs)("div", {
+    className: "mt-6 pt-6 border-t border-slate-200",
+    children: [
+      // Header Bar Chart
+      (0, p.jsxs)("div", {
+        className: "flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4",
+        children: [
+          (0, p.jsxs)("div", {
+            children: [
+              (0, p.jsxs)("h4", {
+                className: "text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2",
+                children: [
+                  (0, p.jsx)(s, { size: 16, className: "text-emerald-700" }),
+                  "Grafik Komparasi: Target Renstra vs Realisasi Lapangan"
+                ]
+              }),
+              (0, p.jsxs)("p", {
+                className: "text-xs text-slate-500 mt-0.5",
+                children: [
+                  "Visualisasi komparasi angka target dokumen resmi terhadap data transaksi riil tahun ",
+                  (0, p.jsx)("strong", { className: "text-slate-800", children: selectedYear })
+                ]
+              })
+            ]
+          }),
+
+          // Kontrol Tahun & Legenda
+          (0, p.jsxs)("div", {
+            className: "flex flex-wrap items-center gap-3",
+            children: [
+              (0, p.jsxs)("div", {
+                className: "flex items-center gap-3 text-xs bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md",
+                children: [
+                  (0, p.jsxs)("div", {
+                    className: "flex items-center gap-1.5",
+                    children: [
+                      (0, p.jsx)("span", { className: "w-3 h-3 rounded-xs bg-slate-400" }),
+                      (0, p.jsx)("span", { className: "text-slate-600 font-medium text-[11px]", children: "Target" })
+                    ]
+                  }),
+                  (0, p.jsxs)("div", {
+                    className: "flex items-center gap-1.5",
+                    children: [
+                      (0, p.jsx)("span", { className: "w-3 h-3 rounded-xs bg-emerald-600" }),
+                      (0, p.jsx)("span", { className: "text-slate-600 font-medium text-[11px]", children: "Realisasi" })
+                    ]
+                  })
+                ]
+              }),
+              (0, p.jsxs)("div", {
+                className: "flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-2xs",
+                children: [
+                  (0, p.jsx)("span", { className: "text-[11px] font-semibold text-slate-500", children: "Tahun:" }),
+                  (0, p.jsx)("select", {
+                    value: selectedYear,
+                    onChange: e => setSelectedYear(Number(e.target.value)),
+                    className: "bg-transparent font-bold text-xs text-slate-800 focus:outline-none cursor-pointer",
+                    children: years.map(yr => (0, p.jsx)("option", {
+                      value: yr,
+                      children: is2025 && yr === 2024 ? "2024 (Baseline Awal)" : is2025 && yr === 2025 ? "2025 (Tahun Berjalan)" : String(yr)
+                    }, yr))
+                  })
+                ]
+              })
+            ]
+          })
+        ]
+      }),
+
+      // Daftar Bar Chart Horizontal (Normalized Scale per Komoditas)
+      (0, p.jsx)("div", {
+        className: "space-y-3.5 bg-slate-50/60 border border-slate-200 rounded-lg p-5 shadow-2xs",
+        children: chartItems.map((item, idx) => {
+          const maxVal = Math.max(item.target || 0, item.realisasi || 0) * 1.15 || 1;
+          const tgtPct = item.target ? Math.min(100, (item.target / maxVal) * 100) : 0;
+          const realPct = item.realisasi ? Math.min(100, (item.realisasi / maxVal) * 100) : 0;
+
+          return (0, p.jsxs)("div", {
+            key: `bar-${idx}`,
+            className: "bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs flex flex-col gap-2",
+            children: [
+              // Header Indikator
+              (0, p.jsxs)("div", {
+                className: "flex flex-wrap items-center justify-between gap-2",
+                children: [
+                  (0, p.jsxs)("div", {
+                    className: "flex items-center gap-2",
+                    children: [
+                      getSectorBadge(item.sektor),
+                      (0, p.jsx)("span", { className: "font-bold text-xs sm:text-sm text-slate-900", children: item.nama }),
+                      (0, p.jsx)("span", { className: "text-[11px] text-slate-500", children: `(${item.satuan})` })
+                    ]
+                  }),
+                  getPercentBadge(item.prosentase)
+                ]
+              }),
+
+              // Bar Tracks
+              (0, p.jsxs)("div", {
+                className: "flex flex-col gap-1.5 pt-1",
+                children: [
+                  // Track Target
+                  (0, p.jsxs)("div", {
+                    className: "flex items-center gap-2",
+                    children: [
+                      (0, p.jsx)("span", { className: "w-16 text-[10px] font-semibold text-slate-500 shrink-0 uppercase tracking-wide", children: "Target" }),
+                      (0, p.jsx)("div", {
+                        className: "flex-1 bg-slate-100 rounded-full h-3 overflow-hidden",
+                        children: item.target ? (0, p.jsx)("div", {
+                          className: "bg-slate-400 h-full rounded-full transition-all duration-500",
+                          style: { width: `${tgtPct}%` }
+                        }) : null
+                      }),
+                      (0, p.jsx)("span", {
+                        className: "w-32 text-right font-mono text-[11px] font-medium text-slate-700 shrink-0 tabular-nums",
+                        children: item.target ? `${Number(item.target).toLocaleString("id-ID")} ${item.satuan}` : "—"
+                      })
+                    ]
+                  }),
+
+                  // Track Realisasi
+                  (0, p.jsxs)("div", {
+                    className: "flex items-center gap-2",
+                    children: [
+                      (0, p.jsx)("span", { className: "w-16 text-[10px] font-semibold text-slate-500 shrink-0 uppercase tracking-wide", children: "Realisasi" }),
+                      (0, p.jsx)("div", {
+                        className: "flex-1 bg-slate-100 rounded-full h-3 overflow-hidden",
+                        children: item.realisasi ? (0, p.jsx)("div", {
+                          className: `${item.prosentase >= 100 ? "bg-emerald-600" : item.prosentase >= 80 ? "bg-amber-500" : "bg-rose-500"} h-full rounded-full transition-all duration-500`,
+                          style: { width: `${realPct}%` }
+                        }) : null
+                      }),
+                      (0, p.jsx)("span", {
+                        className: "w-32 text-right font-mono text-[11px] font-bold text-slate-900 shrink-0 tabular-nums",
+                        children: item.realisasi !== null ? `${Number(item.realisasi).toLocaleString("id-ID")} ${item.satuan}` : "— (Belum Ada)"
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+        })
+      })
+    ]
+  });
+}
+
+// =========================================================================
+// KOMPONEN UNIFIED: RENSTRA VIEW DENGAN MODEL A
 // =========================================================================
 function RenstraView({ periode }) {
   const is2025 = periode === "2025-2029";
-  const [activeTab, setActiveTab] = (0, f.useState)("sasaran");
+  const years = is2025 ? [2024, 2025, 2026, 2027, 2028, 2029, 2030] : [2017, 2018, 2019, 2020, 2021, 2022];
+  const evalYears = is2025 ? [2024, 2025, 2026, 2027, 2028, 2029] : [2018, 2019, 2020, 2021, 2022];
+
+  // State Model A
+  const [analysisMode, setAnalysisMode] = (0, f.useState)("target"); // "target" | "realisasi" | "prosentase" | "ringkasan" | "pagu"
+  const [indicatorTab, setIndicatorTab] = (0, f.useState)("sasaran"); // "sasaran" | "program"
   const [selectedSektor, setSelectedSektor] = (0, f.useState)("semua");
   const [searchQuery, setSearchQuery] = (0, f.useState)("");
-  const [remoteData, setRemoteData] = (0, f.useState)(null);
 
-  // Fallback data lokal faktual
-  const defaultSasaran = is2025 ? ikuList2025 : sasaranList2019;
-  const defaultProgram = is2025 ? ikkList2025 : programList2019;
+  // Data Async
+  const [evaluasiData, setEvaluasiData] = (0, f.useState)(null);
+  const [paguData, setPaguData] = (0, f.useState)(null);
+  const [loading, setLoading] = (0, f.useState)(true);
 
-  // Fetch data dinamis dari REST API
+  // Fetch Evaluasi & Pagu
   (0, f.useEffect)(() => {
     let active = true;
-    const apiUrl = `/api/v1/renstra/target?periode=${periode}`;
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(json => {
-        if (active && json && Array.isArray(json.data) && json.data.length > 0) {
-          const formatted = json.data.map(item => ({
-            no: item.no_urut,
-            sektor: item.kategori_sektor,
-            indikator: item.indikator,
-            satuan: item.satuan,
-            baseline: item.baseline_nilai || "-",
-            t1: item.t1 || "-",
-            t2: item.t2 || "-",
-            t3: item.t3 || "-",
-            t4: item.t4 || "-",
-            t5: item.t5 || "-",
-            t6: item.t6 || null,
-            jenis: (item.jenis_tabel || "").toUpperCase()
-          }));
-          setRemoteData(formatted);
-        }
-      })
-      .catch(() => {});
+    setLoading(true);
+
+    Promise.all([
+      fetch(`/api/v1/renstra/evaluasi?periode=${periode}`).then(r => r.json()).catch(() => null),
+      fetch(`/api/v1/renstra/pagu?periode=${periode}`).then(r => r.json()).catch(() => null)
+    ]).then(([evRes, pgRes]) => {
+      if (active) {
+        if (evRes && Array.isArray(evRes.data)) setEvaluasiData(evRes.data);
+        if (pgRes && Array.isArray(pgRes.data)) setPaguData(pgRes.data);
+        setLoading(false);
+      }
+    });
+
     return () => { active = false; };
   }, [periode]);
 
-  // Pisahkan sasaran vs program
-  const currentDataset = (0, f.useMemo)(() => {
-    if (remoteData && remoteData.length > 0) {
-      if (is2025) {
-        return activeTab === "sasaran"
-          ? remoteData.filter(d => d.jenis === "IKU")
-          : remoteData.filter(d => d.jenis === "IKK");
-      } else {
-        return activeTab === "sasaran"
-          ? remoteData.filter(d => d.jenis === "SASARAN_RENSTRA")
-          : remoteData.filter(d => d.jenis === "PROGRAM_RPJMD");
-      }
-    }
-    return activeTab === "sasaran" ? defaultSasaran : defaultProgram;
-  }, [remoteData, activeTab, is2025, defaultSasaran, defaultProgram]);
+  // Dataset Indikator Sesuai Filter
+  const currentIndicators = (0, f.useMemo)(() => {
+    if (!evaluasiData) return [];
+    return evaluasiData.filter(item => {
+      // Sub-filter Sasaran vs Program
+      const isTargetSasaran = is2025 ? item.jenis === "IKU" : item.jenis === "SASARAN_RENSTRA";
+      const matchType = indicatorTab === "sasaran" ? isTargetSasaran : !isTargetSasaran;
+      if (!matchType) return false;
 
-  // Filter Sektor & Search Query
-  const filteredData = (0, f.useMemo)(() => {
-    return currentDataset.filter(item => {
+      // Filter Sektor
       const matchSektor = selectedSektor === "semua" || item.sektor.toLowerCase().includes(selectedSektor.toLowerCase());
-      const matchQuery = !searchQuery || item.indikator.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchSektor && matchQuery;
-    });
-  }, [currentDataset, selectedSektor, searchQuery]);
+      if (!matchSektor) return false;
 
+      // Search Query
+      const matchSearch = !searchQuery || item.indikator.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchSearch;
+    });
+  }, [evaluasiData, is2025, indicatorTab, selectedSektor, searchQuery]);
+
+  // Dataset Pagu Sesuai Filter
+  const currentPagu = (0, f.useMemo)(() => {
+    if (!paguData) return [];
+    return paguData.filter(item => {
+      const matchSektor = selectedSektor === "semua" || item.sektor.toLowerCase().includes(selectedSektor.toLowerCase());
+      if (!matchSektor) return false;
+      const matchSearch = !searchQuery || item.program.toLowerCase().includes(searchQuery.toLowerCase()) || item.indikator.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchSearch;
+    });
+  }, [paguData, selectedSektor, searchQuery]);
+
+  // Summary Metrics
   const totalSasaran = is2025 ? 9 : 43;
   const totalProgram = is2025 ? 18 : 17;
+
+  // Agregasi Ringkasan Sektoral (Mode Ringkasan)
+  const sektorSummary = (0, f.useMemo)(() => {
+    if (!evaluasiData) return [];
+    const map = {};
+    for (const item of evaluasiData) {
+      const s = item.sektor || "Lainnya";
+      if (!map[s]) {
+        map[s] = { sektor: s, total: 0, terisi: 0, sumPct: 0, countPct: 0, tercapai: 0, mendekati: 0, perhatian: 0 };
+      }
+      map[s].total++;
+
+      // Cek apakah ada realisasi di tahun-tahun berjalan
+      let hasReal = false;
+      for (const yr of evalYears) {
+        const pct = item.prosentase?.[yr];
+        if (pct !== null && pct !== undefined) {
+          hasReal = true;
+          map[s].sumPct += pct;
+          map[s].countPct++;
+          if (pct >= 100) map[s].tercapai++;
+          else if (pct >= 80) map[s].mendekati++;
+          else map[s].perhatian++;
+        }
+      }
+      if (hasReal) map[s].terisi++;
+    }
+
+    return Object.values(map).map(sec => ({
+      ...sec,
+      avgPct: sec.countPct > 0 ? (sec.sumPct / sec.countPct).toFixed(1) : null
+    }));
+  }, [evaluasiData, evalYears]);
 
   return (0, p.jsxs)("div", {
     className: "flex flex-col gap-6",
@@ -329,135 +502,345 @@ function RenstraView({ periode }) {
         ]
       }),
 
-      // 3. TABEL MATRIKS TARGET MULTI-TAHUN TERPADU
+      // 3. TABEL MATRIKS EVALUASI KINERJA (MODEL A - 5 TAB TERPADU)
       (0, p.jsxs)("div", {
         className: "print-block bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden text-left",
         children: [
+          // Header Kontrol & Navigasi Tab
           (0, p.jsxs)("div", {
-            className: "p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3",
+            className: "p-5 border-b border-slate-200 flex flex-col gap-4",
             children: [
+              // Baris Atas: Judul & 5-Segmented Tab Model A
               (0, p.jsxs)("div", {
-                children: [
-                  (0, p.jsx)("h3", {
-                    className: "text-sm sm:text-base font-bold text-slate-900",
-                    children: is2025 ? "Matriks Target Kinerja 2025–2029" : "Matriks Target Kinerja 2019–2022"
-                  }),
-                  (0, p.jsx)("p", {
-                    className: "text-xs text-slate-500 mt-0.5",
-                    children: activeTab === "sasaran"
-                      ? (is2025 ? "Indikator Sasaran Kinerja Utama (IKU Dinas — Tabel 4.5)" : "Indikator Sasaran & Komoditas Fisik Renstra (Tabel 4.1)")
-                      : (is2025 ? "Indikator Kinerja Kunci Program (IKK — Tabel 4.7)" : "Indikator Program Urusan Penyelenggaraan RPJMD (Tabel 7.2)")
-                  })
-                ]
-              }),
-              (0, p.jsxs)("div", {
-                className: "flex flex-wrap items-center gap-2",
+                className: "flex flex-col lg:flex-row lg:items-center justify-between gap-3",
                 children: [
                   (0, p.jsxs)("div", {
-                    className: "inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-xs font-semibold",
                     children: [
-                      (0, p.jsx)("button", {
-                        type: "button",
-                        onClick: () => setActiveTab("sasaran"),
-                        className: activeTab === "sasaran"
-                          ? "px-3 py-1 rounded-md bg-white text-emerald-800 shadow-2xs font-bold"
-                          : "px-3 py-1 text-slate-600 hover:text-slate-900",
-                        children: "Indikator Sasaran"
+                      (0, p.jsx)("h3", {
+                        className: "text-sm sm:text-base font-bold text-slate-900",
+                        children: analysisMode === "pagu"
+                          ? `Kerangka Pendanaan & Pagu Anggaran APBD (${is2025 ? "2025–2029" : "2018–2022"})`
+                          : analysisMode === "ringkasan"
+                            ? `Ringkasan Ketercapaian Kinerja Sektoral (${is2025 ? "2025–2029" : "2019–2022"})`
+                            : `Matriks ${analysisMode === "target" ? "Target" : analysisMode === "realisasi" ? "Realisasi Lapangan" : "Prosentase Ketercapaian"} Kinerja (${is2025 ? "2025–2029" : "2019–2022"})`
                       }),
-                      (0, p.jsx)("button", {
-                        type: "button",
-                        onClick: () => setActiveTab("program"),
-                        className: activeTab === "program"
-                          ? "px-3 py-1 rounded-md bg-white text-emerald-800 shadow-2xs font-bold"
-                          : "px-3 py-1 text-slate-600 hover:text-slate-900",
-                        children: "Indikator Program"
+                      (0, p.jsx)("p", {
+                        className: "text-xs text-slate-500 mt-0.5",
+                        children: analysisMode === "pagu"
+                          ? (is2025 ? "Alokasi pagu indikatif belanja APBD per program/kegiatan dinas (Tabel 4.3)" : "Rencana pendanaan indikatif program perangkat daerah (Bab VI)")
+                          : analysisMode === "ringkasan"
+                            ? "Status ketercapaian target dinas berdasarkan verifikasi data transaksi riil lapangan"
+                            : (indicatorTab === "sasaran"
+                              ? (is2025 ? "Indikator Sasaran Kinerja Utama (IKU Dinas — Tabel 4.5)" : "Indikator Sasaran & Komoditas Fisik Renstra (Tabel 4.1)")
+                              : (is2025 ? "Indikator Kinerja Kunci Program (IKK — Tabel 4.7)" : "Indikator Program Urusan Penyelenggaraan RPJMD (Tabel 7.2)"))
                       })
                     ]
                   }),
-                  (0, p.jsxs)("select", {
-                    "aria-label": "Filter Sektor",
-                    value: selectedSektor,
-                    onChange: e => setSelectedSektor(e.target.value),
-                    className: "bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-medium text-slate-700 focus:outline-none cursor-pointer",
+
+                  // 5-Segmented Tab Model A (Executive Segmented Pill)
+                  (0, p.jsxs)("div", {
+                    className: "inline-flex flex-wrap items-center gap-1 p-1 rounded-lg border border-slate-200 bg-slate-100 shadow-2xs text-xs font-semibold",
                     children: [
-                      (0, p.jsx)("option", { value: "semua", children: "Semua Sektor" }),
-                      (0, p.jsx)("option", { value: "pangan", children: "Pangan & Gizi" }),
-                      (0, p.jsx)("option", { value: "tanaman", children: "Tanaman Pangan" }),
-                      (0, p.jsx)("option", { value: "horti", children: "Hortikultura & Kebun" }),
-                      (0, p.jsx)("option", { value: "peternakan", children: "Peternakan" }),
-                      (0, p.jsx)("option", { value: "perikanan", children: "Perikanan" }),
-                      (0, p.jsx)("option", { value: "tata kelola", children: "Tata Kelola / Layanan" })
+                      { id: "target", label: "Target" },
+                      { id: "realisasi", label: "Realisasi" },
+                      { id: "prosentase", label: "Prosentase" },
+                      { id: "ringkasan", label: "Ringkasan" },
+                      { id: "pagu", label: "Pagu Anggaran" }
+                    ].map(tab => (0, p.jsx)("button", {
+                      type: "button",
+                      key: tab.id,
+                      onClick: () => setAnalysisMode(tab.id),
+                      className: analysisMode === tab.id
+                        ? "px-3 py-1.5 rounded-md bg-white text-emerald-800 shadow-xs font-bold transition-all"
+                        : "px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 font-semibold transition-all",
+                      children: tab.label
+                    }))
+                  })
+                ]
+              }),
+
+              // Baris Bawah: Sub-filter (IKU vs IKK) & Sektor & Search
+              (0, p.jsxs)("div", {
+                className: "flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100",
+                children: [
+                  // Sub-filter IKU vs IKK (hanya untuk mode target, realisasi, prosentase)
+                  analysisMode !== "pagu" && analysisMode !== "ringkasan" ? (0, p.jsxs)("div", {
+                    className: "inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs font-semibold",
+                    children: [
+                      (0, p.jsx)("button", {
+                        type: "button",
+                        onClick: () => setIndicatorTab("sasaran"),
+                        className: indicatorTab === "sasaran"
+                          ? "px-3 py-1 rounded-md bg-white text-emerald-800 shadow-2xs font-bold"
+                          : "px-3 py-1 text-slate-600 hover:text-slate-900",
+                        children: is2025 ? "Indikator Sasaran (IKU)" : "Indikator Sasaran (Tabel 4.1)"
+                      }),
+                      (0, p.jsx)("button", {
+                        type: "button",
+                        onClick: () => setIndicatorTab("program"),
+                        className: indicatorTab === "program"
+                          ? "px-3 py-1 rounded-md bg-white text-emerald-800 shadow-2xs font-bold"
+                          : "px-3 py-1 text-slate-600 hover:text-slate-900",
+                        children: is2025 ? "Indikator Program (IKK)" : "Indikator Program (Tabel 7.2)"
+                      })
                     ]
+                  }) : (0, p.jsx)("div", {
+                    className: "text-xs font-semibold text-slate-500",
+                    children: analysisMode === "pagu" ? "Data Pagu Program APBD" : "Agregat Evaluasi Multi-Sektor"
                   }),
-                  (0, p.jsx)("input", {
-                    type: "text",
-                    placeholder: "Cari indikator...",
-                    value: searchQuery,
-                    onChange: e => setSearchQuery(e.target.value),
-                    className: "bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-700 placeholder-slate-400 focus:outline-none w-36"
+
+                  // Filter Sektor & Pencarian
+                  (0, p.jsxs)("div", {
+                    className: "flex flex-wrap items-center gap-2",
+                    children: [
+                      (0, p.jsxs)("select", {
+                        "aria-label": "Filter Sektor",
+                        value: selectedSektor,
+                        onChange: e => setSelectedSektor(e.target.value),
+                        className: "bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-medium text-slate-700 focus:outline-none cursor-pointer",
+                        children: [
+                          (0, p.jsx)("option", { value: "semua", children: "Semua Sektor" }),
+                          (0, p.jsx)("option", { value: "pangan", children: "Pangan & Gizi" }),
+                          (0, p.jsx)("option", { value: "tanaman", children: "Tanaman Pangan" }),
+                          (0, p.jsx)("option", { value: "horti", children: "Hortikultura & Kebun" }),
+                          (0, p.jsx)("option", { value: "peternakan", children: "Peternakan" }),
+                          (0, p.jsx)("option", { value: "perikanan", children: "Perikanan" }),
+                          (0, p.jsx)("option", { value: "tata kelola", children: "Tata Kelola / Layanan" })
+                        ]
+                      }),
+                      (0, p.jsx)("input", {
+                        type: "text",
+                        placeholder: analysisMode === "pagu" ? "Cari program..." : "Cari indikator...",
+                        value: searchQuery,
+                        onChange: e => setSearchQuery(e.target.value),
+                        className: "bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-700 placeholder-slate-400 focus:outline-none w-44"
+                      })
+                    ]
                   })
                 ]
               })
             ]
           }),
 
-          // Tabel Responsif
+          // Content Switcher Berdasarkan Analysis Mode
           (0, p.jsx)("div", {
-            key: `table-wrap-${periode}-${activeTab}-${selectedSektor}`,
             className: "overflow-x-auto",
-            children: (0, p.jsxs)("table", {
-              className: "w-full text-left text-xs border-collapse min-w-[760px]",
-              children: [
-                (0, p.jsx)("thead", {
-                  children: (0, p.jsxs)("tr", {
-                    className: "border-b border-slate-200 bg-slate-50/80 text-slate-600",
+            children: loading ? (
+              (0, p.jsx)("div", { className: "p-8 text-center text-xs text-slate-500", children: "Memuat data matriks kinerja..." })
+            ) : analysisMode === "ringkasan" ? (
+              // TAMPILAN MODE RINGKASAN: TABEL REKAPITULASI + BAR CHART KOMPARASI
+              (0, p.jsxs)("div", {
+                className: "p-5",
+                children: [
+                  (0, p.jsxs)("table", {
+                    className: "w-full text-left text-xs border-collapse min-w-[700px]",
                     children: [
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] w-12 text-center", children: "No" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Sektor" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Indikator Kinerja" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Satuan" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right bg-slate-100/70", children: is2025 ? "2024" : "2017" }),
-                      (0, p.jsx)("th", { className: `p-3 font-bold uppercase tracking-wider text-[11px] text-right ${is2025 ? "bg-emerald-50/80 text-emerald-800" : ""}`, children: is2025 ? "2025" : "2018" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2026" : "2019" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2027" : "2020" }),
-                      (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2028" : "2021" }),
-                      (0, p.jsx)("th", { className: `p-3 font-bold uppercase tracking-wider text-[11px] text-right ${is2025 ? "bg-blue-50/60 text-blue-900 font-bold" : "bg-emerald-50/80 text-emerald-900 font-bold"}`, children: is2025 ? "2029" : "2022" }),
-                      is2025 && (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right text-slate-400", children: "2030" })
-                    ].filter(Boolean)
-                  })
-                }),
-                (0, p.jsx)("tbody", {
-                  className: "divide-y divide-slate-100",
-                  children: filteredData.length === 0 ? (
-                    (0, p.jsx)("tr", {
-                      children: (0, p.jsx)("td", {
-                        colSpan: is2025 ? 11 : 10,
-                        className: "p-8 text-center text-slate-500 text-xs italic",
-                        children: "Tidak ada indikator yang sesuai dengan filter pencarian."
+                      (0, p.jsx)("thead", {
+                        children: (0, p.jsxs)("tr", {
+                          className: "border-b border-slate-200 bg-slate-50/80 text-slate-600",
+                          children: [
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Bidang Sektor" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Total Indikator" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Data Lapangan" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Tercapai (≥100%)" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Mendekati (80-99%)" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Perlu Perhatian (<80%)" }),
+                            (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: "Rata-rata Capaian" })
+                          ]
+                        })
+                      }),
+                      (0, p.jsx)("tbody", {
+                        className: "divide-y divide-slate-100",
+                        children: sektorSummary.map(s => (0, p.jsxs)("tr", {
+                          key: s.sektor,
+                          className: "hover:bg-slate-50/80 transition-colors",
+                          children: [
+                            (0, p.jsx)("td", { className: "p-3 font-semibold", children: getSectorBadge(s.sektor) }),
+                            (0, p.jsxs)("td", { className: "p-3 text-center font-bold text-slate-700 tabular-nums", children: [s.total, " Indikator"] }),
+                            (0, p.jsxs)("td", { className: "p-3 text-center font-medium text-slate-600 tabular-nums", children: [s.terisi, " / ", s.total] }),
+                            (0, p.jsx)("td", { className: "p-3 text-center font-bold text-emerald-700 tabular-nums", children: s.tercapai }),
+                            (0, p.jsx)("td", { className: "p-3 text-center font-bold text-amber-600 tabular-nums", children: s.mendekati }),
+                            (0, p.jsx)("td", { className: "p-3 text-center font-bold text-rose-600 tabular-nums", children: s.perhatian }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-bold tabular-nums", children: getPercentBadge(s.avgPct) })
+                          ]
+                        }))
                       })
-                    })
-                  ) : (
-                    filteredData.map((item, idx) => (0, p.jsxs)("tr", {
-                      key: `row-${item.no}-${idx}`,
-                      className: "hover:bg-slate-50/80 transition-colors",
+                    ]
+                  }),
+                  (0, p.jsx)("p", {
+                    className: "text-[11px] text-slate-400 mt-4 leading-relaxed",
+                    children: "* Catatan: Rata-rata persentase ketercapaian dihitung secara faktual hanya dari indikator yang telah memiliki data statistik transaksi riil di database SISPERTANI. Indikator non-fisik atau tahun yang belum berjalan ditampilkan sebagai status belum terisi (Zero Dummy Data Law)."
+                  }),
+
+                  // KOMPONEN BAR CHART KOMPARASI TARGET VS REALISASI INDIKATOR UTAMA
+                  (0, p.jsx)(RenstraBarChart, {
+                    evaluasiData,
+                    periode,
+                    is2025
+                  })
+                ]
+              })
+            ) : analysisMode === "pagu" ? (
+              // TAMPILAN MODE PAGU ANGGARAN (TABEL 4.3)
+              (0, p.jsxs)("table", {
+                className: "w-full text-left text-xs border-collapse min-w-[850px]",
+                children: [
+                  (0, p.jsx)("thead", {
+                    children: (0, p.jsxs)("tr", {
+                      className: "border-b border-slate-200 bg-slate-50/80 text-slate-600",
                       children: [
-                        (0, p.jsx)("td", { className: "p-3 text-center font-bold text-slate-500 tabular-nums", children: item.no }),
-                        (0, p.jsx)("td", { className: "p-3 font-semibold", children: getSectorBadge(item.sektor) }),
-                        (0, p.jsx)("td", { className: "p-3 font-semibold text-slate-900", children: item.indikator }),
-                        (0, p.jsx)("td", { className: "p-3 text-center font-medium text-slate-500 text-[11px]", children: item.satuan }),
-                        (0, p.jsx)("td", { className: "p-3 text-right font-medium text-slate-700 tabular-nums bg-slate-50/50", children: item.baseline }),
-                        (0, p.jsx)("td", { className: `p-3 text-right tabular-nums ${is2025 ? "font-bold text-emerald-800 bg-emerald-50/40" : "font-medium text-slate-600"}`, children: item.t1 }),
-                        (0, p.jsx)("td", { className: "p-3 text-right font-medium text-slate-600 tabular-nums", children: item.t2 }),
-                        (0, p.jsx)("td", { className: "p-3 text-right font-medium text-slate-600 tabular-nums", children: item.t3 }),
-                        (0, p.jsx)("td", { className: "p-3 text-right font-medium text-slate-600 tabular-nums", children: item.t4 }),
-                        (0, p.jsx)("td", { className: `p-3 text-right font-bold tabular-nums ${is2025 ? "text-blue-900 bg-blue-50/30" : "text-emerald-900 bg-emerald-50/40"}`, children: item.t5 }),
-                        is2025 && (0, p.jsx)("td", { className: "p-3 text-right font-normal text-slate-400 tabular-nums", children: item.t6 || "-" })
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] w-12 text-center", children: "No" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Sektor" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] font-mono", children: "Kode" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Program Pembangunan" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Indikator Output" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "Pagu 2025" : "Pagu 2018" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "Pagu 2026" : "Pagu 2019" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "Pagu 2027" : "Pagu 2020" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "Pagu 2028" : "Pagu 2021" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right bg-emerald-50/60 text-emerald-900 font-bold", children: is2025 ? "Pagu 2029" : "Pagu 2022" })
+                      ]
+                    })
+                  }),
+                  (0, p.jsx)("tbody", {
+                    className: "divide-y divide-slate-100",
+                    children: currentPagu.length === 0 ? (
+                      (0, p.jsx)("tr", { children: (0, p.jsx)("td", { colSpan: 10, className: "p-8 text-center text-slate-400 italic", children: "Tidak ada program yang sesuai dengan filter." }) })
+                    ) : (
+                      currentPagu.map(item => {
+                        const pYears = is2025 ? [2025, 2026, 2027, 2028, 2029] : [2018, 2019, 2020, 2021, 2022];
+                        return (0, p.jsxs)("tr", {
+                          key: item.kode,
+                          className: "hover:bg-slate-50/80 transition-colors",
+                          children: [
+                            (0, p.jsx)("td", { className: "p-3 text-center font-bold text-slate-500 tabular-nums", children: item.no }),
+                            (0, p.jsx)("td", { className: "p-3 font-semibold", children: getSectorBadge(item.sektor) }),
+                            (0, p.jsx)("td", { className: "p-3 font-mono text-[11px] text-slate-600", children: item.kode }),
+                            (0, p.jsx)("td", { className: "p-3 font-bold text-slate-900", children: item.program }),
+                            (0, p.jsx)("td", { className: "p-3 text-slate-600 text-[11px]", children: item.indikator }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-mono text-[11px] tabular-nums text-slate-700", children: formatRp(item.pagu[pYears[0]]) }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-mono text-[11px] tabular-nums text-slate-700", children: formatRp(item.pagu[pYears[1]]) }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-mono text-[11px] tabular-nums text-slate-700", children: formatRp(item.pagu[pYears[2]]) }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-mono text-[11px] tabular-nums text-slate-700", children: formatRp(item.pagu[pYears[3]]) }),
+                            (0, p.jsx)("td", { className: "p-3 text-right font-mono text-[11px] tabular-nums font-bold text-emerald-900 bg-emerald-50/30", children: formatRp(item.pagu[pYears[4]]) })
+                          ]
+                        });
+                      })
+                    )
+                  })
+                ]
+              })
+            ) : (
+              // TAMPILAN MODE TARGET, REALISASI, PROSENTASE
+              (0, p.jsxs)("table", {
+                className: "w-full text-left text-xs border-collapse min-w-[760px]",
+                children: [
+                  (0, p.jsx)("thead", {
+                    children: (0, p.jsxs)("tr", {
+                      className: "border-b border-slate-200 bg-slate-50/80 text-slate-600",
+                      children: [
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] w-12 text-center", children: "No" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Sektor" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px]", children: "Indikator Kinerja" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-center", children: "Satuan" }),
+                        analysisMode !== "prosentase" && (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right bg-slate-100/70", children: is2025 ? "2024" : "2017" }),
+                        (0, p.jsx)("th", { className: `p-3 font-bold uppercase tracking-wider text-[11px] text-right ${is2025 ? "bg-emerald-50/80 text-emerald-800" : ""}`, children: is2025 ? "2025" : "2018" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2026" : "2019" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2027" : "2020" }),
+                        (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right", children: is2025 ? "2028" : "2021" }),
+                        (0, p.jsx)("th", { className: `p-3 font-bold uppercase tracking-wider text-[11px] text-right ${is2025 ? "bg-blue-50/60 text-blue-900 font-bold" : "bg-emerald-50/80 text-emerald-900 font-bold"}`, children: is2025 ? "2029" : "2022" }),
+                        is2025 && analysisMode === "target" && (0, p.jsx)("th", { className: "p-3 font-bold uppercase tracking-wider text-[11px] text-right text-slate-400", children: "2030" })
                       ].filter(Boolean)
-                    }))
-                  )
-                })
-              ]
-            })
+                    })
+                  }),
+                  (0, p.jsx)("tbody", {
+                    className: "divide-y divide-slate-100",
+                    children: currentIndicators.length === 0 ? (
+                      (0, p.jsx)("tr", {
+                        children: (0, p.jsx)("td", {
+                          colSpan: is2025 ? 11 : 10,
+                          className: "p-8 text-center text-slate-500 text-xs italic",
+                          children: "Tidak ada indikator yang sesuai dengan filter pencarian."
+                        })
+                      })
+                    ) : (
+                      currentIndicators.map((item, idx) => (0, p.jsxs)("tr", {
+                        key: `row-${item.no}-${idx}`,
+                        className: "hover:bg-slate-50/80 transition-colors",
+                        children: [
+                          (0, p.jsx)("td", { className: "p-3 text-center font-bold text-slate-500 tabular-nums", children: item.no }),
+                          (0, p.jsx)("td", { className: "p-3 font-semibold", children: getSectorBadge(item.sektor) }),
+                          (0, p.jsx)("td", { className: "p-3 font-semibold text-slate-900", children: item.indikator }),
+                          (0, p.jsx)("td", { className: "p-3 text-center font-medium text-slate-500 text-[11px]", children: item.satuan }),
+
+                          // Baseline
+                          analysisMode !== "prosentase" && (0, p.jsx)("td", {
+                            className: "p-3 text-right font-medium text-slate-700 tabular-nums bg-slate-50/50 font-mono",
+                            children: item.target?.baseline || "—"
+                          }),
+
+                          // Year 1 (2025 / 2018)
+                          (0, p.jsx)("td", {
+                            className: `p-3 text-right tabular-nums font-mono ${is2025 ? "font-bold text-emerald-800 bg-emerald-50/40" : "font-medium text-slate-600"}`,
+                            children: analysisMode === "target"
+                              ? (item.target?.t1 || "—")
+                              : analysisMode === "realisasi"
+                                ? (item.realisasi?.[years[1]] !== null ? Number(item.realisasi[years[1]]).toLocaleString("id-ID") : (0, p.jsx)("span", { className: "text-slate-400", children: "—" }))
+                                : getPercentBadge(item.prosentase?.[years[1]])
+                          }),
+
+                          // Year 2 (2026 / 2019)
+                          (0, p.jsx)("td", {
+                            className: "p-3 text-right font-mono font-medium text-slate-600 tabular-nums",
+                            children: analysisMode === "target"
+                              ? (item.target?.t2 || "—")
+                              : analysisMode === "realisasi"
+                                ? (item.realisasi?.[years[2]] !== null ? Number(item.realisasi[years[2]]).toLocaleString("id-ID") : (0, p.jsx)("span", { className: "text-slate-400", children: "—" }))
+                                : getPercentBadge(item.prosentase?.[years[2]])
+                          }),
+
+                          // Year 3 (2027 / 2020)
+                          (0, p.jsx)("td", {
+                            className: "p-3 text-right font-mono font-medium text-slate-600 tabular-nums",
+                            children: analysisMode === "target"
+                              ? (item.target?.t3 || "—")
+                              : analysisMode === "realisasi"
+                                ? (item.realisasi?.[years[3]] !== null ? Number(item.realisasi[years[3]]).toLocaleString("id-ID") : (0, p.jsx)("span", { className: "text-slate-400", children: "—" }))
+                                : getPercentBadge(item.prosentase?.[years[3]])
+                          }),
+
+                          // Year 4 (2028 / 2021)
+                          (0, p.jsx)("td", {
+                            className: "p-3 text-right font-mono font-medium text-slate-600 tabular-nums",
+                            children: analysisMode === "target"
+                              ? (item.target?.t4 || "—")
+                              : analysisMode === "realisasi"
+                                ? (item.realisasi?.[years[4]] !== null ? Number(item.realisasi[years[4]]).toLocaleString("id-ID") : (0, p.jsx)("span", { className: "text-slate-400", children: "—" }))
+                                : getPercentBadge(item.prosentase?.[years[4]])
+                          }),
+
+                          // Year 5 (2029 / 2022)
+                          (0, p.jsx)("td", {
+                            className: `p-3 text-right font-bold tabular-nums font-mono ${is2025 ? "text-blue-900 bg-blue-50/30" : "text-emerald-900 bg-emerald-50/40"}`,
+                            children: analysisMode === "target"
+                              ? (item.target?.t5 || "—")
+                              : analysisMode === "realisasi"
+                                ? (item.realisasi?.[years[5]] !== null ? Number(item.realisasi[years[5]]).toLocaleString("id-ID") : (0, p.jsx)("span", { className: "text-slate-400", children: "—" }))
+                                : getPercentBadge(item.prosentase?.[years[5]])
+                          }),
+
+                          // Year 6 (2030 jika 2025 target)
+                          is2025 && analysisMode === "target" && (0, p.jsx)("td", {
+                            className: "p-3 text-right font-normal text-slate-400 tabular-nums font-mono",
+                            children: item.target?.t6 || "—"
+                          })
+                        ].filter(Boolean)
+                      }))
+                    )
+                  })
+                ]
+              })
+            )
           })
         ]
       }),
@@ -479,8 +862,8 @@ function RenstraView({ periode }) {
                   (0, p.jsx)(r, { size: 14, className: "text-emerald-600 mt-0.5 shrink-0" }),
                   (0, p.jsx)("span", {
                     children: is2025
-                      ? "Data merujuk dokumen Rencana Strategis Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2025–2029 (penjabaran RPJMD 2025–2029)."
-                      : "Data merujuk dokumen Rencana Strategis Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2019–2022 (Perda No. 9/2018 & Permendagri No. 90/2019)."
+                      ? "Data target dan pagu anggaran merujuk dokumen Rencana Strategis Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2025–2029 (Tabel 4.3, 4.5, dan 4.7)."
+                      : "Data target dan pendanaan merujuk dokumen Rencana Strategis Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2019–2022 (Tabel 4.1, 7.2, dan Bab VI)."
                   })
                 ]
               }),
@@ -537,8 +920,8 @@ function RenstraPage() {
                 (0, p.jsx)("p", {
                   className: "text-xs sm:text-sm font-medium text-slate-500 leading-relaxed max-w-3xl mt-1",
                   children: selectedPeriod === "2025-2029"
-                    ? "Target Kinerja Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2025–2029"
-                    : "Target Kinerja Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2019–2022"
+                    ? "Target Kinerja & Evaluasi Capaian Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2025–2029"
+                    : "Target Kinerja & Evaluasi Capaian Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara 2019–2022"
                 })
               ]
             }),

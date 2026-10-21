@@ -36,23 +36,20 @@ Dokumen ini memetakan derajat ketergantungan antar-berkas kode di dalam sistem, 
 | [`src/routes/perkebunan.js`](file:///e:/Project/pertanian_main/src/routes/perkebunan.js) | Endpoint kueri komoditas perkebunan | Terisolasi pada domain Perkebunan |
 | [`src/routes/peternakan.js`](file:///e:/Project/pertanian_main/src/routes/peternakan.js) | Endpoint kueri populasi ternak, RPH, dan produk hewani | Terisolasi pada domain Peternakan |
 | [`src/routes/perikanan.js`](file:///e:/Project/pertanian_main/src/routes/perikanan.js) | Endpoint kueri budidaya, tangkap, dan benih ikan | Terisolasi pada domain Perikanan |
-| [`src/routes/ekonomi.js`](file:///e:/Project/pertanian_main/src/routes/ekonomi.js) | Endpoint kueri inflasi, pasar daerah, nilai ekonomi, dan lumbung pangan | Terisolasi pada domain Ekonomi & Logistik |
-| [`src/routes/kelembagaan.js`](file:///e:/Project/pertanian_main/src/routes/kelembagaan.js) | Endpoint kueri Poktan, Gapoktan, dan KTH | Terisolasi pada domain Kelembagaan |
-| [`src/routes/st2023.js`](file:///e:/Project/pertanian_main/src/routes/st2023.js) | Endpoint kueri data sensus ST2023 tingkat desa | Terisolasi pada domain Sensus |
-| [`src/routes/bantuan.js`](file:///e:/Project/pertanian_main/src/routes/bantuan.js) | Endpoint kueri program dan sebaran bantuan pemerintah | Terisolasi pada domain Bantuan |
-| [`src/routes/lahan.js`](file:///e:/Project/pertanian_main/src/routes/lahan.js) | Endpoint kueri penggunaan lahan, tutupan lahan & evaluasi kesesuaian | Mengimpor `src/lib/kesesuaian.js` |
-| [`src/lib/kesesuaian.js`](file:///e:/Project/pertanian_main/src/lib/kesesuaian.js) | Modul evaluasi kesesuaian lahan multi-sektor & korelasi tutupan lahan fisik | Digunakan oleh `src/routes/lahan.js` |
+| [`src/routes/ekonomi.js`](file:///d:/Project/pertanian_main/src/routes/ekonomi.js) | Endpoint kueri inflasi, pasar daerah, titik spasial pasar (/pasar-titik), nilai ekonomi, dan lumbung pangan | Terisolasi pada domain Ekonomi & Logistik |
+| [`src/routes/kelembagaan.js`](file:///d:/Project/pertanian_main/src/routes/kelembagaan.js) | Endpoint kueri Poktan, Gapoktan, dan KTH | Terisolasi pada domain Kelembagaan |
+| [`src/routes/st2023.js`](file:///d:/Project/pertanian_main/src/routes/st2023.js) | Endpoint kueri data sensus ST2023 tingkat desa | Terisolasi pada domain Sensus |
+| [`src/routes/bantuan.js`](file:///d:/Project/pertanian_main/src/routes/bantuan.js) | Endpoint kueri program dan sebaran bantuan pemerintah | Terisolasi pada domain Bantuan |
+| [`src/routes/lahan.js`](file:///d:/Project/pertanian_main/src/routes/lahan.js) | Endpoint kueri penggunaan lahan, tutupan lahan & evaluasi kesesuaian | Mengimpor `src/lib/kesesuaian.js` |
+| [`src/lib/kesesuaian.js`](file:///d:/Project/pertanian_main/src/lib/kesesuaian.js) | Modul evaluasi kesesuaian lahan multi-sektor & korelasi tutupan lahan fisik | Digunakan oleh `src/routes/lahan.js` |
 | [`src/routes/ai.js`](file:///d:/Project/pertanian_main/src/routes/ai.js) | Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL, Offline NLG, dan KB) | Mengimpor `src/lib/ai-nlg.js` & `src/lib/ai-offline-kb.js` |
-| [`src/lib/ai-nlg.js`](file:///d:/Project/pertanian_main/src/lib/ai-nlg.js) | Rule-Based Natural Language Generator untuk sintesis narasi ramah & terstruktur | Digunakan oleh `src/routes/ai.js` (ADR-060) |
+| [`src/lib/ai-nlg.js`](file:///d:/Project/pertanian_main/src/lib/ai-nlg.js) | Rule-Based Natural Language Generator untuk sintesis narasi ramah & terstruktur | Digunakan oleh `src/routes/ai.js` (ADR-060, ADR-078) |
 | [`src/lib/ai-offline-kb.js`](file:///d:/Project/pertanian_main/src/lib/ai-offline-kb.js) | Pustaka pengetahuan offline komoditas Banjarnegara, SOP hama, & panduan SIMLUHTAN | Digunakan oleh `src/routes/ai.js` (ADR-060) |
-| [`scripts/seed_ketahanan_pangan.js`](file:///d:/Project/pertanian_main/scripts/seed_ketahanan_pangan.js) | Skrip seed idempoten akun ketahanan-pangan ke database users | Skrip CLI pemeliharaan DB (ADR-061) |
-| [`tests/ai-fallback.test.js`](file:///d:/Project/pertanian_main/tests/ai-fallback.test.js) | Unit test otomatis modul AI Offline KB dan Natural Language Generator | Test runner |
-| [`tests/endpoint.test.js`](file:///d:/Project/pertanian_main/tests/endpoint.test.js) | Integration test endpoint streaming SSE `/api/v1/ai/chat` | Test runner |
-| [`src/lib/data-sources.js`](file:///d:/Project/pertanian_main/src/lib/data-sources.js) | Katalog pemetaan sumber data publik vs rujukan luar per domain | Digunakan oleh `src/routes/admin.js` (ADR-063) |
-| [`src/lib/helpers.js`](file:///d:/Project/pertanian_main/src/lib/helpers.js) | Utilitas pembungkus rute `wrapRoute()` dan respon standar | Utility murni |
-| [`src/routes/renstra.js`](file:///d:/Project/pertanian_main/src/routes/renstra.js) | Endpoint kueri target indikator kinerja Renstra dinamis (`/target`, `/summary`) | Terisolasi pada domain Renstra & RKPD (ADR-075) |
+| [`src/routes/renstra.js`](file:///d:/Project/pertanian_main/src/routes/renstra.js) | Endpoint kueri target indikator kinerja Renstra dinamis (`/target`, `/summary`, `/evaluasi`, `/pagu`) | Mengimpor `src/lib/renstra-evaluasi.js` (ADR-075, ADR-079) |
+| [`src/lib/renstra-evaluasi.js`](file:///d:/Project/pertanian_main/src/lib/renstra-evaluasi.js) | Engine kalkulasi evaluasi indikator Renstra Model A & matriks pagu program APBD | Digunakan oleh `src/routes/renstra.js` (ADR-079) |
 | [`scripts/migrate_renstra_schema.js`](file:///d:/Project/pertanian_main/scripts/migrate_renstra_schema.js) | Skrip migrasi DDL multi-tahun tabel `renstra_target` MySQL | Skrip CLI pemeliharaan DB (ADR-075) |
 | [`scripts/seed_renstra_target.js`](file:///d:/Project/pertanian_main/scripts/seed_renstra_target.js) | Skrip seeding 87 data faktual resmi Renstra 2019–2022 & 2025–2029 | Skrip CLI pemeliharaan DB (ADR-075) |
+| [`scripts/seed_pasar_banjarnegara.js`](file:///d:/Project/pertanian_main/scripts/seed_pasar_banjarnegara.js) | Skrip seed 36 titik pasar resmi ke tabel `pasar_banjarnegara` | Skrip CLI pemeliharaan DB (ADR-077) |
 
 ---
 
@@ -81,6 +78,7 @@ src/server.js
   ├── src/routes/bantuan.js ─────────────> src/db.js
   ├── src/routes/lahan.js ───────────────> src/db.js & src/lib/kesesuaian.js
   ├── src/routes/ai.js ──────────────────> src/db.js, src/lib/ai-nlg.js, src/lib/ai-offline-kb.js & Google Gemini API
+  ├── src/routes/renstra.js ─────────────> src/db.js & src/lib/renstra-evaluasi.js
   └── /api/v1/komoditas-unggulan ─> src/db.js (Tabel komoditas_unggulan & ikan_produksi_jenis)
 ```
 

@@ -312,12 +312,16 @@ peternakanRouter.post(
     }
 
     if (kategori === "poultry_shop") {
-      const nm = nama || "Toko Sapronak";
-      const lyn = jenis || req.body.layanan || "Pakan, Obat & Sapronak";
+      const nm = nama || req.body.nama_toko || "Toko Sapronak";
+      const lyn = jenis || req.body.layanan || req.body.jenis_layanan || "Pakan, Obat & Sapronak";
+      let krd = koordinat || req.body.koordinat || null;
+      if (!krd && req.body.latitude && req.body.longitude) {
+        krd = `${req.body.latitude}, ${req.body.longitude}`;
+      }
       await q(
         `INSERT INTO ternak_poultry_shop (kecamatan_id, tahun, bulan, nama_toko, alamat, jenis_layanan, koordinat, kontak, catatan, sumber)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'manual')`,
-        [kecId, thn, bulan || null, nm, alamat || null, lyn, koordinat || null, kontak || null, catatan || null],
+        [kecId, thn, bulan || null, nm, alamat || null, lyn, krd, kontak || null, catatan || null],
       );
       return { ok: true, message: `Data Toko Peternakan '${nm}' di Kec. ${kecamatan} berhasil disimpan.` };
     }

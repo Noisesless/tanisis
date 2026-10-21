@@ -81,3 +81,32 @@ renstraRouter.get(
     };
   })
 );
+
+/**
+ * GET /api/v1/renstra/evaluasi
+ * Query:
+ * - periode: '2025-2029' (default) | '2019-2022'
+ */
+renstraRouter.get(
+  "/evaluasi",
+  route(async (req) => {
+    const { getEvaluasiRenstra } = await import("../lib/renstra-evaluasi.js");
+    const periode = req.query.periode === "2019-2022" ? "2019-2022" : "2025-2029";
+    return await getEvaluasiRenstra(periode);
+  })
+);
+
+/**
+ * GET /api/v1/renstra/pagu
+ * Query:
+ * - periode: '2025-2029' (default) | '2019-2022'
+ */
+renstraRouter.get(
+  "/pagu",
+  route(async (req) => {
+    const { getPaguRenstra } = await import("../lib/renstra-evaluasi.js");
+    const periode = req.query.periode === "2019-2022" ? "2019-2022" : "2025-2029";
+    return getPaguRenstra(periode);
+  })
+);
+

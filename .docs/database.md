@@ -8,7 +8,7 @@ Dokumentasi lengkap struktur basis data MySQL/MariaDB `pertasis`, relasi master 
 
 - **Database Engine:** MySQL / MariaDB (InnoDB)
 - **Collation:** `utf8mb4_unicode_ci`
-- **Total Tabel:** 71 Tabel (mencakup master geografi, 23 domain statistik operasional yang memetakan 55 tabel sheet, sistem RBAC, komoditas, varietas, tabel audit sync_log dan activity_logs)
+- **Total Tabel:** 73 Tabel (mencakup master geografi, 23 domain statistik operasional yang memetakan 55 tabel sheet, sistem RBAC, komoditas, varietas, direktori spasial pasar fisik dan poultry shop, tabel audit sync_log dan activity_logs)
 - **Prinsip Upsert:** Seluruh tabel data statistik memiliki kunci unik natural (`UNIQUE KEY` pada kombinasi dimensi wilayah, tahun, dan komoditas) untuk mendukung operasi penggabungan `INSERT INTO ... ON DUPLICATE KEY UPDATE` saat impor Excel dilakukan. Kolom relasi teknis `desa_id` dan `kode_kec` di-resolve otomatis dari master geografi saat proses impor.
 - **Harmonisasi Baseline & Patch Runner:** Sinkronisasi dua arah telah dilakukan antara data riil production dan skema termutakhir development. Skrip migrasi non-destruktif tersimpan di `database/production_migration_patch.sql` dan `database/patch_production_normalization_2026.sql` yang dapat dieksekusi via `npm run db:patch` atau `npm run db:normalize`.
 
@@ -101,7 +101,8 @@ Katalog komoditas unggulan dan varietas spesifik (Padi Pandanwangi, Kentang Gran
 | **Perikanan** | `ikan_obyek_penangkapan` | `(kecamatan_id, obyek, arah, tahun)` | Pemantauan obyek penangkapan ikan |
 | **Perikanan** | `ikan_hias` | `(kecamatan_id, varietas, tahun)` | Budidaya ikan hias (cupang, koi, koki, guppy, arwana, dll.) |
 | **Ekonomi** | `inflasi` | `(wilayah, tahun)` | Laju inflasi komoditas pangan |
-| **Ekonomi** | `pasar` | `(jenis, tahun)` | Jumlah dan kategori pasar daerah |
+| **Ekonomi** | `pasar` | `(jenis, tahun)` | Jumlah dan kategori pasar daerah (agregat) |
+| **Ekonomi** | `pasar_banjarnegara` | `(id)` | Direktori 36 titik pasar fisik resmi, kategori, kecamatan, alamat, dan koordinat GPS (sumber GeoJSON Pemkab) |
 | **Ekonomi** | `nilai_ekonomi_tahunan` | `(bidang, komoditas, tahun, triwulan)`| Valuasi rupiah (Volume × Harga Produsen) |
 | **Ekonomi / Komoditas** | `komoditas_unggulan` | `(sektor, nama_komoditas, tahun)` | Agregasi dinamis komoditas unggulan ranking #1, volume, sentra, dan valuasi estimasi (ADR-009: auto-calculated dari tabel produksi) |
 | **Ekonomi** | `lumbung_pangan` | `(kecamatan_id, tahun)` | Jumlah unit & kapasitas lumbung/gudang |

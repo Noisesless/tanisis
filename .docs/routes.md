@@ -93,7 +93,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/perikanan/nilai-budidaya` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi budidaya ikan |
 | `GET` | `/v1/perikanan/nilai-tangkap` | `src/routes/perikanan.js` | Publik | Valuasi nilai ekonomi perikanan tangkap |
 | `GET` | `/v1/ekonomi/inflasi` | `src/routes/ekonomi.js` | Publik | Indeks inflasi bahan pangan |
-| `GET` | `/v1/ekonomi/pasar` | `src/routes/ekonomi.js` | Publik | Direktori pasar komoditas daerah |
+| `GET` | `/v1/ekonomi/pasar` | `src/routes/ekonomi.js` | Publik | Direktori pasar komoditas daerah (agregat tahunan) |
+| `GET` | `/v1/ekonomi/pasar-titik` | `src/routes/ekonomi.js` | Publik | Direktori 36 titik pasar fisik resmi Banjarnegara (nama, kategori, kecamatan, alamat, koordinat) |
 | `GET` | `/v1/ekonomi/sektor-ringkasan` | `src/routes/ekonomi.js` | Publik | Agregasi dinamis komoditas utama (ranking #1) & total nilai ekonomi per sektor, subsektor (sayuran, buah, biofarmaka, tanaman_hias), & tahun (Zero Dummy Data, ADR-009, ADR-014) |
 | `GET` | `/v1/ekonomi/nilai-ekonomi` | `src/routes/ekonomi.js` | Publik | Valuasi nilai ekonomi tahunan resmi per bidang dari MySQL |
 | `GET` | `/v1/komoditas-unggulan` | `src/server.js` | Publik | Daftar dinamis komoditas unggulan per bidang dari MySQL & tabel produksi riil (Zero Dummy Data) |
@@ -122,6 +123,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/bantuan` | `src/routes/bantuan.js` | Publik | Alokasi dan penerima bantuan pemerintah (mendukung pemisahan Uang & Barang/Paket tanpa nominal rupiah) |
 | `GET` | `/v1/renstra/target` | `src/routes/renstra.js` | Publik | Data target indikator kinerja Renstra dinamis (2019–2022 & 2025–2029) dengan filter jenis dan sektor |
 | `GET` | `/v1/renstra/summary` | `src/routes/renstra.js` | Publik | Ringkasan agregat total indikator sasaran dan program per periode Renstra |
+| `GET` | `/v1/renstra/evaluasi` | `src/routes/renstra.js` | Publik | Evaluasi ketercapaian target Renstra vs data statistik transaksi riil database pertasis (Model A) |
+| `GET` | `/v1/renstra/pagu` | `src/routes/renstra.js` | Publik | Pagu indikatif belanja APBD program dan kegiatan utama Renstra (Tabel 4.3 & Bab VI) |
 | `POST`| `/v1/admin/login` | `src/routes/admin.js` | Publik (RL) | Autentikasi user admin & 5 bidang teknis (`admin`, `tanaman-pangan`, `horti-perkebunan`, `peternakan`, `perikanan`, `ketahanan-pangan`), generate bearer token, rate-limited, & catat activity_logs (ADR-061) |
 | `POST`| `/v1/admin/logout` | `src/routes/admin.js` | Bearer (Auth) | Logout sesi admin & pencatatan audit activity_logs |
 | `GET` | `/v1/admin/domains` | `src/routes/admin.js` | Bearer (RBAC) | 16 domain operasional terpadu bebas redundansi difilter sesuai peran aktif (ADR-058) |
@@ -133,8 +136,8 @@ Dokumen ini memetakan seluruh rute antarmuka frontend (SPA) dan endpoint API bac
 | `GET` | `/v1/admin/paket` | `src/routes/admin.js` | Bearer (Admin) | Indeks berkas paket arsip template/ekspor (Excel & CSV) |
 | `GET` | `/v1/admin/paket/:tipe/:file` | `src/routes/admin.js` | Bearer (Admin) | Unduh berkas paket arsip tertentu |
 | `GET` | `/v1/admin/readiness` | `src/routes/admin.js` | Bearer (Admin) | Audit kesiapan data publik per bidang, tahun data terakhir, status tabel database, & pelacakan fallback |
-| `GET` | `/v1/admin/sumber-data` | `src/routes/admin.js` | Bearer (Admin) | Pemetaan dinamis status asal data (unggahan Distankan KP vs pembanding luar BAPANAS/BPS/Kementan) per domain dan rute publik (ADR-063) |
-| `POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG & Resilient Offline NLG (`ai-nlg.js` + `ai-offline-kb.js` dengan streaming micro-chunk pacing SSE, grounding faktual 20 kecamatan, ADR-060) |
+| `GET` | `/v1/kewirausahaan/kwt` | `src/server.js` | Publik | Direktori live Kewirausahaan Kelompok Wanita Tani (KWT: 232 kelompok) dan kelompok binaan perikanan (Pokdakan/Poklahsar) |
+| `GET/POST`| `/v1/ai/chat` | `src/routes/ai.js` | Publik (RL) | Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG & Resilient Offline NLG (`ai-nlg.js` + `ai-offline-kb.js` dengan streaming micro-chunk pacing SSE, grounding faktual 20 kecamatan, ADR-060, info schema pada GET) |
 
 ---
 

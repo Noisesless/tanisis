@@ -93,7 +93,7 @@ Gunakan metode ini jika melakukan instalasi bersih atau memindahkan hosting:
 
 ---
 
-## 4. Sinkronisasi Basis Data Produksi (71 Tabel Lengkap)
+## 4. Sinkronisasi Basis Data Produksi (73 Tabel Lengkap)
 
 Terdapat tiga metode sinkronisasi basis data yang didukung penuh:
 

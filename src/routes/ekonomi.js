@@ -35,6 +35,32 @@ ekonomiRouter.get(
   }),
 );
 
+/** GET /api/v1/ekonomi/pasar-titik -> Daftar 36 pasar fisik resmi Banjarnegara dari database */
+ekonomiRouter.get(
+  "/pasar-titik",
+  route(async (req) => {
+    const { kecamatan, kategori } = req.query;
+    let where = "WHERE 1=1";
+    const params = [];
+    if (kecamatan) {
+      where += " AND LOWER(kecamatan) LIKE ?";
+      params.push(`%${String(kecamatan).toLowerCase().trim()}%`);
+    }
+    if (kategori) {
+      where += " AND LOWER(kategori) LIKE ?";
+      params.push(`%${String(kategori).toLowerCase().trim()}%`);
+    }
+    const rows = await q(
+      `SELECT id, nama, kategori, kecamatan_id, kecamatan, alamat, latitude, longitude, koordinat, sumber
+       FROM pasar_banjarnegara
+       ${where}
+       ORDER BY kecamatan ASC, nama ASC`,
+      params,
+    );
+    return rows;
+  }),
+);
+
 /** GET /api/v1/ekonomi/harga-kabupaten -> data harga produsen resmi kabupaten */
 ekonomiRouter.get(
   "/harga-kabupaten",

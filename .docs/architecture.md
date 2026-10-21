@@ -48,6 +48,11 @@ graph TD
 2. **Lapisan Spasial GIS (Geographic Information System & True-Lazy Loading):**
    - Menggunakan pustaka Leaflet dan MapLibre GL untuk merender peta interaktif dashboard eksekutif dan sebaran komoditas.
    - Peta dan data vektor disajikan dalam format GeoJSON statis dari direktori `./dist/` (`peta_desa_v3.geojson`, `peta_kecamatan.geojson`, `sawah.geojson`, `kebun.geojson`, `ladang.geojson`, `danau.geojson`, `sungai.geojson`, `jalan.geojson`, dll).
+   - **Point Overlay Tematik (Pasar & Poultry Shop — ADR-077):** Peta Dashboard Eksekutif (`pages-BdW-ZTL4.js`) dilengkapi dua layer titik spasial:
+     - *Layer Pasar Daerah:* 36 titik pasar fisik terverifikasi (31 pasar tradisional, 2 pasar ikan, 1 pasar hewan, 1 pasar buah, 1 pasar unggas) dari tabel database `pasar_banjarnegara` dan `dist/data/pasar-banjarnegara.geojson`.
+     - *Layer Poultry Shop & Pakan:* 15 titik toko peternakan riil se-Kabupaten Banjarnegara (termasuk 6 toko terverifikasi di pusat Kota Banjarnegara: Krandegan, Kutabanjarnegara, Jl. Jend. Sudirman, Jl. Mayjend Soetojo) dari tabel `ternak_poultry_shop` dan `dist/data/poultry-banjarnegara.geojson` dengan marker ungu khas (`#7c3aed`).
+     - *Bypass Cache GeoJSON Titik Dinamis:* Berkas `poultry-banjarnegara.geojson` dan `pasar-banjarnegara.geojson` disajikan oleh Express di `src/server.js` dengan header `Cache-Control: no-cache, no-store, must-revalidate` serta query buster `?v=timestamp` agar titik baru langsung tampil di peramban tanpa jeda caching.
+     - *Leaflet Reactive Remount Key:* Elemen `<Ce.Overlay>` diberi key dinamis `${e.key}-${t.features.length}` sehingga layer otomatis ter-render ulang saat data GeoJSON asinkron selesai diunduh.
    - **Optimasi Geometri & Koordinat (ADR-051):** Seluruh berkas GeoJSON dioptimasi via `scripts/optimize_geojson.js` (`npm run geojson:optimize`) dengan pembulatan koordinat 6 desimal (~11 cm akurasi), 2D flattening (eliminasi elevasi Z `0`), serta pembersihan metadata shapefile mentah (`METADATA`, `SRS_ID`, dll), memangkas ukuran total dari 23,30 MB menjadi 13,72 MB (-41,1%).
    - **True-Lazy Layer Loading:** Bundel frontend (`pages-BdW-ZTL4.js`) mengimplementasikan pemuatan on-demand via event Leaflet `overlayadd`. Layer berat (Jaringan Jalan 5,5 MB, Sawah 1,1 MB, Kebun 1,8 MB, Ladang 1,1 MB) hanya diunduh saat pengguna mencentang toggle layer bersangkutan, memangkas transfer awal halaman sebesar 85,8% (~3,3 MB initial payload).
    - **Ketahanan Cache Browser & Eliminasi Quota Storage (ADR-074):** Berkas `peta_desa_v3.geojson` (2,63 MB) tidak lagi disimpan di `localStorage` klien untuk menghindari `QuotaExceededError` (5 MB DOMStorage limit) dan mencegah risiko memuat geometri cacat dari cache usang. Caching GeoJSON didelegasikan 100% ke HTTP Disk Cache browser resmi dengan header `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
@@ -71,11 +76,15 @@ graph TD
    - **Pembersihan Kartu Pembungkus Global `Ft`:** Komponen global `Ft` di `index-CI1XYnwk.js` dikonversi menjadi unboxed murni (`h-14 sm:h-16 w-auto object-contain max-h-[60px]`).
    - **Favicon Multi-Resolusi Terpadu:** Seluruh browser favicon (.ico dan .png 16×16 s/d 256×256) di-generate langsung dari aset master resmi `dist/logo.png`.
 
-6. **Arsitektur Renstra Dual-Periode & Integrasi REST API MySQL (ADR-072, ADR-073 & ADR-075):**
-   - **Unified 5-Layer Layout Engine:** Halaman `/renstra` mengimplementasikan arsitektur visual terpadu 5 lapis (`dist/assets/renstra-v242.js`) yang setara dan presisi untuk kedua periode: Header & Pemilih Periode, 3 Top Metric Cards beraksen `border-l-4`, 4 Pilar Sasaran Pokok, Tabel Matriks Target Multi-Tahun (dengan tab segmented Sasaran vs Program, filter 7 sektor, dan live text search), serta Sumber Dokumen Resmi.
-   - **Integrasi REST API Dinamis (`/api/v1/renstra/target` & `/api/v1/renstra/summary`):** Komponen frontend secara asinkron mengambil data live dari basis data MySQL `pertasis` (tabel `renstra_target`), dengan fallback instan ke dataset terverifikasi (87 record resmi: 27 indikator 2025–2029 dan 60 indikator 2019–2022) untuk menjamin zero-flicker dan ketersediaan offline.
+6. **Arsitektur Renstra Model A & Integrasi REST API MySQL (ADR-072, ADR-073, ADR-075 & ADR-079):**
+   - **Unified 5-Segmented Navigation Engine:** Halaman `/renstra` mengimplementasikan navigasi modular 5-tab tersegmentasi (`dist/assets/renstra-v242.js`):
+     1. *Renstra 2025–2029:* 9 IKU & 18 IKK resmi RPJMD (Tabel 4.5 & 4.7).
+     2. *Renstra 2019–2022:* 43 Indikator Sasaran & 17 Program RPJMD (Tabel 4.1 & 7.2).
+     3. *Evaluasi Indikator (Model A):* Matriks komparasi komprehensif Target vs Realisasi riil Th-1 s/d Th-4 beserta perhitungan persentase capaian kualitatif per indikator.
+     4. *Pagu Anggaran per Program:* Analisis alokasi pembiayaan APBD Murni & Perubahan Th-1 s/d Th-4 untuk 17 program dinas.
+     5. *Dokumen Renstra:* Akses unduh berkas salinan resmi PDF 77 halaman (`/renstra-2025-2029.pdf`) dan 123 halaman (`/renstra.pdf`).
+   - **Integrasi REST API Dinamis (`/api/v1/renstra/*`):** Endpoint `/target`, `/summary`, `/evaluasi`, dan `/pagu` menyajikan data langsung dari database MySQL `pertasis` dengan fallback client-side aman untuk zero-flicker dan ketersediaan offline.
    - **Kanonikalitas Modul Entry-Point (`index-CI1XYnwk.js`):** Menetapkan kembali `index-CI1XYnwk.js` sebagai root bundle di `dist/index.html` dan `src/server.js` tanpa pengalihan HTTP 301, memastikan seluruh chunk modul frontend berbagi instansiasi tunggal React (*ReactCurrentDispatcher singleton*) tanpa risiko Minified React Error #321.
-   - **Harmonisasi Unduh PDF Dinamis:** Tombol unduh dokumen secara dinamis mengarah ke berkas salinan resmi PDF 77 halaman (`/renstra-2025-2029.pdf`) atau berkas historis 123 halaman (`/renstra.pdf`).
 
 ---
 
@@ -192,6 +201,9 @@ sequenceDiagram
    - Seluruh respons asisten—baik dijalankan melalui Google Gemini API (online), fallback lokal Node.js (`src/lib/ai-nlg.js`), maupun CLI Python (`scripts/offline_rag.py`)—menggunakan persona tunggal yang identik: **"Si Pertani"**, asisten informasi resmi Dinas Pertanian, Perikanan dan Ketahanan Pangan Kabupaten Banjarnegara.
    - Dilarang keras membocorkan parameter teknis backend ke antarmuka pengguna (seperti *"Mode Offline RAG"*, *"koneksi upstream sedang sibuk"*, atau istilah arsitektur internal).
 6. **Resilience & High Availability:** Orkestrasi fallback multi-model (`gemini-flash-lite-latest` -> `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.8-flash`) serta fallback lokal Rule-Based NLG menjamin layanan asisten tetap beroperasi 100% tanpa henti.
+7. **Grounding Spasial Titik Pasar Fisik & Toko Peternakan (ADR-078):**
+   - Mengintegrasikan data 36 pasar fisik resmi dari tabel `pasar_banjarnegara` (termasuk 2 pasar ikan: Krandegan & Karangkobar, pasar hewan Petambakan, pasar buah Kalibening, pasar unggas Kutabanjarnegara) dan 15 toko peternakan riil dari `ternak_poultry_shop` (termasuk 6 toko di pusat Kota Banjarnegara: Jl. Jend. Sudirman, Jl. Mayjend Soetojo, Sunan Gripit, Serma Mukhlas).
+   - Dilengkapi modul *Typo Tolerance* dan *Spatial Intent Extractor* (`isPasar`, `isPoultry`, `isWhereQuery`) yang menangkap variasi kueri (seperti `"pasa ikan dimana"`, `"psar"`, `"toko pakan"`, `"sapronak"`, `"kios"`) dan menyajikan titik koordinat, kecamatan, dan alamat resmi baik pada mode Gemini API maupun fallback lokal NLG tanpa halusinasi ketiadaan titik.
 
 ---
 

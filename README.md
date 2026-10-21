@@ -19,8 +19,10 @@ Sistem ini melayani dua antarmuka utama:
 Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prinsip anti-AI-slop yang membagi navigasi menjadi 4 pilar fungsional terurut dengan ikonografi resmi `lucide-react`:
 
 1. **Eksekutif & Spasial:**
-   - `Dashboard Eksekutif` (`/`) — Ringkasan metrik makro pangan, komoditas, dan grafik daerah.
-   - `Peta Geospasial GIS` (`/sebaran/pangan`) — WebGIS interaktif tutupan sawah, ladang, sungai, jalan, dan batas wilayah.
+   - `Dashboard Eksekutif` (`/`) — Ringkasan metrik makro pangan, komoditas, grafik daerah, serta **Peta GIS Eksekutif Interaktif** dengan tutupan sawah, ladang, sungai, jalan, batas wilayah, serta 2 layer titik overlay tematik:
+     - *Layer Pasar Daerah:* 36 titik pasar fisik terverifikasi (31 tradisional, 2 pasar ikan [Krandegan & Karangkobar], 1 pasar hewan [Petambakan], 1 pasar buah [Kalibening], 1 pasar unggas [Kutabanjarnegara]) dari database `pasar_banjarnegara`.
+     - *Layer Poultry Shop & Pakan:* 15 titik toko peternakan riil se-Kabupaten Banjarnegara (termasuk 6 toko resmi di pusat Kota Banjarnegara: Jl. Jend. Sudirman, Jl. Mayjend Soetojo, Sunan Gripit, Serma Mukhlas) dengan pin ungu (`#7c3aed`), popup rincian jam layanan, dan nomor kontak.
+   - `Peta Geospasial GIS` (`/sebaran/pangan`) — WebGIS interaktif tutupan sawah, ladang, sungai, jaringan jalan, dan batas wilayah administrasi desa/kecamatan.
 2. **Sektor Komoditas (4 Bidang Teknis Simetris — Dual Submenus Dinamis):**
    - `Tanaman Pangan` — Produksi Padi & Palawija, Komoditas Unggulan Pangan (`/komoditas-unggulan/pangan`), Nilai Ekonomi Pangan (`/nilai-ekonomi/pangan`), LTT & Kalender Tanam (`/ltt-katam`), Prediksi Panen.
    - `Hortikultura & Perkebunan` — Produksi Sayuran & Buah, Komoditas Unggulan Hortikultura, Nilai Ekonomi Hortikultura, Analitik Perkebunan Khas, Komoditas Unggulan Perkebunan, Nilai Ekonomi Perkebunan.
@@ -28,7 +30,7 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
    - `Perikanan Air Tawar` — Produksi & Budidaya Ikan, Komoditas Unggulan Perikanan, Nilai Ekonomi Perikanan (`/economic-value`).
 3. **Kebijakan & Ketapang:**
    - `Ketahanan Pangan (Bapanas)` — Ketersediaan Beras, Peta FSVA Desa (`/fsva` — 16 Indikator Fisik & Rasio Validasi Bapanas Terintegrasi Database), Rantai Pasok/RMU, Fluktuasi Harga Pasar.
-   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra` — Dual Periode Terpadu: Renstra 2025–2029 [9 IKU & 18 IKK] & Renstra 2019–2022 [43 Indikator Sasaran & 17 Indikator Program RPJMD] dengan tabel target multi-tahun terpadu, integrasi REST API MySQL `pertasis`, dan unduh berkas resmi PDF), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
+   - `Perencanaan & Renstra` — Analisis Indikator Renstra Distankan (`/renstra` — Navigasi Modular 5-Tab Tersegmentasi: Renstra 2025–2029 [9 IKU & 18 IKK], Renstra 2019–2022 [43 Indikator Sasaran & 17 Program RPJMD], Evaluasi Indikator [Model A Target vs Realisasi Th-1 s/d Th-4 + Capaian %], Pagu Anggaran per Program [APBD Murni & Perubahan Th-1 s/d Th-4], dan Akses Unduh Dokumen Resmi PDF 77 & 123 Halaman), Rekomendasi Kebijakan (`/recommendations`), Sensus ST2023.
    - `Kelembagaan & Data`:
    - `Kelembagaan Tani` (3 Submenu Navbar Terisolasi):
      - `Tani, Gapoktan & KWT` (`/farmers?klaster=tani`) — 2.687 Poktan/KWT/Gapoktan & Rekapitulasi Validasi SK Kadistan 20 Kecamatan.
@@ -40,6 +42,8 @@ Sidebar aplikasi dirancang dengan pendekatan *Shape-First Architecture* dan prin
 
 > **Fitur Visual & Tata Letak Unggulan:**
 > - **Unified Topbar & Avatar Dropdown:** Mengeliminasi tombol berceceran di header atas. Seluruh tautan utilitas (*Info*, *Panduan*, status profil *Guest*, dan akses *Portal Admin*) dirapikan ke dalam satu Avatar Dropdown interaktif setinggi `72px`.
+> - **Integrasi Layer Spasial Titik & Cache-Busting Cerdas (ADR-077):** Peta Dashboard Eksekutif menampilkan layer titik pasar (oranye) dan toko pakan/poultry shop (ungu) dengan popup interaktif rincian alamat dan layanan. Engine server mengecualikan GeoJSON titik dinamis dari caching lama, menyajikan header `no-cache, no-store` dengan parameter versi, dan komponen Leaflet me-remount secara dinamis lewat reactive feature length key (`${e.key}-${t.features.length}`).
+> - **Arsitektur Model A Renstra Evaluasi & Alokasi Pagu (ADR-079):** Transformasi antarmuka Renstra (`/renstra`) menjadi 5 pilar navigasi setara, menyatukan visualisasi matriks target multi-tahun, evaluasi kualitatif capaian indikator lapangan, dan transparansi alokasi belanja APBD dinas secara terpadu.
 > - **Penyelarasan 36 Judul Navbar vs Halaman & Unifikasi Tab Baku (ADR-054):** 100% sinkronisasi 36 rute antara sidebar dan tag `<h1>` halaman. Seluruh tab diunifikasi menjadi format *Executive Segmented Pill* (`flex flex-wrap items-center gap-1.5 p-1 rounded-lg border border-slate-200 bg-slate-100/90 shadow-sm w-fit`), eliminasi pembungkus kartu ilustrasi domain pada komponen `Ft`, serta penyediaan browser favicon multi-resolusi (16×16 s/d 256×256) dari logo master resmi `dist/logo.png`.
 > - **Ketahanan Spasial GeoJSON & True-Lazy Loading (ADR-051 & ADR-053):** Peta desa/kecamatan bebas galat dengan optimasi koordinat 6 desimal, 2D flattening, penanganan rekursif fitur `GeometryCollection`, defensive guard Leaflet, serta pengunduhan on-demand layer tematik berat yang menghemat transfer awal hingga 85,8%.
 > - **Resilience Peta Choropleth & Dashboard Eksekutif (ADR-074):** Pemuatan data lahan desa dieksekusi secara decoupled (46 ms) tanpa terhambat delay upstream CKAN, proteksi anti-empty cache di localStorage, delegasi GeoJSON 2,63 MB murni ke HTTP Cache browser, dan proksi fallback CKAN dengan snapshot lokal 170 dataset.
@@ -90,15 +94,20 @@ pertanian_main/
 │   │   └── helpers.js         # Wrapper error handling, validasi & format response
 │   └── routes/
 │       ├── admin.js           # Auth Bearer, rate limiter login, import/export/paket
+│       ├── ai.js              # Streaming AI assistant Si Pertani + Dynamic Live RAG
 │       ├── bantuan.js         # Program bantuan pemerintah, alokasi & dampak
 │       ├── ekonomi.js         # Inflasi, pasar daerah, nilai ekonomi komoditas
 │       ├── hortikultura.js    # Produksi & luas sayuran/buah kecamatan & kabupaten
-│       ├── kelembagaan.js     # Kelompok tani (Poktan, Gapoktan) & KTH
+│       ├── kelembagaan.js     # Kelompok tani (Poktan, Gapoktan, KWT) & KTH
+│       ├── ketahanan.js       # FSVA desa 16 indikator, neraca komposit, harga pasar
+│       ├── komoditas-unggulan.js # Komoditas unggulan top-1 per kecamatan x 5 bidang
 │       ├── lahan.js           # Penggunaan lahan sawah & tutupan tanah
 │       ├── padi.js            # Produksi padi sawah/ladang & palawija
 │       ├── perikanan.js       # Budidaya kolam/waduk/minapadi, tangkap & benih
 │       ├── perkebunan.js      # Areal & produksi komoditas perkebunan
-│       ├── peternakan.js      # Populasi, daging, telur, susu/kulit, HPT, UMKM, NKV & entry
+│       ├── peternakan.js      # Populasi, daging, telur, susu/kulit, HPT, UMKM, poultry, NKV
+│       ├── psat.js            # Pengawasan uji petik keamanan pangan PSAT-PDUK
+│       ├── renstra.js         # Indikator kinerja Renstra 2019-2022 & 2025-2029, evaluasi & pagu
 │       └── st2023.js          # Sensus Pertanian 2023 tingkat desa
 └── .docs/                     # Dokumentasi arsitektur standar lengkap
     ├── architecture.md        # Aliran data makro (Presentation -> Logic -> DB)
@@ -172,6 +181,15 @@ npm run db:patch
 
 # Sinkronisasi khusus komoditas unggulan faktual & pembersihan dummy
 npm run db:patch-unggulan
+
+# Seeding titik spasial 36 pasar resmi Banjarnegara ke database
+node scripts/seed_pasar_banjarnegara.js
+
+# Verifikasi & seeding 6 toko peternakan / poultry shop Kota Banjarnegara
+node scripts/add_kota_poultry_shops.js
+
+# Seeding 87 indikator kinerja resmi Renstra 2019–2022 & 2025–2029
+node scripts/seed_renstra_target.js
 
 # Menjalankan Asisten RAG Offline Python (CLI / Terminal)
 npm run rag:offline "kalau 2023 salak paling banyak dari mana?"
@@ -254,14 +272,19 @@ Semua endpoint didaftarkan dengan dukungan dual-prefix:
 - `GET /api/v1/perikanan/hias` — Data varietas ikan hias per kecamatan.
 - `GET /api/v1/perikanan/budidaya`, `/perikanan/tangkap`, `/perikanan/benih` — Statistik perikanan & alat tangkap (termasuk Bubu).
 - `GET /api/v1/ekonomi/inflasi`, `/ekonomi/pasar`, `/lumbung` — Indikator makro ekonomi & logistik.
+- `GET /api/v1/ekonomi/pasar-titik` — Titik spasial 36 pasar fisik resmi Banjarnegara (31 pasar tradisional, 2 pasar ikan, 1 pasar hewan, 1 pasar buah, 1 pasar unggas) dari database `pasar_banjarnegara` (filter `?kecamatan=&kategori=`).
 - `GET /api/v1/ekonomi/sektor-ringkasan` — Komoditas utama ranking #1 & nilai ekonomi sektor (kalkulasi dinamis, Zero Dummy Data).
 - `GET /api/v1/ekonomi/nilai-ekonomi` — Valuasi nilai ekonomi tahunan resmi per bidang.
 - `GET /api/v1/komoditas-unggulan` — Daftar dinamis komoditas unggulan per bidang (agregasi otomatis server-side).
 - `GET /api/v1/komoditas-unggulan/per-kecamatan` — Top-1 komoditas per kecamatan x 5 bidang (agregasi server-side).
+- `GET /api/v1/renstra/target` — Target indikator resmi Renstra 2019–2022 & 2025–2029 dari database `renstra_target` (87 indikator, filter `?periode=&jenis=&sektor=`).
+- `GET /api/v1/renstra/summary` — Ringkasan total indikator sasaran dan program per periode.
+- `GET /api/v1/renstra/evaluasi` — Matriks evaluasi indikator Renstra Model A (Target vs Realisasi Th-1 s/d Th-4 dan persentase capaian).
+- `GET /api/v1/renstra/pagu` — Analisis pagu anggaran APBD Murni & Perubahan Th-1 s/d Th-4 untuk 17 program dinas.
 - `GET /api/v1/kelembagaan/kelompok-tani`, `/kelembagaan/kth` — Data kelembagaan tani.
 - `GET /api/v1/st2023/desa` — Data Sensus Pertanian 2023 desa.
 - `GET /api/v1/bantuan` — Data alokasi, program, dan sebaran bantuan.
-- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Year-Aware Live RAG (MySQL `pertasis` + Google Gemini) & Resilient Offline NLG. Mendukung penarikan data lintas tahun (2023–2025), eliminasi data dummy, filter kelompok tanaman hias & ikan hias, pencarian spasial kelembagaan KWT, serta Graceful Local Fallback berbasis Rule-Based NLG dan Offline Agricultural Knowledge Base (SOP hama, profil komoditas Banjarnegara, dan panduan SIMLUHTAN) dengan streaming micro-chunk pacing.
+- `POST /api/v1/ai/chat` — Proksi streaming Chatbot Si Pertani + Dynamic Live RAG (MySQL `pertasis` + Google Gemini) & Resilient Offline NLG. Mendukung penarikan data lintas tahun (2018–2029), grounding spasial titik pasar fisik (`pasar_banjarnegara`) dan toko peternakan / poultry shop (`ternak_poultry_shop`), toleransi tipografi (typo tolerance: `"pasa ikan"`, `"psar"`, `"toko pakan"`, `"sapronak"`), target Renstra 87 indikator, eliminasi data dummy, filter kelompok tanaman & ikan hias, pencarian spasial kelembagaan KWT, serta Graceful Local Fallback berbasis Rule-Based NLG dan Offline Agricultural Knowledge Base (SOP hama, profil komoditas Banjarnegara, panduan SIMLUHTAN) dengan streaming micro-chunk pacing tanpa kebocoran istilah teknis internal.
 - `GET /api/3/*` — Gateway proksi katalog CKAN Open Data Banjarnegara.
 
 ### Endpoint Dasbor Administrasi (Bearer Auth & RBAC)

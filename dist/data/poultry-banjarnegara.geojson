@@ -1,0 +1,276 @@
+{
+  "type": "FeatureCollection",
+  "name": "poultry-banjarnegara",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "(TRIO PUTRA) Herry PS Banjarnegara",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Unggas, Konsentrat Ayam & Burung, Obat Ternak",
+        "alamat": "Jl. Mayjend Soetojo No. 7, Krandegan, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0882-2783-8741"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.69581,
+          -7.39415
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Iqbal Jaya Poultry Shop",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ayam, Bebek, Unggas & Obat-obatan Hewan",
+        "alamat": "Jl. Sunan Gripit, Kutabanjarnegara, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0857-4774-4417"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.69115,
+          -7.39342
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pioneer Poultry Shop",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Unggas, DOC, Vaksin, Vitamin & Sapronak Peternakan",
+        "alamat": "Jl. Jend. Sudirman No. 166, Krandegan, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0811-2616-199"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.69742,
+          -7.398412
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "PS. Berkah (Pakan Hewan & Burung)",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Pakan Unggas, Burung & Ikan",
+        "alamat": "Jl. Serma Mukhlas No. 1, Kutabanjarnegara, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0857-346-976"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.6892,
+          -7.3981
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sekawan Animal Food (PT. Kanaan Makmur Sejahtera)",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Pakan Ikan, Konsentrat & Perlengkapan Peternakan",
+        "alamat": "Jl. Jend. Sudirman No. 196, Krandegan, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0812-2299-9039"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.69913,
+          -7.39885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sri Jaya PS",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Konsentrat Unggas & Sapronak",
+        "alamat": "Area Krandegan, Kec. Banjarnegara",
+        "kecamatan": "Banjarnegara",
+        "kontak": "0815-4237-4898"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.6962,
+          -7.3965
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "BARA PETSHOP 1",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Hewan, Vitamin, Obat & Perlengkapan Peternakan",
+        "alamat": "Jl. Raya Bawang, Kec. Bawang",
+        "kecamatan": "Bawang",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.620955,
+          -7.400662
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tani Jaya PS",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ayam, Bebek, Pakan Ikan & Obat Hewan",
+        "alamat": "Jl. Raya Bawang / Pucang, Kec. Bawang",
+        "kecamatan": "Bawang",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.619157,
+          -7.400807
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Adam Poultry Shop",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Unggas, DOC, Vitamin & Sapronak",
+        "alamat": "Jl. Raya Mandiraja, Kec. Mandiraja",
+        "kecamatan": "Mandiraja",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.472353,
+          -7.465383
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Reza Poultry Shop",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Sapronak Unggas & Obat Hewan",
+        "alamat": "Jl. Raya Purwanegara, Kec. Purwanegara",
+        "kecamatan": "Purwanegara",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.557089,
+          -7.433529
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Manyoel ABS K3",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak & Sarana Produksi Peternakan",
+        "alamat": "Klampok / Kaliwinasuh, Kec. Purwareja Klampok",
+        "kecamatan": "Purwareja Klampok",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.452326,
+          -7.461357
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Toko Pakan Ternak \"Iman\"",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Unggas & Sapronak",
+        "alamat": "Klampok, Kec. Purwareja Klampok",
+        "kecamatan": "Purwareja Klampok",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.440366,
+          -7.459866
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Toko Sidodadi PS",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Hewan, Unggas, Telur & Kebutuhan Peternakan",
+        "alamat": "Sirkandi, Kec. Purwareja Klampok",
+        "kecamatan": "Purwareja Klampok",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.429035,
+          -7.473699
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "JOGLO PS - Animal Food & Plastik",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Animal Food & Kebutuhan Unggas",
+        "alamat": "Kawasan Susukan, Kec. Susukan",
+        "kecamatan": "Susukan",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.390476,
+          -7.497117
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Toko Sumber Pakan",
+        "kategori": "Poultry Shop",
+        "jenis_layanan": "Pakan Ternak, Konsentrat & Pakan Unggas",
+        "alamat": "Wilayah Brengkok / Susukan, Kec. Susukan",
+        "kecamatan": "Susukan",
+        "kontak": "—"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.419044,
+          -7.486154
+        ]
+      }
+    }
+  ]
+}

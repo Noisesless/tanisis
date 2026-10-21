@@ -37,6 +37,10 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 | **Resolusi React Singleton & DOM Reconciler (ADR-073)** | Sangat Baik | ✅ PASSED | Penegakan `index-CI1XYnwk.js` sebagai root bundle kanonikal yang diimpor seluruh 76 chunk dan `index.html`. Eliminasi permanen Minified React error #321 dan error reconciler DOM `removeChild`. |
 | **Resilience Peta Choropleth & Dashboard Eksekutif (ADR-074)** | Sangat Baik | ✅ PASSED | Decoupled data fetching data desa mandiri (46 ms) tanpa terblokir CKAN timeout; auto-purge key kosong di localStorage; eliminasi 5 MB GeoJSON dari DOMStorage mendelegasikannya ke HTTP Disk Cache; proksi CKAN timeout 4s dengan fallback snapshot lokal 170 dataset (ISSUE-056). |
 | **Standardisasi Renstra Multi-Periode & Migrasi MySQL (ADR-075)** | Sangat Baik | ✅ PASSED | Penyelarasan antarmuka Renstra 2019–2022 dan 2025–2029 ke Unified 5-Layer Layout yang setara; migrasi skema tabel renstra_target di MySQL pertasis; seeding 87 record faktual utuh tanpa data dummy; penyediaan REST API dinamis live (/api/v1/renstra/target dan summary) dengan fallback client-side aman (ISSUE-055). |
+| **Integrasi Titik Spasial Pasar & Poultry Shop (ADR-077)** | Sangat Baik | ✅ PASSED | Seeding 36 pasar resmi Banjarnegara ke tabel `pasar_banjarnegara` dan 15 toko peternakan riil ke `ternak_poultry_shop` (termasuk 6 toko di pusat Kota Banjarnegara). Bypass cache GeoJSON dinamis (`no-cache`) dan dynamic remount key `<Ce.Overlay>` Leaflet memastikan visibilitas instan tanpa stale caching. |
+| **Grounding Spasial RAG & Typo Tolerance (ADR-078)** | Sangat Baik | ✅ PASSED | Peningkatan Dynamic RAG Si Pertani (`/api/v1/ai/chat`) dengan deteksi toleran typo (`"pasa ikan"`, `"psar"`, `"toko pakan"`, `"sapronak"`) dan grounding faktual dari tabel `pasar_banjarnegara` dan `ternak_poultry_shop`. Menghilangkan halusinasi ketidaktercatatan titik fisik. |
+| **Implementasi Renstra Model A & Matriks Pagu (ADR-079)** | Sangat Baik | ✅ PASSED | Penataan modular 5-tab tersegmentasi pada `/renstra` (`renstra-v242.js`), mencakup Evaluasi Indikator Target vs Realisasi Th-1 s/d Th-4 dan Analisis Pagu Anggaran per Program APBD Murni/Perubahan, didukung endpoint REST API `/evaluasi` dan `/pagu`. |
+| **Audit Mendalam & Eliminasi Gap Full-Stack (ADR-080)** | Sangat Baik | ✅ PASSED | Pemindaian faktual 73 tabel MySQL, 29 berkas backend, dan 84 bundle frontend; perbaikan kolom `LOWER(komoditas)` pada `palawija_produksi` (`src/routes/ai.js`), penyediaan GET schema pada `/api/v1/ai/chat`, integrasi live data 232 KWT pada `/api/v1/kewirausahaan/kwt`, serta 100% kelulusan live test 67 frontend endpoint. |
 
 ---
 
@@ -70,6 +74,10 @@ Dokumen ini memuat analisis kualitas kode, evaluasi keamanan (OWASP compliance),
 8. **Zero Technical Leak Persona Standard & Comprehensive Factual Grounding (ADR-076):**
    - Menghilangkan seluruh kebocoran istilah backend (*technical leak*) seperti *Mode Offline*, *upstream*, dan *RAG* dari respons asisten Si Pertani di antarmuka pengguna.
    - Menguji dan memvalidasi respons faktual komparasi target Renstra vs realisasi lapangan, bantuan alsintan, demografi sensus ST2023, LPM, dan sertifikasi NKV dengan tingkat akurasi 100% terhadap pangkalan data resmi tanpa halusinasi.
+
+9. **Spasial Parameterized Queries & Guard Anti-Halusinasi Lokasi (ADR-078):**
+   - Kueri titik pasar dan toko peternakan di `src/routes/ai.js` dan `src/routes/ekonomi.js` menggunakan kueri berparameter aman (`?`) melalui pool `mysql2/promise`.
+   - Engine RAG secara otomatis menyuntikkan fakta koordinat, kecamatan, dan alamat resmi dari tabel `pasar_banjarnegara` dan `ternak_poultry_shop`, mengeliminasi celah halusinasi bahwa lokasi fisik pasar/toko tidak tercatat di basis data.
 
 ---
 

@@ -835,11 +835,102 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 - **Verifikasi:**
   - Uji faktual langsung via `POST /api/v1/ai/chat` dan CLI berhasil dengan akurasi 100% pada 8 domain uji (Kentang 2020, SAKIP/IPP 2025-2029, Bantuan Alsintan 2024, ST2023 Batur, NKV, LPM, Anti-halusinasi Sawit, dan Perikanan Tangkap).
 
+### [ISSUE-057] Integrasi Titik Spasial Pasar & Poultry Shop Kota Banjarnegara di Dashboard Eksekutif
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-21
+- **Komponen:** `src/server.js`, `src/routes/ekonomi.js`, `dist/assets/pages-BdW-ZTL4.js`, `dist/data/poultry-banjarnegara.geojson`, `dist/data/pasar-banjarnegara.geojson`, `scripts/seed_pasar_banjarnegara.js`, `scripts/add_kota_poultry_shops.js`.
+- **Deskripsi:** 
+  1. Pengguna melaporkan bahwa toko peternakan/poultry shop di pusat Kota Banjarnegara (Krandegan, Kutabanjarnegara, Jl. Jend. Sudirman, Jl. Mayjend Soetojo) belum muncul di peta spasial Dashboard Eksekutif (`/`).
+  2. Data pasar fisik sebelumnya hanya tersimpan di file statis GeoJSON tanpa tabel database pendukung, sehingga kueri backend dan RAG tidak dapat memverifikasi ketersediaan pasar fisik.
+  3. Caching agresif pada server (`Cache-Control: max-age=86400`) dan siklus hidup Leaflet React Overlay menahan render penanda titik baru pada browser klien.
+- **Akar Masalah:**
+  - Belum ada tabel database `pasar_banjarnegara` di basis data MySQL `pertasis`.
+  - Data poultry shop di tabel `ternak_poultry_shop` sebelumnya hanya memuat 9 toko di kecamatan luar tanpa toko riil di pusat Kota Banjarnegara.
+  - Berkas GeoJSON titik spasial dinamis tertahan oleh aturan cache statis 1 hari di `src/server.js`.
+  - Komponen `<Ce.Overlay>` Leaflet tidak me-remount otomatis saat data GeoJSON asinkron selesai diunduh.
+- **Solusi yang Diterapkan (ADR-077):**
+  1. **Tabel Database & Seeding Pasar Fisik (`scripts/seed_pasar_banjarnegara.js`):**
+     Membuat tabel `pasar_banjarnegara` (36 record: 31 pasar tradisional, 2 pasar ikan [Krandegan & Karangkobar], 1 pasar hewan [Petambakan], 1 pasar buah [Kalibening], 1 pasar unggas [Kutabanjarnegara]) dengan koordinat GPS presisi dan endpoint `GET /api/v1/ekonomi/pasar-titik`.
+  2. **Verifikasi & Seeding Toko Peternakan Kota Banjarnegara (`scripts/add_kota_poultry_shops.js`):**
+     Memverifikasi 6 profil bisnis nyata Google Maps di Kota Banjarnegara (*Pioneer Poultry Shop*, *Sekawan Animal Food*, *(TRIO PUTRA) Herry PS*, *Iqbal Jaya Poultry Shop*, *Sri Jaya PS*, *PS. Berkah*) dan memasukkannya ke tabel `ternak_poultry_shop` serta memperbarui `dist/data/poultry-banjarnegara.geojson` (total 15 titik se-kabupaten).
+  3. **Penambahan Layer Overlay Ungu di Dashboard Eksekutif (`pages-BdW-ZTL4.js`):**
+     Menambahkan konfigurasi layer *Poultry Shop & Pakan* dengan warna ungu (`#7c3aed`), popup lengkap, dan dynamic key `<Ce.Overlay key={`${e.key}-${t.features.length}`}>` agar peta Leaflet me-remount secara reaktif saat data selesai diunduh.
+  4. **Pembaruan Aturan Cache Server (`src/server.js`):**
+     Mengecualikan `poultry-banjarnegara.geojson` dan `pasar-banjarnegara.geojson` dari header cache jangka panjang, menyajikannya dengan `Cache-Control: no-cache, no-store, must-revalidate` dan query parameter `?v=timestamp`.
+- **Verifikasi:**
+  - Sintaksis JavaScript diverifikasi valid via `node --check`.
+  - Kueri endpoint `/api/v1/ekonomi/pasar-titik` mengembalikan 36 record pasar (HTTP 200 OK).
+  - Berkas GeoJSON `poultry-banjarnegara.geojson` berhasil memuat 15 titik terverifikasi.
+
+### [ISSUE-058] Grounding Spasial Pasar & Toko Pakan pada Chatbot AI Si Pertani RAG & Typo Tolerance
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-21
+- **Komponen:** `src/routes/ai.js`, `src/lib/ai-nlg.js`.
+- **Deskripsi:** 
+  1. Pengguna menanyakan lokasi pasar ikan (*"pasar ikan dimana"*), namun chatbot Si Pertani mengalami error koneksi atau memberikan jawaban bahwa lokasi fisik pasar belum tercatat di database.
+  2. Pertanyaan yang mengandung salah ketik kecil (misal *"pasa ikan dimana"*) tidak terdeteksi oleh regex kueri sehingga tidak menarik konteks pasar ke prompt grounding.
+- **Akar Masalah:**
+  - Deteksi kueri pasar sebelumnya mensyaratkan kata persis `pasar`, sehingga variasi typo seperti `pasa` atau kueri dengan penulisan terpisah tidak menarik data dari database.
+  - Logika context grounding di `src/routes/ai.js` belum membaca tabel `pasar_banjarnegara` dan `ternak_poultry_shop`.
+  - Belum ada formatter fallback bahasa alami (NLG) untuk data pasar dan toko peternakan di `src/lib/ai-nlg.js`.
+- **Solusi yang Diterapkan (ADR-078):**
+  1. **Typo Tolerance & Spatial Intent Detection (`src/routes/ai.js`):**
+     Memperluas deteksi kueri pasar ke variasi ejaan (`"pasar"`, `"pasa"`, `"psar"`, `"kios"`, `"bazar"`) serta pola intent lokasi (`isWhereQuery` + komoditas). Menambahkan deteksi `isPoultry` untuk toko pakan dan poultry shop.
+  2. **Grounding Spasial Komprehensif (`retrieveDynamicContext`):**
+     Menyuntikkan 36 pasar fisik dari `pasar_banjarnegara` dan 15 toko pakan dari `ternak_poultry_shop` ke dalam prompt grounding AI dengan direktif tegas: *"Wajib sebutkan nama pasar, kecamatan, dan alamat resmi dari data di atas. Dilarang mengklaim titik fisik tidak tercatat."*
+  3. **Local Fallback NLG Formatters (`src/lib/ai-nlg.js`):**
+     Menambahkan format narasi ramah untuk kueri pasar dan poultry shop, merinci nama pasar, kategori, kecamatan, alamat, dan titik koordinat GPS.
+- **Verifikasi:**
+  - Pengujian langsung via kueri live `POST /api/v1/ai/chat`:
+    - `"pasar ikan dimana"` -> Mengembalikan Pasar Ikan Krandegan dan Karangkobar secara presisi.
+    - `"pasa ikan dimana"` (typo) -> Berhasil mengenali maksud pengguna dan menjawab dengan data pasar ikan faktual.
+    - `"toko pakan di kota banjarnegara apa saja"` -> Mengembalikan 6 toko pakan di Kota Banjarnegara beserta alamat resminya.
+
+### [ISSUE-059] Implementasi Model A Evaluasi Indikator & Pagu Anggaran pada Modul Renstra
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-21
+- **Komponen:** `src/routes/renstra.js`, `src/lib/renstra-evaluasi.js`, `dist/assets/renstra-v242.js`.
+- **Deskripsi:** 
+  Halaman Renstra sebelumnya hanya menyajikan tabel target multi-tahun, tanpa modul perbandingan evaluasi realisasi indikator (Model A) dan rincian alokasi pagu anggaran APBD per program dinas.
+- **Akar Masalah:**
+  Data evaluasi indikator (target vs realisasi Th-1 s/d Th-4) dan pagu anggaran program masih berupa dokumen statis dan belum diolah menjadi antarmuka interaktif.
+- **Solusi yang Diterapkan (ADR-079):**
+  1. **Engine Evaluasi & Pagu (`src/lib/renstra-evaluasi.js`):**
+     Membangun modul kalkulasi evaluasi indikator resmi Model A dan matriks pagu anggaran APBD Murni/Perubahan Th-1 s/d Th-4 untuk 17 program dinas.
+  2. **REST API Endpoints (`src/routes/renstra.js`):**
+     Menyediakan endpoint `GET /api/v1/renstra/evaluasi` dan `GET /api/v1/renstra/pagu`.
+  3. **Antarmuka 5-Segmented Tab (`dist/assets/renstra-v242.js`):**
+     Memperluas tab navigasi menjadi 5 pilar (Renstra 2025–2029, Renstra 2019–2022, Evaluasi Indikator [Model A], Pagu Anggaran per Program, dan Dokumen Renstra Resmi PDF) dengan filter sektor dan pencarian live.
+- **Verifikasi:**
+  - Endpoint `/api/v1/renstra/evaluasi` dan `/api/v1/renstra/pagu` mengembalikan data valid (HTTP 200 OK).
+  - Verifikasi sintaksis `node --check` sukses tanpa galat.
+
+### [ISSUE-060] Resolusi Celah Kolom SQL, Info Handler AI Chat & Integrasi Live Kewirausahaan KWT
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-21
+- **Komponen:** `src/routes/ai.js`, `src/server.js`, `scripts/audit_deep_gaps.js`, `scripts/inspect_all_frontend_endpoints.js`.
+- **Deskripsi:** 
+  Audit mendalam full-stack menemukan 3 gap fungsional minor:
+  1. Pada kueri cross-reference Renstra 2019 di `src/routes/ai.js:782`, sistem mencari `WHERE LOWER(tanaman) LIKE '%jagung%'` pada `palawija_produksi`, menyebabkan error MySQL `Unknown column 'tanaman' in 'where clause'`.
+  2. Endpoint `/api/v1/ai/chat` hanya melayani metode HTTP `POST`. Inspeksi/probe metode `GET` menghasilkan 404.
+  3. Pemanggilan frontend ke `/api/v1/kewirausahaan/kwt` menghasilkan `404 Not Found` karena belum terpasang di backend server.
+- **Akar Masalah:**
+  - Inkonsistensi nama kolom `komoditas` vs `tanaman` pada tabel `palawija_produksi`.
+  - Ketiadaan handler GET metadata pada modul router AI.
+  - Endpoint kewirausahaan belum dipetakan ke tabel master kelembagaan dinas.
+- **Solusi yang Diterapkan (ADR-080):**
+  1. **Perbaikan Kueri SQL (`src/routes/ai.js`):** Mengubah `LOWER(tanaman)` menjadi `LOWER(komoditas) LIKE '%jagung%'`.
+  2. **GET Metadata Handler (`src/routes/ai.js`):** Menambahkan rute `aiRouter.get("/chat")` yang mengembalikan info skema, model resmi Gemini yang didukung, dan status operasional (`200 OK`).
+  3. **Integrasi Rute Kewirausahaan (`src/server.js`):** Membangun endpoint `GET /v1/kewirausahaan/kwt` yang menghubungkan data riil 232 Kelompok Wanita Tani (KWT) dari `kelembagaan_pertanian` dan kelompok binaan perikanan (Pokdakan/Poklahsar) dari `kelembagaan_perikanan`.
+- **Verifikasi:**
+  - Seluruh 67 endpoint frontend diuji live via automated tester: 100% lulus HTTP 200 OK tanpa 404 dan 500.
+
 ---
 
 ### Rencana Peningkatan Lainnya:
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.
+
 
 
 
