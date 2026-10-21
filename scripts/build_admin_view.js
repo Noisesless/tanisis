@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const adminFilePath = "dist/assets/admin-C9Dakcgq.js";
+const adminFilePath = "dist/assets/admin-v241.js";
 
 const code = `import{t as e}from"./arrow-left-Cnc8r38x.js";import{t}from"./beef-Cqs5FrT3.js";import{a as n,c as r,d as i,f as a,i as o,l as s,m as c,n as l,o as u,p as d,r as f,s as p,t as ee,u as m}from"./x-CXWFwwzx.js";import{t as te}from"./circle-check-PxHdRpHr.js";import{t as h}from"./external-link-DfcptrNX.js";import{t as g}from"./file-spreadsheet-R11Sgu_C.js";import{t as _}from"./landmark-BY9XAS70.js";import{t as ne}from"./package-Bedd0TCh.js";import{t as v}from"./tree-pine-DWgOB3Ww.js";import{t as y}from"./warehouse-NEEFGyVg.js";import{C as b,b as x,i as S,m as C,n as w,p as T,r as E,s as re,t as ie}from"./index-CI1XYnwk.js";import{H as ae,t as D}from"./api-BxFGoia1.js";import{i as oe,n as O,r as k,t as se}from"./bantuan-BnL_U6Ks.js";import{t as A}from"./site-B5h-x_N5.js";
 
@@ -961,7 +961,7 @@ function V(){
                                 value:searchQ,
                                 onChange:e=>setSearchQ(e.target.value),
                                 placeholder:\`Cari domain atau sheet...\`,
-                                className:\`w-full rounded-md border border-slate-300 bg-white py-1.5 pl-8 pr-3 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
+                                className:\`w-full rounded-md border border-slate-300 bg-white py-1.5 pl-9 pr-3 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500\`
                               })
                             ]
                           })

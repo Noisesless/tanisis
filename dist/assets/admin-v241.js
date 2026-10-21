@@ -962,7 +962,7 @@ Unduh template Excel resmi melalui Portal Admin SISPERTANI (http://127.0.0.1:517
                                 value:searchQ,
                                 onChange:e=>setSearchQ(e.target.value),
                                 placeholder:`Cari domain atau sheet...`,
-                                className:`w-full rounded-md border border-slate-300 bg-white py-1.5 pl-8 pr-3 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500`
+                                className:`w-full rounded-md border border-slate-300 bg-white py-1.5 pl-9 pr-3 text-xs text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500`
                               })
                             ]
                           })

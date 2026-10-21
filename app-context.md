@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Fase 16: Audit Mendalam Seluruh Aplikasi (Frontend, Backend, Database) & Eliminasi Seluruh Gap Faktual (ADR-080) done=ALL last=Menjalankan pemindaian faktual 73 tabel MySQL pertasis, 29 berkas backend src/, dan 84 bundle frontend dist/assets/; memperbaiki gap kolom SQL LOWER(tanaman) -> LOWER(komoditas) pada palawija_produksi (src/routes/ai.js); menambahkan handler GET /api/v1/ai/chat informatif (mencegah 404); mengintegrasikan endpoint GET /api/v1/kewirausahaan/kwt dengan data riil 232 KWT dan Pokdakan/Poklahsar dari MySQL; serta memvalidasi 67 endpoint frontend dengan tingkat kelulusan 100% OK. next=Pemeliharaan berkala dan deployment
+phase=Fase 17: Forensic Tracking & Tuntas Perbaikan Tabrakan Icon-Teks Dropdown & Menu Admin (ADR-081) done=ALL last=Melakukan audit forensik 85 bundle dist/assets/*.js, menemukan hilangnya utilitas Tailwind .pl-8, .pl-3.5, .pr-7, .pr-8 dari CSS bundle yang memicu tabrakan icon-teks pada dropdown Tahun Data Rekap (farmers) dan pencarian Admin. Menambahkan paket utilitas CSS lengkap, rule pelindung tabrakan struktural (.relative > .absolute[class*="left-"] ~ select/input { padding-left: 2.25rem !important }), serta styling chevron SVG seragam pada select.appearance-none. next=Pemeliharaan berkala dan deployment
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -53,6 +53,14 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,pasar_banjarnegara,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,ternak_poultry_shop,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,renstra_target,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-081] Remediasi Forensik Tabrakan Icon dan Teks pada Seluruh Dropdown & Kontrol Menu Admin:
+- Melakukan audit menyeluruh pada 85 bundle JavaScript di `dist/assets/`, memetakan 62 elemen `<select>` dan ratusan elemen `<input>`.
+- Mengungkap akar penyebab visual tabrakan (overlap `20[📅]25`): Kompilasi Tailwind CSS pada `dist/assets/index-DmHYJUQI.css` dan `pages-vh-t_kPv.css` tidak menyertakan class `.pl-8` (dan varian spacing `.pl-3.5`, `.pl-6`, `.pl-7`, `.pr-7`, `.pr-8`, `.ml-4`, `.mt-3.5`, `.my-1.5`). Hal ini menyebabkan browser tidak memberikan offset padding kiri saat elemen `<select>` atau `<input>` dipadukan dengan icon berposisi `absolute left-3` (12px), sehingga teks dirender tepat di bawah icon.
+- Menerapkan perbaikan 3 lapis:
+  1. Melengkapi seluruh utilitas spacing Tailwind yang hilang (`.pl-6` s/d `.pl-16`, `.pr-5` s/d `.pr-16`, `.px-7`, `.py-7`, `.ml-4`, dll.) pada `index-DmHYJUQI.css` dan `pages-vh-t_kPv.css`.
+  2. Memasang *Structural Collision Guard* otomatis di CSS: `.relative > .absolute[class*="left-"] ~ select, .relative > .absolute[class*="left-"] ~ input { padding-left: 2.25rem !important; }` yang menjamin jarak aman 36px secara permanen untuk kontrol apa pun dengan icon kiri.
+  3. Memasang styling chevron SVG elegan dan seragam pada seluruh `select.appearance-none` dengan `padding-right: 2.25rem !important`.
+  4. Menyelaraskan class padding pada bundel `farmers-RBAkXoyn.js` (Tahun Data Rekap), `admin-v241.js` (Pencarian Admin), `suitability-BoKTpxZD.js` (Pencarian Komoditas), dan generator `scripts/build_admin_view.js` menjadi `pl-9 pr-8`.
 [ADR-079] Penyempurnaan Chatbot AI Si Pertani RAG dengan Grounding Spasial Pasar & Typo Tolerance:
 - Menambahkan modul typo tolerance pada deteksi kueri pasar dan lokasi (`"pasa ikan"`, `"psar"`, `"kios"`, `"bazar"`) serta kueri poultry shop (`"poultry"`, `"pakan ternak"`, `"toko ternak"`, `"sapronak"`).
 - Menyuntikkan 36 titik pasar dari tabel `pasar_banjarnegara` dan 15 toko pakan dari `ternak_poultry_shop` ke prompt sistem AI dengan direktif tegas agar AI menyebutkan nama pasar, kecamatan, dan alamat resmi serta dilarang mengklaim titik fisik tidak tercatat.

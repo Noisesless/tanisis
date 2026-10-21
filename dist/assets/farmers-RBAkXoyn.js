@@ -761,7 +761,7 @@ function FarmersPage() {
                           value: j ?? "",
                           onChange: e => M(e.target.value),
                           disabled: j === null,
-                          className: "w-full pl-8 pr-3 py-2 border border-slate-200 text-xs font-semibold bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700/20 focus:border-slate-700 appearance-none cursor-pointer h-[38px] disabled:opacity-50",
+                          className: "w-full pl-9 pr-8 py-2 border border-slate-200 text-xs font-semibold bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700/20 focus:border-slate-700 appearance-none cursor-pointer h-[38px] disabled:opacity-50",
                           children: W.map(item => (
                             (0, T.jsx)("option", { value: item, children: U.has(item) ? `${item} (parsial)` : item }, item)
                           ))

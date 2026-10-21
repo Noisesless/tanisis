@@ -411,3 +411,58 @@
 .border-l-rose-600 {
   border-left-color: #dc2626 !important;
 }
+
+/* ==========================================================================
+   SISPERTANI DROPDOWN & INPUT OVERLAP REMEDIATION & SPACING UTILITIES
+   ========================================================================== */
+
+/* 1. Missing Tailwind Spacing Utilities (Padding Left) */
+.pl-3\.5 { padding-left: calc(var(--spacing, 0.25rem) * 3.5) !important; }
+.pl-6    { padding-left: calc(var(--spacing, 0.25rem) * 6) !important; }
+.pl-7    { padding-left: calc(var(--spacing, 0.25rem) * 7) !important; }
+.pl-8    { padding-left: calc(var(--spacing, 0.25rem) * 8) !important; }
+.pl-9    { padding-left: calc(var(--spacing, 0.25rem) * 9) !important; }
+.pl-10   { padding-left: calc(var(--spacing, 0.25rem) * 10) !important; }
+.pl-11   { padding-left: calc(var(--spacing, 0.25rem) * 11) !important; }
+.pl-12   { padding-left: calc(var(--spacing, 0.25rem) * 12) !important; }
+.pl-14   { padding-left: calc(var(--spacing, 0.25rem) * 14) !important; }
+.pl-16   { padding-left: calc(var(--spacing, 0.25rem) * 16) !important; }
+
+/* 2. Missing Tailwind Spacing Utilities (Padding Right) */
+.pr-5    { padding-right: calc(var(--spacing, 0.25rem) * 5) !important; }
+.pr-6    { padding-right: calc(var(--spacing, 0.25rem) * 6) !important; }
+.pr-7    { padding-right: calc(var(--spacing, 0.25rem) * 7) !important; }
+.pr-8    { padding-right: calc(var(--spacing, 0.25rem) * 8) !important; }
+.pr-9    { padding-right: calc(var(--spacing, 0.25rem) * 9) !important; }
+.pr-11   { padding-right: calc(var(--spacing, 0.25rem) * 11) !important; }
+.pr-12   { padding-right: calc(var(--spacing, 0.25rem) * 12) !important; }
+.pr-14   { padding-right: calc(var(--spacing, 0.25rem) * 14) !important; }
+.pr-16   { padding-right: calc(var(--spacing, 0.25rem) * 16) !important; }
+
+/* 3. Missing Spacing Utilities (Padding Other & Margin) */
+.px-7    { padding-left: calc(var(--spacing, 0.25rem) * 7) !important; padding-right: calc(var(--spacing, 0.25rem) * 7) !important; }
+.py-7    { padding-top: calc(var(--spacing, 0.25rem) * 7) !important; padding-bottom: calc(var(--spacing, 0.25rem) * 7) !important; }
+.pb-2\.5 { padding-bottom: calc(var(--spacing, 0.25rem) * 2.5) !important; }
+.pt-3\.5 { padding-top: calc(var(--spacing, 0.25rem) * 3.5) !important; }
+.p-12    { padding: calc(var(--spacing, 0.25rem) * 12) !important; }
+
+.ml-4    { margin-left: calc(var(--spacing, 0.25rem) * 4) !important; }
+.mt-3\.5 { margin-top: calc(var(--spacing, 0.25rem) * 3.5) !important; }
+.my-1\.5 { margin-top: calc(var(--spacing, 0.25rem) * 1.5) !important; margin-bottom: calc(var(--spacing, 0.25rem) * 1.5) !important; }
+
+/* 4. Structural Collision Guard: Absolute Left Icon + Select/Input */
+.relative > .absolute[class*="left-"] ~ select,
+.relative > .absolute[class*="left-"] ~ input,
+.relative > .absolute[class*="left-"] + select,
+.relative > .absolute[class*="left-"] + input {
+  padding-left: 2.25rem !important; /* 36px clearance to prevent icon/text overlap */
+}
+
+/* 5. Custom Select Chevron / Arrow Appearance Fallback */
+select.appearance-none {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+  background-position: right 0.65rem center !important;
+  background-repeat: no-repeat !important;
+  background-size: 1.15em 1.15em !important;
+  padding-right: 2.25rem !important;
+}

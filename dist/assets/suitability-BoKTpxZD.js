@@ -557,7 +557,7 @@ function KesesuaianLahanPage() {
                               value: search,
                               onChange: (e) => { setSearch(e.target.value); setPage(1); },
                               placeholder: "Cari komoditas…",
-                              className: "pl-8 pr-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 w-44"
+                              className: "pl-9 pr-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 w-44"
                             })
                           ]
                         }),
