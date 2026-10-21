@@ -161,6 +161,17 @@ async function main() {
     }
   }
 
+  // Jalankan pembersihan data dummy & test (Opsi B: kosongkan tabel sintetis & hapus data test)
+  const sanitizeScript = path.resolve(process.cwd(), "scripts/sanitize_all_dummy_and_test_data.js");
+  if (fs.existsSync(sanitizeScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Menjalankan sanitasi data dummy & test...`);
+      execSync(`node "${sanitizeScript}"`, { stdio: "inherit", env: process.env });
+    } catch (sanErr) {
+      console.warn(`[Migrasi Patch Warning] Sanitasi data gagal:`, sanErr.message);
+    }
+  }
+
   const verifyConn = await mysql.createConnection({
     host: envHost,
     port: envPort,

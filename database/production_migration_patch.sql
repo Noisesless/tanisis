@@ -1091,13 +1091,7 @@ CREATE TABLE `kelembagaan_perikanan` (
   KEY `idx_jenis` (`jenis_lembaga`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT IGNORE INTO `kelembagaan_perikanan` (`id`, `kecamatan`, `desa`, `jenis_lembaga`, `nama_kelompok`, `id_kusuka`, `nama_ketua`, `kontak_hp`, `komoditas_utama`, `jumlah_anggota`, `kelas_kemampuan`, `status_aktif`, `created_at`) VALUES
-(1, 'Madukara', 'Kutayasa', 'Pokdakan', 'Mina Barokah', 'KSK-3304-001', 'Supardi', '081298765431', 'Gurami & Nila', 20, 'Madya', 'Aktif', '2026-10-06 16:06:30'),
-(2, 'Purwareja Klampok', 'Klampok', 'Pokdakan', 'Mina Mandiri', 'KSK-3304-012', 'Ahmad Fauzi', '081387654321', 'Lele Sangkuriang', 15, '', 'Aktif', '2026-10-06 16:06:30'),
-(3, 'Wanadadi', 'Medayu', 'Poklahsar', 'Ikan Barokah', 'KSK-3304-025', 'Tri Wahyuni', '081576543210', 'Abon & Keripik Ikan', 12, 'Pemula', 'Aktif', '2026-10-06 16:06:30'),
-(4, 'Bawang', 'Masaran', 'Pokmaswas', 'Mina Lestari', 'KSK-3304-030', 'Joko Prasetyo', '082165432109', 'Konservasi Perairan Umum', 18, 'Madya', 'Aktif', '2026-10-06 16:06:30');
-
-CREATE TABLE `kelembagaan_juleha` (
+CREATE TABLE IF NOT EXISTS `kelembagaan_juleha` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nama_lengkap` varchar(150) NOT NULL,
   `nik` varchar(20) DEFAULT NULL,
@@ -1112,15 +1106,9 @@ CREATE TABLE `kelembagaan_juleha` (
   PRIMARY KEY (`id`),
   KEY `idx_kecamatan` (`kecamatan`),
   KEY `idx_status` (`status_sertifikasi`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT IGNORE INTO `kelembagaan_juleha` (`id`, `nama_lengkap`, `nik`, `kecamatan`, `desa`, `no_sertifikat_halal`, `lembaga_penerbit`, `unit_tugas`, `status_sertifikasi`, `tahun_kelulusan`, `created_at`) VALUES
-(1, 'Ahmad Subhan', '3304011205850001', 'Banjarnegara', 'Parakancanggah', 'BNSP-JLH-3304-2023-01', 'LSP Juleha Indonesia / BNSP', 'RPH Banjarnegara', 'Tersertifikasi', 2023, '2026-10-06 16:06:30'),
-(2, 'Muhammad Rois', '3304141508900003', 'Purwanegara', 'Kalipelus', 'BNSP-JLH-3304-2024-05', 'LSP Halal Indonesia', 'RPU Mandiraja', 'Tersertifikasi', 2024, '2026-10-06 16:06:30'),
-(3, 'Hasan Basri', '3304062001880002', 'Karangkobar', 'Karangkobar', 'KEMENAG-HALAL-2023-88', 'Kemenag RI & MUI', 'Kios Daging Pasar Karangkobar', 'Tersertifikasi', 2023, '2026-10-06 16:06:30'),
-(4, 'Wahyu Hidayat', '3304151004950004', 'Purwareja Klampok', 'Klampok', 'BNSP-JLH-3304-2025-02', 'LSP Juleha Indonesia', 'Pasar Rakyat Klampok', 'Dalam Pelatihan', 2025, '2026-10-06 16:06:30');
-
-CREATE TABLE `kelembagaan_p4s` (
+CREATE TABLE IF NOT EXISTS `kelembagaan_p4s` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nama_p4s` varchar(150) NOT NULL,
   `pengelola` varchar(100) NOT NULL,
@@ -1133,13 +1121,9 @@ CREATE TABLE `kelembagaan_p4s` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_kecamatan` (`kecamatan`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT IGNORE INTO `kelembagaan_p4s` (`id`, `nama_p4s`, `pengelola`, `kecamatan`, `desa`, `bidang_kejuruan`, `klasifikasi_akreditasi`, `no_register_bppsdmp`, `kontak`, `created_at`) VALUES
-(1, 'P4S Tani Jaya Mandiri', 'H. Mulyono', 'Batur', 'Batur', 'Hortikultura Kentang & Sayuran Ramah Lingkungan', 'Madya', '033/P4S/BPPSDMP/2021', '081234567890', '2026-10-06 16:06:30'),
-(2, 'P4S Makmur Abadi', 'Sutrisno', 'Mandiraja', 'Kertayasa', 'Peternakan Kambing Perah & Pengolahan Susu', 'Pratama', '045/P4S/BPPSDMP/2022', '081398765432', '2026-10-06 16:06:30');
-
-CREATE TABLE `kelembagaan_upja` (
+CREATE TABLE IF NOT EXISTS `kelembagaan_upja` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nama_upja` varchar(150) NOT NULL,
   `manajer` varchar(100) NOT NULL,
@@ -1152,11 +1136,38 @@ CREATE TABLE `kelembagaan_upja` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_kecamatan` (`kecamatan`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT IGNORE INTO `kelembagaan_upja` (`id`, `nama_upja`, `manajer`, `kecamatan`, `desa`, `gapoktan_induk`, `jenis_alsintan_dikelola`, `jumlah_alsintan`, `status_operasional`, `created_at`) VALUES
-(1, 'UPJA Berkah Tani', 'Sugeng Riyadi', 'Purwanegara', 'Mertasari', 'Gapoktan Tani Makmur', 'Traktor Roda 4 (2 unit), Combine Harvester (1 unit), Transplanter (2 unit), Pompa Air (4 unit)', 9, 'Aktif Beroperasi', '2026-10-06 16:06:30'),
-(2, 'UPJA Subur Makmur', 'Waryono', 'Rakit', 'Rakit', 'Gapoktan Sumber Rejeki', 'Traktor Roda 2 (4 unit), Power Thresher (2 unit), Pompa Air (3 unit)', 9, 'Aktif Beroperasi', '2026-10-06 16:06:30');
+-- Sanitasi Data Dummy / Test & Pemulihan Sektor Resmi
+DELETE FROM kelembagaan_perikanan;
+DELETE FROM kelembagaan_juleha;
+DELETE FROM kelembagaan_upja;
+DELETE FROM kelembagaan_p4s;
+DELETE FROM kelembagaan_pertanian WHERE id = 2688 OR nama_kelompok LIKE 'Test %';
+DELETE FROM kelembagaan_posluhdes WHERE id IN (37, 38) OR nama_posluhdes LIKE 'Test %';
+DELETE FROM kelembagaan_pps WHERE id = 157 OR nama_penyuluh LIKE 'Test %';
+DELETE FROM kelembagaan_kep WHERE id = 138 OR nama_kep LIKE 'Test %';
+DELETE FROM st2023_desa WHERE id = 279 OR (desa = 'BEJI' AND kecamatan_id = 4);
+UPDATE st2023_desa 
+SET rumah_tangga_petani = 229, petani = 229, rt_anggota_kelompok = 58, rt_bukan_anggota_kelompok = 189, rtup = 247, rt_perikanan = 76, rt_perikanan_budidaya = 76, rt_perikanan_tangkap = 0, sumber_teks = 'BPS Hasil Sensus Pertanian 2023 Kecamatan Bawang', sumber = 'json_fallback'
+WHERE id = 40;
+
+DELETE FROM bantuan_korelasi;
+INSERT INTO bantuan_korelasi (sektor, bantuan_miliar, kenaikan_produksi_pct) VALUES
+('Tanaman Pangan', 7.20, 8.50),
+('Hortikultura', 3.40, 6.20),
+('Perkebunan', 2.10, 4.80),
+('Peternakan', 4.80, 9.10),
+('Perikanan', 2.90, 7.40)
+ON DUPLICATE KEY UPDATE bantuan_miliar = VALUES(bantuan_miliar);
+
+DELETE FROM bantuan_alokasi;
+INSERT INTO bantuan_alokasi (tahun, apbd_miliar, apbn_miliar) VALUES
+(2021, 4.20, 6.80),
+(2022, 5.10, 7.50),
+(2023, 5.80, 8.20),
+(2024, 6.50, 9.40)
+ON DUPLICATE KEY UPDATE apbd_miliar = VALUES(apbd_miliar);
 
 
 SET FOREIGN_KEY_CHECKS = 1;
