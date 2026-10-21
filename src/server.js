@@ -420,6 +420,17 @@ app.get("/data/poultry-banjarnegara.geojson", async (req, res, next) => {
         });
       }
     }
+    if (features.length === 0) {
+      try {
+        const fs = await import("node:fs/promises");
+        const diskPath = path.join(distRoot, "data", "poultry-banjarnegara.geojson");
+        const raw = await fs.readFile(diskPath, "utf8");
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        return res.send(raw);
+      } catch {}
+    }
+
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
@@ -431,7 +442,16 @@ app.get("/data/poultry-banjarnegara.geojson", async (req, res, next) => {
     });
   } catch (err) {
     console.error("[GeoJSON] Error generating dynamic poultry-banjarnegara.geojson:", err?.message);
-    next();
+    try {
+      const fs = await import("node:fs/promises");
+      const diskPath = path.join(distRoot, "data", "poultry-banjarnegara.geojson");
+      const raw = await fs.readFile(diskPath, "utf8");
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+      return res.send(raw);
+    } catch {
+      next();
+    }
   }
 });
 
@@ -462,6 +482,18 @@ app.get("/data/pasar-banjarnegara.geojson", async (req, res, next) => {
         });
       }
     }
+
+    if (features.length === 0) {
+      try {
+        const fs = await import("node:fs/promises");
+        const diskPath = path.join(distRoot, "data", "pasar-banjarnegara.geojson");
+        const raw = await fs.readFile(diskPath, "utf8");
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        return res.send(raw);
+      } catch {}
+    }
+
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
@@ -472,7 +504,16 @@ app.get("/data/pasar-banjarnegara.geojson", async (req, res, next) => {
     });
   } catch (err) {
     console.error("[GeoJSON] Error generating dynamic pasar-banjarnegara.geojson:", err?.message);
-    next();
+    try {
+      const fs = await import("node:fs/promises");
+      const diskPath = path.join(distRoot, "data", "pasar-banjarnegara.geojson");
+      const raw = await fs.readFile(diskPath, "utf8");
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+      return res.send(raw);
+    } catch {
+      next();
+    }
   }
 });
 

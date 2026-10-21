@@ -1165,3 +1165,81 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 SET FOREIGN_KEY_CHECKS = 1;
 SET SQL_MODE=@OLD_SQL_MODE;
+
+-- Tabel: pasar_banjarnegara (36 titik pasar resmi Banjarnegara)
+CREATE TABLE IF NOT EXISTS `pasar_banjarnegara` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nama` varchar(150) NOT NULL,
+  `kategori` varchar(50) NOT NULL,
+  `kecamatan_id` tinyint(3) unsigned DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `alamat` text DEFAULT NULL,
+  `latitude` decimal(10,7) NOT NULL,
+  `longitude` decimal(10,7) NOT NULL,
+  `koordinat` varchar(60) NOT NULL,
+  `sumber` varchar(100) DEFAULT 'GeoJSON Pemkab Banjarnegara',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_kecamatan_id` (`kecamatan_id`),
+  KEY `idx_kategori` (`kategori`),
+  KEY `idx_nama` (`nama`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `pasar_banjarnegara` (`id`, `nama`, `kategori`, `kecamatan_id`, `kecamatan`, `alamat`, `latitude`, `longitude`, `koordinat`, `sumber`) VALUES
+(1, 'Pasar Salak', 'Pasar Buah', 2, 'Banjarnegara', 'Pasar Salak, Parakancanggah, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53412', -7.389362, 109.70366, '-7.389362, 109.703660', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(2, 'Pasar Hewan Petambakan', 'Pasar Hewan', 7, 'Madukara', 'JM9R+74J, Satu, Petambakan, Kec. Madukara, Kab. Banjarnegara, Jawa Tengah 53482', -7.381797, 109.690255, '-7.381797, 109.690255', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(3, 'Pasar Ikan Purwonegoro', 'Pasar Ikan', 14, 'Purwanegara', 'Purwonegoro, Purwanegara, Karangplak, Purwonegoro, Kec. Purwanegara, Kab. Banjarnegara, Jawa Tengah 53472', -7.438447, 109.555066, '-7.438447, 109.555066', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(4, 'Pasar Ikan Segar', 'Pasar Ikan', 2, 'Banjarnegara', 'Kijagapati, Krandegan, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53414', -7.394065, 109.702145, '-7.394065, 109.702145', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(5, 'Pasar Bandingan', 'Pasar Tradisional', 17, 'Sigaluh', 'Bandingan, Kec. Sigaluh, Kab. Banjarnegara, Jawa Tengah 53481', -7.412072, 109.796504, '-7.412072, 109.796504', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(6, 'Pasar Batur', 'Pasar Tradisional', 3, 'Batur', 'Kab, Jl. Raya Batur No.1, Sumberejo I, Batur, Kec. Batur, Kab. Banjarnegara, Jawa Tengah 53456', -7.207367, 109.828602, '-7.207367, 109.828602', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(7, 'Pasar Bugel Krandegan', 'Pasar Tradisional', 2, 'Banjarnegara', 'Margamulya 02/01, Krandegan, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53414', -7.390052, 109.697731, '-7.390052, 109.697731', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(8, 'Pasar Caplek', 'Pasar Tradisional', 4, 'Bawang', 'JJ2H+W63, Jl. Raya Brengkok - Banjarnegara, Mantiranom, Mantrianom, Kec. Bawang, Kab. Banjarnegara, Jawa Tengah 53471', -7.397727, 109.628057, '-7.397727, 109.628057', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(9, 'Pasar Gripit', 'Pasar Tradisional', 1, 'Banjarmangu', 'MM5V+48R pasar, Pasar gripit Tepat Jalan Raya No.pertigaan, Sarang Panjang, Kesenet, Kec. Banjarmangu, Kab. Banjarnegara, Jawa Tengah 53452', -7.342723, 109.692935, '-7.342723, 109.692935', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(10, 'Pasar Jembangan', 'Pasar Tradisional', 13, 'Punggelan', 'MHQP+HM5, Gemanti, Jembangan, Kec. Punggelan, Kab. Banjarnegara, Jawa Tengah 53462', -7.311118, 109.586744, '-7.311118, 109.586744', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(11, 'Pasar Kalibening', 'Pasar Tradisional', 5, 'Kalibening', 'QJHQ+F5C, Kalibening, Kec. Kalibening, Kab. Banjarnegara, Jawa Tengah 53458', -7.221324, 109.637896, '-7.221324, 109.637896', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(12, 'Pasar Karangkobar', 'Pasar Tradisional', 6, 'Karangkobar', 'UPTD III, Pasar Umum, Jl. Raya Karangkobar Pejawaran, Karangkobar Wetan, Karangkobar, Kec. Karangkobar, Kab. Banjarnegara, Jawa Tengah 53453', -7.271376, 109.740337, '-7.271376, 109.740337', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(13, 'Pasar Kebutuhduwur', 'Pasar Tradisional', 9, 'Pagedongan', 'Desa No.Rt 02/05, Kutasari, Kebutuhduwur, Kec. Pagedongan, Kab. Banjarnegara, Jawa Tengah 53418', -7.460756, 109.691247, '-7.460756, 109.691247', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(14, 'Pasar Kota', 'Pasar Tradisional', 2, 'Banjarnegara', 'Jl. Pemuda No.46, Krandegan, Parakancanggah, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53474', -7.395339, 109.70331, '-7.395339, 109.703310', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(15, 'Pasar Kotak Amba', 'Pasar Tradisional', 9, 'Pagedongan', 'GMR6+228, Siwaru, Lebakwangi, Kec. Pagedongan, Kab. Banjarnegara, Jawa Tengah 53418', -7.459971, 109.660064, '-7.459971, 109.660064', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(16, 'Pasar Madukara', 'Pasar Tradisional', 7, 'Madukara', 'Jl. Raya Madukara, Sidutu, Pekauman, Kec. Madukara, Kab. Banjarnegara, Jawa Tengah 53482', -7.37932, 109.746611, '-7.379320, 109.746611', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(17, 'Pasar Mandiraja', 'Pasar Tradisional', 8, 'Mandiraja', 'GGVF+Q6Q, Jl. Klinik Lama Jalan, Mandiraja Kulon, Kec. Mandiraja, Kab. Banjarnegara, Jawa Tengah 53473', -7.453265, 109.523883, '-7.453265, 109.523883', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(18, 'Pasar Manis', 'Pasar Tradisional', 16, 'Rakit', 'JH35+3M8, Badamita, Kec. Rakit, Kab. Banjarnegara, Jawa Tengah 53463', -7.397326, 109.559194, '-7.397326, 109.559194', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(19, 'Pasar Manis Punggelan', 'Pasar Tradisional', 13, 'Punggelan', 'JHWJ+QPF, Jl. Ps. Manis, Kepering, Punggelan, Kec. Punggelan, Kab. Banjarnegara, Jawa Tengah 53462', -7.353068, 109.581784, '-7.353068, 109.581784', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(20, 'Pasar Pagi', 'Pasar Tradisional', 19, 'Wanadadi', 'JJMG+4HR, Dusun Dua, Wanadadi, Kec. Wanadadi, Kab. Banjarnegara, Jawa Tengah 53461', -7.366958, 109.626362, '-7.366958, 109.626362', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(21, 'Pasar Pagi Sandemaning', 'Pasar Tradisional', 2, 'Banjarnegara', '13, Jl. Dipayuda No.rt.02, RW.04, Krandegan, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53418', -7.39529, 109.695943, '-7.395290, 109.695943', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(22, 'Pasar Pon', 'Pasar Tradisional', 13, 'Punggelan', 'MJQV+VHG, Pasar pon, Gumpang, Tlaga, Kec. Punggelan, Kab. Banjarnegara, Jawa Tengah 53462', -7.310311, 109.643968, '-7.310311, 109.643968', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(23, 'Pasar Pon (PonLine)', 'Pasar Tradisional', 13, 'Punggelan', 'Danakerta I, Danakerta, Kec. Punggelan, Kab. Banjarnegara, Jawa Tengah 53462', -7.353562, 109.545438, '-7.353562, 109.545438', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(24, 'Pasar Pucang', 'Pasar Tradisional', 4, 'Bawang', 'JM24+MW6, Jl. Raya Pucang, Blater, Pucang, Kec. Bawang, Kab. Banjarnegara, Jawa Tengah 53471', -7.397998, 109.654117, '-7.397998, 109.654117', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(25, 'Pasar Purwareja Klampok', 'Pasar Tradisional', 15, 'Purwareja Klampok', 'GCHH+2W7, Jl. Pramuka No.563, Dusun Kalikidang Lor, Purworejo, Kec. Purwareja Klampok, Kab. Banjarnegara, Jawa Tengah 53474', -7.472599, 109.429469, '-7.472599, 109.429469', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(26, 'Pasar Rakit', 'Pasar Tradisional', 16, 'Rakit', 'HG8H+2R6, Rakit, Kec. Rakit, Kab. Banjarnegara, Jawa Tengah 53463', -7.434958, 109.52951, '-7.434958, 109.529510', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(27, 'Pasar Setu Merden', 'Pasar Tradisional', 14, 'Purwanegara', 'GGJR+V7Q, Jln.Raya Demang Jl. Sutawijaya, Rawawungu, Merden, Kec. Purwanegara, Kab. Banjarnegara, Jawa Tengah 53472', -7.467791, 109.540739, '-7.467791, 109.540739', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(28, 'Pasar Tradisional Gumiwang', 'Pasar Tradisional', 14, 'Purwanegara', 'HHJQ+CP5, Jl. Raya Gumiwang Purwonegoro, Kompleks Pasar, Gumiwang, Kec. Purwanegara, Kab. Banjarnegara, Jawa Tengah 53472', -7.416905, 109.592947, '-7.416905, 109.592947', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(29, 'Pasar Tunggoro', 'Pasar Tradisional', 17, 'Sigaluh', 'HRGH+QW3, Jurang, Tunggara, Kec. Sigaluh, Kab. Banjarnegara, Jawa Tengah 53481', -7.423121, 109.829786, '-7.423121, 109.829786', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(30, 'Pasar Wage Aribaya', 'Pasar Tradisional', 10, 'Pagentan', 'MQ79+RPG, Unnamed Road, Bawang, Aribaya, Kec. Pagentan, Kab. Banjarnegara, Jawa Tengah 53455', -7.335443, 109.769336, '-7.335443, 109.769336', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(31, 'Pasar Wage Baru', 'Pasar Tradisional', 2, 'Banjarnegara', 'HMXP+58P, Jl. Serma Mukhlas No.182, Kutabanjarnegara, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53418', -7.399503, 109.685709, '-7.399503, 109.685709', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(32, 'Pasar Wage Beji', 'Pasar Tradisional', 1, 'Banjarmangu', 'MMWF+PMH, Jl. Kalibening - Gripit, Kali Jambe, Beji, Kec. Banjarmangu, Kab. Banjarnegara, Jawa Tengah 53452', -7.303182, 109.674242, '-7.303182, 109.674242', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(33, 'Pasar Wage Lengkong', 'Pasar Tradisional', 16, 'Rakit', 'JH3H+X4V, Jalan Raya, Blimbing, Lengkong, Rakit, Banjarnegara, Central Java 53463', -7.395003, 109.577788, '-7.395003, 109.577788', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(34, 'Pasar Wanadadi', 'Pasar Tradisional', 19, 'Wanadadi', 'Jl. Hos Cokroaminoto No.234, Dusun Dua, Wanadadi, Kec. Wanadadi, Kab. Banjarnegara, Jawa Tengah 53461', -7.367936, 109.626586, '-7.367936, 109.626586', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(35, 'Pasar Wanadri', 'Pasar Tradisional', 4, 'Bawang', 'Dusun I, Wanadri, Kec. Bawang, Kab. Banjarnegara, Jawa Tengah 53471', -7.45945, 109.606286, '-7.459450, 109.606286', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)'),
+(36, 'Pasar Unggas Kota', 'Pasar Unggas', 2, 'Banjarnegara', 'JP53+8QC, Jl. Letnan Karjono No.10, Parakancanggah, Krandegan, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53474', -7.391719, 109.70439, '-7.391719, 109.704390', 'GeoJSON Pemkab Banjarnegara (dist/data/pasar-banjarnegara.geojson)');
+
+
+-- Seeder: ternak_poultry_shop (15 toko pakan terverifikasi Banjarnegara)
+INSERT IGNORE INTO `ternak_poultry_shop` (`id`, `kecamatan_id`, `tahun`, `bulan`, `nama_toko`, `alamat`, `jenis_layanan`, `koordinat`, `kontak`, `catatan`, `sumber`) VALUES
+(21, 15, 2024, NULL, 'Toko Pakan Ternak "Iman"', 'Klampok, Kec. Purwareja Klampok', 'Pakan Ternak, Unggas & Sapronak', '-7.459866, 109.440366', '—', 'Terverifikasi profil bisnis Google Maps Klampok', 'manual'),
+(22, 15, 2024, NULL, 'Manyoel ABS K3', 'Klampok / Kaliwinasuh, Kec. Purwareja Klampok', 'Pakan Ternak & Sarana Produksi Peternakan', '-7.461357, 109.452326', '—', 'Terverifikasi profil bisnis Google Maps', 'manual'),
+(23, 15, 2024, NULL, 'Toko Sidodadi PS', 'Sirkandi, Kec. Purwareja Klampok', 'Pakan Hewan, Unggas, Telur & Kebutuhan Peternakan', '-7.473699, 109.429035', '—', 'Terverifikasi profil bisnis Google Maps', 'manual'),
+(24, 8, 2024, NULL, 'Adam Poultry Shop', 'Jl. Raya Mandiraja, Kec. Mandiraja', 'Pakan Unggas, DOC, Vitamin & Sapronak', '-7.465383, 109.472353', '—', 'Terverifikasi profil bisnis Google Maps Mandiraja', 'manual'),
+(25, 14, 2024, NULL, 'Reza Poultry Shop', 'Jl. Raya Purwanegara, Kec. Purwanegara', 'Pakan Ternak, Sapronak Unggas & Obat Hewan', '-7.433529, 109.557089', '—', 'Terverifikasi profil bisnis Google Maps Purwanegara', 'manual'),
+(26, 4, 2024, NULL, 'Tani Jaya PS', 'Jl. Raya Bawang / Pucang, Kec. Bawang', 'Pakan Ayam, Bebek, Pakan Ikan & Obat Hewan', '-7.400807, 109.619157', '—', 'Terverifikasi profil bisnis Google Maps Bawang', 'manual'),
+(27, 4, 2024, NULL, 'BARA PETSHOP 1', 'Jl. Raya Bawang, Kec. Bawang', 'Pakan Hewan, Vitamin, Obat & Perlengkapan Peternakan', '-7.400662, 109.620955', '—', 'Terverifikasi profil bisnis Google Maps Bawang', 'manual'),
+(28, 18, 2024, NULL, 'JOGLO PS - Animal Food & Plastik', 'Kawasan Susukan, Kec. Susukan', 'Pakan Ternak, Animal Food & Kebutuhan Unggas', '-7.497117, 109.390476', '—', 'Terverifikasi profil bisnis Google Maps Susukan', 'manual'),
+(29, 18, 2024, NULL, 'Toko Sumber Pakan', 'Wilayah Brengkok / Susukan, Kec. Susukan', 'Pakan Ternak, Konsentrat & Pakan Unggas', '-7.486154, 109.419044', '—', 'Terverifikasi profil bisnis Google Maps Susukan', 'manual'),
+(30, 2, 2024, NULL, 'Pioneer Poultry Shop', 'Jl. Jend. Sudirman No. 166, Krandegan, Kec. Banjarnegara', 'Pakan Unggas, DOC, Vaksin, Vitamin & Sapronak Peternakan', '-7.398412, 109.697420', '0811-2616-199', 'Terverifikasi profil bisnis Google Maps (Rating 4.6, 67 ulasan)', 'manual'),
+(31, 2, 2024, NULL, 'Sekawan Animal Food (PT. Kanaan Makmur Sejahtera)', 'Jl. Jend. Sudirman No. 196, Krandegan, Kec. Banjarnegara', 'Pakan Ternak, Pakan Ikan, Konsentrat & Perlengkapan Peternakan', '-7.398850, 109.699130', '0812-2299-9039', 'Terverifikasi profil bisnis Google Maps (Rating 4.1, 235 ulasan)', 'manual'),
+(32, 2, 2024, NULL, '(TRIO PUTRA) Herry PS Banjarnegara', 'Jl. Mayjend Soetojo No. 7, Krandegan, Kec. Banjarnegara', 'Pakan Unggas, Konsentrat Ayam & Burung, Obat Ternak', '-7.394150, 109.695810', '0882-2783-8741', 'Terverifikasi profil bisnis Google Maps (Rating 5.0)', 'manual'),
+(33, 2, 2024, NULL, 'Iqbal Jaya Poultry Shop', 'Jl. Sunan Gripit, Kutabanjarnegara, Kec. Banjarnegara', 'Pakan Ayam, Bebek, Unggas & Obat-obatan Hewan', '-7.393420, 109.691150', '0857-4774-4417', 'Terverifikasi profil bisnis Google Maps (Rating 4.7)', 'manual'),
+(34, 2, 2024, NULL, 'Sri Jaya PS', 'Area Krandegan, Kec. Banjarnegara', 'Pakan Ternak, Konsentrat Unggas & Sapronak', '-7.396500, 109.696200', '0815-4237-4898', 'Terverifikasi profil bisnis Google Maps (Rating 3.9)', 'manual'),
+(35, 2, 2024, NULL, 'PS. Berkah (Pakan Hewan & Burung)', 'Jl. Serma Mukhlas No. 1, Kutabanjarnegara, Kec. Banjarnegara', 'Pakan Ternak, Pakan Unggas, Burung & Ikan', '-7.398100, 109.689200', '0857-346-976', 'Terverifikasi profil bisnis Google Maps (Rating 5.0)', 'manual');
+

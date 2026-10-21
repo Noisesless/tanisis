@@ -150,6 +150,17 @@ async function main() {
     }
   }
 
+  // Jalankan migrasi & seeder titik spasial pasar_banjarnegara & ternak_poultry_shop (ADR-077)
+  const spatialPoultryScript = path.resolve(process.cwd(), "scripts/seed_spatial_and_poultry.js");
+  if (fs.existsSync(spatialPoultryScript)) {
+    try {
+      console.log(`\n[Migrasi Patch] Memeriksa & menyinkronkan layer spasial pasar_banjarnegara & ternak_poultry_shop (ADR-077)...`);
+      execSync(`node "${spatialPoultryScript}"`, { stdio: "inherit", env: process.env });
+    } catch (spErr) {
+      console.warn(`[Migrasi Patch Warning] Spatial & poultry seeder gagal:`, spErr.message);
+    }
+  }
+
   const verifyConn = await mysql.createConnection({
     host: envHost,
     port: envPort,
@@ -164,6 +175,7 @@ async function main() {
       "activity_logs",
       "fsva_desa_indikator",
       "harga_pasar_banjarnegara",
+      "pasar_banjarnegara",
       "neraca_pangan_komposit",
       "kelembagaan_pertanian",
       "kelembagaan_perikanan",
@@ -173,6 +185,7 @@ async function main() {
       "ternak_flow",
       "ternak_pemotongan",
       "ternak_daging",
+      "ternak_poultry_shop",
       "horti_luas_kabupaten",
       "horti_produksi_kabupaten",
       "renstra_target"
