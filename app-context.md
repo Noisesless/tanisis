@@ -10,7 +10,7 @@ bg=#ffffff surface=#f8fafc text=#0f172a accent1=#16a34a accent2=#0284c7
 font_head=Inter font_body=Inter radius=8px nav=topbar theme=light
 
 ## [STATE]
-phase=Fase 17: Forensic Tracking & Tuntas Perbaikan Tabrakan Icon-Teks Dropdown & Menu Admin (ADR-081) done=ALL last=Melakukan audit forensik 85 bundle dist/assets/*.js, menemukan hilangnya utilitas Tailwind .pl-8, .pl-3.5, .pr-7, .pr-8 dari CSS bundle yang memicu tabrakan icon-teks pada dropdown Tahun Data Rekap (farmers) dan pencarian Admin. Menambahkan paket utilitas CSS lengkap, rule pelindung tabrakan struktural (.relative > .absolute[class*="left-"] ~ select/input { padding-left: 2.25rem !important }), serta styling chevron SVG seragam pada select.appearance-none. next=Pemeliharaan berkala dan deployment
+phase=Fase 18: Audit Keamanan Produksi, Sinkronisasi Otomatis Lingkungan (Lokal-GitHub-Server Nargaroth), Eliminasi Leftover .env.bak, Pengamanan .htaccess Defense-in-Depth, dan Pemulihan Akun Ketahanan Pangan (ADR-082) done=ALL last=Audit komprehensif keamanan dan drift lingkungan: menyelesaikan penarikan langsung commit 9f4b1af ke server produksi nargaroth via root SSH, menyelaraskan branch server ke main, menyuntikkan PASS_KETAHANAN_PANGAN ke .env produksi, menghapus berkas sisa .env.production.bak, memasang .htaccess defense-in-depth, dan memastikan API health serta aset CSS/JS 100% sinkron. next=Monitoring berkala dan pengawasan operasional
 build=OK issues=0
 
 ## [VISUAL_GATE]
@@ -53,6 +53,14 @@ icon_lib=lucide
 pertasis(bantuan,ekonomi,pasar_banjarnegara,hortikultura,kelembagaan,kelembagaan_pertanian,lahan,padi,palawija,perikanan,ikan_produksi_jenis,perkebunan,peternakan,ternak_poultry_shop,st2023,komoditas_unggulan,nilai_ekonomi_tahunan,ltt_katam,psat_pduk,harga_pasar_banjarnegara,fsva_desa_indikator,neraca_pangan_komposit,renstra_target,activity_logs,sync_log)
 
 ## [ADR]
+[ADR-082] Audit Keamanan Produksi, Standarisasi Git Server, Pemulihan Akun Ketahanan Pangan & Hardening .htaccess:
+- Melakukan audit komparatif mendalam antara Lokal, GitHub, dan Server Produksi Nargaroth (`https://pertanian.sistemdata.id`), mengidentifikasi server produksi tertinggal di commit `3a8e597`.
+- Menyelesaikan penarikan langsung (*pull*) commit `9f4b1af` ke server via SSH root, membakukan branch server ke `main` tracking `origin/main` (menghapus branch `master` lama), dan menyetel hak akses ke `sistnian:sistnian`.
+- Menyuntikkan variabel `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` ke `.env` produksi yang sebelumnya belum ada, memulihkan autentikasi akun bidang ketahanan pangan.
+- Menghapus berkas cadangan liar `.env.production.bak` dari root server produksi demi integritas kredensial.
+- Membangun dan menyinkronkan berkas `.htaccess` di root untuk proteksi *defense-in-depth* lintas-platform (mematikan directory indexing dan memblokir akses berkas sensitif).
+- Memverifikasi live probe: `index-DmHYJUQI.css` memuat `padding-left: 2.25rem !important` (true), `farmers-RBAkXoyn.js` memuat `pl-9` (true), dan API health 200 OK (`db: up`).
+
 [ADR-081] Remediasi Forensik Tabrakan Icon dan Teks pada Seluruh Dropdown & Kontrol Menu Admin:
 - Melakukan audit menyeluruh pada 85 bundle JavaScript di `dist/assets/`, memetakan 62 elemen `<select>` dan ratusan elemen `<input>`.
 - Mengungkap akar penyebab visual tabrakan (overlap `20[📅]25`): Kompilasi Tailwind CSS pada `dist/assets/index-DmHYJUQI.css` dan `pages-vh-t_kPv.css` tidak menyertakan class `.pl-8` (dan varian spacing `.pl-3.5`, `.pl-6`, `.pl-7`, `.pr-7`, `.pr-8`, `.ml-4`, `.mt-3.5`, `.my-1.5`). Hal ini menyebabkan browser tidak memberikan offset padding kiri saat elemen `<select>` atau `<input>` dipadukan dengan icon berposisi `absolute left-3` (12px), sehingga teks dirender tepat di bawah icon.

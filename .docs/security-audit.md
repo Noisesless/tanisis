@@ -145,3 +145,23 @@ curl -s http://127.0.0.1:5173/api/health
 
 1. **Rotasi Kredensial Produksi:** Saat mendeploy ke server produksi, selalu ganti kata sandi default `ADMIN_PASS` dan `PASS_*` di `.env`.
 2. **Dependensi Rutin:** Pantau pembaruan `exceljs` untuk upgrade transisi paket `uuid` jika versi terbaru telah dirilis.
+
+---
+
+## 6. Hasil Audit Produksi & Hardening Lingkungan (2026-11-02 — ADR-082)
+
+Pemeriksaan keamanan faktual secara langsung (*live forensic audit*) di server produksi (`https://pertanian.sistemdata.id` / Nargaroth) membuktikan:
+
+1. **Audit Variabel Lingkungan (`.env` & `.env.example`):**
+   - **Network Binding:** `BIND_HOST=127.0.0.1` membatasi listening hanya ke loopback lokal.
+   - **CORS Whitelist:** `CORS_ORIGIN=https://pertanian.sistemdata.id` mengeliminasi celah cross-origin arbitrary domain.
+   - **Template Bebas Rahasia:** `.env.example` 100% bebas dari kunci rahasia/password riil.
+   - **Pemulihan Akun Ketahanan Pangan:** Variabel `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` berhasil ditambahkan pada `.env` server produksi.
+2. **Eliminasi Berkas Cadangan Liar:**
+   - Ditemukan dan dimusnahkan berkas sisa `.env.production.bak` dari root server produksi demi integritas kredensial.
+3. **Verifikasi Penolakan Akses File Sensitif Publik (Live HTTP Probe):**
+   - `GET /.env` &rarr; `403 Forbidden` (`{"error":"forbidden_access"}`).
+   - `GET /.git/config` &rarr; `403 Forbidden` (`{"error":"forbidden_access"}`).
+   - `GET /database/dump_production_pertanian_updated.sql` &rarr; `403 Forbidden` (`{"error":"forbidden_access"}`).
+4. **Proteksi Bertingkat .htaccess (Defense-in-Depth):**
+   - Berkas `.htaccess` protektif disematkan di root dan server untuk mematikan `Options -Indexes`, memblokir regex berkas sensitif (`^\.`, `.env*`, `.sql`, `.bak`, `.sh`, `.yml`), serta menegakkan security headers darurat.

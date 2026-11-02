@@ -269,4 +269,20 @@ graph LR
    - 🔴 **Belum Tersedia (0 Baris):** Tabel kosong, prioritas tagihan data ke admin bidang teknis.
 3. **Actionable Governance:** Menyediakan tombol 1-klik untuk menyalin rincian format tagihan data ke clipboard untuk komunikasi antar-bidang dinas (WhatsApp/disposisi) serta tautan langsung ke filter unduh template Excel.
 
+---
+
+## 9. Arsitektur Structural Collision Guard Kontrol Input (ADR-081)
+
+Untuk mencegah degradasi visual tabrakan icon-teks pada elemen form interaktif akibat perbedaan purging Tailwind CSS:
+1. **Aturan Pelindung Struktural CSS:** Menyuntikkan aturan cascading universal `.relative > .absolute[class*="left-"] ~ select, .relative > .absolute[class*="left-"] ~ input { padding-left: 2.25rem !important; }` ke bundle `index-DmHYJUQI.css` dan `pages-vh-t_kPv.css`.
+2. **Penyelarasan Chevron Dropdown:** Memasang background SVG chevron dinamis pada seluruh `select.appearance-none` dengan `padding-right: 2.25rem !important`.
+
+---
+
+## 10. Arsitektur Keamanan Produksi & Defense-in-Depth Lintas-Platform (ADR-082)
+
+1. **Unifikasi Branch Repositori:** Standarisasi branch tunggal `main` yang sinkron antara Local Workstation, GitHub Remote, dan Linux Production Server (menghapus bifurkasi branch `master` warisan).
+2. **Enkapsulasi Lingkungan & Port:** Node.js listening dikunci secara ketat pada `BIND_HOST=127.0.0.1:5173`, hanya dapat diakses melalui reverse proxy Nginx CloudPanel dengan validasi SSL/TLSv1.2+ dan HTTP/2.
+3. **Proteksi Bertingkat .htaccess:** Menyediakan proteksi fallback otomatis untuk server berbasis Apache/cPanel yang secara proaktif menolak akses publik ke regex berkas sensitif (`^\.`, `.env*`, `.sql`, `.bak`, `.sh`, `.yml`, `.log`) serta menegakkan headers keamanan.
+
 

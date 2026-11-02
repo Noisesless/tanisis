@@ -22,12 +22,12 @@ Dokumen ini memuat prosedur resmi dan tunggal (*Single Source of Truth*) untuk d
 | `DB_HOST` | `127.0.0.1` | `localhost` / `127.0.0.1` | Host MySQL/MariaDB |
 | `DB_PORT` | `3306` | `3306` | Port MySQL |
 | `DB_USER` | `root` | `pertalit` | Akun database terdedikasi |
-| `DB_PASS` | *(kosong)* | `w1x4pYxx7u3WYNqVX4g4` | Kata sandi database produksi |
+| `DB_PASS` | *(kosong)* | `[secure_password]` | Kata sandi database produksi |
 | `DB_NAME` | `pertasis` | `pertasis` | Nama database |
 | `CORS_ORIGIN` | `*` | `https://pertanian.sistemdata.id` | Domain yang diizinkan untuk CORS |
 | `DIST_DIR` | `./dist` | `./dist` | Direktori berkas statis frontend SPA |
 | `CKAN_PROXY` | `1` | `1` | Aktifkan proksi CKAN Open Data Banjarnegara |
-| `ADMIN_PASS` | `C9145qbSjR` | `[secure_password]` | Kata sandi super-admin |
+| `ADMIN_PASS` | `[secure_password]` | `[secure_password]` | Kata sandi super-admin |
 | `PASS_TANAMAN_PANGAN` | `TanamanPangan.2026` | `[secure_password]` | Kata sandi akun Bidang Tanaman Pangan |
 | `PASS_HORTI_PERKEBUNAN` | `HortiPerkebunan.2026` | `[secure_password]` | Kata sandi akun Bidang Hortikultura & Perkebunan |
 | `PASS_PETERNAKAN` | `Peternakan.2026` | `[secure_password]` | Kata sandi akun Bidang Peternakan |
@@ -193,3 +193,21 @@ pm2 restart ecosystem.config.cjs
 ```
 
 Layanan akan seketika pulih normal ke kondisi stabil sebelumnya tanpa *downtime*.
+
+---
+
+## 7. Arsitektur Reverse Proxy Nginx & Proteksi .htaccess (ADR-082)
+
+Server produksi Nargaroth menggunakan stack **Nginx Reverse Proxy & Node.js PM2**:
+
+1. **Nginx Virtual Host (`/etc/nginx/sites-enabled/pertanian.sistemdata.id.conf`):**
+   - Mendengarkan port 80 dan 443 (SSL/TLSv1.2 & TLSv1.3, HTTP/2).
+   - Port 80 otomatis dialihkan ke HTTPS via *301 Permanent Redirect*.
+   - Meneruskan seluruh request web & API ke backend Express di `http://127.0.0.1:5173/`.
+   - Mengaktifkan *Security Headers* global: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, dan `Referrer-Policy: same-origin`.
+2. **Proteksi Berkas Sensitif Lapis Ganda:**
+   - **Lapis Express (`src/server.js`):** Blokir request publik ke `.sql`, `.env`, `.bak`, `.sh`, `.yml`, `.config`, dan folder tersembunyi `/.` menghasilkan `403 Forbidden` (`{"error":"forbidden_access"}`).
+   - **Lapis .htaccess Defense-in-Depth:** Berkas `.htaccess` terpasang di *root* dan siap melindungi direktori jika aplikasi dijalankan atau dicadangkan ke server berbasis Apache/cPanel/LiteSpeed.
+3. **Standarisasi Branch Git Server:**
+   - Server produksi dibakukan pada branch `main` yang melacak `origin/main` (menghapus drift branch `master` historis).
+   - Seluruh izin berkas di `/home/sistnian/htdocs/pertanian.sistemdata.id` dimiliki oleh user `sistnian:sistnian`.

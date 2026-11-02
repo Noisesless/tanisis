@@ -1,0 +1,25 @@
+# SISPERTANI Defense-in-Depth Security Rules (.htaccess)
+# Berlaku jika aplikasi dipindahkan/dicadangkan ke lingkungan Apache / LiteSpeed / cPanel
+
+# 1. Matikan Directory Indexing
+Options -Indexes
+
+# 2. Blokir Akses ke Berkas Sensitif & Tersembunyi (.env, .git, .sql, .bak, .yml, .sh)
+<FilesMatch "^\.|\.(env.*|sql|bak|old|orig|sh|bash|yml|yaml|config|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 3. Header Keamanan Tambahan
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+

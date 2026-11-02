@@ -927,6 +927,45 @@ Dokumen ini mencatat daftar isu, kendala teknis, status penyelesaian (*FIFO buff
 
 ---
 
+### [ISSUE-061] Remediasi Forensik Tabrakan Icon dan Teks pada Kontrol Dropdown & Input Admin (ADR-081)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-10-21
+- **Komponen:** `dist/assets/index-DmHYJUQI.css`, `dist/assets/pages-vh-t_kPv.css`, `dist/assets/farmers-RBAkXoyn.js`, `dist/assets/admin-v241.js`, `scripts/build_admin_view.js`.
+- **Deskripsi:** 
+  Pada tampilan halaman rekapitulasi data petani (`/farmers`) dan pencarian data admin (`/admin`), teks dropdown pemilih tahun dan input form bertabrakan langsung dengan ikon kalender/pencarian di sebelah kiri (visual collision overlap `20[📅]25`).
+- **Akar Masalah:**
+  Kompilasi utilitas Tailwind CSS pada bundle `index-DmHYJUQI.css` dan `pages-vh-t_kPv.css` tidak memuat class `.pl-8` serta varian spacing `.pl-3.5`, `.pl-6`, `.pl-7`, `.pr-7`, `.pr-8`. Elemen `<select>` dan `<input>` tidak mendapatkan padding kiri yang cukup saat dipadukan dengan ikon `absolute left-3`.
+- **Solusi yang Diterapkan (ADR-081):**
+  1. Menambahkan seluruh utilitas spacing Tailwind yang hilang (`.pl-6` s/d `.pl-16`, `.pr-5` s/d `.pr-16`, `.ml-4`, dll.) pada bundle CSS.
+  2. Menerapkan *Structural Collision Guard* di CSS: `.relative > .absolute[class*="left-"] ~ select, .relative > .absolute[class*="left-"] ~ input { padding-left: 2.25rem !important; }` (offset 36px permanen).
+  3. Memasang styling chevron SVG seragam pada `select.appearance-none` dengan `padding-right: 2.25rem !important`.
+  4. Menyelaraskan padding elemen di `farmers-RBAkXoyn.js`, `admin-v241.js`, dan `scripts/build_admin_view.js` menjadi `pl-9 pr-8`.
+- **Verifikasi:**
+  - Teks dropdown tahun dan input admin terbebas dari tumpang tindih secara permanen di seluruh breakpoint layar.
+
+### [ISSUE-062] Resolusi Drift Deployment Produksi, Sinkronisasi Branch Git Server, Pemulihan Variabel Ketahanan Pangan & Hardening .htaccess (ADR-082)
+- **Status:** RESOLVED
+- **Tanggal:** 2026-11-02
+- **Komponen:** Server Produksi Nargaroth (`/home/sistnian/htdocs/pertanian.sistemdata.id`), `.env`, `.htaccess`, Nginx vhost.
+- **Deskripsi:** 
+  Audit komparatif antara Repo Lokal, GitHub, dan Produksi menemukan server produksi mengalami *drift*: aset CSS dan JS di server masih melayani commit lama (`3a8e597`) sebelum ADR-081. Selain itu, ditemukan variabel `PASS_KETAHANAN_PANGAN` belum tercantum pada `.env` server, branch lokal server tertahan di `master` bukan `main`, serta adanya berkas sisa `.env.production.bak`.
+- **Akar Masalah:**
+  - Branch lokal git di server produksi sebelumnya dinamai `master` dan belum menarik commit `9f4b1af` dari `origin/main`.
+  - Penambahan RBAC ketahanan pangan di ADR-061 belum disinkronkan ke `.env` produksi.
+  - Sisa berkas cadangan setup lama belum dibersihkan.
+- **Solusi yang Diterapkan (ADR-082):**
+  1. **Checkout & Pull:** Menyelaraskan branch lokal server ke `main` dan menarik commit terbaru `9f4b1af`.
+  2. **Izin Berkas:** Memperbaiki izin berkas ke kepemilikan `sistnian:sistnian`.
+  3. **Pemulihan Variabel Lingkungan:** Menyuntikkan `PASS_KETAHANAN_PANGAN=KetahananPangan.2026` ke `.env` produksi secara rapi.
+  4. **Pembersihan Berkas Sisa:** Menghapus `.env.production.bak` dari root server produksi.
+  5. **Migrasi Basis Data & Reload:** Menjalankan `npm run db:patch` idempoten dan melakukan graceful reload PM2 (`sispertani-api`).
+  6. **Hardening Defense-in-Depth:** Memasang berkas `.htaccess` di root untuk proteksi bertingkat Apache/LiteSpeed.
+- **Verifikasi:**
+  - Live probe aset: `index-DmHYJUQI.css` memuat `padding-left: 2.25rem !important` (true), `farmers-RBAkXoyn.js` memuat `pl-9` (true).
+  - API health status 200 OK (`db: up`), commit git lokal, GitHub, dan produksi 100% identik di `9f4b1af`.
+
+---
+
 ### Rencana Peningkatan Lainnya:
 1. **Sinkronisasi Koreksi Anomali Salak 2024 Dinas:** Berkoordinasi dengan admin dinas untuk mengoreksi angka input 2024 pada file mentah CSV dinas di mana baris Kalibening tertulis 80.880 Ton dan Banjarmangu 9.230 Ton.
 2. **Monitoring Log Berkala di Produksi:** Memantau berkas log aktivitas dan rotasi audit di server cPanel nargaroth setelah perilisan multi-role dasbor admin aktif.

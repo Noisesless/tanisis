@@ -1,6 +1,7 @@
 # TODO: SISPERTANI — Data Readiness & Audit Dashboard
 
 ## Status: 100% Selesai (Bantuan Uang/Barang, 17 Domain Unifikasi, Uji Upload 1-Sheet, & Optimasi Peta Selesai)
+- [x] Audit Keamanan Produksi, Standarisasi Git Server, & Pemulihan Akun Ketahanan Pangan (ADR-082): Penarikan commit 9f4b1af ke server Nargaroth via SSH, unifikasi branch server ke `main`, penyuntikan `PASS_KETAHANAN_PANGAN`, eliminasi `.env.production.bak`, dan penegakan `.htaccess` defense-in-depth lintas-platform
 - [x] Pemisahan Bantuan Uang vs Barang (Paket): Penambahan kolom `jenis_bantuan` (Uang/Barang), `jumlah_barang`, `satuan_barang` di tabel `bantuan_program`, dukungan nilai_rupiah 0/NULL, serta sinkronisasi template impor/ekspor Excel
 - [x] Normalisasi & Unifikasi 17 Domain Admin: Eliminasi redundansi domain (ST2023 desa diserap ke Kelembagaan, 3 kartu Bantuan disatukan, 3 kartu Tanaman Pangan disatukan) dengan backward compatibility alias
 - [x] Uji Faktual Upload 17 Domain & Toleransi 1-Sheet: 17 dari 17 domain lulus uji impor 100%, konfirmasi faktual bahwa upload 1 sheet pada domain multi-sheet tetap tersimpan ke database tanpa error
